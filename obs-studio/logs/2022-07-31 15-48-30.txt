@@ -1,0 +1,108 @@
+15:48:30.429: CPU Name: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
+15:48:30.429: CPU Speed: 2000.000MHz
+15:48:30.429: Physical Cores: 4, Logical Cores: 8
+15:48:30.430: Physical Memory: 11848MB Total, 1607MB Free
+15:48:30.430: Kernel Version: Linux 5.18.10-76051810-generic
+15:48:30.430: Distribution: "Pop!_OS" "22.04"
+15:48:30.430: Session Type: x11
+15:48:30.430: Window System: X11.0, Vendor: The X.Org Foundation, Version: 1.21.1
+15:48:30.431: Qt Version: 5.15.3 (runtime), 5.15.2 (compiled)
+15:48:30.431: Portable mode: false
+15:48:30.474: OBS 27.2.3+dfsg1-1 (linux)
+15:48:30.474: ---------------------------------
+15:48:30.515: ---------------------------------
+15:48:30.515: audio settings reset:
+15:48:30.515: 	samples per sec: 48000
+15:48:30.515: 	speakers:        2
+15:48:30.525: ---------------------------------
+15:48:30.525: Initializing OpenGL...
+15:48:30.579: Loading up OpenGL on adapter NVIDIA Corporation NVIDIA GeForce GTX 1050/PCIe/SSE2
+15:48:30.579: OpenGL loaded successfully, version 3.3.0 NVIDIA 470.129.06, shading language 3.30 NVIDIA via Cg compiler
+15:48:30.589: ---------------------------------
+15:48:30.589: video settings reset:
+15:48:30.589: 	base resolution:   1280x720
+15:48:30.589: 	output resolution: 1280x720
+15:48:30.589: 	downscale filter:  Bilinear
+15:48:30.589: 	fps:               60/1
+15:48:30.589: 	format:            NV12
+15:48:30.589: 	YUV mode:          709/Partial
+15:48:30.589: NV12 texture support not available
+15:48:30.590: Audio monitoring device:
+15:48:30.590: 	name: Default
+15:48:30.590: 	id: default
+15:48:30.590: ---------------------------------
+15:48:30.591: Failed to load 'en-US' text for module: 'decklink-captions.so'
+15:48:30.593: Failed to load 'en-US' text for module: 'decklink-ouput-ui.so'
+15:48:30.642: A DeckLink iterator could not be created.  The DeckLink drivers may not be installed
+15:48:30.642: No blackmagic support
+15:48:30.649: v4l2loopback not installed, virtual camera disabled
+15:48:30.678: NVENC supported
+15:48:30.678: FFMPEG VAAPI supported
+15:48:30.688: [vlc-video]: VLC 3.0.16 Vetinari found, VLC video source enabled
+15:48:30.703: [StreamFX] Loading Version 0.11.1.0-g81a96998
+15:48:30.709: [StreamFX] <gfx::opengl> Version 3.3 initialized.
+15:48:30.714: [StreamFX] Loaded Version 0.11.1.0-g81a96998
+15:48:30.714: ---------------------------------
+15:48:30.714:   Loaded Modules:
+15:48:30.714:     StreamFX.so
+15:48:30.714:     vlc-video.so
+15:48:30.714:     text-freetype2.so
+15:48:30.714:     rtmp-services.so
+15:48:30.714:     obs-x264.so
+15:48:30.714:     obs-transitions.so
+15:48:30.714:     obs-outputs.so
+15:48:30.714:     obs-filters.so
+15:48:30.714:     obs-ffmpeg.so
+15:48:30.714:     linux-v4l2.so
+15:48:30.714:     linux-pulseaudio.so
+15:48:30.714:     linux-jack.so
+15:48:30.714:     linux-decklink.so
+15:48:30.714:     linux-capture.so
+15:48:30.714:     linux-alsa.so
+15:48:30.714:     image-source.so
+15:48:30.714:     frontend-tools.so
+15:48:30.714:     decklink-ouput-ui.so
+15:48:30.714:     decklink-captions.so
+15:48:30.714: ---------------------------------
+15:48:30.714: ==== Startup complete ===============================================
+15:48:30.747: All scene data cleared
+15:48:30.747: ------------------------------------------------
+15:48:30.751: pulse-input: Server name: 'PulseAudio (on PipeWire 0.3.56) 15.0.0'
+15:48:30.751: pulse-input: Audio format: s32le, 48000 Hz, 2 channels
+15:48:30.751: pulse-input: Started recording from 'alsa_output.pci-0000_00_1f.3.analog-stereo.monitor'
+15:48:30.752: [Loaded global audio device]: 'Desktop Audio'
+15:48:30.752: pulse-input: Server name: 'PulseAudio (on PipeWire 0.3.56) 15.0.0'
+15:48:30.752: pulse-input: Audio format: s16le, 32000 Hz, 2 channels
+15:48:30.752: pulse-input: Started recording from 'alsa_input.usb-046d_HD_Pro_Webcam_C920_5DF49F9F-02.analog-stereo'
+15:48:30.753: [Loaded global audio device]: 'Mic/Aux'
+15:48:30.753:     - filter: 'Noise Suppression' (noise_suppress_filter_v2)
+15:48:30.753: v4l2-input: Start capture from /dev/video0
+15:48:30.754: v4l2-input: Input: 0
+15:48:30.754: v4l2-input: Resolution: 800x448
+15:48:30.754: v4l2-input: Pixelformat: YUYV
+15:48:30.754: v4l2-input: Linesize: 1600 Bytes
+15:48:30.754: v4l2-input: Framerate: 30.00 fps
+15:48:30.757: v4l2-input: /dev/video0: select timeout set to 166666 (5x frame periods)
+15:48:30.761: xshm-input: Geometry 1920x1080 @ 1920,0
+15:48:30.762: Switched to scene 'Scene'
+15:48:30.763: ------------------------------------------------
+15:48:30.763: Loaded scenes:
+15:48:30.763: - scene 'Scene':
+15:48:30.764:     - source: 'Screen Capture (XSHM)' (xshm_input)
+15:48:30.764:     - source: 'Video Capture Device (V4L2)' (v4l2_input)
+15:48:30.764:         - filter: 'Blur' (streamfx-filter-blur)
+15:48:30.764: - scene 'Myself':
+15:48:30.764:     - source: 'Video Capture Device (V4L2)' (v4l2_input)
+15:48:30.764:         - filter: 'Blur' (streamfx-filter-blur)
+15:48:30.764: ------------------------------------------------
+15:48:31.110: [StreamFX] <updater> Automatic checks at launch are now enabled.
+15:48:31.507: adding 42 milliseconds of audio buffering, total audio buffering is now 42 milliseconds (source: Desktop Audio)
+15:48:31.507: 
+15:48:31.571: adding 21 milliseconds of audio buffering, total audio buffering is now 64 milliseconds (source: Mic/Aux)
+15:48:31.571: 
+15:48:38.118: User switched to scene 'Myself'
+15:48:39.048: User switched to scene 'Scene'
+15:48:45.135: User added scene 'Before Stream'
+15:48:45.140: User switched to scene 'Before Stream'
+15:48:54.850: User added source 'Image' (image_source) to scene 'Before Stream'
+15:49:40.046: User added source 'Continue' (text_ft2_source_v2) to scene 'Before Stream'
