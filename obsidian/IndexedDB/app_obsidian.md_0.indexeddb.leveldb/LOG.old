@@ -1,6 +1,0 @@
-2022/06/30-11:39:04.745 644e Reusing MANIFEST /home/glyphack/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/MANIFEST-000001
-2022/06/30-11:39:04.745 644e Recovering log #3
-2022/06/30-11:39:04.790 644e Reusing old log /home/glyphack/.config/obsidian/IndexedDB/app_obsidian.md_0.indexeddb.leveldb/000003.log 
-2022/06/30-12:52:47.284 138b6 Level-0 table #5: started
-2022/06/30-12:52:47.314 138b6 Level-0 table #5: 1433141 bytes OK
-2022/06/30-12:52:47.324 138b6 Delete type=0 #3
