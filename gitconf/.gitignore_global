@@ -5,3 +5,5 @@
 metals.sbt
 .metals
 .bloop
+
+.end.*
