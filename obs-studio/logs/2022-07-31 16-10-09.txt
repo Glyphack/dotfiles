@@ -1,0 +1,215 @@
+16:10:09.110: ================================
+16:10:09.110: Warning: OBS is already running!
+16:10:09.110: ================================
+16:10:09.110: User is now running multiple instances of OBS!
+16:10:09.129: CPU Name: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
+16:10:09.129: CPU Speed: 800.001MHz
+16:10:09.131: Physical Cores: 4, Logical Cores: 8
+16:10:09.131: Physical Memory: 11848MB Total, 1346MB Free
+16:10:09.131: Kernel Version: Linux 5.18.10-76051810-generic
+16:10:09.131: Distribution: "Pop!_OS" "22.04"
+16:10:09.131: Session Type: x11
+16:10:09.131: Window System: X11.0, Vendor: The X.Org Foundation, Version: 1.21.1
+16:10:09.136: Qt Version: 5.15.3 (runtime), 5.15.2 (compiled)
+16:10:09.136: Portable mode: false
+16:10:09.167: OBS 27.2.3+dfsg1-1 (linux)
+16:10:09.167: ---------------------------------
+16:10:09.178: ---------------------------------
+16:10:09.178: audio settings reset:
+16:10:09.178: 	samples per sec: 48000
+16:10:09.178: 	speakers:        2
+16:10:09.192: ---------------------------------
+16:10:09.192: Initializing OpenGL...
+16:10:09.242: Loading up OpenGL on adapter NVIDIA Corporation NVIDIA GeForce GTX 1050/PCIe/SSE2
+16:10:09.242: OpenGL loaded successfully, version 3.3.0 NVIDIA 470.129.06, shading language 3.30 NVIDIA via Cg compiler
+16:10:09.252: ---------------------------------
+16:10:09.252: video settings reset:
+16:10:09.252: 	base resolution:   1280x720
+16:10:09.252: 	output resolution: 1280x720
+16:10:09.252: 	downscale filter:  Bilinear
+16:10:09.252: 	fps:               60/1
+16:10:09.252: 	format:            NV12
+16:10:09.252: 	YUV mode:          709/Partial
+16:10:09.252: NV12 texture support not available
+16:10:09.252: Audio monitoring device:
+16:10:09.252: 	name: Default
+16:10:09.252: 	id: default
+16:10:09.253: ---------------------------------
+16:10:09.254: Failed to load 'en-US' text for module: 'decklink-captions.so'
+16:10:09.256: Failed to load 'en-US' text for module: 'decklink-ouput-ui.so'
+16:10:09.298: A DeckLink iterator could not be created.  The DeckLink drivers may not be installed
+16:10:09.298: No blackmagic support
+16:10:09.304: v4l2loopback not installed, virtual camera disabled
+16:10:09.342: NVENC supported
+16:10:09.342: FFMPEG VAAPI supported
+16:10:09.353: [vlc-video]: VLC 3.0.16 Vetinari found, VLC video source enabled
+16:10:09.368: [StreamFX] Loading Version 0.11.1.0-g81a96998
+16:10:09.375: [StreamFX] <gfx::opengl> Version 3.3 initialized.
+16:10:09.379: [StreamFX] Loaded Version 0.11.1.0-g81a96998
+16:10:09.379: ---------------------------------
+16:10:09.379:   Loaded Modules:
+16:10:09.379:     StreamFX.so
+16:10:09.379:     vlc-video.so
+16:10:09.379:     text-freetype2.so
+16:10:09.379:     rtmp-services.so
+16:10:09.379:     obs-x264.so
+16:10:09.379:     obs-transitions.so
+16:10:09.379:     obs-outputs.so
+16:10:09.379:     obs-filters.so
+16:10:09.379:     obs-ffmpeg.so
+16:10:09.379:     linux-v4l2.so
+16:10:09.379:     linux-pulseaudio.so
+16:10:09.379:     linux-jack.so
+16:10:09.379:     linux-decklink.so
+16:10:09.379:     linux-capture.so
+16:10:09.379:     linux-alsa.so
+16:10:09.379:     image-source.so
+16:10:09.380:     frontend-tools.so
+16:10:09.380:     decklink-ouput-ui.so
+16:10:09.380:     decklink-captions.so
+16:10:09.380: ---------------------------------
+16:10:09.380: ==== Startup complete ===============================================
+16:10:09.411: All scene data cleared
+16:10:09.411: ------------------------------------------------
+16:10:09.416: pulse-input: Server name: 'PulseAudio (on PipeWire 0.3.56) 15.0.0'
+16:10:09.416: pulse-input: Audio format: s32le, 48000 Hz, 2 channels
+16:10:09.416: pulse-input: Started recording from 'alsa_output.pci-0000_00_1f.3.analog-stereo.monitor'
+16:10:09.416: [Loaded global audio device]: 'Desktop Audio'
+16:10:09.417: pulse-input: Server name: 'PulseAudio (on PipeWire 0.3.56) 15.0.0'
+16:10:09.417: pulse-input: Audio format: s16le, 32000 Hz, 2 channels
+16:10:09.417: pulse-input: Started recording from 'alsa_input.usb-046d_HD_Pro_Webcam_C920_5DF49F9F-02.analog-stereo'
+16:10:09.418: [Loaded global audio device]: 'Mic/Aux'
+16:10:09.418:     - filter: 'Noise Suppression' (noise_suppress_filter_v2)
+16:10:09.502: xshm-input: Geometry 1920x1080 @ 1920,0
+16:10:09.503: v4l2-input: Start capture from /dev/video0
+16:10:09.505: v4l2-input: Input: 0
+16:10:09.505: v4l2-input: Resolution: 800x448
+16:10:09.505: v4l2-input: Pixelformat: YUYV
+16:10:09.505: v4l2-input: Linesize: 1600 Bytes
+16:10:09.505: v4l2-input: Framerate: 30.00 fps
+16:10:09.506: v4l2-input: /dev/video0: select timeout set to 166666 (5x frame periods)
+16:10:09.544: Switched to scene 'Scene'
+16:10:09.545: ------------------------------------------------
+16:10:09.545: Loaded scenes:
+16:10:09.545: - scene 'Scene':
+16:10:09.546:     - source: 'Screen Capture (XSHM)' (xshm_input)
+16:10:09.546:     - source: 'Video Capture Device (V4L2)' (v4l2_input)
+16:10:09.546:         - filter: 'Blur' (streamfx-filter-blur)
+16:10:09.546: - scene 'Myself':
+16:10:09.546:     - source: 'Video Capture Device (V4L2)' (v4l2_input)
+16:10:09.546:         - filter: 'Blur' (streamfx-filter-blur)
+16:10:09.546: - scene 'Before Stream':
+16:10:09.546:     - source: 'Image' (image_source)
+16:10:09.546:     - source: 'Continue' (text_ft2_source_v2)
+16:10:09.546: - scene 'BRB':
+16:10:09.546:     - source: 'Image' (image_source)
+16:10:09.546:     - source: 'Continue' (text_ft2_source_v2)
+16:10:09.546: ------------------------------------------------
+16:10:09.915: [StreamFX] <updater> Automatic checks at launch are now enabled.
+16:10:09.984: adding 42 milliseconds of audio buffering, total audio buffering is now 42 milliseconds (source: Desktop Audio)
+16:10:09.984: 
+16:10:10.027: adding 21 milliseconds of audio buffering, total audio buffering is now 64 milliseconds (source: Mic/Aux)
+16:10:10.027: 
+16:10:22.126: ---------------------------------
+16:10:22.126: [NVENC encoder: 'simple_h264_recording'] settings:
+16:10:22.126: 	rate_control: CQP
+16:10:22.126: 	bitrate:      0
+16:10:22.126: 	cqp:          21
+16:10:22.126: 	keyint:       250
+16:10:22.126: 	preset:       hq
+16:10:22.126: 	profile:      high
+16:10:22.126: 	width:        1280
+16:10:22.126: 	height:       720
+16:10:22.126: 	2-pass:       false
+16:10:22.126: 	b-frames:     2
+16:10:22.126: 	psycho-aq:    1
+16:10:22.126: 	GPU:          0
+16:10:22.126: 
+16:10:22.487: ---------------------------------
+16:10:22.488: [FFmpeg aac encoder: 'simple_aac_recording'] bitrate: 192, channels: 2, channel_layout: 3
+16:10:22.488: 
+16:10:22.509: ==== Recording Start ===============================================
+16:10:22.509: [ffmpeg muxer: 'simple_file_output'] Writing file '/home/glyphack/2022-07-31 16-10-22.mkv'...
+16:10:23.551: [ffmpeg muxer: 'simple_file_output'] Output of file '/home/glyphack/2022-07-31 16-10-22.mkv' stopped
+16:10:23.551: Output 'simple_file_output': stopping
+16:10:23.551: Output 'simple_file_output': Total frames output: 27
+16:10:23.551: Output 'simple_file_output': Total drawn frames: 61 (62 attempted)
+16:10:23.551: Output 'simple_file_output': Number of lagged frames due to rendering lag/stalls: 1 (1.6%)
+16:10:23.552: ==== Recording Stop ================================================
+16:10:24.105: ---------------------------------
+16:10:24.106: [NVENC encoder: 'simple_h264_stream'] settings:
+16:10:24.106: 	rate_control: CBR
+16:10:24.106: 	bitrate:      2500
+16:10:24.106: 	cqp:          0
+16:10:24.106: 	keyint:       120
+16:10:24.106: 	preset:       hq
+16:10:24.106: 	profile:      high
+16:10:24.106: 	width:        1280
+16:10:24.106: 	height:       720
+16:10:24.106: 	2-pass:       false
+16:10:24.106: 	b-frames:     2
+16:10:24.106: 	psycho-aq:    1
+16:10:24.106: 	GPU:          0
+16:10:24.106: 
+16:10:24.393: ---------------------------------
+16:10:24.393: [FFmpeg aac encoder: 'simple_aac'] bitrate: 160, channels: 2, channel_layout: 3
+16:10:24.393: 
+16:10:24.394: [rtmp stream: 'simple_stream'] Connecting to RTMP URL rtmp://ams02.contribute.live-video.net/app...
+16:10:27.804: [rtmp stream: 'simple_stream'] Connection to rtmp://ams02.contribute.live-video.net/app successful
+16:10:27.807: ==== Streaming Start ===============================================
+16:11:57.771: Settings changed (outputs)
+16:11:57.771: ------------------------------------------------
+16:13:07.890: [rtmp stream: 'simple_stream'] User stopped the stream
+16:13:07.891: Output 'simple_stream': stopping
+16:13:07.891: Output 'simple_stream': Total frames output: 7106 (9567 attempted)
+16:13:07.891: Output 'simple_stream': Total drawn frames: 9694 (9810 attempted)
+16:13:07.891: Output 'simple_stream': Number of lagged frames due to rendering lag/stalls: 116 (1.2%)
+16:13:07.891: Output 'simple_stream': Number of dropped frames due to insufficient bandwidth/connection stalls: 2461 (25.7%)
+16:13:07.897: ==== Streaming Stop ================================================
+16:13:19.094: ---------------------------------
+16:13:19.094: video settings reset:
+16:13:19.094: 	base resolution:   1280x720
+16:13:19.094: 	output resolution: 1280x720
+16:13:19.094: 	downscale filter:  Bilinear
+16:13:19.094: 	fps:               48/1
+16:13:19.094: 	format:            NV12
+16:13:19.094: 	YUV mode:          709/Partial
+16:13:19.095: NV12 texture support not available
+16:13:19.096: Settings changed (video)
+16:13:19.096: ------------------------------------------------
+16:13:36.205: ---------------------------------
+16:13:36.205: video settings reset:
+16:13:36.205: 	base resolution:   1280x720
+16:13:36.205: 	output resolution: 1280x720
+16:13:36.205: 	downscale filter:  Bicubic
+16:13:36.205: 	fps:               48/1
+16:13:36.205: 	format:            NV12
+16:13:36.205: 	YUV mode:          709/Partial
+16:13:36.206: NV12 texture support not available
+16:13:36.207: Settings changed (video)
+16:13:36.207: ------------------------------------------------
+16:15:33.696: Settings changed (outputs, audio)
+16:15:33.696: ------------------------------------------------
+16:15:36.412: ---------------------------------
+16:15:36.412: [NVENC encoder: 'simple_h264_stream'] settings:
+16:15:36.412: 	rate_control: CBR
+16:15:36.412: 	bitrate:      1600
+16:15:36.412: 	cqp:          0
+16:15:36.412: 	keyint:       96
+16:15:36.412: 	preset:       llhq
+16:15:36.412: 	profile:      high
+16:15:36.412: 	width:        1280
+16:15:36.412: 	height:       720
+16:15:36.412: 	2-pass:       false
+16:15:36.412: 	b-frames:     2
+16:15:36.412: 	psycho-aq:    1
+16:15:36.412: 	GPU:          0
+16:15:36.412: 
+16:15:36.600: ---------------------------------
+16:15:36.600: [FFmpeg aac encoder: 'simple_aac'] bitrate: 160, channels: 2, channel_layout: 3
+16:15:36.600: 
+16:15:36.600: [rtmp stream: 'simple_stream'] Connecting to RTMP URL rtmp://lhr04.contribute.live-video.net/app...
+16:15:39.601: [rtmp stream: 'simple_stream'] Connection to rtmp://lhr04.contribute.live-video.net/app successful
+16:15:39.604: ==== Streaming Start ===============================================
+16:17:50.388: Settings changed (outputs)
+16:17:50.389: ------------------------------------------------

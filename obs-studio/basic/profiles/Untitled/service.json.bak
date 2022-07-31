@@ -1,1 +1,1 @@
-{"settings":{"bwtest":false,"key":"live_615991354_7zlsFsejJvR7B6MW32c4FjFkGAMKQW","server":"auto","service":"Twitch"},"type":"rtmp_common"}
+{"settings":{"bwtest":false,"key":"live_615991354_7zlsFsejJvR7B6MW32c4FjFkGAMKQW?bandwidthtest=true","server":"auto","service":"Twitch"},"type":"rtmp_common"}

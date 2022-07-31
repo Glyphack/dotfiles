@@ -1,0 +1,129 @@
+16:20:18.565: CPU Name: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
+16:20:18.565: CPU Speed: 2000.000MHz
+16:20:18.585: Physical Cores: 4, Logical Cores: 8
+16:20:18.585: Physical Memory: 11848MB Total, 2699MB Free
+16:20:18.585: Kernel Version: Linux 5.18.10-76051810-generic
+16:20:18.585: Distribution: "Pop!_OS" "22.04"
+16:20:18.585: Session Type: x11
+16:20:18.585: Window System: X11.0, Vendor: The X.Org Foundation, Version: 1.21.1
+16:20:18.586: Qt Version: 5.15.3 (runtime), 5.15.2 (compiled)
+16:20:18.586: Portable mode: false
+16:20:18.630: OBS 27.2.3+dfsg1-1 (linux)
+16:20:18.630: ---------------------------------
+16:20:18.667: ---------------------------------
+16:20:18.667: audio settings reset:
+16:20:18.667: 	samples per sec: 48000
+16:20:18.667: 	speakers:        2
+16:20:18.674: ---------------------------------
+16:20:18.674: Initializing OpenGL...
+16:20:18.713: Loading up OpenGL on adapter NVIDIA Corporation NVIDIA GeForce GTX 1050/PCIe/SSE2
+16:20:18.713: OpenGL loaded successfully, version 3.3.0 NVIDIA 470.129.06, shading language 3.30 NVIDIA via Cg compiler
+16:20:18.722: ---------------------------------
+16:20:18.722: video settings reset:
+16:20:18.722: 	base resolution:   1280x720
+16:20:18.722: 	output resolution: 1280x720
+16:20:18.722: 	downscale filter:  Bicubic
+16:20:18.722: 	fps:               48/1
+16:20:18.722: 	format:            NV12
+16:20:18.722: 	YUV mode:          709/Partial
+16:20:18.722: NV12 texture support not available
+16:20:18.722: Audio monitoring device:
+16:20:18.722: 	name: Default
+16:20:18.722: 	id: default
+16:20:18.722: ---------------------------------
+16:20:18.724: Failed to load 'en-US' text for module: 'decklink-captions.so'
+16:20:18.726: Failed to load 'en-US' text for module: 'decklink-ouput-ui.so'
+16:20:18.764: A DeckLink iterator could not be created.  The DeckLink drivers may not be installed
+16:20:18.764: No blackmagic support
+16:20:18.769: v4l2loopback not installed, virtual camera disabled
+16:20:18.798: NVENC supported
+16:20:18.798: FFMPEG VAAPI supported
+16:20:18.808: [vlc-video]: VLC 3.0.16 Vetinari found, VLC video source enabled
+16:20:18.821: [StreamFX] Loading Version 0.11.1.0-g81a96998
+16:20:18.826: [StreamFX] <gfx::opengl> Version 3.3 initialized.
+16:20:18.830: [StreamFX] Loaded Version 0.11.1.0-g81a96998
+16:20:18.830: ---------------------------------
+16:20:18.830:   Loaded Modules:
+16:20:18.830:     StreamFX.so
+16:20:18.830:     vlc-video.so
+16:20:18.830:     text-freetype2.so
+16:20:18.830:     rtmp-services.so
+16:20:18.830:     obs-x264.so
+16:20:18.830:     obs-transitions.so
+16:20:18.830:     obs-outputs.so
+16:20:18.830:     obs-filters.so
+16:20:18.830:     obs-ffmpeg.so
+16:20:18.830:     linux-v4l2.so
+16:20:18.830:     linux-pulseaudio.so
+16:20:18.830:     linux-jack.so
+16:20:18.830:     linux-decklink.so
+16:20:18.830:     linux-capture.so
+16:20:18.830:     linux-alsa.so
+16:20:18.830:     image-source.so
+16:20:18.830:     frontend-tools.so
+16:20:18.830:     decklink-ouput-ui.so
+16:20:18.830:     decklink-captions.so
+16:20:18.830: ---------------------------------
+16:20:18.830: ==== Startup complete ===============================================
+16:20:18.857: All scene data cleared
+16:20:18.857: ------------------------------------------------
+16:20:18.860: pulse-input: Server name: 'PulseAudio (on PipeWire 0.3.56) 15.0.0'
+16:20:18.861: pulse-input: Audio format: s32le, 48000 Hz, 2 channels
+16:20:18.861: pulse-input: Started recording from 'alsa_output.pci-0000_00_1f.3.analog-stereo.monitor'
+16:20:18.861: [Loaded global audio device]: 'Desktop Audio'
+16:20:18.861: pulse-input: Server name: 'PulseAudio (on PipeWire 0.3.56) 15.0.0'
+16:20:18.861: pulse-input: Audio format: s16le, 32000 Hz, 2 channels
+16:20:18.861: pulse-input: Started recording from 'alsa_input.usb-046d_HD_Pro_Webcam_C920_5DF49F9F-02.analog-stereo'
+16:20:18.862: [Loaded global audio device]: 'Mic/Aux'
+16:20:18.862:     - filter: 'Noise Suppression' (noise_suppress_filter_v2)
+16:20:18.862: v4l2-input: Start capture from /dev/video0
+16:20:18.863: v4l2-input: Input: 0
+16:20:18.863: v4l2-input: Resolution: 800x448
+16:20:18.863: v4l2-input: Pixelformat: YUYV
+16:20:18.863: v4l2-input: Linesize: 1600 Bytes
+16:20:18.863: v4l2-input: Framerate: 30.00 fps
+16:20:18.864: v4l2-input: /dev/video0: select timeout set to 166666 (5x frame periods)
+16:20:18.869: xshm-input: Geometry 1920x1080 @ 1920,0
+16:20:18.951: Switched to scene 'Scene'
+16:20:18.951: ------------------------------------------------
+16:20:18.951: Loaded scenes:
+16:20:18.951: - scene 'Scene':
+16:20:18.952:     - source: 'Screen Capture (XSHM)' (xshm_input)
+16:20:18.952:     - source: 'Video Capture Device (V4L2)' (v4l2_input)
+16:20:18.952:         - filter: 'Blur' (streamfx-filter-blur)
+16:20:18.952: - scene 'Myself':
+16:20:18.952:     - source: 'Video Capture Device (V4L2)' (v4l2_input)
+16:20:18.952:         - filter: 'Blur' (streamfx-filter-blur)
+16:20:18.952: - scene 'Before Stream':
+16:20:18.952:     - source: 'Image' (image_source)
+16:20:18.952:     - source: 'Continue' (text_ft2_source_v2)
+16:20:18.952: - scene 'BRB':
+16:20:18.952:     - source: 'Image' (image_source)
+16:20:18.952:     - source: 'Continue' (text_ft2_source_v2)
+16:20:18.952: ------------------------------------------------
+16:20:19.245: [StreamFX] <updater> Automatic checks at launch are now enabled.
+16:20:19.806: adding 42 milliseconds of audio buffering, total audio buffering is now 42 milliseconds (source: Desktop Audio)
+16:20:19.806: 
+16:20:19.870: adding 21 milliseconds of audio buffering, total audio buffering is now 64 milliseconds (source: Mic/Aux)
+16:20:19.870: 
+16:20:23.223: ---------------------------------
+16:20:23.223: [NVENC encoder: 'simple_h264_stream'] settings:
+16:20:23.223: 	rate_control: CBR
+16:20:23.223: 	bitrate:      2500
+16:20:23.223: 	cqp:          0
+16:20:23.223: 	keyint:       96
+16:20:23.223: 	preset:       ll
+16:20:23.223: 	profile:      high
+16:20:23.223: 	width:        1280
+16:20:23.223: 	height:       720
+16:20:23.223: 	2-pass:       false
+16:20:23.223: 	b-frames:     2
+16:20:23.223: 	psycho-aq:    1
+16:20:23.223: 	GPU:          0
+16:20:23.223: 
+16:20:23.420: ---------------------------------
+16:20:23.421: [FFmpeg aac encoder: 'simple_aac'] bitrate: 160, channels: 2, channel_layout: 3
+16:20:23.421: 
+16:20:23.422: [rtmp stream: 'simple_stream'] Connecting to RTMP URL rtmp://lhr04.contribute.live-video.net/app...
+16:20:25.229: [rtmp stream: 'simple_stream'] Connection to rtmp://lhr04.contribute.live-video.net/app successful
+16:20:25.255: ==== Streaming Start ===============================================

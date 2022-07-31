@@ -106,3 +106,72 @@
 15:48:45.140: User switched to scene 'Before Stream'
 15:48:54.850: User added source 'Image' (image_source) to scene 'Before Stream'
 15:49:40.046: User added source 'Continue' (text_ft2_source_v2) to scene 'Before Stream'
+15:53:44.260: User switched to scene 'Myself'
+15:53:44.603: User switched to scene 'Before Stream'
+15:53:50.432: User added scene 'BRB'
+15:53:50.435: User added source 'Image' (image_source) to scene 'BRB'
+15:53:50.435: User added source 'Continue' (text_ft2_source_v2) to scene 'BRB'
+15:53:50.449: Switched to scene 'BRB'
+15:54:26.857: User switched to scene 'Scene'
+15:54:28.183: User switched to scene 'BRB'
+15:59:07.770: User switched to scene 'Scene'
+15:59:13.566: ---------------------------------
+15:59:13.569: [NVENC encoder: 'simple_h264_stream'] settings:
+15:59:13.569: 	rate_control: CBR
+15:59:13.569: 	bitrate:      2500
+15:59:13.569: 	cqp:          0
+15:59:13.569: 	keyint:       120
+15:59:13.569: 	preset:       hq
+15:59:13.569: 	profile:      high
+15:59:13.569: 	width:        1280
+15:59:13.569: 	height:       720
+15:59:13.569: 	2-pass:       false
+15:59:13.569: 	b-frames:     2
+15:59:13.569: 	psycho-aq:    1
+15:59:13.569: 	GPU:          0
+15:59:13.569: 
+15:59:13.935: ---------------------------------
+15:59:13.936: [FFmpeg aac encoder: 'simple_aac'] bitrate: 160, channels: 2, channel_layout: 3
+15:59:13.936: 
+15:59:13.938: [rtmp stream: 'simple_stream'] Connecting to RTMP URL rtmp://ams02.contribute.live-video.net/app...
+15:59:15.996: [rtmp stream: 'simple_stream'] Connection to rtmp://ams02.contribute.live-video.net/app successful
+15:59:16.020: ==== Streaming Start ===============================================
+16:02:32.583: [rtmp stream: 'simple_stream'] User stopped the stream
+16:02:32.583: Output 'simple_stream': stopping
+16:02:32.583: Output 'simple_stream': Total frames output: 4637 (11757 attempted)
+16:02:32.583: Output 'simple_stream': Total drawn frames: 11859 (11919 attempted)
+16:02:32.583: Output 'simple_stream': Number of lagged frames due to rendering lag/stalls: 60 (0.5%)
+16:02:32.583: Output 'simple_stream': Number of dropped frames due to insufficient bandwidth/connection stalls: 7120 (60.6%)
+16:02:32.583: [rtmp stream: 'simple_stream'] Freeing 1458 remaining packets
+16:02:32.586: ==== Streaming Stop ================================================
+16:07:12.343: Settings changed (stream 1)
+16:07:12.343: ------------------------------------------------
+16:07:14.517: ---------------------------------
+16:07:14.518: [NVENC encoder: 'simple_h264_stream'] settings:
+16:07:14.518: 	rate_control: CBR
+16:07:14.518: 	bitrate:      2500
+16:07:14.518: 	cqp:          0
+16:07:14.518: 	keyint:       120
+16:07:14.518: 	preset:       hq
+16:07:14.518: 	profile:      high
+16:07:14.518: 	width:        1280
+16:07:14.518: 	height:       720
+16:07:14.518: 	2-pass:       false
+16:07:14.518: 	b-frames:     2
+16:07:14.518: 	psycho-aq:    1
+16:07:14.518: 	GPU:          0
+16:07:14.518: 
+16:07:14.854: ---------------------------------
+16:07:14.854: [FFmpeg aac encoder: 'simple_aac'] bitrate: 160, channels: 2, channel_layout: 3
+16:07:14.854: 
+16:07:14.854: [rtmp stream: 'simple_stream'] Connecting to RTMP URL rtmp://ams02.contribute.live-video.net/app...
+16:07:16.883: [rtmp stream: 'simple_stream'] Connection to rtmp://ams02.contribute.live-video.net/app successful
+16:07:16.885: ==== Streaming Start ===============================================
+16:10:04.948: ==== Shutting down ==================================================
+16:10:04.977: pulse-input: Stopped recording from 'alsa_output.pci-0000_00_1f.3.analog-stereo.monitor'
+16:10:04.977: pulse-input: Got 51761 packets with 62113200 frames
+16:10:04.977: pulse-input: Stopped recording from 'alsa_input.usb-046d_HD_Pro_Webcam_C920_5DF49F9F-02.analog-stereo'
+16:10:04.977: pulse-input: Got 51759 packets with 41407200 frames
+16:10:04.996: v4l2-input: /dev/video0: Stopped capture after 38820 frames
+16:10:05.023: All scene data cleared
+16:10:05.023: ------------------------------------------------
