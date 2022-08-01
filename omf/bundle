@@ -1,0 +1,6 @@
+package aws
+package foreign-env
+package git@github.com:mgoodness/plugin-asp.git
+package https://github.com/franciscolourenco/done
+package nvm
+theme default
