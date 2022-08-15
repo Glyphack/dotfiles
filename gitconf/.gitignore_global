@@ -6,4 +6,8 @@ metals.sbt
 .metals
 .bloop
 
-.end.*
+# env files
+.env.*
+
+# local dbs
+*.db
