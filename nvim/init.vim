@@ -1,9 +1,8 @@
-nnoremap <C-p> :<C-u>FZF<CR>
-
 lua require('config')
 lua require('plugins')
+lua require('auto-cmp')
 
-let mapleader = ","
+let mapleader = "," 
 set encoding=utf-8
 set number relativenumber
 syntax enable
@@ -17,10 +16,13 @@ set expandtab
 set autoindent
 set fileformat=unix
 
+set wildmode=longest,list,full
+set wildmenu
+
 " Enable folding
 set foldmethod=indent
 set foldlevel=99
-nnoremap <space> za
+" nnoremap <space> za
 
 set clipboard=unnamed
 
@@ -43,6 +45,11 @@ if has('nvim')
   tnoremap <M-k> <c-\><c-n><c-w>k
   tnoremap <M-l> <c-\><c-n><c-w>l
 endif
+if has('nvim')
+  tnoremap <Esc> <C-\><C-n>
+  tnoremap <M-[> <Esc>
+  tnoremap <C-v><Esc> <Esc>
+endif
 
 augroup my_spelling_colors
   " Underline, don't do intrusive red things.
@@ -58,3 +65,8 @@ set nospell
 autocmd FileType markdown setlocal spell
 
 
+" Telescope
+nnoremap <leader>p <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>f <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>b <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>h <cmd>lua require('telescope.builtin').help_tags()<cr>
