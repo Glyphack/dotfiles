@@ -1,6 +1,7 @@
 set -U fish_greeting "fus ro dah"
 
 set -x PYENV_ROOT $HOME/.pyenv
+set -x POETRY $HOME/.poetry/bin
 set -x GOPATH $HOME/go
 set -gx NVM_DIR $HOME/.nvm
 set --universal FZF_DEFAULT_COMMAND fd
@@ -8,7 +9,7 @@ set -x JAVA_HOME $HOME/Library/Caches/Coursier/arc/https/github.com/AdoptOpenJDK
 set -x VISUAL nvim
 set -x VIMCONFIG $HOME/.config/nvim/
 
-set -x PATH $PATH $PYENV_ROOT/bin $GOPATH/bin $NVM_DIR $JAVA_HOME /Users/glyphack/Library/Python/3.9/bin /Users/glyphack/.local/bin /Users/glyphack/opt/anaconda3/bin /Users/glyphack/opt/anaconda3/condabin /Users/glyphack/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin /usr/local/Cellar/openvpn/2.5.5/sbin
+set -x PATH $PATH $POETRY $PYENV_ROOT/bin $GOPATH/bin $NVM_DIR $JAVA_HOME /Users/glyphack/Library/Python/3.9/bin /Users/glyphack/.local/bin /Users/glyphack/opt/anaconda3/bin /Users/glyphack/opt/anaconda3/condabin /Users/glyphack/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin /usr/local/Cellar/openvpn/2.5.5/sbin
 
 
 status is-login; and pyenv init --path | source
