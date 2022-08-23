@@ -26,6 +26,7 @@ switch (uname)
         set -x VIMDATA ~/.local/share/nvim
     case '*'
         set -x VIMDATA ~/.local/share/nvim
+        set -x PATH $PATH /Users/glyphack/Library/Application\ Support/Coursier/bin
 end
 
 

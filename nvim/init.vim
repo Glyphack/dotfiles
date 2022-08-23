@@ -1,8 +1,9 @@
 lua require('config')
 lua require('plugins')
-lua require('auto-cmp')
 
-let mapleader = "," 
+
+" nnoremap <SPACE> <Nop>
+let mapleader = ","
 set encoding=utf-8
 set number relativenumber
 syntax enable
@@ -25,14 +26,6 @@ set foldlevel=99
 " nnoremap <space> za
 
 set clipboard=unnamed
-
-" filetree
-nnoremap g- :NvimTreeToggle<CR>
-" let g:netrw_banner = 0
-" let g:netrw_liststyle = 3
-" let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
-" autocmd FileType netrw setl bufhidden=delete
-"-- filetree END
 
 " terminal easy switch windows
 nnoremap <M-h> <c-w>h
@@ -64,9 +57,10 @@ set spell spelllang=en
 set nospell
 autocmd FileType markdown setlocal spell
 
-
 " Telescope
-nnoremap <leader>p <cmd>lua require('telescope.builtin').find_files()<cr>
-nnoremap <leader>f <cmd>lua require('telescope.builtin').live_grep()<cr>
-nnoremap <leader>b <cmd>lua require('telescope.builtin').buffers()<cr>
-nnoremap <leader>h <cmd>lua require('telescope.builtin').help_tags()<cr>
+nnoremap <leader>fp <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>ff <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>fr <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
+nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+

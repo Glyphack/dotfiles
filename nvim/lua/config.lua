@@ -1,4 +1,8 @@
-require("nvim-tree").setup()
+-- global
+vim.opt_global.completeopt = { "menuone", "noinsert", "noselect" }
+vim.opt_global.shortmess:remove("F"):append("c")
+
+-- require("nvim-tree").setup()
 require("presence"):setup({
     -- General options
     auto_update         = true,                       -- Update activity based on autocmd events (if `false`, map or manually execute `:lua package.loaded.presence:update()`)
@@ -22,141 +26,78 @@ require("presence"):setup({
     line_number_text    = "Line %s out of %s",        -- Format string rendered when `enable_line_number` is set to true (either string or function(line_number: number, line_count: number): string)
 })
 
-----------------------------------
--- OPTIONS -----------------------
-----------------------------------
--- global-- Mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
-local opts = { noremap=true, silent=true }
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
+local lsp = require('lsp-zero')
+lsp.preset('recommended')
 
+lsp.setup()
 
-vim.opt_global.completeopt = { "menuone", "noinsert", "noselect" }
-vim.opt_global.shortmess:remove("F"):append("c")
+-- Formatter
+-- require("formatter").setup {
+--   logging = true,
+--   log_level = vim.log.levels.WARN,
+--   filetype = {
+--     python = {
+--       require("formatter.filetypes.python").black,
+--       require("formatter.filetypes.python").isort
+--     },
 
-local api = vim.api
-local cmd = vim.cmd
-local function map(mode, lhs, rhs, opts)
-  local options = { noremap = true }
-  if opts then
-    options = vim.tbl_extend("force", options, opts)
-  end
-  api.nvim_set_keymap(mode, lhs, rhs, options)
-end
+--     ["*"] = {
+--       function()
+--         return { exe = 'sed', args = { '-i', "''", "'s/[	 ]*$//'" } }
+--       end,
+--     }
+--   }
+-- }
 
+require("nvim-tree").setup()
+vim.api.nvim_set_keymap(
+  "n",
+  ",fb",
+  ":NvimTreeToggle<CR>",
+  { noremap = true }
+)
+vim.api.nvim_set_keymap(
+  "n",
+  ",ff",
+  ":NvimTreeFindFile<CR>",
+  { noremap = true }
+)
 
--- LSP mappings
-map("n", "gD", "<cmd>lua vim.lsp.buf.definition()<CR>")
-map("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>")
-map("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>")
-map("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>")
-map("n", "gds", "<cmd>lua vim.lsp.buf.document_symbol()<CR>")
-map("n", "gws", "<cmd>lua vim.lsp.buf.workspace_symbol()<CR>")
-map("n", "<leader>cl", [[<cmd>lua vim.lsp.codelens.run()<CR>]])
-map("n", "<leader>sh", [[<cmd>lua vim.lsp.buf.signature_help()<CR>]])
-map("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>")
-map("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>")
-map("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>")
-map("n", "<leader>ws", '<cmd>lua require"metals".hover_worksheet()<CR>')
-map("n", "<leader>aa", [[<cmd>lua vim.diagnostic.setqflist()<CR>]]) -- all workspace diagnostics
-map("n", "<leader>ae", [[<cmd>lua vim.diagnostic.setqflist({severity = "E"})<CR>]]) -- all workspace errors
-map("n", "<leader>aw", [[<cmd>lua vim.diagnostic.setqflist({severity = "W"})<CR>]]) -- all workspace warnings
-map("n", "<leader>d", "<cmd>lua vim.diagnostic.setloclist()<CR>") -- buffer diagnostics only
-map("n", "[c", "<cmd>lua vim.diagnostic.goto_prev { wrap = false }<CR>")
-map("n", "]c", "<cmd>lua vim.diagnostic.goto_next { wrap = false }<CR>")
-
--- Example mappings for usage with nvim-dap. If you don't use that, you can
--- skip these
-map("n", "<leader>dc", [[<cmd>lua require"dap".continue()<CR>]])
-map("n", "<leader>dr", [[<cmd>lua require"dap".repl.toggle()<CR>]])
-map("n", "<leader>dK", [[<cmd>lua require"dap.ui.widgets".hover()<CR>]])
-map("n", "<leader>dt", [[<cmd>lua require"dap".toggle_breakpoint()<CR>]])
-map("n", "<leader>dso", [[<cmd>lua require"dap".step_over()<CR>]])
-map("n", "<leader>dsi", [[<cmd>lua require"dap".step_into()<CR>]])
-map("n", "<leader>dl", [[<cmd>lua require"dap".run_last()<CR>]])
-
--- completion related settings
--- This is similiar to what I use
-local cmp = require("cmp")
-cmp.setup({
-  sources = {
-    { name = "nvim_lsp" },
-    { name = "vsnip" },
+-- Telescope
+require("telescope").setup {
+  extensions = {
+    file_browser = {
+        theme = "ivy",
+        -- disables netrw and use telescope-file-browser in its place
+        hijack_netrw = true,
+        mappings = {
+            ["i"] = {
+            },
+            ["n"] = {
+            },
+      },
+    },
+    project = {
+      base_dirs = {
+        {'~/Programming/', max_depth = 4},
+        {'~/', max_depth = 2},
+      },
+      hidden_files = true, -- default: false
+      theme = "dropdown"
+    }
   },
-  snippet = {
-    expand = function(args)
-      -- Comes from vsnip
-      vim.fn["vsnip#anonymous"](args.body)
-    end,
-  },
-  mapping = cmp.mapping.preset.insert({
-    -- None of this made sense to me when first looking into this since there
-    -- is no vim docs, but you can't have select = true here _unless_ you are
-    -- also using the snippet stuff. So keep in mind that if you remove
-    -- snippets you need to remove this select
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
-    -- I use tabs... some say you should stick to ins-completion but this is just here as an example
-    ["<Tab>"] = function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      else
-        fallback()
-      end
-    end,
-    ["<S-Tab>"] = function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      else
-        fallback()
-      end
-    end,
-  }),
-})
-
-
-----------------------------------
--- PLUGINS -----------------------
-----------------------------------
--- global
-vim.opt_global.completeopt = { "menuone", "noinsert", "noselect" }
-vim.opt_global.shortmess:remove("F"):append("c")
--- completion related settings
-local cmp = require("cmp")
-cmp.setup({
-  sources = {
-    { name = "nvim_lsp" },
-    { name = "vsnip" },
-  },
-  snippet = {
-    expand = function(args)
-      -- Comes from vsnip
-      vim.fn["vsnip#anonymous"](args.body)
-    end,
-  },
-  mapping = cmp.mapping.preset.insert({
-    -- None of this made sense to me when first looking into this since there
-    -- is no vim docs, but you can't have select = true here _unless_ you are
-    -- also using the snippet stuff. So keep in mind that if you remove
-    -- snippets you need to remove this select
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
-    -- I use tabs... some say you should stick to ins-completion but this is just here as an example
-    ["<Tab>"] = function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      else
-        fallback()
-      end
-    end,
-    ["<S-Tab>"] = function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      else
-        fallback()
-      end
-    end,
-  }),
-})
-
+}
+-- require("telescope").load_extension "file_browser"
+-- vim.api.nvim_set_keymap(
+--   "n",
+--   "<space>fb",
+--   ":Telescope file_browser<CR>",
+--   { noremap = true }
+-- )
+require'telescope'.load_extension 'project'
+vim.api.nvim_set_keymap(
+    'n',
+    '<C-p>',
+    ":lua require'telescope'.extensions.project.project{}<CR>",
+    {noremap = true, silent = true}
+)
