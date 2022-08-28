@@ -48,7 +48,6 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 metals_config.capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
 
 metals_config.on_attach = function(client, bufnr)
-
 end
 
 -- Autocmd that will actually be in charging of starting the whole thing
