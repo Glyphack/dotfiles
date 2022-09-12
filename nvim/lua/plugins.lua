@@ -51,13 +51,11 @@ require("packer").startup(function(use)
         },
         tag = 'nightly' -- optional, updated every week. (see issue #1193)
     }
-    use 'morhetz/gruvbox'
     use 'junegunn/fzf'
     use({
         'nvim-telescope/telescope.nvim',
         branch = release
     })
-    use "nvim-telescope/telescope-file-browser.nvim"
     use 'nvim-telescope/telescope-project.nvim'
     use 'nvim-treesitter/nvim-treesitter'
     use 'BurntSushi/ripgrep'
@@ -68,13 +66,11 @@ require("packer").startup(function(use)
     use 'radenling/vim-dispatch-neovim'
     use 'vim-airline/vim-airline'
     use 'tpope/vim-commentary'
-    use 'tmhedberg/SimpylFold'
     use 'nvie/vim-flake8'
     use 'preservim/vim-markdown'
     use 'andweeb/presence.nvim'
     -- use 'pocco81/auto-save.nvim'
     use 'nvim-lua/plenary.nvim'
-    use 'rebelot/kanagawa.nvim'
     use 'neovim/nvim-lspconfig'
     use 'wakatime/vim-wakatime'
     use 'simrat39/symbols-outline.nvim'
@@ -83,12 +79,29 @@ require("packer").startup(function(use)
     use { "akinsho/toggleterm.nvim", tag = 'v2.*' }
     use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
     use 'folke/tokyonight.nvim'
+    -- use {
+    --     "zbirenbaum/copilot.lua",
+    --     event = "InsertEnter",
 
+    --     config = function()
+    --         vim.defer_fn(function() require("copilot").setup() end, 100)
+    --     end,
+    -- }
+    -- use {
+    --     "zbirenbaum/copilot-cmp",
+    --     after = { "copilot.lua" },
+    --     config = function()
+    --         require("copilot_cmp").setup({
+    --             method = "getCompletionsCycling",
+    --             force_autofmt = true,
+    --             formatters = {
+    --                 label = require("copilot_cmp.format").format_label_text,
+    --                 insert_text = require("copilot_cmp.format").format_label_text,
+    --                 preview = require("copilot_cmp.format").deindent,
+    --             },
+    --         })
+    --     end
+    -- }
 end)
 
-vim.cmd([[
-  augroup packer_user_config
-    autocmd!
-    autocmd BufWritePost plugins.lua source <afile> | PackerCompile && PackerSync
-  augroup end
-]])
+vim.cmd([[ augroup packer_user_config autocmd! autocmd BufWritePost plugins.lua source <afile> | PackerCompile && PackerSync augroup end ]])

@@ -27,7 +27,7 @@ null_ls.setup({
         formatting.black.with({
             extra_args = { "--line-length", "79" },
         }),
-        formatting.gofumpt,
+        formatting.golines,
         formatting.prettier,
         -- null_ls.builtins.formatting.scalafmt,
         diagnostics.eslint,
