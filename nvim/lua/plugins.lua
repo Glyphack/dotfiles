@@ -26,7 +26,7 @@ require("packer").startup(function(use)
     }
     use 'jose-elias-alvarez/null-ls.nvim'
     use 'hrsh7th/cmp-cmdline'
-    use 'f3fora/cmp-spell'
+    use "hrsh7th/cmp-nvim-lua"
     use({
         "scalameta/nvim-metals",
         requires = {
@@ -51,7 +51,6 @@ require("packer").startup(function(use)
         },
         tag = 'nightly' -- optional, updated every week. (see issue #1193)
     }
-    use 'kyazdani42/blue-moon'
     use 'morhetz/gruvbox'
     use 'junegunn/fzf'
     use({
@@ -72,7 +71,6 @@ require("packer").startup(function(use)
     use 'tmhedberg/SimpylFold'
     use 'nvie/vim-flake8'
     use 'preservim/vim-markdown'
-    use 'tpope/vim-fugitive'
     use 'andweeb/presence.nvim'
     -- use 'pocco81/auto-save.nvim'
     use 'nvim-lua/plenary.nvim'
@@ -81,11 +79,16 @@ require("packer").startup(function(use)
     use 'wakatime/vim-wakatime'
     use 'simrat39/symbols-outline.nvim'
     use 'pixelneo/vim-python-docstring'
+    use 'ray-x/lsp_signature.nvim'
+    use { "akinsho/toggleterm.nvim", tag = 'v2.*' }
+    use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
+    use 'folke/tokyonight.nvim'
+
 end)
 
 vim.cmd([[
   augroup packer_user_config
     autocmd!
-    autocmd BufWritePost plugins.lua source <afile> | PackerCompile
+    autocmd BufWritePost plugins.lua source <afile> | PackerCompile && PackerSync
   augroup end
 ]])

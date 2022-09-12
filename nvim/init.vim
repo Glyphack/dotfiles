@@ -1,11 +1,8 @@
-lua require('config')
 lua require('plugins')
+lua require('config')
 
 
-" nnoremap <SPACE> <Nop>
-let mapleader = ","
 set encoding=utf-8
-set number relativenumber
 syntax enable
 set noswapfile
 set backspace=indent,eol,start
@@ -14,7 +11,6 @@ set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 set expandtab
-set autoindent
 set fileformat=unix
 
 set wildmode=longest,list,full
@@ -27,22 +23,19 @@ set foldlevel=99
 
 set clipboard=unnamed
 
+
 " terminal easy switch windows
 nnoremap <M-h> <c-w>h
 nnoremap <M-j> <c-w>j
 nnoremap <M-k> <c-w>k
 nnoremap <M-l> <c-w>l 
-if has('nvim')
-  tnoremap <M-h> <c-\><c-n><c-w>h
-  tnoremap <M-j> <c-\><c-n><c-w>j
-  tnoremap <M-k> <c-\><c-n><c-w>k
-  tnoremap <M-l> <c-\><c-n><c-w>l
-endif
-if has('nvim')
-  tnoremap <Esc> <C-\><C-n>
-  tnoremap <M-[> <Esc>
-  tnoremap <C-v><Esc> <Esc>
-endif
+tnoremap <M-h> <c-\><c-n><c-w>h
+tnoremap <M-j> <c-\><c-n><c-w>j
+tnoremap <M-k> <c-\><c-n><c-w>k
+tnoremap <M-l> <c-\><c-n><c-w>l
+tnoremap <Esc> <C-\><C-n>
+tnoremap <M-[> <Esc>
+tnoremap <C-v><Esc> <Esc>
 
 augroup my_spelling_colors
   " Underline, don't do intrusive red things.

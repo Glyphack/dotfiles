@@ -3,8 +3,8 @@
 .idea
 
 metals.sbt
-.metals
-.bloop
+*metals*
+*bloop*
 
 # env files
 .env.*
