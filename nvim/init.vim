@@ -49,10 +49,4 @@ set spell spelllang=en
 set nospell
 autocmd FileType markdown setlocal spell
 
-" Telescope
-nnoremap <leader>fp <cmd>lua require('telescope.builtin').find_files()<cr>
-nnoremap <leader>ff <cmd>lua require('telescope.builtin').live_grep()<cr>
-nnoremap <leader>fr <cmd>lua require('telescope.builtin').buffers()<cr>
-nnoremap <leader>fh <cmd>lua require('telescope.builtin').help_tags()<cr>
-nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 

@@ -1,6 +1,7 @@
 [user]
 	name = glyphack
 	email = sh.hooshyari@gmail.com
+    signingkey = 145D38B03F8621FF
 [core]
 	excludesfile = /Users/glyphack/.gitignore_global
 

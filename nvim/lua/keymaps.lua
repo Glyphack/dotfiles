@@ -47,3 +47,10 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 
 -- from The Primeagen
 keymap("x", "<leader>p", "\"_dP", opts)
+
+-- cd to current buffer parent dir
+keymap('n', '<leader>cd', ":cd %:p:h<CR>:pwd<CR>", { noremap = true, silent = true })
+
+
+keymap('n', '<leader>m', ":lua require('harpoon.mark').add_file()<CR>", opts)
+keymap('n', '<leader>h', ":lua require('harpoon.ui').toggle_quick_menu()<CR>", opts)
