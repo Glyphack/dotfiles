@@ -5,6 +5,7 @@ lsp.preset('lsp-compe')
 lsp.configure('sumneko_lua', require('lsp.settings.sumneko_lua'))
 lsp.configure('jsonls', require('lsp.settings.jsonls'))
 lsp.configure('pylsp', require("lsp.settings.pylsp"))
+lsp.configure('metals', {})
 
 local function lsp_highlight_document(client)
     -- Set autocommands conditional on server_capabilities
@@ -31,19 +32,19 @@ lsp.setup()
 
 
 -- Signature completion
-require("lsp_signature").setup({
-    bind = false,
-    handler_opts = {
-        border = "rounded",
-    },
-    max_width = 80,
-    max_height = 4,
-    -- doc_lines = 4,
-    floating_window = true,
+-- require("lsp_signature").setup({
+--     bind = false,
+--     handler_opts = {
+--         border = "rounded",
+--     },
+--     max_width = 80,
+--     max_height = 4,
+--     -- doc_lines = 4,
+--     floating_window = true,
 
-    floating_window_above_cur_line = false,
-    fix_pos = false,
-    always_trigger = false,
-    zindex = 40,
-    timer_interval = 100,
-})
+--     floating_window_above_cur_line = false,
+--     fix_pos = false,
+--     always_trigger = false,
+--     zindex = 40,
+--     timer_interval = 5,
+-- })

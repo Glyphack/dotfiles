@@ -23,14 +23,18 @@ null_ls.setup({
     end,
     sources = {
         formatting.lua_format,
-        formatting.isort,
+        formatting.isort.with({
+            extra_args = { "--float-to-top" },
+        }),
         formatting.black.with({
             extra_args = { "--line-length", "79" },
         }),
         formatting.golines,
+        formatting.buf,
         formatting.prettier,
-        -- null_ls.builtins.formatting.scalafmt,
+        formatting.scalafmt,
         diagnostics.eslint,
+        diagnostics.buf,
         -- diagnostics.pylint.with({
         --     diagnostics_postprocess = function(diagnostic)
         --         diagnostic.code = diagnostic.message_id

@@ -82,7 +82,6 @@ packer.startup(function(use)
         },
         tag = 'nightly' -- optional, updated every week. (see issue #1193)
     }
-    use 'junegunn/fzf'
     use({
         'nvim-telescope/telescope.nvim',
         branch = 'release'
