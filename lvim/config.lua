@@ -14,7 +14,6 @@ require("user.copilot")
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
-lvim.colorscheme = "onedarker"
 
 -- colorscheme
 vim.g.tokyonight_style = "night"
@@ -23,13 +22,15 @@ vim.g.tokyonight_sidebars = { "qf", "vista_kind", "terminal", "packer" }
 vim.g.tokyonight_transparent_sidebar = true
 vim.g.tokyonight_colors = { hint = "orange", error = "#ff0000" }
 lvim.colorscheme = "tokyonight"
-lvim.transparent_window = true
 
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
+lvim.keys.normal_mode["<leader>m"] = ":lua require('harpoon.mark').add_file()<CR>"
+lvim.keys.normal_mode["<leader>h"] = ":lua require('harpoon.ui').toggle_quick_menu()<CR>"
+
 -- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 -- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- unmap a default keymapping
@@ -153,7 +154,7 @@ lvim.builtin.treesitter.highlight.enabled = true
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   { command = "black", filetypes = { "python" }, extra_args = { "--float-to-top" }, },
-  { command = "isort", filetypes = { "python" }, extra_args = { "--line-length", "79" }, },
+  { command = "isort", filetypes = { "python" }, extra_args = { "--line-length", "79", "--ca", "--profile", "pycharm" }, },
   {
     command = "prettier",
     extra_args = { "--print-with", "100" },
@@ -182,14 +183,12 @@ lvim.builtin.dap.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.bufferline.active = false
 
+
 -- Additional Plugins
 lvim.plugins = {
   --language supports
   {
     "scalameta/nvim-metals",
-    config = function()
-      require("user.metals").config()
-    end,
   },
   -- LSP features
   {
@@ -268,7 +267,14 @@ autocmd('TextYankPost', {
   end,
 })
 
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-  pattern = { "*.scala", "*.sbt", "*.sc" },
-  callback = function() require('user.metals').config() end,
+local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+  -- NOTE: You may or may not want java included here. You will need it if you
+  -- want basic Java support but it may also conflict if you are using
+  -- something like nvim-jdtls which also works on a java filetype autocmd.
+  pattern = { "scala", "sbt", "java" },
+  callback = function()
+    require('user.metals').config()
+  end,
+  group = nvim_metals_group,
 })
