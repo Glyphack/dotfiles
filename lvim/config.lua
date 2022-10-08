@@ -7,21 +7,20 @@ a global executable or a path to
 an executable
 ]]
 -- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
-require("user.options")
-require("user.harpoon")
-require("user.copilot")
+lvim.builtin.alpha.active = true
+lvim.builtin.dap.active = true
+lvim.builtin.terminal.active = true
+lvim.builtin.bufferline.active = false
+lvim.builtin.autopairs.active = false
 
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
 
 -- colorscheme
-vim.g.tokyonight_style = "night"
-vim.g.tokyonight_italic_comments = true
-vim.g.tokyonight_sidebars = { "qf", "vista_kind", "terminal", "packer" }
-vim.g.tokyonight_transparent_sidebar = true
-vim.g.tokyonight_colors = { hint = "orange", error = "#ff0000" }
-lvim.colorscheme = "tokyonight"
+lvim.colorscheme = "everforest"
+vim.cmd([[set background = "light"]])
+-- vim.g.everforest_background = 'hard'
 
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
@@ -29,7 +28,8 @@ lvim.leader = "space"
 -- add your own keymapping
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<leader>m"] = ":lua require('harpoon.mark').add_file()<CR>"
-lvim.keys.normal_mode["<leader>h"] = ":lua require('harpoon.ui').toggle_quick_menu()<CR>"
+lvim.keys.normal_mode["<leader>["] = ":lua require('harpoon.ui').toggle_quick_menu()<CR>"
+
 
 -- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 -- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
@@ -153,8 +153,9 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
-  { command = "black", filetypes = { "python" }, extra_args = { "--float-to-top" }, },
-  { command = "isort", filetypes = { "python" }, extra_args = { "--line-length", "79", "--ca", "--profile", "pycharm" }, },
+  { command = "isort", filetypes = { "python" }, extra_args = { "--line-length", "79", "--ca", "--profile", "black" }, },
+  -- { command = "black", filetypes = { "python" } },
+  { command = "black" },
   {
     command = "prettier",
     extra_args = { "--print-with", "100" },
@@ -165,23 +166,13 @@ formatters.setup {
 -- -- set additional linters
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-  { command = "flake8", filetypes = { "python" } },
-  --   {
-  --     -- each linter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
-  --     command = "shellcheck",
-  --     ---@usage arguments to pass to the formatter
-  --     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
-  --     extra_args = { "--severity", "warning" },
-  -- },
+  { command = "flake8", filetypes = { "python" }, extra_args = { "--max-complexity", "5" }, },
   {
     command = "codespell",
   },
 }
 
-lvim.builtin.alpha.active = true
-lvim.builtin.dap.active = true
-lvim.builtin.terminal.active = true
-lvim.builtin.bufferline.active = false
+
 
 
 -- Additional Plugins
@@ -191,17 +182,23 @@ lvim.plugins = {
     "scalameta/nvim-metals",
   },
   -- LSP features
+  -- {
+  --   "ray-x/lsp_signature.nvim",
+  --   event = "BufRead",
+  --   config = function() require "lsp_signature".on_attach({
+  --       toggle_key = "<M-x>",
+  --     }
+  --     )
+  --   end,
+  -- },
   {
-    "ray-x/lsp_signature.nvim",
-    event = "BufRead",
-    config = function() require "lsp_signature".on_attach() end,
-  }, {
     "simrat39/symbols-outline.nvim",
     config = function()
       require('symbols-outline').setup()
     end
   },
   -- Editor assistant
+  { 'sainnhe/everforest' },
   { 'ThePrimeagen/harpoon' }, {
     "folke/todo-comments.nvim",
     event = "BufRead",
@@ -211,16 +208,13 @@ lvim.plugins = {
   },
   {
     "tpope/vim-surround",
-    -- make sure to change the value of `timeoutlen` if it's not triggering correctly, see https://github.com/tpope/vim-surround/issues/117
-    -- setup = function()
-    --  vim.o.timeoutlen = 500
-    -- end
   },
+  { 'ray-x/guihua.lua', run = 'cd lua/fzy && make' },
+  -- { "ray-x/navigator.lua" },
   { "folke/tokyonight.nvim" },
-  -- { "andweeb/presence.nvim", config = function()
-  --   -- require("presence").setup()
-  -- end },
   { 'hrsh7th/cmp-cmdline' },
+  { 'hrsh7th/cmp-nvim-lsp-signature-help' },
+  { 'ray-x/cmp-treesitter' },
   { 'wakatime/vim-wakatime' },
   { 'pixelneo/vim-python-docstring' },
   { "zbirenbaum/copilot.lua",
@@ -236,6 +230,9 @@ lvim.plugins = {
 
   { "zbirenbaum/copilot-cmp",
     after = { "copilot.lua", "nvim-cmp" },
+    config = function()
+      require("copilot_cmp").setup()
+    end
   }, -- { "github/copilot.vim" } only for the auth
 }
 
@@ -252,6 +249,26 @@ lvim.plugins = {
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
 -- })
+
+table.insert(lvim.builtin.cmp.sources, { name = "copilot", group_index = 0 })
+lvim.builtin.cmp.formatting.source_names["copilot"] = "(Copilot)"
+
+table.insert(lvim.builtin.cmp.sources, { name = "nvim_lsp_signature_help", group_index = 0 })
+lvim.builtin.cmp.formatting.source_names["nvim_lsp_signature_help"] = "Sig"
+
+table.insert(lvim.builtin.cmp.sources, { name = "treesitter", group_index = 0 })
+lvim.builtin.cmp.formatting.source_names["treesitter"] = "Treesitter"
+
+require("user.options")
+require("user.harpoon")
+
+require('guihua.maps').setup({
+  maps = {
+    close_view = '<C-x>',
+  }
+})
+-- require 'navigator'.setup()
+
 
 local autocmd = vim.api.nvim_create_autocmd
 local augroup = vim.api.nvim_create_augroup
