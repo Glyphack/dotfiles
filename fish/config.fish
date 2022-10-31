@@ -30,4 +30,3 @@ switch (uname)
         set -x VIMDATA ~/.local/share/nvim
         set -x PATH $PATH /Users/glyphack/Library/Application\ Support/Coursier/bin /usr/local/opt/fzf/bin
 end
-
