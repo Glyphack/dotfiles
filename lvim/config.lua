@@ -10,6 +10,7 @@ an executable
 lvim.builtin.alpha.active = true
 lvim.builtin.dap.active = true
 lvim.builtin.terminal.active = true
+lvim.builtin.terminal.open_mapping = [[<c-\>]]
 lvim.builtin.bufferline.active = false
 lvim.builtin.autopairs.active = false
 
@@ -18,9 +19,12 @@ lvim.log.level = "warn"
 lvim.format_on_save = true
 
 -- colorscheme
-lvim.colorscheme = "everforest"
-vim.cmd([[set background = "light"]])
--- vim.g.everforest_background = 'hard'
+vim.g.tokyonight_style = "night"
+vim.g.tokyonight_italic_comments = true
+vim.g.tokyonight_sidebars = { "qf", "vista_kind", "terminal", "packer" }
+vim.g.tokyonight_transparent_sidebar = true
+vim.g.tokyonight_colors = { hint = "orange", error = "#ff0000" }
+lvim.colorscheme = "tokyonight"
 
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
@@ -84,7 +88,6 @@ tnoremap <C-v><Esc> <Esc>
 -- After changing plugin config exit and reopen LunarVim, Run :PackerInstall :PackerCompile
 lvim.builtin.alpha.active = true
 lvim.builtin.alpha.mode = "dashboard"
-lvim.builtin.notify.active = true
 lvim.builtin.terminal.active = true
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
@@ -104,6 +107,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "java",
   "yaml",
   "go",
+  "gomod",
 }
 
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -112,27 +116,12 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- generic LSP settings
 
 -- -- make sure server will always be installed even if the server is in skipped_servers list
--- lvim.lsp.installer.setup.ensure_installed = {
---     "sumeko_lua",
---     "jsonls",
--- }
--- -- change UI setting of `LspInstallInfo`
--- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
--- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
--- lvim.lsp.installer.setup.ui.border = "rounded"
--- lvim.lsp.installer.setup.ui.keymaps = {
---     uninstall_server = "d",
---     toggle_server_expand = "o",
--- }
-
--- ---@usage disable automatic installation of servers
--- lvim.lsp.installer.setup.automatic_installation = false
-
--- ---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
--- ---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
--- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
--- local opts = {} -- check the lspconfig documentation for a list of all possible options
--- require("lvim.lsp.manager").setup("pyright", opts)
+lvim.lsp.installer.setup.ensure_installed = {
+  "sumeko_lua",
+  "jsonls",
+}
+---configure a server manually. !!Requires `:LvimCacheReset` to take effect!!
+---see the full default list `:lua print(vim.inspect(lvim.lsp.automatic_configuration.skipped_servers))`
 
 -- ---remove a server from the skipped list, e.g. eslint, or emmet_ls. !!Requires `:LvimCacheReset` to take effect!!
 -- ---`:LvimInfo` lists which server(s) are skipped for the current filetype
@@ -142,34 +131,49 @@ lvim.builtin.treesitter.highlight.enabled = true
 
 -- -- you can set a custom on_attach function that will be used for all the language servers
 -- -- See <https://github.com/neovim/nvim-lspconfig#keybindings-and-completion>
--- lvim.lsp.on_attach_callback = function(client, bufnr)
---   local function buf_set_option(...)
---     vim.api.nvim_buf_set_option(bufnr, ...)
---   end
---   --Enable completion triggered by <c-x><c-o>
---   buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
--- end
+lvim.lsp.on_attach_callback = function(client, bufnr)
+  local function buf_set_option(...)
+    vim.api.nvim_buf_set_option(bufnr, ...)
+  end
+
+  --Enable completion triggered by <c-x><c-o>
+  buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
+end
 
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
 local formatters = require "lvim.lsp.null-ls.formatters"
+local null_ls = require("null-ls")
+
 formatters.setup {
-  { command = "isort", filetypes = { "python" }, extra_args = { "--line-length", "79", "--ca", "--profile", "black" }, },
-  -- { command = "black", filetypes = { "python" } },
-  { command = "black" },
+  -- TODO https://github.com/younger-1/nvim/blob/one/lua/young/lang/python.lua
+  { command = "isort", filetypes = { "python" },
+    extra_args = { "--line-length", "79", "--ca", "--profile", "black", "--float-to-top" },
+  },
+  { command = "black", filetypes = { "python" }, args = { "--line-length", "79" } },
+  { command = "shfmt", filetypes = { "sh" }, args = { "-filename", "$FILENAME"
+  } },
+  -- { command = "packer", filetypes = { "hcl" }, args = { "fmt", "-" } },
   {
     command = "prettier",
     extra_args = { "--print-with", "100" },
     filetypes = { "typescript", "typescriptreact" },
   },
+  { command = "goimports", filetypes = { "go", "gomod" } },
+  { command = "gofumpt", filetypes = { "go" } },
+  null_ls.builtins.formatting.markdownlint,
 }
 
--- -- set additional linters
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-  { command = "flake8", filetypes = { "python" }, extra_args = { "--max-complexity", "5" }, },
-  {
-    command = "codespell",
-  },
+  { command = "flake8", filetypes = { "python" }, extra_args = { "--max-complexity", "5", "--ignore", "E203,W503" }, },
+  { command = "golangci_lint", filetypes = { "go" } },
+  null_ls.builtins.diagnostics.markdownlint,
+}
+
+local code_actions = require "lvim.lsp.null-ls.code_actions"
+code_actions.setup {
+  null_ls.builtins.diagnostics.cspell,
+  null_ls.builtins.code_actions.cspell,
 }
 
 
@@ -177,25 +181,39 @@ linters.setup {
 
 -- Additional Plugins
 lvim.plugins = {
-  --language supports
+  -- language supports
+  -- Scala
   {
     "scalameta/nvim-metals",
   },
-  -- LSP features
-  -- {
-  --   "ray-x/lsp_signature.nvim",
-  --   event = "BufRead",
-  --   config = function() require "lsp_signature".on_attach({
-  --       toggle_key = "<M-x>",
-  --     }
-  --     )
-  --   end,
-  -- },
+  -- Go
+  { "ray-x/go.nvim", requires = "ray-x/guihua.lua", },
+  "leoluz/nvim-dap-go",
+  -- Python
+  "AckslD/swenv.nvim",
+  "mfussenegger/nvim-dap-python",
   {
-    "simrat39/symbols-outline.nvim",
+    "danymat/neogen",
     config = function()
-      require('symbols-outline').setup()
-    end
+      require("neogen").setup {
+        enabled = true,
+        languages = {
+          python = {
+            template = {
+              annotation_convention = "numpydoc",
+            },
+          },
+        },
+      }
+    end,
+  },
+  -- LSP features
+  {
+    "ray-x/lsp_signature.nvim",
+    event = "BufRead",
+    config = function()
+      require "lsp_signature".setup({})
+    end,
   },
   -- Editor assistant
   { 'sainnhe/everforest' },
@@ -207,16 +225,18 @@ lvim.plugins = {
     end,
   },
   {
-    "tpope/vim-surround",
+    "simrat39/symbols-outline.nvim",
+    config = function()
+      require('symbols-outline').setup()
+    end
   },
+  { "tpope/vim-surround", },
   { 'ray-x/guihua.lua', run = 'cd lua/fzy && make' },
-  -- { "ray-x/navigator.lua" },
-  { "folke/tokyonight.nvim" },
+  { "ray-x/navigator.lua" },
   { 'hrsh7th/cmp-cmdline' },
   { 'hrsh7th/cmp-nvim-lsp-signature-help' },
   { 'ray-x/cmp-treesitter' },
   { 'wakatime/vim-wakatime' },
-  { 'pixelneo/vim-python-docstring' },
   { "zbirenbaum/copilot.lua",
     event = { "VimEnter" },
     config = function()
@@ -230,10 +250,22 @@ lvim.plugins = {
 
   { "zbirenbaum/copilot-cmp",
     after = { "copilot.lua", "nvim-cmp" },
-    config = function()
-      require("copilot_cmp").setup()
+    cofnig = function()
+      local copilot_cmp = require "copilot_cmp"
+      copilot_cmp.setup({
+        formatters = {
+          insert_text = require("copilot_cmp.format").remove_existing
+        },
+      })
     end
-  }, -- { "github/copilot.vim" } only for the auth
+  },
+  -- { "github/copilot.vim" } only for the auth
+  { 'krivahtoo/silicon.nvim', run = './install.sh', config = function()
+    require('silicon').setup({
+      font = 'FantasqueSansMono Nerd Font=16',
+      theme = 'Monokai Extended',
+    })
+  end },
 }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
@@ -249,15 +281,32 @@ lvim.plugins = {
 --     require("nvim-treesitter.highlight").attach(0, "bash")
 --   end,
 -- })
+local cmp = require "cmp"
 
-table.insert(lvim.builtin.cmp.sources, { name = "copilot", group_index = 0 })
+lvim.builtin.cmp.sorting = {
+  sorting = {
+    priority_weight = 2,
+    comparators = {
+      cmp.config.compare.exact,
+      -- copilot_cmp.comparators.prioritize,
+      -- copilot_cmp.comparators.score,
+
+      cmp.config.compare.offset,
+      cmp.config.compare.scopes,
+      cmp.config.compare.score,
+      cmp.config.compare.recently_used,
+      cmp.config.compare.locality,
+      cmp.config.compare.kind,
+      cmp.config.compare.sort_text,
+      cmp.config.compare.length,
+      cmp.config.compare.order,
+    },
+  }
+}
 lvim.builtin.cmp.formatting.source_names["copilot"] = "(Copilot)"
+table.insert(lvim.builtin.cmp.sources, 1, { name = "copilot" })
 
-table.insert(lvim.builtin.cmp.sources, { name = "nvim_lsp_signature_help", group_index = 0 })
-lvim.builtin.cmp.formatting.source_names["nvim_lsp_signature_help"] = "Sig"
 
-table.insert(lvim.builtin.cmp.sources, { name = "treesitter", group_index = 0 })
-lvim.builtin.cmp.formatting.source_names["treesitter"] = "Treesitter"
 
 require("user.options")
 require("user.harpoon")
@@ -267,7 +316,14 @@ require('guihua.maps').setup({
     close_view = '<C-x>',
   }
 })
--- require 'navigator'.setup()
+
+-- require 'navigator'.setup({
+--   lsp = {
+--     disable_lsp = { 'pylsp', 'jedi_language_server' },
+--   }
+-- })
+
+
 
 
 local autocmd = vim.api.nvim_create_autocmd
@@ -284,14 +340,49 @@ autocmd('TextYankPost', {
   end,
 })
 
+-- -- Scala
 local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
-  -- NOTE: You may or may not want java included here. You will need it if you
-  -- want basic Java support but it may also conflict if you are using
-  -- something like nvim-jdtls which also works on a java filetype autocmd.
-  pattern = { "scala", "sbt", "java" },
+  pattern = { "*.scala", "*.sbt", "*.sc" },
   callback = function()
     require('user.metals').config()
   end,
   group = nvim_metals_group,
 })
+
+-- Python
+local python_group = vim.api.nvim_create_augroup("nvim-python", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "*.py", "pyproject.toml" },
+  callback = function()
+    require('user.python').config()
+  end,
+  group = python_group,
+})
+-- vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
+
+-- require("lvim.lsp.manager").setup("pylsp", {
+--   settings = {
+--     pylsp = {
+--       plugins = {
+--         jedi_completion = { cache_for = { "pandas", "numpy", "tensorflow", "matplotlib", "aws_cdk" ,} },
+--         autopep8 = { enabled = false },
+--         flake8 = { enabled = false, },
+--         pyflakes = { enabled = false },
+--         mypy = { enabled = false },
+--         isort = { enabled = false },
+--         yapf = { enabled = false },
+--         pylint = { enabled = false },
+--         pydocstyle = { enabled = false },
+--         pycodestyle = { enabled = false },
+--         mccabe = { enabled = false },
+--       }
+--     }
+--   }
+-- }
+-- )
+
+
+-- -- GOlang
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "gopls" })
+require('user.go').config()
