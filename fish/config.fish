@@ -9,8 +9,9 @@ set -x VIMCONFIG $HOME/.config/nvim/
 set --universal FZF_DEFAULT_COMMAND "fd --hidden"
 set -x FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
 set -x FZF_ALT_C_COMMAND "fd -t d . ~/Programming"
+set -x NPM_PRE $HOME/.npm-global/bin
 
-set -x PATH $PATH $PYENV_ROOT/bin $GOPATH/bin $JAVA_HOME /Users/glyphack/Library/Python/3.9/bin /Users/glyphack/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin /usr/local/Cellar/openvpn/2.5.5/sbin $HOME/.poetry/bin
+set -x PATH $PATH $PYENV_ROOT/bin $GOPATH/bin $JAVA_HOME /Users/glyphack/Library/Python/3.9/bin /Users/glyphack/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin /usr/local/Cellar/openvpn/2.5.5/sbin $HOME/.poetry/bin NPM_PRE
 
 status is-login; and pyenv init --path | source
 status is-interactive; and pyenv init - | source

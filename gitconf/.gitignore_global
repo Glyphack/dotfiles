@@ -5,6 +5,7 @@
 metals.sbt
 *metals*
 *bloop*
+*pyrightconfig.json
 
 # env files
 .env.*
