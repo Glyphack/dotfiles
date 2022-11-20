@@ -152,7 +152,7 @@ vim.api.nvim_create_autocmd("filetype", {
   group = python_group,
 })
 
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tailwindcss", "tsserver" })
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" })
 require("lvim.lsp.manager").setup("tsserver", {
   on_attach = function(client)
     client.server_capabilities.documentFormattingProvider = false
@@ -160,6 +160,7 @@ require("lvim.lsp.manager").setup("tsserver", {
   filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
   cmd = { "typescript-language-server", "--stdio" }
 })
+
 
 -- require("lvim.lsp.manager").setup("pylsp", {
 --   settings = {
