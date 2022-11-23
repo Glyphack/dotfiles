@@ -16,7 +16,7 @@ end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 local metals_config = require("metals").bare_config()
-metals_config.capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 metals_config.settings = {
     showImplicitArguments = false,
     showInferredType = true
