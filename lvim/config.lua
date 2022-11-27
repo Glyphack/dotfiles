@@ -11,14 +11,12 @@ lvim.builtin.nvimtree.setup.view.side = "left"
 -- lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 lvim.log.level = "warn"
 lvim.format_on_save = true
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "gopls", "tsserver" })
 
 -- colorscheme
-vim.g.tokyonight_style = "night"
-vim.g.tokyonight_italic_comments = true
-vim.g.tokyonight_sidebars = { "qf", "vista_kind", "terminal", "packer" }
-vim.g.tokyonight_transparent_sidebar = true
-vim.g.tokyonight_colors = { hint = "orange", error = "#ff0000" }
-lvim.colorscheme = "tokyonight"
+require("tokyonight").setup({
+  style = "storm",
+})
 
 
 -- keymappings [view all the defaults by pressing <leader>lk]
@@ -68,31 +66,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "java",
 }
 
-local formatters = require "lvim.lsp.null-ls.formatters"
 local null_ls = require("null-ls")
-
-formatters.setup {
-  -- todo https://github.com/younger-1/nvim/blob/one/lua/young/lang/python.lua
-  { command = "isort", filetypes = { "python" },
-    extra_args = { "--line-length", "79", "--ca", "--profile", "black", "--float-to-top" },
-  },
-  { command = "black", filetypes = { "python" }, args = { "--line-length", "79" } },
-  { command = "shfmt", filetypes = { "sh" }, args = { "-filename", "$filename", "--indent", "2" } },
-  { name = "prettierd", },
-  { command = "goimports", filetypes = { "go", "gomod" } },
-  { command = "gofumpt", filetypes = { "go" } },
-  { name = "markdownlint" },
-  { name = "prismafmt" },
-}
-
-local linters = require "lvim.lsp.null-ls.linters"
-linters.setup {
-  { command = "flake8", filetypes = { "python" }, extra_args = { "--max-complexity", "5", "--ignore", "e203,W503" }, },
-  { command = "golangci_lint", filetypes = { "go" } },
-  { name = "markdownlint" },
-  { command = "eslint", filetypes = { "javascript", "typescript" } },
-}
-
 local code_actions = require "lvim.lsp.null-ls.code_actions"
 code_actions.setup {
   null_ls.builtins.diagnostics.cspell,
@@ -106,13 +80,6 @@ vim.api.nvim_create_autocmd("bufenter", {
   pattern = { "*.json", "*.jsonc" },
   -- enable wrap mode for json files only
   command = "setlocal wrap",
-})
-vim.api.nvim_create_autocmd("filetype", {
-  pattern = "zsh",
-  callback = function()
-    -- let treesitter use bash highlight for zsh files as well
-    require("nvim-treesitter.highlight").attach(0, "bash")
-  end,
 })
 
 lvim.builtin.cmp.formatting.source_names["copilot"] = "(copilot)"
@@ -134,25 +101,7 @@ autocmd('textyankpost', {
   end,
 })
 
-local nvim_scala_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
-vim.api.nvim_create_autocmd("filetype", {
-  pattern = { "*.scala", "*.sbt", "*.sc" },
-  callback = function()
-    require('user.metals').config()
-  end,
-  group = nvim_scala_group,
-})
 
-local python_group = vim.api.nvim_create_augroup("nvim-python", { clear = true })
-vim.api.nvim_create_autocmd("filetype", {
-  pattern = { "*.py", "pyproject.toml" },
-  callback = function()
-    require('user.python').config()
-  end,
-  group = python_group,
-})
-
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" })
 require("lvim.lsp.manager").setup("tsserver", {
   on_attach = function(client)
     client.server_capabilities.documentFormattingProvider = false
@@ -182,18 +131,6 @@ require("lvim.lsp.manager").setup("tsserver", {
 --   }
 -- }
 -- )
-
-
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "gopls" })
-local golang_group = vim.api.nvim_create_augroup("nvim-golang", { clear = true })
-vim.api.nvim_create_autocmd("filetype", {
-  pattern = { "*.go", "go.mod", "go.work" },
-  callback = function()
-    require('user.go').config()
-  end,
-  group = golang_group,
-})
-
 
 lvim.plugins = {
   -- language supports
