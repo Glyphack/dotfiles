@@ -11,6 +11,7 @@ lvim.builtin.nvimtree.setup.view.side = "left"
 -- lvim.builtin.nvimtree.setup.renderer.icons.show.git = false
 lvim.log.level = "warn"
 lvim.format_on_save = true
+lvim.builtin.lualine.options.theme = "tokyonight"
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "gopls", "tsserver" })
 
 -- colorscheme
@@ -135,9 +136,7 @@ require("lvim.lsp.manager").setup("tsserver", {
 lvim.plugins = {
   -- language supports
   -- scala
-  {
-    "scalameta/nvim-metals",
-  },
+  "scalameta/nvim-metals",
   -- go
   "leoluz/nvim-dap-go",
   "ray-x/go.nvim",
@@ -145,11 +144,7 @@ lvim.plugins = {
   "acksld/swenv.nvim",
   "mfussenegger/nvim-dap-python",
   -- lsp features
-  {
-    "ray-x/lsp_signature.nvim",
-    event = "bufread",
-    config = function() require "lsp_signature".on_attach() end,
-  },
+  "ray-x/lsp_signature.nvim",
   -- editor assistant
   {
     "danymat/neogen",
@@ -169,15 +164,9 @@ lvim.plugins = {
   { 'mzlogin/vim-markdown-toc' },
   { 'sainnhe/everforest' },
   { 'theprimeagen/harpoon' },
-  {
-    "simrat39/symbols-outline.nvim",
-    config = function()
-      require('symbols-outline').setup()
-    end
-  },
+  { "simrat39/symbols-outline.nvim" },
   { "tpope/vim-surround", },
   { 'ray-x/guihua.lua' },
-  -- { 'hrsh7th/cmp-cmdline' },
   -- { 'hrsh7th/cmp-nvim-lsp-signature-help' },
   { 'ray-x/cmp-treesitter' },
   { 'wakatime/vim-wakatime' },
@@ -199,13 +188,9 @@ lvim.plugins = {
       require("copilot_cmp").setup()
     end,
   },
-  { 'krivahtoo/silicon.nvim', run = './install.sh', config = function()
-    require('silicon').setup({
-      font = 'fantasquesansmono nerd font=16',
-      theme = 'monokai extended',
-    })
-  end
-  },
+  { 'krivahtoo/silicon.nvim', run = './install.sh' },
   { "iamcco/markdown-preview.nvim", run = "cd app && npm install",
     setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, }
 }
+require "lsp_signature".setup()
+require('symbols-outline').setup()
