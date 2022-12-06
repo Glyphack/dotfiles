@@ -12,7 +12,6 @@ lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.log.level = "warn"
 lvim.format_on_save = true
 lvim.builtin.lualine.options.theme = "tokyonight"
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "gopls", "tsserver" })
 
 -- colorscheme
 require("tokyonight").setup({
@@ -74,6 +73,12 @@ code_actions.setup {
   null_ls.builtins.code_actions.cspell,
 }
 
+local formatters = require "lvim.lsp.null-ls.formatters"
+
+formatters.setup {
+  { name = "prettierd", },
+}
+
 lvim.lsp.installer.setup.ensure_installed = {
   "jsonls",
 }
@@ -103,13 +108,6 @@ autocmd('textyankpost', {
 })
 
 
-require("lvim.lsp.manager").setup("tsserver", {
-  on_attach = function(client)
-    client.server_capabilities.documentFormattingProvider = false
-  end,
-  filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-  cmd = { "typescript-language-server", "--stdio" }
-})
 
 
 -- require("lvim.lsp.manager").setup("pylsp", {
@@ -145,6 +143,12 @@ lvim.plugins = {
   "mfussenegger/nvim-dap-python",
   -- lsp features
   "ray-x/lsp_signature.nvim",
+  {
+    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+    config = function()
+      require("lsp_lines").setup()
+    end,
+  },
   -- editor assistant
   {
     "danymat/neogen",
