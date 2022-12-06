@@ -1,9 +1,19 @@
 [user]
-	name = glyphack
+	name = Glyphack
 	email = sh.hooshyari@gmail.com
     signingkey = 145D38B03F8621FF
 [core]
 	excludesfile = /Users/glyphack/.gitignore_global
+
+[alias]
+  co = checkout
+  oops = reset --hard 'HEAD@{1}'
+  forgot = commit --amend -C HEAD
+  lg = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+  wip = for-each-ref --sort='authordate:iso8601' --format=' %(color:green)%(authordate:relative)%09%(color:white)%(refname:short)' refs/heads
+
+[pull]
+  ff = only
 
 [url "git@github.com:"]
  insteadOf = https://github.com/
@@ -11,7 +21,7 @@
 [url "git@gitlab.com:"]
  insteadOf = https://gitlab.com/
 
-[includeIf "gitdir:~/Programming/carnext/"] 
-    path = ~/Programming/carnext/.gitconfig-carnext
+[includeIf "gitdir:~/Programming/brenntag/"] 
+    path = ~/Programming/brenntag/.gitconfig-brenntag
 [init]
 	defaultBranch = master
