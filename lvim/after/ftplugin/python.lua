@@ -24,7 +24,9 @@ lvim.builtin.which_key.mappings["P"] = {
 
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
-  { command = "flake8", filetypes = { "python" }, extra_args = { "--max-complexity", "5", "--ignore", "e203,W503" }, },
+  -- Flake8 not blazingly fast
+  -- { command = "flake8", filetypes = { "python" }, extra_args = { "--max-complexity", "5", "--ignore", "e203,W503" }, },
+  { name = "ruff" },
 }
 
 local formatters = require "lvim.lsp.null-ls.formatters"
