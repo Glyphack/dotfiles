@@ -108,6 +108,21 @@ autocmd('textyankpost', {
 })
 
 
+-- TS because it's everywhere
+local linters = require "lvim.lsp.null-ls.linters"
+linters.setup {
+  { command = "eslint", filetypes = { "javascript", "typescript" } },
+}
+
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" })
+require("lvim.lsp.manager").setup("tsserver", {
+  on_attach = function(client)
+    client.server_capabilities.documentFormattingProvider = false
+  end,
+  filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+  cmd = { "typescript-language-server", "--stdio" }
+})
+
 
 
 -- require("lvim.lsp.manager").setup("pylsp", {
@@ -143,12 +158,12 @@ lvim.plugins = {
   "mfussenegger/nvim-dap-python",
   -- lsp features
   "ray-x/lsp_signature.nvim",
-  {
-    "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
-    config = function()
-      require("lsp_lines").setup()
-    end,
-  },
+  -- {
+  --   "https://git.sr.ht/~whynothugo/lsp_lines.nvim",
+  --   config = function()
+  --     require("lsp_lines").setup()
+  --   end,
+  -- },
   -- editor assistant
   {
     "danymat/neogen",
