@@ -108,13 +108,15 @@ autocmd('textyankpost', {
 })
 
 
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "pyright" })
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" })
+
 -- TS because it's everywhere
 local linters = require "lvim.lsp.null-ls.linters"
 linters.setup {
   { command = "eslint", filetypes = { "javascript", "typescript" } },
 }
 
-vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "tsserver" })
 require("lvim.lsp.manager").setup("tsserver", {
   on_attach = function(client)
     client.server_capabilities.documentFormattingProvider = false
@@ -125,26 +127,6 @@ require("lvim.lsp.manager").setup("tsserver", {
 
 
 
--- require("lvim.lsp.manager").setup("pylsp", {
---   settings = {
---     pylsp = {
---       plugins = {
---         jedi_completion = { cache_for = { "pandas", "numpy", "tensorflow", "matplotlib", "aws_cdk" ,} },
---         autopep8 = { enabled = false },
---         flake8 = { enabled = false, },
---         pyflakes = { enabled = false },
---         mypy = { enabled = false },
---         isort = { enabled = false },
---         yapf = { enabled = false },
---         pylint = { enabled = false },
---         pydocstyle = { enabled = false },
---         pycodestyle = { enabled = false },
---         mccabe = { enabled = false },
---       }
---     }
---   }
--- }
--- )
 
 lvim.plugins = {
   -- language supports
@@ -209,7 +191,8 @@ lvim.plugins = {
   },
   { 'krivahtoo/silicon.nvim', run = './install.sh' },
   { "iamcco/markdown-preview.nvim", run = "cd app && npm install",
-    setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, }
+    setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, },
+  { 'mbbill/undotree' },
 }
 require "lsp_signature".setup()
 require('symbols-outline').setup()

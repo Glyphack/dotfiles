@@ -22,15 +22,27 @@ lvim.builtin.which_key.mappings["P"] = {
   d = { "<cmd>lua require('swenv.api').get_current_venv()<cr>", "Show Env" },
 }
 
-require("lvim.lsp.manager").setup("pyright", {
+-- require("lvim.lsp.manager").setup("pyright", {
+--   settings = {
+--     python = {
+--       analysis = {
+--         typeCheckingMode = "basic",
+--       },
+--     },
+--   },
+-- })
+
+require("lvim.lsp.manager").setup("pylsp", {
   settings = {
-    python = {
-      analysis = {
-        typeCheckingMode = "basic",
-      },
-    },
-  },
-})
+    pylsp = {
+      plugins = {
+        jedi_completion = { cache_for = { "pandas", "numpy", "tensorflow", "matplotlib", "aws_cdk", } },
+        ruff = { enabled = true },
+      }
+    }
+  }
+}
+)
 
 
 local linters = require "lvim.lsp.null-ls.linters"
@@ -41,28 +53,6 @@ linters.setup {
 }
 
 local formatters = require "lvim.lsp.null-ls.formatters"
-
-local null_ls = require("null-ls")
-local methods = require("null-ls.methods")
-local helpers = require("null-ls.helpers")
-
-local function ruff_fix()
-  return helpers.make_builtin({
-    name = "ruff",
-    meta = {
-      url = "https://github.com/charliermarsh/ruff/",
-      description = "An extremely fast Python linter, written in Rust.",
-    },
-    method = methods.internal.FORMATTING,
-    filetypes = { "python" },
-    generator_opts = {
-      command = "ruff",
-      args = { "--fix", "-e", "-n", "--stdin-filename", "$FILENAME", "-" },
-      to_stdin = true
-    },
-    factory = helpers.formatter_factory
-  })
-end
 
 formatters.setup {
   -- todo https://github.com/younger-1/nvim/blob/one/lua/young/lang/python.lua
