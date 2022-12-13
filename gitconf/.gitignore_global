@@ -8,7 +8,8 @@ metals.sbt
 *pyrightconfig.json
 
 # env files
-.env.*
+.env.prod
+.env.test
 
 # local dbs
 *.db
