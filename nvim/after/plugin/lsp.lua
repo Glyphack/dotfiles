@@ -1,6 +1,8 @@
 local lsp = require("lsp-zero")
 
 lsp.preset("recommended")
+vim.diagnostic.config({ virtual_text = true })
+require('fidget').setup()
 
 lsp.ensure_installed({
     'tsserver',
@@ -16,7 +18,7 @@ local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
     ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
     ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-i>'] = cmp.mapping.confirm({ select = true }),
     ["<C-Space>"] = cmp.mapping.complete(),
 })
 
@@ -39,29 +41,15 @@ lsp.set_preferences({
     }
 })
 
-vim.diagnostic.config({
-    virtual_text = true,
-})
+
+local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
 lsp.on_attach(function(client, bufnr)
     local opts = { buffer = bufnr, remap = false }
 
-    if client.supports_method("textDocument/formatting") then
-        vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-        vim.api.nvim_create_autocmd("BufWritePre", {
-            group = augroup,
-            buffer = bufnr,
-            callback = function()
-                vim.lsp.buf.format({ bufnr = bufnr })
-            end,
-        })
+    if client.name == 'tsserver' then
+        client.server_capabilities.documentFormattingProvider = true
     end
-
-    if client.name == "tsserver" then
-        client.server_capabilities.documentFormattingProvider = false
-        return
-    end
-
 
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
     vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
@@ -276,5 +264,15 @@ local opts = {
 
 
 lsp.configure("jsonls", opts)
+
+lsp.configure("sumneko_lua", {
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { 'vim' },
+            },
+        }
+    }
+})
 
 lsp.setup()

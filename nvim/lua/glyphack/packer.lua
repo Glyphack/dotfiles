@@ -58,13 +58,6 @@ require('packer').startup(function(use)
 
     use("folke/zen-mode.nvim")
     use({ "ray-x/lsp_signature.nvim" })
-    -- Sometimes you want hell
-    -- use({
-    --   "https://git.sr.ht/~whynothugo/lsp_lines.nvim"}
-    --   config = function()
-    --     require("lsp_lines").setup()
-    --   end
-    -- }
     -- editor assistant
     use({
         "danymat/neogen",
@@ -117,9 +110,6 @@ require('packer').startup(function(use)
 
     use({
         "jose-elias-alvarez/null-ls.nvim",
-        config = function()
-            require("null-ls").setup()
-        end,
     })
     use {
         'numToStr/Comment.nvim',
@@ -132,7 +122,7 @@ require('packer').startup(function(use)
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
     use { 'github/copilot.vim' }
     use { 'akinsho/toggleterm.nvim' }
-
+    use { 'j-hui/fidget.nvim' }
 
     if is_bootstrap then
         require('packer').sync()
