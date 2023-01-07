@@ -14,7 +14,7 @@ set -x NPM_PRE $HOME/.npm-global/bin
 
 set -x OPENAI_API_KEY $(cat $PROGRAMMING_DIR/dotfiles/fish/secrets/open_ai_token.txt)
 
-set -x PATH $PATH $PYENV_ROOT/bin $GOPATH/bin $JAVA_HOME /Users/glyphack/Library/Python/3.9/bin /Users/glyphack/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin /usr/local/Cellar/openvpn/2.5.5/sbin $HOME/.poetry/bin NPM_PRE
+set -x PATH $PATH $PYENV_ROOT/bin $GOPATH/bin $JAVA_HOME /Users/glyphack/Library/Python/3.9/bin /Users/glyphack/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin /usr/local/Cellar/openvpn/2.5.5/sbin $HOME/.poetry/bin $NPM_PRE
 
 status is-login; and pyenv init --path | source
 status is-interactive; and pyenv init - | source
