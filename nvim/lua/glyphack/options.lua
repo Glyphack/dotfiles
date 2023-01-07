@@ -22,6 +22,8 @@ local options = {
   undodir = os.getenv("HOME") .. "/.vim/undodir",
   updatetime = 50, -- faster completion (4000ms default)
 
+  autowriteall = true, -- autosave before commands like :next and :make
+
   number = true, -- set numbered lines
   relativenumber = true, -- set relative numbered lines
   numberwidth = 4, -- set number column width to 2 {default 4}

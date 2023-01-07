@@ -25,11 +25,11 @@ null_ls.setup({
             extra_args = { "--line-length", "79", "--ca", "--profile", "black", "--float-to-top" },
         }),
         formatting.black.with({
-            extra_args = { "--line-length", "79" },
+            -- extra_args = { "--line-length", "79" },
         }),
-        formatting.ruff.with({
-            extra_args = { "--line-length", "79" },
-        }),
+        -- formatting.ruff.with({
+        --     extra_args = { "--line-length", "79" },
+        -- }),
         formatting.golines,
         formatting.buf,
         formatting.prettierd,
@@ -39,7 +39,7 @@ null_ls.setup({
         formatting.gofumpt,
         diagnostics.markdownlint,
         diagnostics.ruff,
-        diagnostics.eslint_d,
+        -- diagnostics.eslint_d,
         diagnostics.buf,
         diagnostics.hadolint,
     },

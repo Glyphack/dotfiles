@@ -2,11 +2,11 @@ local lsp = require("lsp-zero")
 
 lsp.preset("recommended")
 vim.diagnostic.config({ virtual_text = true })
+
 require('fidget').setup()
 
 lsp.ensure_installed({
     'tsserver',
-    'eslint',
     'sumneko_lua',
     'rust_analyzer',
     'jsonls',
@@ -248,17 +248,8 @@ local opts = {
             schemas = extended_schemas,
         },
     },
-    setup = {
-        commands = {
-            Format = {
-                function()
-                    vim.lsp.buf.range_formatting({}, { 0, 0 }, { vim.fn.line "$", 0 })
-                end,
-            },
-        },
-    },
     on_attach = function(client, bufnr)
-        client.resolved_capabilities.document_formatting = false
+        client.server_capabilities.documentFormattingProvider = false
     end
 }
 
