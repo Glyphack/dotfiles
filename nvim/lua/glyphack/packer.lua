@@ -151,6 +151,14 @@ require('packer').startup(function(use)
             })
         end,
     }
+    use {
+        'ruifm/gitlinker.nvim',
+        requires = 'nvim-lua/plenary.nvim',
+    }
+
+    use {
+        'tpope/vim-fugitive',
+    }
 
     if is_bootstrap then
         require('packer').sync()
