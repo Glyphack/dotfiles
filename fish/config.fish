@@ -31,5 +31,5 @@ switch (uname)
         set -x VIMDATA ~/.local/share/nvim
     case '*'
         set -x VIMDATA ~/.local/share/nvim
-        set -x PATH $PATH /Users/glyphack/Library/Application\ Support/Coursier/bin /usr/local/opt/fzf/bin
+        set -x PATH $PATH /Users/glyphack/Library/Application\ Support/Coursier/bin /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
 end
