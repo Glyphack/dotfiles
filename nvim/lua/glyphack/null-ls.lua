@@ -30,13 +30,14 @@ null_ls.setup({
         -- formatting.ruff.with({
         --     extra_args = { "--line-length", "79" },
         -- }),
-        formatting.golines,
         formatting.buf,
         formatting.prettierd,
         formatting.scalafmt,
         formatting.shfmt,
+
         formatting.goimports,
-        formatting.gofumpt,
+        formatting.gofmt,
+        formatting.prismafmt,
         diagnostics.markdownlint,
         diagnostics.ruff,
         -- diagnostics.eslint_d,
