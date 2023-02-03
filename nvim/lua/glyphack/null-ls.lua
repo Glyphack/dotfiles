@@ -34,6 +34,7 @@ null_ls.setup({
         formatting.prettierd,
         formatting.scalafmt,
         formatting.shfmt,
+        formatting.packer,
 
         formatting.goimports,
         formatting.gofmt,

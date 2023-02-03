@@ -156,9 +156,10 @@ require('packer').startup(function(use)
         requires = 'nvim-lua/plenary.nvim',
     }
 
-    use {
-        'tpope/vim-fugitive',
-    }
+    use { 'tpope/vim-fugitive' }
+    use { 'tpope/vim-repeat' }
+    use { 'RRethy/nvim-treesitter-textsubjects' }
+    use { 'ThePrimeagen/refactoring.nvim' }
 
     if is_bootstrap then
         require('packer').sync()

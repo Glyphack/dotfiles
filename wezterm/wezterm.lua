@@ -1,4 +1,5 @@
 local wezterm = require 'wezterm'
+local act = wezterm.action
 return {
   font = wezterm.font 'JetBrains Mono',
   font_size = 20.0,
@@ -6,8 +7,16 @@ return {
     {
       key = 'm',
       mods = 'CMD',
-      action = wezterm.action.DisableDefaultAssignment,
+      action = act.DisableDefaultAssignment,
+    },
+    {
+      key = 'K',
+      mods = 'CTRL|SHIFT',
+      action = act.Multiple {
+        act.ClearScrollback 'ScrollbackAndViewport',
+        act.SendKey { key = 'L', mods = 'CTRL' },
+      },
     },
   },
-  color_scheme = 'Cai (Gogh)',
+  color_scheme = 'Erebus (terminal.sexy)',
 }
