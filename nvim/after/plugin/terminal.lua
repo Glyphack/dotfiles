@@ -16,6 +16,9 @@ toggleterm.setup({
   direction = "float",
   close_on_exit = true,
   shell = vim.o.shell,
+  on_create = function(term)
+      term:send("source ~/.virtualenvs/$(cat $VIRTUALFISH_ACTIVATION_FILE)/bin/activate.fish")
+  end,
   float_opts = {
     border = "curved",
     winblend = 0,
