@@ -160,6 +160,7 @@ require('packer').startup(function(use)
     use { 'tpope/vim-repeat' }
     use { 'RRethy/nvim-treesitter-textsubjects' }
     use { 'ThePrimeagen/refactoring.nvim' }
+    use { 'tpope/vim-sleuth' }
 
     if is_bootstrap then
         require('packer').sync()
