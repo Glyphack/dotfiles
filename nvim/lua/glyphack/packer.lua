@@ -161,6 +161,7 @@ require('packer').startup(function(use)
     use { 'RRethy/nvim-treesitter-textsubjects' }
     use { 'ThePrimeagen/refactoring.nvim' }
     use { 'tpope/vim-sleuth' }
+    use { 'mrjones2014/nvim-ts-rainbow' }
 
     if is_bootstrap then
         require('packer').sync()

@@ -2,6 +2,7 @@ require("glyphack.options")
 require("glyphack.remap")
 require("glyphack.packer")
 require("glyphack.null-ls")
+require("glyphack.treesitter")
 
 local augroup = vim.api.nvim_create_augroup
 local MyGroup = augroup('ThePrimeagen', {})

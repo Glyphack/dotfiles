@@ -9,6 +9,7 @@
   co = checkout
   oops = reset --hard 'HEAD@{1}'
   forgot = commit --amend -C HEAD
+  pushf = push --force-with-lease
   lg = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
   wip = for-each-ref --sort='authordate:iso8601' --format=' %(color:green)%(authordate:relative)%09%(color:white)%(refname:short)' refs/heads
   clear-out = "!f() { if [ -z $1 ]; then BRANCH=$(git branch --show-current); else BRANCH=$1; fi; git branch --merged $BRANCH | grep -v $BRANCH$ | xargs git branch -d; }; f"
@@ -27,3 +28,5 @@
     path = ~/Programming/brenntag/.gitconfig-brenntag
 [init]
 	defaultBranch = master
+[push]
+	autoSetupRemote = true
