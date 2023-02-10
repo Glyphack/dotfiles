@@ -1,11 +1,8 @@
 require("glyphack.options")
 require("glyphack.remap")
-require("glyphack.packer")
-require("glyphack.null-ls")
-require("glyphack.treesitter")
 
 local augroup = vim.api.nvim_create_augroup
-local MyGroup = augroup('ThePrimeagen', {})
+local MyGroup = augroup('group', {})
 
 local autocmd = vim.api.nvim_create_autocmd
 local yank_group = augroup('HighlightYank', {})
@@ -40,4 +37,20 @@ vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, {
 })
 
 
--- vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+require("glyphack.packer")
+
+require("glyphack.null-ls")
+require("glyphack.treesitter")

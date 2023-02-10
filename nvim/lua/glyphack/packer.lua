@@ -1,67 +1,55 @@
-local install_path = vim.fn.stdpath 'data' .. '/site/pack/packer/start/packer.nvim'
-local is_bootstrap = false
-if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-    is_bootstrap = true
-    vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim ' .. install_path)
-    vim.cmd [[packadd packer.nvim]]
-end
-
-require('packer').startup(function(use)
-
-    use 'wbthomason/packer.nvim'
-    use {
-        'nvim-telescope/telescope.nvim', tag = '0.1.0',
-        requires = { { 'nvim-lua/plenary.nvim' } }
-    }
-    use({ 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' })
-    use('nvim-treesitter/playground')
-
-    use({
-        'rose-pine/neovim',
-        as = 'rose-pine',
-        config = function()
-            vim.cmd('colorscheme rose-pine')
+require("lazy").setup({
+    {
+        "nvim-telescope/telescope.nvim", tag = '0.1.0',
+        dependencies = { "nvim-lua/plenary.nvim" }
+    },
+    { "nvim-treesitter/nvim-treesitter", build = ':TSUpdate' },
+    {"nvim-treesitter/playground"},
+    {
+        "rose-pine/neovim",
+        name = "rose-pine",
+        config = function(plugin)
+            vim.cmd("colorscheme rose-pine")
         end
-    })
-    use({ 'folke/tokyonight.nvim', })
+    },
+    { "folke/tokyonight.nvim" },
     -- language supports
     -- scala
-    use({ "scalameta/nvim-metals" })
+    { "scalameta/nvim-metals" },
     -- go
-    use({ "leoluz/nvim-dap-go" })
-    use({ "ray-x/go.nvim" })
-    -- -- python
-    use({ "acksld/swenv.nvim" })
-    use({ "mfussenegger/nvim-dap-python" })
-    -- lsp features
-    use {
-        'VonHeikemen/lsp-zero.nvim',
-        requires = {
+    { "leoluz/nvim-dap-go" },
+    { "ray-x/go.nvim" },
+    -- python
+    { "acksld/swenv.nvim" },
+    { "mfussenegger/nvim-dap-python" },
+     -- lsp features
+    {
+        "VonHeikemen/lsp-zero.nvim",
+        dependencies = {
             -- LSP Support
-            { 'neovim/nvim-lspconfig' },
-            { 'williamboman/mason.nvim' },
-            { 'williamboman/mason-lspconfig.nvim' },
+            { "neovim/nvim-lspconfig" },
+            { "williamboman/mason.nvim" },
+            { "williamboman/mason-lspconfig.nvim" },
 
             -- Autocompletion
-            { 'hrsh7th/nvim-cmp' },
-            { 'hrsh7th/cmp-buffer' },
-            { 'hrsh7th/cmp-path' },
-            { 'saadparwaiz1/cmp_luasnip' },
-            { 'hrsh7th/cmp-nvim-lsp' },
-            { 'hrsh7th/cmp-nvim-lua' },
+            { "hrsh7th/nvim-cmp" },
+            { "hrsh7th/cmp-buffer" },
+            { "hrsh7th/cmp-path" },
+            { "saadparwaiz1/cmp_luasnip" },
+            { "hrsh7th/cmp-nvim-lsp" },
+            { "hrsh7th/cmp-nvim-lua" },
 
             -- Snippets
-            { 'L3MON4D3/LuaSnip' },
-            { 'rafamadriz/friendly-snippets' },
+            { "L3MON4D3/LuaSnip" },
+            { "rafamadriz/friendly-snippets" },
         }
-    }
-
-    use("folke/zen-mode.nvim")
-    use({ "ray-x/lsp_signature.nvim" })
-    -- editor assistant
-    use({
+    },
+    {"folke/zen-mode.nvim"},
+    { "ray-x/lsp_signature.nvim" },
+    -- editor assista
+    {
         "danymat/neogen",
-        config = function()
+        config = function(plugin)
             require("neogen").setup {
                 enabled = true,
                 languages = {
@@ -73,57 +61,55 @@ require('packer').startup(function(use)
                 }
             }
         end
-    })
-    use({ 'mzlogin/vim-markdown-toc' })
-    use({ 'sainnhe/everforest' })
-    use({ 'theprimeagen/harpoon' })
-    use({ "simrat39/symbols-outline.nvim" })
-    use({ "tpope/vim-surround" })
-    use({ 'ray-x/guihua.lua' })
-    -- use({ 'hrsh7th/cmp-nvim-lsp-signature-help' })
-    use({ 'ray-x/cmp-treesitter' })
-    use({ 'wakatime/vim-wakatime' })
-    use({ 'krivahtoo/silicon.nvim', run = "./install.sh" })
-    use({ "iamcco/markdown-preview.nvim", run = "cd app && npm install",
-        setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, })
-    use({ 'mbbill/undotree' })
-    use({ 'lewis6991/gitsigns.nvim' })
-    use({ 'andweeb/presence.nvim' })
-    use({
+    },
+    { "mzlogin/vim-markdown-toc" },
+    { "sainnhe/everforest" },
+    { "theprimeagen/harpoon" },
+    { "simrat39/symbols-outline.nvim" },
+    { "tpope/vim-surround" },
+    { "ray-x/guihua.lua" },
+    { "hrsh7th/cmp-nvim-lsp-signature-help" },
+    { "ray-x/cmp-treesitter" },
+    { "wakatime/vim-wakatime" },
+    { "krivahtoo/silicon.nvim", build = "./install.sh" },
+    { "iamcco/markdown-preview.nvim", build = "cd app && npm install",
+        setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, },
+    { "mbbill/undotree" },
+    { "lewis6991/gitsigns.nvim" },
+    { "andweeb/presence.nvim" },
+    {
         "jackMort/ChatGPT.nvim",
         config = function()
             require("chatgpt").setup({})
         end,
-        requires = {
+        dependencies = {
             { "MunifTanjim/nui.nvim" },
             { "nvim-lua/plenary.nvim" },
             { "nvim-telescope/telescope.nvim" },
         }
-    })
-    use {
-        'nvim-tree/nvim-tree.lua',
-        requires = {
-            'nvim-tree/nvim-web-devicons',
+    },
+    {
+        "nvim-tree/nvim-tree.lua",
+        dependencies = {
+            "nvim-tree/nvim-web-devicons",
         },
-        tag = 'nightly' -- optional, updated every week. (see issue #1193)
-    }
+        version = "nightly"
+    },
 
-    use({
-        "jose-elias-alvarez/null-ls.nvim",
-    })
-    use {
-        'numToStr/Comment.nvim',
-        config = function()
-            require('Comment').setup()
+    {"jose-elias-alvarez/null-ls.nvim"},
+   {
+        "numToStr/Comment.nvim",
+        config = function(plugin)
+            require("Comment").setup()
         end
-    }
-    use { 'nvim-lualine/lualine.nvim' }
-    -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
-    use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make', cond = vim.fn.executable 'make' == 1 }
-    use { 'github/copilot.vim' }
-    use { 'akinsho/toggleterm.nvim' }
-    use { 'j-hui/fidget.nvim' }
-    use {
+    },
+   { "nvim-lualine/lualine.nvim" },
+    -- Fuzzy Finder Algorithm which dependencies local dependencies to be built. Only load if `make` is available
+   { "nvim-telescope/telescope-fzf-native.nvim", build = 'make', cond = vim.fn.executable 'make' == 1 },
+   { "github/copilot.vim" },
+   { "akinsho/toggleterm.nvim" },
+   { "j-hui/fidget.nvim" },
+   {
         "gaoDean/autolist.nvim",
         ft = {
             "markdown",
@@ -131,7 +117,7 @@ require('packer').startup(function(use)
             "tex",
             "plaintex",
         },
-        config = function()
+        config = function(plugin)
             local autolist = require("autolist")
             autolist.setup()
             autolist.create_mapping_hook("i", "<CR>", autolist.new)
@@ -150,38 +136,18 @@ require('packer').startup(function(use)
                 end
             })
         end,
-    }
-    use {
-        'ruifm/gitlinker.nvim',
-        requires = 'nvim-lua/plenary.nvim',
-    }
+    },
+   {
+        "ruifm/gitlinker.nvim",
+        dependencies = "nvim-lua/plenary.nvim",
+    },
 
-    use { 'tpope/vim-fugitive' }
-    use { 'tpope/vim-repeat' }
-    use { 'RRethy/nvim-treesitter-textsubjects' }
-    use { 'ThePrimeagen/refactoring.nvim' }
-    use { 'tpope/vim-sleuth' }
-    use { 'mrjones2014/nvim-ts-rainbow' }
+    { "tpope/vim-fugitive" },
+    { "tpope/vim-repeat" },
+    { "RRethy/nvim-treesitter-textsubjects" },
+    { "ThePrimeagen/refactoring.nvim" },
+    { "tpope/vim-sleuth" },
+    { "mrjones2014/nvim-ts-rainbow" },
 
-    if is_bootstrap then
-        require('packer').sync()
-    end
-end)
-
-
-if is_bootstrap then
-    print '=================================='
-    print '    Plugins are being installed'
-    print '    Wait until Packer completes,'
-    print '       then restart nvim'
-    print '=================================='
-    return
-end
-
--- Automatically source and re-compile packer whenever you save this init.lua
-local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
-vim.api.nvim_create_autocmd('BufWritePost', {
-    command = 'source <afile> | PackerCompile',
-    group = packer_group,
-    pattern = vim.fn.expand '$MYVIMRC',
 })
+

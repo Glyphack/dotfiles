@@ -17,7 +17,7 @@ toggleterm.setup({
   close_on_exit = true,
   shell = vim.o.shell,
   on_create = function(term)
-      term:send("if string length -q -- $VIRTUALFISH_ACTIVATION_FILE; vf activate $(cat $VIRTUALFISH_ACTIVATION_FILE); end")
+      term:send("if test -r $VIRTUALFISH_ACTIVATION_FILE; vf activate $(cat $VIRTUALFISH_ACTIVATION_FILE); end")
   end,
   float_opts = {
     border = "curved",

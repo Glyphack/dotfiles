@@ -11,6 +11,14 @@ lsp.ensure_installed({
     'rust_analyzer',
     'jsonls',
     'pyright',
+    'bufls',
+    'ruff_lsp',
+    'bashls',
+    'dockerls',
+    'tailwindcss',
+    'yamlls',
+    'gopls',
+    'golangci_lint_ls',
 })
 
 local cmp = require('cmp')
@@ -28,8 +36,13 @@ cmp_mappings['<Tab>'] = nil
 cmp_mappings['<S-Tab>'] = nil
 
 lsp.setup_nvim_cmp({
-    mapping = cmp_mappings
-})
+    mapping = cmp_mappings,
+    sources = {
+        { name = "path" },
+        { name = "nvim_lsp", keyword_length = 1},
+        { name = "buffer", keyword_length = 3 },
+        { name = "luasnip", keyword_length = 2 },
+}})
 
 lsp.set_preferences({
     suggest_lsp_servers = false,
