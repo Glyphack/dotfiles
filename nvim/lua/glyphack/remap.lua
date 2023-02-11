@@ -22,7 +22,7 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
--- No headache replace
+-- No headache paste
 vim.keymap.set("x", "<leader>p", [["_dP]])
 
 -- to clipboard and from clipboard
@@ -48,7 +48,6 @@ vim.keymap.set("n", "<M-Up>", ":resize +2<CR>", opts)
 vim.keymap.set("n", "<M-Down>", ":resize -2<CR>", opts)
 vim.keymap.set("n", "<M-Left>", ":vertical resize -2<CR>", opts)
 vim.keymap.set("n", "<M-Right>", ":vertical resize +2<CR>", opts)
-vim.keymap.set("i", "qq", "<ESC>", opts)
 
 
 vim.keymap.set("n", "<leader>xx", ":source %<CR>", opts)

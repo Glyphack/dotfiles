@@ -6,6 +6,7 @@ metals.sbt
 *metals*
 *bloop*
 *pyrightconfig.json
+.venv
 
 # env files
 .env.prod

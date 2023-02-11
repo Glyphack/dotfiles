@@ -105,7 +105,7 @@ require("lazy").setup({
     },
    { "nvim-lualine/lualine.nvim" },
     -- Fuzzy Finder Algorithm which dependencies local dependencies to be built. Only load if `make` is available
-   { "nvim-telescope/telescope-fzf-native.nvim", build = 'make', cond = vim.fn.executable 'make' == 1 },
+   { "nvim-telescope/telescope-fzf-native.nvim", build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'},
    { "github/copilot.vim" },
    { "akinsho/toggleterm.nvim" },
    { "j-hui/fidget.nvim" },

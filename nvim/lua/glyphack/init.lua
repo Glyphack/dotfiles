@@ -13,8 +13,7 @@ end
 
 autocmd('TextYankPost', {
     group = yank_group,
-    pattern = '*',
-    callback = function()
+    pattern = '*', callback = function()
         vim.highlight.on_yank({
             higroup = 'IncSearch',
             timeout = 40,
@@ -53,4 +52,3 @@ vim.opt.rtp:prepend(lazypath)
 require("glyphack.packer")
 
 require("glyphack.null-ls")
-require("glyphack.treesitter")
