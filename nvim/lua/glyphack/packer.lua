@@ -38,6 +38,7 @@ require("lazy").setup({
             { "saadparwaiz1/cmp_luasnip" },
             { "hrsh7th/cmp-nvim-lsp" },
             { "hrsh7th/cmp-nvim-lua" },
+            { "hrsh7th/cmp-nvim-lsp-signature-help" },
 
             -- Snippets
             { "L3MON4D3/LuaSnip" },
@@ -148,6 +149,7 @@ require("lazy").setup({
     { "ThePrimeagen/refactoring.nvim" },
     { "tpope/vim-sleuth" },
     { "mrjones2014/nvim-ts-rainbow" },
+    { "phelipetls/jsonpath.nvim" },
 
 })
 

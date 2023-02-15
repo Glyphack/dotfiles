@@ -6,7 +6,7 @@ require('fidget').setup()
 
 lsp.ensure_installed({
     'tsserver',
-    'sumneko_lua',
+    'lua_ls',
     'rust_analyzer',
     'jsonls',
     'pyright',
@@ -41,9 +41,10 @@ lsp.setup_nvim_cmp({
     mapping = cmp_mappings,
     sources = {
         { name = "path" },
-        { name = "nvim_lsp", keyword_length = 1 },
-        { name = "buffer",   keyword_length = 3 },
-        { name = "luasnip",  keyword_length = 2 },
+        { name = "nvim_lsp",               keyword_length = 1 },
+        { name = "buffer",                 keyword_length = 3 },
+        { name = "luasnip",                keyword_length = 2 },
+        { name = 'nvim_lsp_signature_help' },
     }
 })
 
@@ -273,7 +274,7 @@ local opts = {
 
 lsp.configure("jsonls", opts)
 
-lsp.configure("sumneko_lua", {
+lsp.configure("lua_ls", {
     settings = {
         Lua = {
             diagnostics = {
