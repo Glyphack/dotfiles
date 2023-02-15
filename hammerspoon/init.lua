@@ -1,49 +1,49 @@
-local hyper     = {"alt"}
-local lesshyper = {"ctrl", "alt"}
+local hyper      = { "alt" }
+local lesshyper  = { "ctrl", "alt" }
 local GlobalMute = hs.loadSpoon("GlobalMute")
 GlobalMute:bindHotkeys({
-  unmute = {lesshyper, "u"},
-  mute   = {lesshyper, "m"},
-  toggle = {hyper, "t"}
+    unmute = { lesshyper, "u" },
+    mute   = { lesshyper, "m" },
+    toggle = { hyper, "t" }
 })
 GlobalMute:configure({
-  unmute_background = 'file:///Library/Desktop%20Pictures/Solid%20Colors/Red%20Orange.png',
-  mute_background   = 'file:///Library/Desktop%20Pictures/Solid%20Colors/Turquoise%20Green.png',
-  enforce_desired_state = true,
-  stop_sococo_for_zoom  = true,
-  unmute_title = "<---- THEY CAN HEAR YOU -----",
-  mute_title = "<-- MUTE",
-  -- change_screens = "SCREENNAME1, SCREENNAME2"  -- This will only change the background of the specific screens.  string.find()
+    unmute_background     = 'file:///Library/Desktop%20Pictures/Solid%20Colors/Red%20Orange.png',
+    mute_background       = 'file:///Library/Desktop%20Pictures/Solid%20Colors/Turquoise%20Green.png',
+    enforce_desired_state = true,
+    stop_sococo_for_zoom  = true,
+    unmute_title          = "<---- THEY CAN HEAR YOU -----",
+    mute_title            = "<-- MUTE",
+    -- change_screens = "SCREENNAME1, SCREENNAME2"  -- This will only change the background of the specific screens.  string.find()
 })
 spoon.GlobalMute._logger.level = 3
 
 function reload(files)
   for _, file in pairs(files) do
-    if file:sub(-4) == ".lua" then
-      hs.notify.new({title='Reloading', informativeText='Reloading Hammerspoon config'}):send()
+    if file:sub( -4) == ".lua" then
+      hs.notify.new({ title = 'Reloading', informativeText = 'Reloading Hammerspoon config' }):send()
       hs.reload()
       return
     end
   end
 end
 
-hs.hotkey.bind({"alt"}, "R", function()
-    hs.reload()
+hs.hotkey.bind({ "alt" }, "R", function()
+  hs.reload()
 end)
 
 function audiodeviceDeviceCallback(event)
-    print("audiodeviceDeviceCallback: "..event)
-   if event == "dIn " then
-       current = hs.audiodevice.defaultInputDevice():name()
-       print("Current device: "..current)
-       if current["name"] == "External Microphone" then
-           print("Forcing default output to Internal Speakers")
-            hs.timer.doAfter(2, function() hs.audiodevice.findOutputByName("Macbook Pro Speakers"):setDefaultOutputDevice() end)
-       end
-   end
+  print("audiodeviceDeviceCallback: " .. event)
+  if event == "dIn " then
+    current = hs.audiodevice.defaultInputDevice():name()
+    print("Current device: " .. current)
+    if current == "External Microphone" then
+      print("Forcing default output to Internal Speakers")
+      hs.audiodevice.findOutputByName("MacBook Pro Speakers"):setDefaultOutputDevice()
+    end
+  end
 end
+
 hs.audiodevice.watcher.setCallback(audiodeviceDeviceCallback)
 hs.audiodevice.watcher.start()
 
 reloadWatcher = hs.pathwatcher.new(os.getenv('HOME') .. '/.hammerspoon/', reload):start()
-
