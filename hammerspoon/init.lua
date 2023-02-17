@@ -31,19 +31,25 @@ hs.hotkey.bind({ "alt" }, "R", function()
   hs.reload()
 end)
 
-function audiodeviceDeviceCallback(event)
-  print("audiodeviceDeviceCallback: " .. event)
-  if event == "dIn " then
+local function switchOutputAfterExternalMicConnected()
     current = hs.audiodevice.defaultInputDevice():name()
     print("Current device: " .. current)
     if current == "External Microphone" then
       print("Forcing default output to Internal Speakers")
       hs.audiodevice.findOutputByName("MacBook Pro Speakers"):setDefaultOutputDevice()
     end
+end
+
+local function audiodeviceDeviceCallback(event)
+  print("audiodeviceDeviceCallback: " .. event)
+  if event == "dIn " then
+    switchOutputAfterExternalMicConnected()
   end
 end
 
 hs.audiodevice.watcher.setCallback(audiodeviceDeviceCallback)
 hs.audiodevice.watcher.start()
+
+switchOutputAfterExternalMicConnected()
 
 reloadWatcher = hs.pathwatcher.new(os.getenv('HOME') .. '/.hammerspoon/', reload):start()
