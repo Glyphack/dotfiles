@@ -150,6 +150,7 @@ require("lazy").setup({
     { "tpope/vim-sleuth" },
     { "mrjones2014/nvim-ts-rainbow" },
     { "phelipetls/jsonpath.nvim" },
+    { "folke/neodev.nvim"},
 
 })
 

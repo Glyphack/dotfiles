@@ -1,4 +1,6 @@
 local lsp = require("lsp-zero")
+require("neodev").setup({
+})
 
 lsp.preset("recommended")
 
@@ -280,6 +282,9 @@ lsp.configure("lua_ls", {
             diagnostics = {
                 globals = { 'vim' },
             },
+            completion = {
+                callSnippet = "Replace"
+            }
         },
         format = {
             enable = true,
