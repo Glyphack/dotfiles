@@ -8,7 +8,7 @@ local GlobalMute = hs.loadSpoon("GlobalMute")
 GlobalMute:bindHotkeys({
     unmute = { lesshyper, "u" },
     mute   = { lesshyper, "m" },
-    toggle = { hyper, "t" }
+    toggle = { hyper, "m" }
 })
 GlobalMute:configure({
     unmute_background     = 'file:///Library/Desktop%20Pictures/Solid%20Colors/Red%20Orange.png',

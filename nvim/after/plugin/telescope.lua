@@ -12,7 +12,7 @@ require('telescope').setup {
 }
 pcall(require('telescope').load_extension, 'fzf')
 
-vim.keymap.set('n', '<leader>pp', builtin.find_files, {})
+vim.keymap.set('n', '<leader><leader>', builtin.find_files, {})
 vim.keymap.set('n', '<leader>pg', builtin.git_files, {})
 vim.keymap.set('n', '<leader>ps', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })

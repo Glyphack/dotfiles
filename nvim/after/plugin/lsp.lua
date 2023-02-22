@@ -21,17 +21,17 @@ lsp.ensure_installed({
     'gopls',
     'golangci_lint_ls',
     'prismals',
-    'marksman',
+    -- 'marksman',
 })
 
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-        ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-        ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-        ['<C-i>'] = cmp.mapping.confirm({ select = true }),
-        ["<C-Space>"] = cmp.mapping.complete(),
-    })
+    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<C-i>'] = cmp.mapping.confirm({ select = true }),
+    ["<C-Space>"] = cmp.mapping.complete(),
+})
 
 -- disable completion with tab
 -- this helps with copilot setup
@@ -262,7 +262,7 @@ end
 
 local extended_schemas = extend(schemas, default_schemas)
 
-local opts = {
+lsp.configure("jsonls", {
     settings = {
         json = {
             schemas = extended_schemas,
@@ -271,10 +271,7 @@ local opts = {
     on_attach = function(client, bufnr)
         client.server_capabilities.documentFormattingProvider = false
     end
-}
-
-
-lsp.configure("jsonls", opts)
+})
 
 lsp.configure("lua_ls", {
     settings = {
