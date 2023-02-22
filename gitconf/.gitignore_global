@@ -14,3 +14,6 @@ metals.sbt
 
 # local dbs
 *.db
+
+# cspell
+cspell.json
