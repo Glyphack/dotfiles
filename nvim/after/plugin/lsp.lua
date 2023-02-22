@@ -61,13 +61,12 @@ lsp.set_preferences({
 })
 
 
-local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
-
 lsp.on_attach(function(client, bufnr)
     local opts = { buffer = bufnr, remap = false }
 
-    if client.name == 'tsserver' then
-        client.server_capabilities.documentFormattingProvider = true
+    if client.name == 'tsserver' or client.name == 'jsonls' then
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentFormattingRangeProvider = false
     end
 
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
@@ -268,9 +267,6 @@ lsp.configure("jsonls", {
             schemas = extended_schemas,
         },
     },
-    on_attach = function(client, bufnr)
-        client.server_capabilities.documentFormattingProvider = false
-    end
 })
 
 lsp.configure("lua_ls", {
@@ -294,3 +290,5 @@ lsp.configure("lua_ls", {
 })
 
 lsp.setup()
+
+require("glyphack.null-ls")

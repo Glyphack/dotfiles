@@ -41,6 +41,8 @@ null_ls.setup({
         formatting.buf,
         diagnostics.buf,
 
+        formatting.rustfmt,
+
         formatting.markdownlint,
         diagnostics.markdownlint,
 

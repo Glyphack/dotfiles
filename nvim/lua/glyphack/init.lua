@@ -51,4 +51,3 @@ vim.opt.rtp:prepend(lazypath)
 
 require("glyphack.packer")
 
-require("glyphack.null-ls")
