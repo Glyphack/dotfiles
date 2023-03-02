@@ -39,6 +39,7 @@ require("lazy").setup({
             { "hrsh7th/cmp-nvim-lsp" },
             { "hrsh7th/cmp-nvim-lua" },
             { "hrsh7th/cmp-nvim-lsp-signature-help" },
+            { "lukas-reineke/cmp-rg" },
 
             -- Snippets
             { "L3MON4D3/LuaSnip" },
@@ -151,6 +152,8 @@ require("lazy").setup({
     { "mrjones2014/nvim-ts-rainbow" },
     { "phelipetls/jsonpath.nvim" },
     { "folke/neodev.nvim"},
+
+    { "antosha417/nvim-lsp-file-operations" },
 
 })
 
