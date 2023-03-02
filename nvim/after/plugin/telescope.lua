@@ -12,13 +12,17 @@ require('telescope').setup {
 }
 pcall(require('telescope').load_extension, 'fzf')
 
-vim.keymap.set('n', '<leader><leader>', builtin.find_files, {})
-vim.keymap.set('n', '<leader>pg', builtin.git_files, {})
+vim.keymap.set('n', '<leader><leader>', function()
+    builtin.find_files({ no_ignore = true })
+end, {})
+vim.keymap.set('n', '<leader>pg', function()
+    builtin.git_files()
+end, {})
 vim.keymap.set('n', '<leader>ps', builtin.live_grep, {})
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
 vim.keymap.set('n', '<leader>/', function()
-  builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
-    previewer = false,
-  })
+    builtin.current_buffer_fuzzy_find({
+        layout_strategy = "vertical",
+        preview_height = 0.4,
+    })
 end, { desc = '[/] Fuzzily search in current buffer]' })
