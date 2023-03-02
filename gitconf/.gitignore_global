@@ -8,6 +8,9 @@ metals.sbt
 *pyrightconfig.json
 .venv
 
+# local scripts
+*helper_*.py
+
 # env files
 .env.prod
 .env.test
