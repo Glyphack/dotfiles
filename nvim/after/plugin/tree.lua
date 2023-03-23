@@ -23,7 +23,6 @@ tree.setup({
         }
     },
     filters = { custom = { "^.git" }, git_clean = false, exclude = { ".git", "node_modules" } },
-    render = { git = { enabled = false, ignore = false } },
 }
 )
 

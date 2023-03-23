@@ -43,7 +43,7 @@ null_ls.setup({
 
         formatting.rustfmt,
 
-        formatting.markdownlint,
+        -- formatting.markdownlint,
         diagnostics.markdownlint,
 
         formatting.prettierd,
@@ -54,6 +54,9 @@ null_ls.setup({
         formatting.shfmt,
         formatting.packer,
 
+        formatting.sqlfluff.with({
+            extra_args = { "--dialect", "sparksql" }, -- change to your dialect
+        }),
         diagnostics.sqlfluff.with({
             extra_args = { "--dialect", "sparksql" }, -- change to your dialect
         }),

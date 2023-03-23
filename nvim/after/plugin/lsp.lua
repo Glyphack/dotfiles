@@ -72,6 +72,10 @@ lsp.on_attach(function(client, bufnr)
         client.server_capabilities.documentFormattingRangeProvider = false
     end
 
+    vim.keymap.set('n', 'gD', ':Glance definitions<CR>')
+    vim.keymap.set('n', 'gr', '<CMD>Glance references<CR>')
+    vim.keymap.set('n', 'gy', '<CMD>Glance type_definitions<CR>')
+    vim.keymap.set('n', 'gi', '<CMD>Glance implementations<CR>')
     vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
     vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
     vim.keymap.set("n", "<leader>lws", vim.lsp.buf.workspace_symbol, opts)

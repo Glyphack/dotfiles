@@ -1,10 +1,11 @@
 require("lazy").setup({
     {
-        "nvim-telescope/telescope.nvim", tag = '0.1.0',
+        "nvim-telescope/telescope.nvim",
+        tag = '0.1.0',
         dependencies = { "nvim-lua/plenary.nvim" }
     },
     { "nvim-treesitter/nvim-treesitter", build = ':TSUpdate' },
-    {"nvim-treesitter/playground"},
+    { "nvim-treesitter/playground" },
     {
         "rose-pine/neovim",
         name = "rose-pine",
@@ -22,7 +23,7 @@ require("lazy").setup({
     -- python
     { "acksld/swenv.nvim" },
     { "mfussenegger/nvim-dap-python" },
-     -- lsp features
+    -- lsp features
     {
         "VonHeikemen/lsp-zero.nvim",
         dependencies = {
@@ -46,7 +47,7 @@ require("lazy").setup({
             { "rafamadriz/friendly-snippets" },
         }
     },
-    {"folke/zen-mode.nvim"},
+    { "folke/zen-mode.nvim" },
     { "ray-x/lsp_signature.nvim" },
     -- editor assista
     {
@@ -73,9 +74,13 @@ require("lazy").setup({
     { "hrsh7th/cmp-nvim-lsp-signature-help" },
     { "ray-x/cmp-treesitter" },
     { "wakatime/vim-wakatime" },
-    { "krivahtoo/silicon.nvim", build = "./install.sh" },
-    { "iamcco/markdown-preview.nvim", build = "cd app && npm install",
-        setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, },
+    { "krivahtoo/silicon.nvim",             build = "./install.sh" },
+    {
+        "iamcco/markdown-preview.nvim",
+        build = "cd app && npm install",
+        setup = function() vim.g.mkdp_filetypes = { "markdown" } end,
+        ft = { "markdown" },
+    },
     { "mbbill/undotree" },
     { "lewis6991/gitsigns.nvim" },
     { "andweeb/presence.nvim" },
@@ -98,20 +103,24 @@ require("lazy").setup({
         version = "nightly"
     },
 
-    {"jose-elias-alvarez/null-ls.nvim"},
-   {
+    { "jose-elias-alvarez/null-ls.nvim" },
+    {
         "numToStr/Comment.nvim",
         config = function(plugin)
             require("Comment").setup()
         end
     },
-   { "nvim-lualine/lualine.nvim" },
+    { "nvim-lualine/lualine.nvim" },
     -- Fuzzy Finder Algorithm which dependencies local dependencies to be built. Only load if `make` is available
-   { "nvim-telescope/telescope-fzf-native.nvim", build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'},
-   { "github/copilot.vim" },
-   { "akinsho/toggleterm.nvim" },
-   { "j-hui/fidget.nvim" },
-   {
+    {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        build =
+        'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+    },
+    { "github/copilot.vim" },
+    { "akinsho/toggleterm.nvim" },
+    { "j-hui/fidget.nvim" },
+    {
         "gaoDean/autolist.nvim",
         ft = {
             "markdown",
@@ -139,7 +148,7 @@ require("lazy").setup({
             })
         end,
     },
-   {
+    {
         "ruifm/gitlinker.nvim",
         dependencies = "nvim-lua/plenary.nvim",
     },
@@ -151,9 +160,20 @@ require("lazy").setup({
     { "tpope/vim-sleuth" },
     { "mrjones2014/nvim-ts-rainbow" },
     { "phelipetls/jsonpath.nvim" },
-    { "folke/neodev.nvim"},
+    { "folke/neodev.nvim" },
 
     { "antosha417/nvim-lsp-file-operations" },
-
+    {
+        "DNLHC/glance.nvim",
+        config = function(plugin)
+            require('glance').setup({
+            })
+        end
+    },
+    {
+        "AckslD/nvim-neoclip.lua",
+        config = function()
+            require('neoclip').setup()
+        end
+    }
 })
-
