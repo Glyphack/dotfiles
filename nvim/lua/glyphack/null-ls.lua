@@ -61,7 +61,7 @@ null_ls.setup({
             extra_args = { "--dialect", "sparksql" }, -- change to your dialect
         }),
 
-        diagnostics.cspell,
-        code_actions.cspell,
+        diagnostics.codespell,
+        code_actions.codespell,
     },
 })
