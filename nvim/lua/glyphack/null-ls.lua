@@ -26,14 +26,6 @@ null_ls.setup({
         formatting.isort.with({
             extra_args = { "--line-length", "79", "--ca", "--profile", "black", "--float-to-top" },
         }),
-        formatting.black.with({
-            -- extra_args = { "--line-length", "79" },
-        }),
-        -- formatting.ruff.with({
-        --     extra_args = { "--line-length", "79" },
-        -- }),
-        diagnostics.ruff,
-
         formatting.scalafmt,
 
         formatting.goimports,
@@ -43,7 +35,6 @@ null_ls.setup({
 
         formatting.rustfmt,
 
-        -- formatting.markdownlint,
         diagnostics.markdownlint,
 
         formatting.prettierd,
@@ -62,6 +53,6 @@ null_ls.setup({
         }),
 
         diagnostics.codespell,
-        code_actions.codespell,
+        formatting.codespell,
     },
 })

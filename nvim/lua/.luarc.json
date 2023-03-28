@@ -1,0 +1,8 @@
+{
+    "workspace.library": [
+        "/Users/glyphack/.local/share/nvim/lazy/neodev.nvim/types/nightly",
+        "/usr/local/Cellar/neovim/HEAD-165b07b/share/nvim/runtime/lua",
+        "/Users/glyphack/Programming/dotfiles/nvim/lua",
+        "${3rd}/luv/library"
+    ]
+}
