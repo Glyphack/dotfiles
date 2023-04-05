@@ -9,7 +9,7 @@ metals.sbt
 .venv
 
 # local scripts
-*helper_*.py
+local_script*.py
 
 # env files
 .env.prod

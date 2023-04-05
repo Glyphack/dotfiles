@@ -17,14 +17,10 @@ end, {})
 vim.keymap.set('n', '<leader><leader>', function()
     builtin.git_files()
 end, {})
+vim.keymap.set('n', '<leader>sy', builtin.lsp_document_symbols, {})
 vim.keymap.set('n', '<leader>ps', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader>/', function()
-    builtin.current_buffer_fuzzy_find({
-        layout_strategy = "vertical",
-        preview_height = 0.4,
-    })
-end, { desc = '[/] Fuzzily search in current buffer]' })
+vim.keymap.set('n', '<leader>?', builtin.oldfiles, { desc = '[?] Find recently opened files' })
+vim.keymap.set('n', '<leader>/', builtin.current_buffer_fuzzy_find, {})
 
 vim.keymap.set('n', '<leader>yh', function()
     require('telescope').extensions.neoclip.default()

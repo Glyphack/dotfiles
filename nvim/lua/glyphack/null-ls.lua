@@ -26,6 +26,7 @@ null_ls.setup({
         formatting.isort.with({
             extra_args = { "--line-length", "79", "--ca", "--profile", "black", "--float-to-top" },
         }),
+        formatting.black,
         formatting.scalafmt,
 
         formatting.goimports,
@@ -53,6 +54,6 @@ null_ls.setup({
         }),
 
         diagnostics.codespell,
-        formatting.codespell,
+        -- formatting.codespell,
     },
 })
