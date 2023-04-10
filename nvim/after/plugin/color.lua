@@ -1,7 +1,7 @@
 function ColorMyPencils(color)
     color = color or "rose-pine"
 
-    vim.o.background = "light"
+    vim.o.background = "dark"
 
     vim.cmd.colorscheme(color)
 
