@@ -42,7 +42,6 @@ null_ls.setup({
         formatting.prismafmt,
         -- diagnostics.eslint_d,
 
-        diagnostics.hadolint,
         formatting.shfmt,
         formatting.packer,
 
@@ -53,7 +52,9 @@ null_ls.setup({
             extra_args = { "--dialect", "sparksql" }, -- change to your dialect
         }),
 
-        diagnostics.codespell,
+        diagnostics.codespell.with({
+            extra_args = { "--L", "crate" },
+        }),
         -- formatting.codespell,
     },
 })

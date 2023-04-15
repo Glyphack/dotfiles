@@ -302,6 +302,14 @@ lsp.configure("lua_ls", {
 lsp.configure("ruff_lsp", {
 })
 
+lsp.configure("yamlls", {
+  settings = {
+    yaml = {
+      keyOrdering = false
+    }
+  }
+})
+
 lsp.setup()
 
 require("glyphack.null-ls")

@@ -5,7 +5,7 @@ require('nvim-treesitter.configs').setup {
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
   incremental_selection = {
-    enable = true,
+    enable = false,
     keymaps = {
       init_selection = '<c-space>',
       node_incremental = '<c-space>',
@@ -15,7 +15,7 @@ require('nvim-treesitter.configs').setup {
   },
   textobjects = {
     select = {
-      enable = true,
+      enable = false,
       lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
       keymaps = {
         -- You can use the capture groups defined in textobjects.scm
@@ -28,7 +28,7 @@ require('nvim-treesitter.configs').setup {
       },
     },
     move = {
-      enable = true,
+      enable = false,
       set_jumps = true, -- whether to set jumps in the jumplist
       goto_next_start = {
         [']m'] = '@function.outer',
@@ -48,7 +48,7 @@ require('nvim-treesitter.configs').setup {
       },
     },
     swap = {
-      enable = true,
+      enable = false,
       swap_next = {
         ['<leader>a'] = '@parameter.inner',
       },
