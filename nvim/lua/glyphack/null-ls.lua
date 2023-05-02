@@ -38,7 +38,9 @@ null_ls.setup({
 
         diagnostics.markdownlint,
 
-        formatting.prettierd,
+        formatting.prettierd.with({
+            filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue", "css", "scss", "less", "html", "jsonc", "yaml", "markdown", "markdown.mdx", "graphql", "handlebars" }
+        }),
         formatting.prismafmt,
         -- diagnostics.eslint_d,
 
