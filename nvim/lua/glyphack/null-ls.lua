@@ -36,6 +36,7 @@ null_ls.setup({
 
         formatting.rustfmt,
 
+        formatting.markdownlint,
         diagnostics.markdownlint,
 
         formatting.prettierd.with({
