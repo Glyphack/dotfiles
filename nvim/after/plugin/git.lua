@@ -17,13 +17,13 @@ local function map(mode, l, r, opts)
 end
 
 -- Navigation
-map('n', ']c', function()
+map('n', ']g', function()
     if vim.wo.diff then return ']c' end
     vim.schedule(function() gs.next_hunk() end)
     return '<Ignore>'
 end, { expr = true })
 
-map('n', '[c', function()
+map('n', '[g', function()
     if vim.wo.diff then return '[c' end
     vim.schedule(function() gs.prev_hunk() end)
     return '<Ignore>'
@@ -38,10 +38,10 @@ vim.api.nvim_set_keymap('n', '<leader>gS', '<cmd>:Gitsigns stage_buffer<cr>', {}
 vim.api.nvim_set_keymap('n', '<leader>gwd', '<cmd>:Gitsigns toggle_word_diff<cr>', {})
 
 require("gitlinker").setup()
-vim.api.nvim_set_keymap('n', '<leader>gb',
-    '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".open_in_browser})<cr>'
+vim.api.nvim_set_keymap('n', '<leader>gc',
+    '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".copy_to_clipboard})<cr>'
     , { silent = true })
 
-vim.api.nvim_set_keymap('v', '<leader>gb',
-    '<cmd>lua require"gitlinker".get_buf_range_url("v", {action_callback = require"gitlinker.actions".open_in_browser})<cr>'
+vim.api.nvim_set_keymap('v', '<leader>go',
+    '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".open_in_browser})<cr>'
     , {})
