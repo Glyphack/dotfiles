@@ -1,9 +1,9 @@
 [user]
-	name = Glyphack
+  name = Glyphack
 	email = sh.hooshyari@gmail.com
     signingkey = 145D38B03F8621FF
 [core]
-	excludesfile = /Users/glyphack/.gitignore_global
+	excludesfile = ~/.gitignore_global
 
 [alias]
   co = checkout
@@ -24,8 +24,6 @@
 [url "git@gitlab.com:"]
  insteadOf = https://gitlab.com/
 
-[includeIf "gitdir:~/Programming/brenntag/"]
-    path = ~/Programming/brenntag/.gitconfig-brenntag
 [init]
 	defaultBranch = master
 [push]
