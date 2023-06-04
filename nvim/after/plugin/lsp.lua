@@ -22,6 +22,8 @@ lsp.ensure_installed({
     'golangci_lint_ls',
     'prismals',
     'ruff_lsp',
+    'ruby_ls',
+    'sorbet',
     -- 'marksman',
 })
 

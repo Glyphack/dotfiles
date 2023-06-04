@@ -10,8 +10,9 @@ link:
 	stow --target=${HOME} gitconf
 
 link-mac:
-	stow --adopt --target=${HOME}/.config/fish fish
-	stow --adopt --target=${HOME}/.config starship
+	mkdir -p ${HOME}/.config
+	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
+	mkdir -p ${HOME}/.config/starship && stow --adopt --target=${HOME}/.config starship
 	stow --target=${HOME} gitconf
 	mkdir -p ${HOME}/.config/nvim && stow --adopt --target=${HOME}/.config/nvim nvim
 	mkdir -p ${HOME}/.config/fd && stow --adopt --target=${HOME}/.config/fd fd

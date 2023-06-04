@@ -27,7 +27,7 @@ null_ls.setup({
             extra_args = { "--line-length", "79", "--ca", "--profile", "black", "--float-to-top" },
         }),
         formatting.black,
-        formatting.scalafmt,
+        -- formatting.scalafmt,
 
         formatting.goimports,
         formatting.gofmt,

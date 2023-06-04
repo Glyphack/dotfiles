@@ -17,9 +17,6 @@ tree.setup({
     },
     view = {
         mappings = {
-            list = {
-                { key = "T", action = "open_tab_silent", action_cb = open_tab_silent },
-            },
         }
     },
     filters = { custom = { "^.git" }, git_clean = false, exclude = { ".git", "node_modules" } },
