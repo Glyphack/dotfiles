@@ -23,7 +23,7 @@ switch (uname)
     case Linux
         set -x VIMDATA ~/.local/share/nvim
     case '*'
-	eval "$(/opt/homebrew/bin/brew shellenv)"
+	eval "(/opt/homebrew/bin/brew shellenv)"
         set -x VIMDATA ~/.local/share/nvim
         set -x PATH $PATH  /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
 end
