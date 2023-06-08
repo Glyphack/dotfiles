@@ -178,5 +178,5 @@ require("lazy").setup({
         config = function()
             require('neoclip').setup()
         end
-    }
+    },
 })

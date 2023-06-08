@@ -24,6 +24,7 @@ lsp.ensure_installed({
     'ruff_lsp',
     'ruby_ls',
     'sorbet',
+    'kotlin_language_server',
     -- 'marksman',
 })
 

@@ -36,6 +36,9 @@ null_ls.setup({
 
         formatting.rustfmt,
 
+        diagnostics.ktlint,
+        formatting.ktlint,
+
         formatting.markdownlint,
         diagnostics.markdownlint,
 
