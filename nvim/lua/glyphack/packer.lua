@@ -4,6 +4,13 @@ require("lazy").setup({
         tag = '0.1.0',
         dependencies = { "nvim-lua/plenary.nvim" }
     },
+    {
+        "nvim-telescope/telescope-frecency.nvim",
+        dependencies = { "kkharji/sqlite.lua" },
+        config = function(plugin)
+            require("telescope").load_extension("frecency")
+        end
+    },
     { "nvim-treesitter/nvim-treesitter", build = ':TSUpdate' },
     { "nvim-treesitter/playground" },
     {
@@ -179,4 +186,7 @@ require("lazy").setup({
             require('neoclip').setup()
         end
     },
+    { "beeender/Comrade" },
+    { "tpope/vim-rake" },
+    { "tpope/vim-rails" },
 })
