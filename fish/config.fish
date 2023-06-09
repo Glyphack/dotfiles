@@ -13,7 +13,6 @@ set -x PYENV_ROOT $HOME/.pyenv
 set -x POETRY $HOME/.poetry
 set -x GOPATH $HOME/go
 
-set -x PATH $PATH $PYENV_ROOT/bin $GOPATH/bin $JAVA_HOME $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE
 
 # Python
 set -x VIRTUALFISH_ACTIVATION_FILE .venv
@@ -23,10 +22,13 @@ switch (uname)
     case Linux
         set -x VIMDATA ~/.local/share/nvim
     case '*'
-	eval "(/opt/homebrew/bin/brew shellenv)"
+        set -x JAVA_HOME /opt/homebrew/Cellar/openjdk/20\x2e0\x2e1/libexec/openjdk\x2ejdk/Contents/Home
+        set -U fish_user_paths /opt/homebrew/bin/ $fish_user_paths
         set -x VIMDATA ~/.local/share/nvim
         set -x PATH $PATH  /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
 end
+
+set -x PATH $PATH $PYENV_ROOT/bin $GOPATH/bin $JAVA_HOME $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE
 
 starship init fish | source
 status is-login; and pyenv init --path | source
