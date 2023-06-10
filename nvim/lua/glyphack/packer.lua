@@ -56,9 +56,15 @@ require("lazy").setup({
     },
     { "folke/zen-mode.nvim" },
     { "ray-x/lsp_signature.nvim" },
+    {
+        "folke/trouble.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        opts = {
+        },
+    },
     -- debugger
     { "mfussenegger/nvim-dap" },
-    { "rcarriga/nvim-dap-ui",    dependencies = { { "mfussenegger/nvim-dap" } } },
+    { "rcarriga/nvim-dap-ui", dependencies = { { "mfussenegger/nvim-dap" } } },
     -- editor assista
     {
         "danymat/neogen",
