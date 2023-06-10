@@ -76,6 +76,11 @@ require("lazy").setup({
                         template = {
                             annotation_convention = "numpydoc"
                         }
+                    },
+                    rust = {
+                        template = {
+                            annotation_convention = "rustdoc"
+                        }
                     }
                 }
             }
@@ -192,7 +197,6 @@ require("lazy").setup({
             require('neoclip').setup()
         end
     },
-    { "beeender/Comrade" },
     { "tpope/vim-rake" },
     { "tpope/vim-rails" },
 })
