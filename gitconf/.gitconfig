@@ -31,5 +31,6 @@
 	defaultBranch = master
 [push]
 	autoSetupRemote = true
+	default = current
 [fetch]
 	prune = true
