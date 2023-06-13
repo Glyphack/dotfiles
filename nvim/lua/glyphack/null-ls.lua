@@ -37,13 +37,16 @@ null_ls.setup({
         formatting.rustfmt,
 
         diagnostics.ktlint,
-        formatting.ktlint,
+        formatting.ktlint.with({
+            extra_args = { "--code-style", "intellij_idea" },
+        }),
 
         formatting.markdownlint,
         diagnostics.markdownlint,
 
         formatting.prettierd.with({
-            filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue", "css", "scss", "less", "html", "jsonc", "yaml", "markdown", "markdown.mdx", "graphql", "handlebars" }
+            filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue", "css", "scss", "less",
+                "html", "jsonc", "yaml", "markdown", "markdown.mdx", "graphql", "handlebars" }
         }),
         formatting.prismafmt,
         -- diagnostics.eslint_d,
