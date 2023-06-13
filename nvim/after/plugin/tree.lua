@@ -26,4 +26,4 @@ tree.setup({
 require("lsp-file-operations").setup()
 
 
-vim.keymap.set("n", "<leader>pe", ":NvimTreeFindFileToggle<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-p>", ":NvimTreeFindFileToggle<CR>", { noremap = true, silent = true })
