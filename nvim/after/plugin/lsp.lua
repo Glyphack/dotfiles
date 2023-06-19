@@ -17,6 +17,10 @@ lsp.ensure_installed({
     'bashls',
     'dockerls',
     'tailwindcss',
+    'emmet_ls',
+    'eslint',
+    'graphql',
+    'rome',
     'yamlls',
     'gopls',
     'golangci_lint_ls',
@@ -31,10 +35,10 @@ lsp.ensure_installed({
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-    ['<C-i>'] = cmp.mapping.confirm({ select = true }),
-    ["<C-Space>"] = cmp.mapping.complete(),
+    ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
 })
 
 -- disable completion with tab
@@ -51,9 +55,18 @@ lsp.setup_nvim_cmp({
         { name = "buffer",                 keyword_length = 3 },
         { name = "luasnip",                keyword_length = 2 },
         { name = 'nvim_lsp_signature_help' },
-        {
-            name = "rg",
-        },
+        { name = "rg" },
+    }
+})
+
+lsp.format_on_save({
+    format_opts = {
+        async = false,
+        timeout_ms = 10000,
+    },
+    servers = {
+        ['lua_ls'] = { 'lua' },
+        ['rust_analyzer'] = { 'rust' },
     }
 })
 
@@ -67,7 +80,6 @@ lsp.set_preferences({
     }
 })
 
-
 lsp.on_attach(function(client, bufnr)
     local opts = { buffer = bufnr, remap = false }
 
@@ -76,20 +88,39 @@ lsp.on_attach(function(client, bufnr)
         client.server_capabilities.documentFormattingRangeProvider = false
     end
 
-    vim.keymap.set('n', 'gd', '<CMD>Glance definitions<CR>')
-    vim.keymap.set('n', 'gr', '<CMD>Glance references<CR>')
-    vim.keymap.set('n', 'gt', '<CMD>Glance type_definitions<CR>')
-    vim.keymap.set('n', 'gi', '<CMD>Glance implementations<CR>')
-    -- vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-    vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
-    vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
-    vim.keymap.set("n", "<leader>lws", vim.lsp.buf.workspace_symbol, opts)
-    vim.keymap.set("n", "<leader>gd", vim.diagnostic.open_float, opts)
-    vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+    -- vim.keymap.set('n', 'gd', '<CMD>Glance definitions<CR>')
+    -- vim.keymap.set('n', 'gr', '<CMD>Glance references<CR>')
+    -- vim.keymap.set('n', 'gt', '<CMD>Glance type_definitions<CR>')
+    -- vim.keymap.set('n', 'gi', '<CMD>Glance implementations<CR>')
+    -- vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+    -- vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
+    -- vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
+    -- vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+    -- vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+    -- vim.keymap.set("n", "gd", vim.diagnostic.open_float, opts)
     vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+    vim.keymap.set("n", "<leader>lws", vim.lsp.buf.workspace_symbol, opts)
     vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
     vim.diagnostic.config({ virtual_text = true })
+
+    local status, saga = pcall(require, "lspsaga")
+    if (not status) then return end
+    vim.keymap.set('n', '[d,', '<Cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
+    vim.keymap.set('n', ']d,', '<Cmd>Lspsaga diagnostic_jump_next<CR>', opts)
+    vim.keymap.set('n', 'gl', '<Cmd>Lspsaga show_line_diagnostics<CR>', opts)
+    vim.keymap.set("n", "gb", "<cmd>Lspsaga show_buf_diagnostics<CR>")
+    vim.keymap.set("n", "gf", "<cmd>Lspsaga lsp_finder<CR>", opts)
+    vim.keymap.set('n', 'gd', '<Cmd>Lspsaga goto_definition<CR>', opts)
+    vim.keymap.set('n', 'gD', '<Cmd>Lspsaga peek_definition<CR>', opts)
+    vim.keymap.set('n', 'gt', '<Cmd>Lspsaga goto_type_definition<CR>', opts)
+    vim.keymap.set('n', 'gT', '<Cmd>Lspsaga peek_type_definition<CR>', opts)
+    vim.keymap.set('i', '<C-k>', '<Cmd>Lspsaga signature_help<CR>', opts)
+    vim.keymap.set('n', 'K', '<Cmd>Lspsaga hover_doc<CR>', opts)
+    vim.keymap.set('n', '<leader>rn', '<Cmd>Lspsaga rename<CR>', opts)
+    vim.keymap.set('n', '<leader>rnp', '<cmd>Lspsaga rename ++project<CR>', opts)
+
+    -- code action
+    vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<CR>")
 end)
 
 local default_schemas = nil
@@ -285,31 +316,34 @@ lsp.configure("lua_ls", {
     settings = {
         Lua = {
             diagnostics = {
+                -- Get the language server to recognize the `vim` global
                 globals = { 'vim' },
             },
-            completion = {
-                callSnippet = "Replace"
-            }
-        },
-        format = {
-            enable = true,
-            defaultConfig = {
-                indent_style = "space",
-                indent_size = "2",
-            }
+
+            workspace = {
+                -- Make the server aware of Neovim runtime files
+                library = vim.api.nvim_get_runtime_file("", true),
+                checkThirdParty = false
+            },
         },
     }
 })
 
-lsp.configure("ruff_lsp", {
-})
+lsp.configure("ruff_lsp", {})
 
 lsp.configure("yamlls", {
-  settings = {
-    yaml = {
-      keyOrdering = false
+    settings = {
+        yaml = {
+            keyOrdering = false
+        }
     }
-  }
+})
+
+lsp.configure("flow", {})
+
+lsp.configure("tsserver", {
+    filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+    cmd = { "typescript-language-server", "--stdio" }
 })
 
 lsp.setup()

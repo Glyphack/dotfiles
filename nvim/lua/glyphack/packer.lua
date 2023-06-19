@@ -13,6 +13,7 @@ require("lazy").setup({
     },
     { "nvim-treesitter/nvim-treesitter", build = ':TSUpdate' },
     { "nvim-treesitter/playground" },
+    -- colorschemes
     {
         "rose-pine/neovim",
         name = "rose-pine",
@@ -20,7 +21,11 @@ require("lazy").setup({
             vim.cmd("colorscheme rose-pine")
         end
     },
+    { "svrana/neosolarized.nvim" },
     { "folke/tokyonight.nvim" },
+    -- editing assistant
+    { "windwp/nvim-ts-autotag" },
+    { "windwp/nvim-autopairs" },
     -- language supports
     -- scala
     { "scalameta/nvim-metals" },
@@ -62,9 +67,32 @@ require("lazy").setup({
         opts = {
         },
     },
+    {
+        "glepnir/lspsaga.nvim",
+        event = "LspAttach",
+        config = function()
+            require("lspsaga").setup({
+                ui = {
+                    winblend = 10,
+                    border = 'rounded',
+                    colors = {
+                        normal_bg = '#002b36'
+                    }
+                },
+                symbol_in_winbar = {
+                    enable = false
+                }
+            })
+        end,
+        dependencies = { { "nvim-tree/nvim-web-devicons" } }
+    },
+    { "nvim-telescope/telescope-file-browser.nvim" },
     -- debugger
     { "mfussenegger/nvim-dap" },
-    { "rcarriga/nvim-dap-ui", dependencies = { { "mfussenegger/nvim-dap" } } },
+    {
+        "rcarriga/nvim-dap-ui",
+        dependencies = { { "mfussenegger/nvim-dap" } }
+    },
     -- editor assista
     {
         "danymat/neogen",
