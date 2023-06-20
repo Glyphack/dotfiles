@@ -36,9 +36,11 @@ null_ls.setup({
 
         formatting.rustfmt,
 
-        diagnostics.ktlint,
-        formatting.ktlint.with({
+        diagnostics.ktlint.with({
             extra_args = { "--code-style", "intellij_idea" },
+        }),
+        formatting.ktlint.with({
+            args = { "--format", "--stdin", "**/*.kt", "**/*.kts", "--code-style", "intellij_idea" },
         }),
 
         formatting.markdownlint,
