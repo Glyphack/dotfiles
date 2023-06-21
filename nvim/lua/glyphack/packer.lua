@@ -4,7 +4,12 @@ require("lazy").setup({
         tag = '0.1.0',
         dependencies = { "nvim-lua/plenary.nvim" }
     },
-    { 'prochri/telescope-all-recent.nvim', dependencies = "kkharji/sqlite.lua" },
+    { 'prochri/telescope-all-recent.nvim', dependencies = "kkharji/sqlite.lua", lazy = false },
+    {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        build = 'make',
+        lazy = false
+    },
     { "nvim-treesitter/nvim-treesitter",   build = ':TSUpdate' },
     {
         "nvim-treesitter/nvim-treesitter-context",
@@ -173,11 +178,6 @@ require("lazy").setup({
         end
     },
     { "nvim-lualine/lualine.nvim" },
-    -- Fuzzy Finder Algorithm which dependencies local dependencies to be built. Only load if `make` is available
-    {
-        "nvim-telescope/telescope-fzf-native.nvim",
-        build = 'make'
-    },
     { "github/copilot.vim" },
     { "akinsho/toggleterm.nvim" },
     { "j-hui/fidget.nvim" },
