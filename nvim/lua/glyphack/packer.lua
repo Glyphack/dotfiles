@@ -4,29 +4,23 @@ require("lazy").setup({
         tag = '0.1.0',
         dependencies = { "nvim-lua/plenary.nvim" }
     },
-    {
-        "nvim-telescope/telescope-frecency.nvim",
-        dependencies = { "kkharji/sqlite.lua" },
-        config = function(plugin)
-            require("telescope").load_extension("frecency")
-        end
-    },
-    { "nvim-treesitter/nvim-treesitter", build = ':TSUpdate' },
+    { 'prochri/telescope-all-recent.nvim', dependencies = "kkharji/sqlite.lua" },
+    { "nvim-treesitter/nvim-treesitter",   build = ':TSUpdate' },
     {
         "nvim-treesitter/nvim-treesitter-context",
         config = function(plugin)
             require 'treesitter-context'.setup {
-                enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-                max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
-                min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+                enable = true,            -- Enable this plugin (Can be enabled/disabled later via commands)
+                max_lines = 0,            -- How many lines the window should span. Values <= 0 mean no limit.
+                min_window_height = 0,    -- Minimum editor window height to enable context. Values <= 0 mean no limit.
                 line_numbers = true,
                 multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
-                trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-                mode = 'cursor', -- Line used to calculate context. Choices: 'cursor', 'topline'
+                trim_scope = 'outer',     -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+                mode = 'cursor',          -- Line used to calculate context. Choices: 'cursor', 'topline'
                 -- Separator between context and content. Should be a single character string, like '-'.
                 -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
                 separator = nil,
-                zindex = 20, -- The Z-index of the context window
+                zindex = 20,     -- The Z-index of the context window
                 on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
             }
         end
@@ -182,8 +176,7 @@ require("lazy").setup({
     -- Fuzzy Finder Algorithm which dependencies local dependencies to be built. Only load if `make` is available
     {
         "nvim-telescope/telescope-fzf-native.nvim",
-        build =
-        'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build'
+        build = 'make'
     },
     { "github/copilot.vim" },
     { "akinsho/toggleterm.nvim" },
