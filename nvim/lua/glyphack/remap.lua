@@ -1,7 +1,7 @@
 vim.g.mapleader = " "
 
 -- Easy window switch
-vim.keymap.set("n", "<M-h>", "<c-w>h)")
+vim.keymap.set("n", "<M-h>", "<c-w>h")
 vim.keymap.set("n", "<M-j>", "<c-w>j")
 vim.keymap.set("n", "<M-k>", "<c-w>k")
 vim.keymap.set("n", "<M-l>", "<c-w>l")
