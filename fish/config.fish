@@ -10,6 +10,7 @@ set -x NPM_PRE $HOME/.npm-global/bin
 set -x PYENV_ROOT $HOME/.pyenv
 set -x POETRY $HOME/.poetry
 set -x GOPATH $HOME/go
+set -x RUST_HOME $HOME/.cargo/bin
 
 # place for software I install
 set -x HOME_BIN $HOME/bin
@@ -29,7 +30,7 @@ switch (uname)
         set -x PATH $PATH  /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
 end
 
-set -x PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOPATH/bin $JAVA_HOME $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE
+set -x PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOPATH/bin $RUST_HOME $JAVA_HOME $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE
 
 
 set -x GITHUB_USERNAME shooshyari
