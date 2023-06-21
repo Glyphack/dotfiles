@@ -37,11 +37,11 @@ vim.api.nvim_set_keymap('n', '<leader>gS', '<cmd>:Gitsigns stage_buffer<cr>', {}
 
 vim.api.nvim_set_keymap('n', '<leader>gwd', '<cmd>:Gitsigns toggle_word_diff<cr>', {})
 
-require("gitlinker").setup()
-vim.api.nvim_set_keymap('n', '<leader>gc',
-    '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".copy_to_clipboard})<cr>'
-    , { silent = true })
-
+require("gitlinker").setup({
+    callbacks = {
+        ["github.*.io"] = require("gitlinker.hosts").get_github_type_url,
+    },
+})
 vim.api.nvim_set_keymap('v', '<leader>go',
     '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".open_in_browser})<cr>'
     , {})
