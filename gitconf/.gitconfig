@@ -17,7 +17,7 @@
 	clear-out = "!f() { if [ -z $1 ]; then BRANCH=$(git branch --show-current); else BRANCH=$1; fi; git branch --merged $BRANCH | grep -v $BRANCH$ | xargs git branch -d; }; f"
 
 [includeIf "gitdir:~/Programming/flexport/"]
-	path = ~/Programming/flexport/.gitconfig-flexport
+	path = ~/Programming/flexport/.gitconfig
 
 
 [pull]

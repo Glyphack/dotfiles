@@ -29,6 +29,7 @@ map('n', '[g', function()
     return '<Ignore>'
 end, { expr = true })
 
+vim.api.nvim_set_keymap('n', '<leader>g', '<cmd>:G<cr>', {})
 vim.api.nvim_set_keymap('n', '<leader>gr', '<cmd>:Gitsigns reset_hunk<cr>', {})
 vim.api.nvim_set_keymap('n', '<leader>gR', '<cmd>:Gitsigns reset_buffer<cr>', {})
 vim.api.nvim_set_keymap('n', '<leader>gp', '<cmd>:Gitsigns preview_hunk_inline<cr>', {})
