@@ -1,16 +1,35 @@
 require("lazy").setup({
+    -- telescope
     {
         "nvim-telescope/telescope.nvim",
-        tag = '0.1.0',
-        dependencies = { "nvim-lua/plenary.nvim" }
+        priority = 100,
+        config = function()
+        end,
     },
-    { 'prochri/telescope-all-recent.nvim', dependencies = "kkharji/sqlite.lua", lazy = false },
+    "nvim-telescope/telescope-file-browser.nvim",
+    "nvim-telescope/telescope-hop.nvim",
+    "nvim-telescope/telescope-ui-select.nvim",
+    {
+        "ThePrimeagen/git-worktree.nvim",
+        config = function()
+            require("git-worktree").setup {}
+        end,
+    },
+    {
+        "AckslD/nvim-neoclip.lua",
+        config = function()
+            require("neoclip").setup()
+        end,
+    },
+    { 'prochri/telescope-all-recent.nvim',          dependencies = "kkharji/sqlite.lua", lazy = false },
+    { 'nvim-telescope/telescope-smart-history.nvim' },
     {
         "nvim-telescope/telescope-fzf-native.nvim",
         build = 'make',
         lazy = false
     },
-    { "nvim-treesitter/nvim-treesitter",   build = ':TSUpdate' },
+    -- telescope end
+    { "nvim-treesitter/nvim-treesitter", build = ':TSUpdate' },
     {
         "nvim-treesitter/nvim-treesitter-context",
         config = function(plugin)
@@ -54,6 +73,7 @@ require("lazy").setup({
     { "acksld/swenv.nvim" },
     { "mfussenegger/nvim-dap-python" },
     -- lsp features
+    { "lvimuser/lsp-inlayhints.nvim" },
     {
         "VonHeikemen/lsp-zero.nvim",
         dependencies = {
@@ -79,6 +99,7 @@ require("lazy").setup({
     },
     { "folke/zen-mode.nvim" },
     { "ray-x/lsp_signature.nvim" },
+    { 'yamatsum/nvim-nonicons' },
     {
         "folke/trouble.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -152,17 +173,6 @@ require("lazy").setup({
     { "lewis6991/gitsigns.nvim" },
     { "andweeb/presence.nvim" },
     {
-        "jackMort/ChatGPT.nvim",
-        config = function()
-            require("chatgpt").setup({})
-        end,
-        dependencies = {
-            { "MunifTanjim/nui.nvim" },
-            { "nvim-lua/plenary.nvim" },
-            { "nvim-telescope/telescope.nvim" },
-        }
-    },
-    {
         "nvim-tree/nvim-tree.lua",
         dependencies = {
             "nvim-tree/nvim-web-devicons",
@@ -180,7 +190,7 @@ require("lazy").setup({
     { "nvim-lualine/lualine.nvim" },
     { "github/copilot.vim" },
     { "akinsho/toggleterm.nvim" },
-    { "j-hui/fidget.nvim" },
+    { "j-hui/fidget.nvim",              tag = "legacy" },
     {
         "gaoDean/autolist.nvim",
         ft = {
@@ -189,24 +199,30 @@ require("lazy").setup({
             "tex",
             "plaintex",
         },
-        config = function(plugin)
-            local autolist = require("autolist")
-            autolist.setup()
-            autolist.create_mapping_hook("i", "<CR>", autolist.new)
-            autolist.create_mapping_hook("i", "<Tab>", autolist.indent)
-            autolist.create_mapping_hook("i", "<S-Tab>", autolist.indent, "<C-D>")
-            autolist.create_mapping_hook("n", "o", autolist.new)
-            autolist.create_mapping_hook("n", "O", autolist.new_before)
-            autolist.create_mapping_hook("n", ">>", autolist.indent)
-            autolist.create_mapping_hook("n", "<<", autolist.indent)
-            autolist.create_mapping_hook("n", "<C-r>", autolist.force_recalculate)
-            autolist.create_mapping_hook("n", "<leader>x", autolist.invert_entry, "")
-            vim.api.nvim_create_autocmd("TextChanged", {
-                pattern = "*",
-                callback = function()
-                    vim.cmd.normal({ autolist.force_recalculate(nil, nil), bang = false })
-                end
-            })
+        config = function()
+            require("autolist").setup()
+
+            vim.keymap.set("i", "<tab>", "<cmd>AutolistTab<cr>")
+            vim.keymap.set("i", "<s-tab>", "<cmd>AutolistShiftTab<cr>")
+            vim.keymap.set("i", "<CR>", "<CR><cmd>AutolistNewBullet<cr>")
+            vim.keymap.set("n", "o", "o<cmd>AutolistNewBullet<cr>")
+            vim.keymap.set("n", "O", "O<cmd>AutolistNewBulletBefore<cr>")
+            vim.keymap.set("n", "<CR>", "<cmd>AutolistToggleCheckbox<cr><CR>")
+            vim.keymap.set("n", "<C-r>", "<cmd>AutolistRecalculate<cr>")
+
+            -- cycle list types with dot-repeat
+            vim.keymap.set("n", "<leader>cn", require("autolist").cycle_next_dr, { expr = true })
+            vim.keymap.set("n", "<leader>cp", require("autolist").cycle_prev_dr, { expr = true })
+
+            -- if you don't want dot-repeat
+            -- vim.keymap.set("n", "<leader>cn", "<cmd>AutolistCycleNext<cr>")
+            -- vim.keymap.set("n", "<leader>cp", "<cmd>AutolistCycleNext<cr>")
+
+            -- functions to recalculate list on edit
+            vim.keymap.set("n", ">>", ">><cmd>AutolistRecalculate<cr>")
+            vim.keymap.set("n", "<<", "<<<cmd>AutolistRecalculate<cr>")
+            vim.keymap.set("n", "dd", "dd<cmd>AutolistRecalculate<cr>")
+            vim.keymap.set("v", "d", "d<cmd>AutolistRecalculate<cr>")
         end,
     },
     {

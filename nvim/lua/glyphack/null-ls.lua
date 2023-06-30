@@ -36,11 +36,16 @@ null_ls.setup({
 
         formatting.rustfmt,
 
-        diagnostics.ktlint.with({
-            extra_args = { "--code-style", "intellij_idea" },
+        -- diagnostics.ktlint.with({}),
+        -- formatting.ktlint.with({
+        --     args = { "--format", "--stdin", "**/*.kt", "**/*.kts", "--code-style", "ktlint_official" },
+        -- }),
+
+        diagnostics.rubocop.with({
+            command = "~/.rvm/gems/ruby-2.7.7/bin/rubocop",
         }),
-        formatting.ktlint.with({
-            args = { "--format", "--stdin", "**/*.kt", "**/*.kts", "--code-style", "intellij_idea" },
+        formatting.rubocop.with({
+            command = "~/.rvm/gems/ruby-2.7.7/bin/rubocop",
         }),
 
         formatting.markdownlint,
