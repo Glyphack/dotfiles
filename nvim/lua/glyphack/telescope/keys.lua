@@ -42,3 +42,6 @@ map_tele("<space>fh", "help_tags")
 -- map_tele("<space>bo", "vim_options")
 -- map_tele("<space>gp", "grep_prompt")
 map_tele("<space>wt", "treesitter")
+
+-- Clip
+map_tele("<leader>yh", "neoclip")

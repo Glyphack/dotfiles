@@ -29,6 +29,8 @@ lsp.ensure_installed({
     'ruby_ls',
     'sorbet',
     'kotlin_language_server',
+    'terraformls',
+    'jdtls',
     -- 'marksman',
 })
 

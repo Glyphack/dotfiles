@@ -353,6 +353,10 @@ function M.vim_options()
   }
 end
 
+function M.neoclip()
+  require('telescope').extensions.neoclip.default()
+end
+
 return setmetatable({}, {
   __index = function(_, k)
     reloader()

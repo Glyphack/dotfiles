@@ -6,6 +6,7 @@
 	excludesfile = ~/.gitignore_global
 
 [alias]
+	pul = pull -q
 	co = checkout
 	oops = reset --hard 'HEAD@{1}'
 	oopsy = reset --soft 'HEAD@{1}'

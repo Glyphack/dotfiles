@@ -61,8 +61,8 @@ require("lazy").setup({
     { "svrana/neosolarized.nvim" },
     { "folke/tokyonight.nvim" },
     -- editing assistant
-    { "windwp/nvim-ts-autotag" },
-    { "windwp/nvim-autopairs" },
+    -- { "windwp/nvim-ts-autotag" },
+    -- { "windwp/nvim-autopairs" },
     -- language supports
     -- scala
     { "scalameta/nvim-metals" },
