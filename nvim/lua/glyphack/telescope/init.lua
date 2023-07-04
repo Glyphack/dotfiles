@@ -246,6 +246,8 @@ function M.file_browser()
     layout_config = {
       prompt_position = "top",
     },
+    select_buffer = true,
+    path = "%:p:h",
 
     attach_mappings = function(prompt_bufnr, map)
       local current_picker = action_state.get_current_picker(prompt_bufnr)

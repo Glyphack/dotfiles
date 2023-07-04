@@ -36,7 +36,7 @@ null_ls.setup({
 
         formatting.rustfmt,
 
-        -- diagnostics.ktlint.with({}),
+        diagnostics.ktlint,
         -- formatting.ktlint.with({
         --     args = { "--format", "--stdin", "**/*.kt", "**/*.kts", "--code-style", "ktlint_official" },
         -- }),

@@ -1,6 +1,5 @@
 local lsp = require("lsp-zero")
-require("neodev").setup({
-})
+require("neodev").setup({})
 
 lsp.preset("recommended")
 
@@ -134,7 +133,7 @@ lsp.on_attach(function(client, bufnr)
     -- vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
     -- vim.keymap.set("n", "gd", vim.diagnostic.open_float, opts)
     vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-    vim.keymap.set("n", "<leader>lws", vim.lsp.buf.workspace_symbol, opts)
+    vim.keymap.set("n", "<leader>ws", vim.lsp.buf.workspace_symbol, opts)
     vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
     vim.diagnostic.config({ virtual_text = true })
 
@@ -149,10 +148,10 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set('n', 'gD', '<Cmd>Lspsaga peek_definition<CR>', opts)
     vim.keymap.set('n', 'gt', '<Cmd>Lspsaga goto_type_definition<CR>', opts)
     vim.keymap.set('n', 'gT', '<Cmd>Lspsaga peek_type_definition<CR>', opts)
-    vim.keymap.set('i', '<C-k>', '<Cmd>Lspsaga signature_help<CR>', opts)
     vim.keymap.set('n', 'K', '<Cmd>Lspsaga hover_doc<CR>', opts)
     vim.keymap.set('n', '<leader>rn', '<Cmd>Lspsaga rename<CR>', opts)
     vim.keymap.set('n', '<leader>rnp', '<cmd>Lspsaga rename ++project<CR>', opts)
+    vim.keymap.set('i', '<C-k>', '<Cmd>Lspsaga signature_help<CR>', opts)
 
     -- code action
     vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<CR>")
