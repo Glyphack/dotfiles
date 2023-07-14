@@ -51,3 +51,5 @@ __nvm_auto
 function __rvm_auto --on-variable PWD
   rvm default
 end
+
+__rvm_auto

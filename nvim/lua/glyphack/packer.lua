@@ -148,6 +148,11 @@ require("lazy").setup({
                         template = {
                             annotation_convention = "rustdoc"
                         }
+                    },
+                    kotlin = {
+                        template = {
+                            annotation_convention = "kdoc"
+                        }
                     }
                 }
             }
