@@ -166,7 +166,7 @@ require("lazy").setup({
     { "ray-x/guihua.lua" },
     { "hrsh7th/cmp-nvim-lsp-signature-help" },
     { "ray-x/cmp-treesitter" },
-    { "wakatime/vim-wakatime" },
+    -- { "wakatime/vim-wakatime" },
     { "krivahtoo/silicon.nvim",             build = "./install.sh" },
     {
         "iamcco/markdown-preview.nvim",
