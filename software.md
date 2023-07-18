@@ -10,6 +10,7 @@
 - https://github.com/ActivityWatch/activitywatch/releases
 - https://sourceforge.net/p/gpgosx/docu/Download/
 - https://www.docker.com/products/docker-desktop/
+- https://obsidian.md/
 
 
 
