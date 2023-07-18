@@ -19,7 +19,7 @@
 	st = status
 
 [includeIf "gitdir:~/Programming/flexport/"]
-	path = ~/Programming/flexport/.gitconfig
+	path = ~/Programming/flexport/flexconf/gitconfig
 
 
 [pull]

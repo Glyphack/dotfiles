@@ -8,6 +8,7 @@
 - https://slack.com/downloads/instructions/mac
 - https://aws.amazon.com/corretto
 - https://github.com/ActivityWatch/activitywatch/releases
+- https://sourceforge.net/p/gpgosx/docu/Download/
 
 
 
@@ -23,13 +24,14 @@ brew tap homebrew/cask-fonts && brew install --cask font-Caskaydia-Cove-nerd-fon
 ```
 
 
-## Other 
+## Other
 
 ```
 cd /tmp/
 curl -sS https://starship.rs/install.sh | sh
 curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
 fisher install jorgebucaran/nvm.fish
+nvm install 16
 
 curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
 sudo installer -pkg ./AWSCLIV2.pkg -target /
@@ -38,6 +40,7 @@ curl -LO https://corretto.aws/downloads/latest/amazon-corretto-17-aarch64-macos-
 curl -LO https://corretto.aws/downloads/latest/amazon-corretto-11-aarch64-macos-jdk.pkg
 
 curl -sSL https://get.rvm.io | bash
+rvm reinstall 2.7
 
 echo /opt/homebrew/bin//fish | sudo tee -a /etc/shells
 chsh -s /opt/homebrew/bin//fish
