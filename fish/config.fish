@@ -27,10 +27,10 @@ switch (uname)
         set -U fish_user_paths /opt/homebrew/bin/ $fish_user_paths
         set -x VIMDATA ~/.local/share/nvim
         set -x PATH $PATH  /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
-        set -x JAVA_HOME /Library/Java/JavaVirtualMachines/amazon-corretto-17.jdk/Contents/Home
+        set -x JAVA_HOME /Library/Java/JavaVirtualMachines/amazon-corretto-19.jdk/Contents/Home
 end
 
-set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOPATH/bin $RUST_HOME $JAVA_HOME $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE
+set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOPATH/bin $RUST_HOME $JAVA_HOME/bin $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE
 
 
 set -gx GITHUB_USERNAME shooshyari
