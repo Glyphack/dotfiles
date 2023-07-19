@@ -1,7 +1,7 @@
 local wezterm = require 'wezterm'
 local act = wezterm.action
 return {
-  font = wezterm.font 'Caskaydia Cove NerdFontMono',
+  font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" }),
   font_size = 19.0,
   keys = {
     {
