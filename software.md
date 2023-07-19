@@ -11,6 +11,8 @@
 - https://sourceforge.net/p/gpgosx/docu/Download/
 - https://www.docker.com/products/docker-desktop/
 - https://obsidian.md/
+- https://insomnia.rest/download
+- https://iina.io/
 
 
 
@@ -19,7 +21,7 @@
 
 ```
 brew update
-brew install hammerspoon raycast wezterm gnupg pyenv neovim blackhole-16ch hugo fish bufbuild/buf/buf kotlin jq ripgrep fd gradle stow fzf sqlite
+brew install hammerspoon raycast wezterm gnupg pyenv neovim blackhole-16ch hugo fish bufbuild/buf/buf kotlin jq ripgrep fd gradle stow fzf sqlite openjdk graphviz gnuplot
 
 sh $(brew --prefix)/opt/fzf/install
 brew tap homebrew/cask-fonts && brew install --cask font-Caskaydia-Cove-nerd-font
