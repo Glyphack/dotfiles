@@ -21,9 +21,9 @@
 
 ```
 brew update
-brew install hammerspoon raycast wezterm gnupg pyenv neovim blackhole-16ch hugo fish bufbuild/buf/buf kotlin jq ripgrep fd gradle stow fzf sqlite openjdk graphviz gnuplot
-
 sh $(brew --prefix)/opt/fzf/install
+brew install hammerspoon raycast wezterm gnupg pyenv neovim blackhole-16ch hugo fish bufbuild/buf/buf kotlin jq ripgrep fd gradle stow fzf sqlite openjdk graphviz gnuplot gh golangci-lint
+
 brew tap homebrew/cask-fonts && brew install --cask font-Caskaydia-Cove-nerd-font font-Symbols-nerd-font
 ```
 
