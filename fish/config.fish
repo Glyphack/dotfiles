@@ -3,7 +3,7 @@ set -x VISUAL nvim
 set -x PROGRAMMING_DIR ~/Programming
 set --universal FZF_DEFAULT_COMMAND "fd --hidden"
 set -x FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
-set -x FZF_ALT_C_COMMAND "fd -t d . $PROGRAMMING_DIR"
+set -x FZF_ALT_C_COMMAND "fd -t d . $PROGRAMMING_DIR -d 3"
 set -x NPM_PRE $HOME/.npm-global/bin
 #
 # # programming languages
