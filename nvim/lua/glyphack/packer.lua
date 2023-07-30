@@ -260,4 +260,5 @@ require("lazy").setup({
     },
     { "tpope/vim-rake" },
     { "tpope/vim-rails" },
+    { 'ActivityWatch/aw-watcher-vim' },
 })
