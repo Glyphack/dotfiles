@@ -1,0 +1,3 @@
+function vim
+  nvim
+end
