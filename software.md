@@ -13,6 +13,7 @@
 - https://obsidian.md/
 - https://insomnia.rest/download
 - https://iina.io/
+- https://github.com/ActivityWatch/activitywatch/releases
 
 
 
