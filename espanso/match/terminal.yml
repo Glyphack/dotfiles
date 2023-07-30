@@ -1,0 +1,3 @@
+matches:
+  - trigger: "rtrace"
+    replace: "RUST_BACKTRACE=1 "
