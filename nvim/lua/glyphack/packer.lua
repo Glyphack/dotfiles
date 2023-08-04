@@ -261,4 +261,11 @@ require("lazy").setup({
     { "tpope/vim-rake" },
     { "tpope/vim-rails" },
     { 'ActivityWatch/aw-watcher-vim' },
+    {
+        'TobinPalmer/rayso.nvim',
+        cmd = { 'Rayso' },
+        config = function()
+            require('rayso').setup {}
+        end
+    }
 })
