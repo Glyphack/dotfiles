@@ -122,37 +122,25 @@ lsp.on_attach(function(client, bufnr)
         client.server_capabilities.documentFormattingRangeProvider = false
     end
 
-    -- vim.keymap.set('n', 'gd', '<CMD>Glance definitions<CR>')
-    -- vim.keymap.set('n', 'gr', '<CMD>Glance references<CR>')
-    -- vim.keymap.set('n', 'gt', '<CMD>Glance type_definitions<CR>')
-    -- vim.keymap.set('n', 'gi', '<CMD>Glance implementations<CR>')
-    -- vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-    -- vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
-    -- vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
-    -- vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-    -- vim.keymap.set('i', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    -- vim.keymap.set("n", "gd", vim.diagnostic.open_float, opts)
-    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-    vim.keymap.set("n", "<leader>ws", vim.lsp.buf.workspace_symbol, opts)
+    vim.keymap.set("n", "lrn", vim.lsp.buf.rename, opts)
+    vim.keymap.set("n", "lws", vim.lsp.buf.workspace_symbol, opts)
     vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
     vim.diagnostic.config({ virtual_text = true })
 
-    vim.keymap.set('n', '[d,', '<Cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
-    vim.keymap.set('n', ']d,', '<Cmd>Lspsaga diagnostic_jump_next<CR>', opts)
-    vim.keymap.set('n', 'gl', '<Cmd>Lspsaga show_line_diagnostics<CR>', opts)
-    vim.keymap.set("n", "gb", "<cmd>Lspsaga show_buf_diagnostics<CR>")
-    vim.keymap.set("n", "gf", "<cmd>Lspsaga finder<CR>", opts)
-    vim.keymap.set('n', 'gd', '<Cmd>Lspsaga goto_definition<CR>', opts)
-    vim.keymap.set('n', 'gD', '<Cmd>Lspsaga peek_definition<CR>', opts)
-    vim.keymap.set('n', 'gt', '<Cmd>Lspsaga goto_type_definition<CR>', opts)
-    vim.keymap.set('n', 'gT', '<Cmd>Lspsaga peek_type_definition<CR>', opts)
+    vim.keymap.set('n', '[[,', '<Cmd>Lspsaga diagnostic_jump_prev<CR>', opts)
+    vim.keymap.set('n', ']],', '<Cmd>Lspsaga diagnostic_jump_next<CR>', opts)
+    vim.keymap.set('n', 'll', '<Cmd>Lspsaga show_line_diagnostics<CR>', opts)
+    vim.keymap.set("n", "lb", "<cmd>Lspsaga show_buf_diagnostics<CR>")
+    vim.keymap.set("n", "lf", "<cmd>Lspsaga finder<CR>", opts)
+    vim.keymap.set('n', 'ld', '<Cmd>Lspsaga goto_definition<CR>', opts)
+    vim.keymap.set('n', 'lD', '<Cmd>Lspsaga peek_definition<CR>', opts)
+    vim.keymap.set('n', 'lt', '<Cmd>Lspsaga goto_type_definition<CR>', opts)
+    vim.keymap.set('n', 'lT', '<Cmd>Lspsaga peek_type_definition<CR>', opts)
     vim.keymap.set('n', 'K', '<Cmd>Lspsaga hover_doc<CR>', opts)
-    vim.keymap.set('n', '<leader>rn', '<Cmd>Lspsaga rename<CR>', opts)
-    vim.keymap.set('n', '<leader>rnp', '<cmd>Lspsaga rename ++project<CR>', opts)
+    vim.keymap.set('n', 'lrn', '<Cmd>Lspsaga rename<CR>', opts)
+    vim.keymap.set('n', 'lnnp', '<cmd>Lspsaga rename ++project<CR>', opts)
     vim.keymap.set('i', '<C-k>', '<Cmd>Lspsaga signature_help<CR>', opts)
-
-    -- code action
-    vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>Lspsaga code_action<CR>")
+    vim.keymap.set({ "n", "v" }, "lca", "<cmd>Lspsaga code_action<CR>")
 end)
 
 local default_schemas = nil
@@ -319,11 +307,6 @@ local schemas = {
             "*.vsconfig",
         },
         url = "https://json.schemastore.org/vsconfig.json",
-    },
-    {
-        description = "Resume json",
-        fileMatch = { "resume.json" },
-        url = "https://raw.githubusercontent.com/jsonresume/resume-schema/v1.0.0/schema.json",
     },
 }
 
