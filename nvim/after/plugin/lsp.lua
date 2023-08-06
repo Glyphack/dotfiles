@@ -140,7 +140,7 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set('n', 'grn', '<Cmd>Lspsaga rename<CR>', opts)
     vim.keymap.set('n', 'grnp', '<cmd>Lspsaga rename ++project<CR>', opts)
     vim.keymap.set('i', '<C-k>', '<Cmd>Lspsaga signature_help<CR>', opts)
-    vim.keymap.set({ "n", "v" }, "lca", "<cmd>Lspsaga code_action<CR>")
+    vim.keymap.set({ "n", "v" }, "gca", "<cmd>Lspsaga code_action<CR>")
 end)
 
 local default_schemas = nil
