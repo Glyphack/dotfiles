@@ -11,7 +11,7 @@
 	oops = reset --hard 'HEAD@{1}'
 	oopsy = reset --soft 'HEAD@{1}'
 	forgot = commit --amend -C HEAD
-	cm = commit -m
+	cm = commit
 	pushf = push --force-with-lease
 	lg = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
 	wip = for-each-ref --sort='authordate:iso8601' --format=' %(color:green)%(authordate:relative)%09%(color:white)%(refname:short)' refs/heads
