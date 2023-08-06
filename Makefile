@@ -1,6 +1,7 @@
 MacAppLib := /Users/glyphack/Library/Application\ Support
 
 link:
+	echo "outdated"
 	stow --target=${HOME}/.config/fish fish
 	mkdir -p ${HOME}/.config/nvim && stow --target=${HOME}/.config/nvim nvim
 	mkdir -p ${HOME}/.local/share/nvim && stow --target=${HOME}/.local/share/nvim nvim-data
@@ -10,6 +11,7 @@ link:
 	stow --target=${HOME} gitconf
 
 link-mac:
+	cd ./dotfiles-private/ && $(MAKE) link
 	mkdir -p ${HOME}/.config
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
 	mkdir -p ${HOME}/.config/starship && stow --adopt --target=${HOME}/.config starship
