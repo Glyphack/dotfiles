@@ -11,8 +11,6 @@ link:
 	stow --target=${HOME} gitconf
 
 link-mac:
-	cd ./dotfiles-private/ && $(MAKE) link
-	cd ./dotfiles-work/ && $(MAKE) link
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
 	mkdir -p ${HOME}/.config/starship && stow --adopt --target=${HOME}/.config starship
 	stow --target=${HOME} gitconf
@@ -22,4 +20,6 @@ link-mac:
 	mkdir -p ${HOME}/.config/wezterm && stow --adopt --target=${HOME}/.config/wezterm wezterm
 	mkdir -p ${HOME}/.hammerspoon && stow --adopt --target=${HOME}/.hammerspoon hammerspoon
 	mkdir -p ${HOME}/Library/Application\ Support/espanso/ && stow --adopt --target=${HOME}/Library/Application\ Support/espanso/ espanso
+	cd ./dotfiles-private/ && $(MAKE) link
+	cd ./dotfiles-work/ && $(MAKE) link
 
