@@ -239,6 +239,7 @@ require("lazy").setup({
     { "tpope/vim-fugitive" },
     { "tpope/vim-repeat" },
     { "RRethy/nvim-treesitter-textsubjects" },
+    { "nvim-treesitter/nvim-treesitter-textobjects" },
     { "ThePrimeagen/refactoring.nvim" },
     { "tpope/vim-sleuth" },
     { "mrjones2014/nvim-ts-rainbow" },
@@ -267,6 +268,25 @@ require("lazy").setup({
         cmd = { 'Rayso' },
         config = function()
             require('rayso').setup {}
+        end
+    },
+    { "nvimdev/guard.nvim" },
+    { "tpope/vim-dadbod" },
+    { "hrsh7th/cmp-nvim-lua" },
+    { "mtoohey31/cmp-fish" },
+    {
+        "aaronhallaert/advanced-git-search.nvim",
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+            "tpope/vim-fugitive",
+            "tpope/vim-rhubarb",
+        },
+    },
+    {
+        'nvimdev/hlsearch.nvim',
+        event = 'BufRead',
+        config = function()
+            require('hlsearch').setup()
         end
     }
 })

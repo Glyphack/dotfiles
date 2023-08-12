@@ -30,6 +30,7 @@ lsp.ensure_installed({
     'kotlin_language_server',
     'terraformls',
     'jdtls',
+    'ltex',
     -- 'marksman',
 })
 
@@ -63,6 +64,8 @@ lsp.setup_nvim_cmp({
         { name = "nvim_lsp",               keyword_length = 1 },
         { name = "buffer",                 keyword_length = 3 },
         { name = "luasnip",                keyword_length = 2 },
+        { name = 'fish' },
+        { name = 'nvim_lua' },
         { name = 'nvim_lsp_signature_help' },
         { name = "rg" },
     },
@@ -93,16 +96,6 @@ lsp.setup_nvim_cmp({
     },
 })
 
-lsp.format_on_save({
-    format_opts = {
-        async = false,
-        timeout_ms = 10000,
-    },
-    servers = {
-        ['lua_ls'] = { 'lua' },
-        ['rust_analyzer'] = { 'rust' },
-    }
-})
 
 lsp.set_preferences({
     suggest_lsp_servers = false,
