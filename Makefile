@@ -12,7 +12,7 @@ link:
 
 link-mac:
 	cd ./dotfiles-private/ && $(MAKE) link
-	mkdir -p ${HOME}/.config
+	cd ./dotfiles-work/ && $(MAKE) link
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
 	mkdir -p ${HOME}/.config/starship && stow --adopt --target=${HOME}/.config starship
 	stow --target=${HOME} gitconf
