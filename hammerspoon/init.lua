@@ -71,7 +71,7 @@ hs.hotkey.bind({ 'shift', 'alt', 'cmd' }, 'l', function()
     win:moveToScreen(next, true)
   end
 end)
-hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'h', function()
+hs.hotkey.bind({ 'shift', 'alt', 'cmd' }, 'h', function()
   local win = hs.window.focusedWindow()
   local next = win:screen():toWest()
   if next then
