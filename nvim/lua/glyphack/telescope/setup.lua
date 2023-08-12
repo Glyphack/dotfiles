@@ -161,6 +161,18 @@ require("telescope").setup {
       use_highlighter = false,
       minimum_grep_characters = 6,
     },
+    advanced_git_search = {
+      diff_plugin = "fugitive",
+      git_flags = {},
+      git_diff_flags = {},
+      show_builtin_git_pickers = false,
+      entry_default_author_or_date = "author",   -- one of "author" or "date"
+      telescope_theme = {
+        show_custom_functions = {
+          layout_config = { width = 0.4, height = 0.4 },
+        },
+      }
+    },
   },
 }
 
@@ -168,5 +180,6 @@ _ = require("telescope").load_extension "file_browser"
 _ = require("telescope").load_extension "fzf"
 _ = require("telescope").load_extension "git_worktree"
 _ = require("telescope").load_extension "neoclip"
+require("telescope").load_extension("advanced_git_search")
 pcall(require("telescope").load_extension, "smart_history")
 require 'telescope-all-recent'.setup {}

@@ -16,7 +16,7 @@ require('nvim-treesitter.configs').setup {
   },
   textobjects = {
     select = {
-      enable = false,
+      enable = true,
       lookahead = true, -- Automatically jump forward to textobj, similar to targets.vim
       keymaps = {
         -- You can use the capture groups defined in textobjects.scm
@@ -49,7 +49,7 @@ require('nvim-treesitter.configs').setup {
       -- },
     },
     swap = {
-      enable = false,
+      enable = true,
       swap_next = {
         ['<leader>a'] = '@parameter.inner',
       },
@@ -58,4 +58,17 @@ require('nvim-treesitter.configs').setup {
       },
     },
   },
+  textsubjects = {
+    enable = true,
+    prev_selection = ',', -- (Optional) keymap to select the previous selection
+    keymaps = {
+      [';'] = 'textsubjects-container-outer',
+      ['.'] = 'textsubjects-smart',
+      ['i;'] = 'textsubjects-container-inner',
+    },
+  },
 }
+
+vim.keymap.set("n", "[c", function()
+  require("treesitter-context").go_to_context()
+end, { silent = true })
