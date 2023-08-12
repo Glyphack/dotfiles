@@ -1,3 +1,6 @@
 [submodule "dotfiles-private"]
 	path = dotfiles-private
 	url = https://github.com/Glyphack/dotfiles-private
+[submodule "dotfiles-flexport"]
+	path = dotfiles-flexport
+	url = https://github.com/Glyphack/dotfiles-flexport
