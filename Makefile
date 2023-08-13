@@ -22,4 +22,6 @@ link-mac:
 	mkdir -p ${HOME}/Library/Application\ Support/espanso/ && stow --adopt --target=${HOME}/Library/Application\ Support/espanso/ espanso
 	cd ./dotfiles-private/ && $(MAKE) link
 	cd ./dotfiles-work/ && $(MAKE) link
+	# to load new changes
+	espanso restart
 
