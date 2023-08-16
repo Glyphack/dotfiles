@@ -11,6 +11,7 @@ link:
 	stow --target=${HOME} gitconf
 
 link-mac:
+	git submodule update --remote --recursive
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
 	mkdir -p ${HOME}/.config/starship && stow --adopt --target=${HOME}/.config starship
 	stow --target=${HOME} gitconf
