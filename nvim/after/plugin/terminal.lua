@@ -5,7 +5,7 @@ end
 
 toggleterm.setup({
   size = 20,
-  open_mapping = [[<c-\>]],
+  open_mapping = [[<c-t>]],
   hide_numbers = true,
   shade_filetypes = {},
   shade_terminals = true,
@@ -17,7 +17,7 @@ toggleterm.setup({
   close_on_exit = true,
   shell = vim.o.shell,
   on_create = function(term)
-      term:send("if test -r $VIRTUALFISH_ACTIVATION_FILE; vf activate $(cat $VIRTUALFISH_ACTIVATION_FILE); end")
+    term:send("if test -r $VIRTUALFISH_ACTIVATION_FILE; vf activate $(cat $VIRTUALFISH_ACTIVATION_FILE); end")
   end,
   float_opts = {
     border = "curved",
