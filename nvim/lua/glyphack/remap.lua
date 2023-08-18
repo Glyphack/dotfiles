@@ -53,4 +53,4 @@ vim.keymap.set("n", "<leader>xx", ":source %<CR>", opts)
 vim.keymap.set("n", "<leader>xv", ":source $MYVIMRC<CR>", opts)
 
 -- save my pinky
-vim.keymap.set("i", "<BS>", "<Esc>", opts)
+vim.keymap.set("i", "<Home>", "<Esc>", opts)
