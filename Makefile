@@ -22,7 +22,7 @@ link-mac:
 	mkdir -p ${HOME}/.hammerspoon && stow --adopt --target=${HOME}/.hammerspoon hammerspoon
 	mkdir -p ${HOME}/Library/Application\ Support/espanso/ && stow --adopt --target=${HOME}/Library/Application\ Support/espanso/ espanso
 	cd ./dotfiles-private/ && $(MAKE) link
-	cd ./dotfiles-work/ && $(MAKE) link
+	cd ./dotfiles-flexport/ && $(MAKE) link
 	# to load new changes
 	espanso restart
 
