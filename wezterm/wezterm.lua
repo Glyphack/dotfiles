@@ -18,5 +18,5 @@ return {
       },
     },
   },
-  color_scheme = 'Erebus (terminal.sexy)',
+  color_scheme = 'tokyonight_day',
 }

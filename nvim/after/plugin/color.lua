@@ -9,7 +9,6 @@ function ColorMyPencils(color)
 
     -- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
     vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-
 end
 
 function solary()
@@ -17,7 +16,7 @@ function solary()
     if (not status) then return end
 
     n.setup({
-      comment_italics = true,
+        comment_italics = true,
     })
     local cb = require('colorbuddy.init')
     local Color = cb.Color
@@ -46,4 +45,9 @@ function solary()
     Group.new("DiagnosticUnderlineHint", colors.none, colors.none, styles.undercurl, cHint)
 end
 
-solary()
+function GoTokiyo()
+    vim.o.background = "light"
+    vim.cmd.colorscheme "tokyonight"
+end
+
+GoTokiyo()
