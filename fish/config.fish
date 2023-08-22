@@ -13,8 +13,12 @@ set -x GOPATH $HOME/go
 set -x GOBIN $GOPATH/bin
 set -x RUST_HOME $HOME/.cargo/bin
 #
-# # place for software I install
+# place for software I install
 set -x HOME_BIN $HOME/bin
+
+# kotlin language server
+
+set -x KOTLIN_LANGUAGE_SERVER $HOME/Programming/kotlin-language-server/server/build/install/server/bin/
 
 
 # Python
@@ -31,7 +35,7 @@ switch (uname)
         set -x JAVA_HOME /Library/Java/JavaVirtualMachines/amazon-corretto-19.jdk/Contents/Home
 end
 
-set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $JAVA_HOME/bin $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom
+set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $JAVA_HOME/bin $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $KOTLIN_LANGUAGE_SERVER
 
 
 set -gx GITHUB_USERNAME shooshyari
