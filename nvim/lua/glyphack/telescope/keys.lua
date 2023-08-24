@@ -19,7 +19,7 @@ map_tele("<space>f/", "grep_last_search", {
 
 -- Files
 map_tele("<space>ft", "git_files")
-map_tele("<space>fg", "multi_rg")
+map_tele("<space>fg", "grep_with_args")
 map_tele("<space>fo", "oldfiles")
 map_tele("<space>fd", "find_files")
 map_tele("<space>fs", "fs")

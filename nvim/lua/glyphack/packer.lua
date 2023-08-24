@@ -9,6 +9,11 @@ require("lazy").setup({
     "nvim-telescope/telescope-file-browser.nvim",
     "nvim-telescope/telescope-hop.nvim",
     "nvim-telescope/telescope-ui-select.nvim",
+    "nvim-telescope/telescope-file-browser.nvim",
+    "nvim-telescope/telescope-live-grep-args.nvim",
+    "nvim-telescope/telescope-frecency.nvim",
+    { 'prochri/telescope-all-recent.nvim',          dependencies = "kkharji/sqlite.lua", lazy = false },
+    { 'nvim-telescope/telescope-smart-history.nvim' },
     {
         "ThePrimeagen/git-worktree.nvim",
         config = function()
@@ -21,8 +26,6 @@ require("lazy").setup({
             require("neoclip").setup()
         end,
     },
-    { 'prochri/telescope-all-recent.nvim',          dependencies = "kkharji/sqlite.lua", lazy = false },
-    { 'nvim-telescope/telescope-smart-history.nvim' },
     {
         "nvim-telescope/telescope-fzf-native.nvim",
         build = 'make',
@@ -125,7 +128,6 @@ require("lazy").setup({
         end,
         dependencies = { { "nvim-tree/nvim-web-devicons" } }
     },
-    { "nvim-telescope/telescope-file-browser.nvim" },
     -- debugger
     { "mfussenegger/nvim-dap" },
     {
