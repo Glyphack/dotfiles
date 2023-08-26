@@ -12,6 +12,7 @@ require("lazy").setup({
     "nvim-telescope/telescope-file-browser.nvim",
     "nvim-telescope/telescope-live-grep-args.nvim",
     "nvim-telescope/telescope-frecency.nvim",
+    "Marskey/telescope-sg",
     { 'prochri/telescope-all-recent.nvim',          dependencies = "kkharji/sqlite.lua", lazy = false },
     { 'nvim-telescope/telescope-smart-history.nvim' },
     {
@@ -63,9 +64,6 @@ require("lazy").setup({
     },
     { "svrana/neosolarized.nvim" },
     { "folke/tokyonight.nvim" },
-    -- editing assistant
-    -- { "windwp/nvim-ts-autotag" },
-    -- { "windwp/nvim-autopairs" },
     -- language supports
     -- scala
     { "scalameta/nvim-metals" },
@@ -134,7 +132,7 @@ require("lazy").setup({
         "rcarriga/nvim-dap-ui",
         dependencies = { { "mfussenegger/nvim-dap" } }
     },
-    -- editor assista
+    -- editor assist
     {
         "danymat/neogen",
         config = function(plugin)

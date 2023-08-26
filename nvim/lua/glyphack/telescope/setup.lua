@@ -175,6 +175,14 @@ require("telescope").setup {
         },
       }
     },
+    ast_grep = {
+      command = {
+        "sg",
+        "--json=stream",
+      },                       -- must have --json=stream
+      grep_open_files = false, -- search in opened files
+      lang = nil,              -- string value, specify language for ast-grep `nil` for default
+    },
   },
 }
 
@@ -186,4 +194,3 @@ _ = require("telescope").load_extension "neoclip"
 require("telescope").load_extension("advanced_git_search")
 require("telescope").load_extension("live_grep_args")
 require("telescope").load_extension("smart_history")
-require 'telescope-all-recent'.setup {}

@@ -23,25 +23,16 @@ map_tele("<space>fg", "grep_with_args")
 map_tele("<space>fo", "oldfiles")
 map_tele("<space>fd", "find_files")
 map_tele("<space>fs", "fs")
+map_tele("<space>fi", "search_all_files")
 map_tele("<space>pp", "project_search")
 -- map_tele("<space>fv", "find_nvim_source")
 map_tele("<space>fe", "file_browser")
 map_tele("<space>fz", "search_only_certain_files")
 
--- Git
-map_tele("<space>gs", "git_status")
-map_tele("<space>gc", "git_commits")
-
 -- Nvim
-map_tele("<space>fb", "buffers")
-map_tele("<space>fp", "my_plugins")
-map_tele("<space>fa", "installed_plugins")
-map_tele("<space>fi", "search_all_files")
 map_tele("<space>ff", "curbuf")
 map_tele("<space>fh", "help_tags")
--- map_tele("<space>bo", "vim_options")
--- map_tele("<space>gp", "grep_prompt")
-map_tele("<space>wt", "treesitter")
+map_tele("<space>ts", "treesitter")
 
 -- Clip
 map_tele("<leader>yh", "neoclip")
