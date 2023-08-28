@@ -26,3 +26,5 @@ link-mac:
 	# to load new changes
 	espanso restart
 
+submodule:
+	git submodule update --remote --recursive
