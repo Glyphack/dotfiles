@@ -40,6 +40,9 @@ set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $JAVA_HOME/bin $H
 
 set -gx GITHUB_USERNAME shooshyari
 
+# setting the default kube config
+set -gx KUBECONFIG $HOME/.kube/config
+
 
 starship init fish | source
 # status is-login; and pyenv init --path | source
