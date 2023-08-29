@@ -17,6 +17,28 @@ local set_prompt_to_entry_value = function(prompt_bufnr)
   action_state.get_current_picker(prompt_bufnr):reset_prompt(entry.ordinal)
 end
 
+local history_db_dir = os.getenv("VIMDATA") .. "/databases"
+local history_db_file = history_db_dir .. "/telescope_history.sqlite3"
+
+-- Function to create directories recursively
+local function createDirectory(path)
+  local current = ""
+  for dir in path:gmatch("[^/]+") do
+    current = current .. dir .. "/"
+    os.execute("mkdir " .. current)
+  end
+end
+
+local file = io.open(history_db_file, "w")
+if not file then
+  createDirectory(history_db_dir)
+  file = io.open(history_db_file, "w")
+end
+
+if not file then
+  print("Error opening file:", file_err)
+end
+
 require("telescope").setup {
   defaults = {
     prompt_prefix = "> ",
@@ -120,7 +142,7 @@ require("telescope").setup {
     qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
 
     history = {
-      path = "~/.local/share/nvim/databases/telescope_history.sqlite3",
+      path = history_db_loc,
       limit = 100,
     },
   },

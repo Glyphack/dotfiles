@@ -1,5 +1,8 @@
 command_timeout = 1000
 
+[battery]
+disabled = true
+
 [aws]
 format = 'on [$symbol($profile )(\($region\) )]($style)'
 style = "yellow"
