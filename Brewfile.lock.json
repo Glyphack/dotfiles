@@ -17,7 +17,7 @@
         "revision": "4d03d87b61bd5202ffb89232592965252a096820"
       },
       "homebrew/cask-fonts": {
-        "revision": "9d1500ea92b84906d3ebdab6060f2649fa7202fa"
+        "revision": "9b3c7408afd0fd45ae20248eb7412a22f5a72e16"
       },
       "metalbear-co/mirrord": {
         "revision": "66d3c1fcaaa0555d3e272bc205d895bd992ca91f"
@@ -2153,7 +2153,7 @@
         "Homebrew/homebrew-core": "api",
         "CLT": "14.3.1.0.1.1683849156",
         "Xcode": "14.3",
-        "macOS": "13.3"
+        "macOS": "13.5.1"
       }
     }
   }
