@@ -18,7 +18,7 @@ GlobalMute:configure({
 })
 spoon.GlobalMute._logger.level = 3
 
-function reload(files)
+function Reload(files)
   for _, file in pairs(files) do
     if file:sub(-4) == ".lua" then
       hs.notify.new({ title = 'Reloading', informativeText = 'Reloading Hammerspoon config' }):send()
@@ -32,14 +32,33 @@ hs.hotkey.bind({ "alt" }, "R", function()
   hs.reload()
 end)
 
+local function useDefaultAudioDevice()
+  jbl_speaker = hs.audiodevice.findOutputByName("JBL Flip 6")
+  if jbl_speaker then
+    jbl_speaker:setDefaultOutputDevice()
+    return
+  end
+  mbp_speaker = hs.audiodevice.findOutputByName("MacBook Pro Speakers")
+  if mbp_speaker then
+    mbp_speaker:setDefaultOutputDevice()
+    return
+  end
+  mac_mini_speaker = hs.audiodevice.findOutputByName("Mac mini Speakers")
+  if mac_mini_speaker then
+    mac_mini_speaker:setDefaultOutputDevice()
+    return
+  end
+end
+
 local function switchOutputAfterExternalMicConnected()
   current = hs.audiodevice.defaultInputDevice():name()
   print("Current device: " .. current)
   if current == "External Microphone" then
     print("Forcing default output to Internal Speakers")
-    hs.audiodevice.findOutputByName("MacBook Pro Speakers"):setDefaultOutputDevice()
+    useDefaultAudioDevice()
   end
 end
+
 
 local function audiodeviceDeviceCallback(event)
   print("audiodeviceDeviceCallback: " .. event)
@@ -91,4 +110,4 @@ hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'r', function()
   hs.window.focusedWindow():setSize({ w = 640, h = 360 })
 end)
 
-reloadWatcher = hs.pathwatcher.new(os.getenv('HOME') .. '/.hammerspoon/', reload):start()
+reloadWatcher = hs.pathwatcher.new(os.getenv('HOME') .. '/.hammerspoon/', Reload):start()
