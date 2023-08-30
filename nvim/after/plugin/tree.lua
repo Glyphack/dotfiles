@@ -9,9 +9,6 @@ require("neo-tree").setup({
             visible = true,
         }
     },
-    sort_function = function(a, b)
-        return a.last_modified > b.last_modified
-    end,
 })
 
 
