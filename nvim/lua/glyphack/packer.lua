@@ -299,4 +299,10 @@ require("lazy").setup({
         -- If you have a recent version of lazy.nvim, you don't need to add this!
         build = "nvim -l build/init.lua",
     },
+    {
+        "kevinhwang91/nvim-fundo",
+        config = function()
+            require('fundo').install()
+        end
+    }
 })

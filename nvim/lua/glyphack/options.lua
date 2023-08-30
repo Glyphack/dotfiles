@@ -41,4 +41,10 @@ for k, v in pairs(options) do
   vim.opt[k] = v
 end
 
+local ok, fundo = pcall(require, "fundo")
+
+if ok then
+    fundo.setup()
+end
+
 vim.wo.number = true
