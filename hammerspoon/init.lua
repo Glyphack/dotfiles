@@ -1,7 +1,7 @@
-HOME_MONITOR = "DELL U2723QE"
-MACBOOK_MONITOR = 'Built-in Retina Display'
+HOME_MONITOR     = "DELL U2723QE"
+MACBOOK_MONITOR  = 'Built-in Retina Display'
 
-
+local secrets    = require("secrets")
 local hyper      = { "alt" }
 local lesshyper  = { "ctrl", "alt" }
 local GlobalMute = hs.loadSpoon("GlobalMute")
@@ -109,5 +109,10 @@ hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'l', function() autoLayout() end)
 hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'r', function()
   hs.window.focusedWindow():setSize({ w = 640, h = 360 })
 end)
+
+
+local PagerDuty = hs.loadSpoon("PagerDuty")
+
+PagerDuty:start(10, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
 
 reloadWatcher = hs.pathwatcher.new(os.getenv('HOME') .. '/.hammerspoon/', Reload):start()
