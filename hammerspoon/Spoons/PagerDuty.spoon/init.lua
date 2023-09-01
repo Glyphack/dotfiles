@@ -37,7 +37,6 @@ local function checkPagerDuty(sinceXSecondsAgo, userId, token, onlyTriggered)
     print("Checking PagerDuty status")
     local status, body, _ = hs.http.get(url, headers)
 
-    print(body)
     if status ~= 200 then
         print("Error: " .. status)
         return
@@ -46,7 +45,7 @@ local function checkPagerDuty(sinceXSecondsAgo, userId, token, onlyTriggered)
     local bodyJson = hs.json.decode(body)
 
     if not bodyJson.incidents then
-        print("No incidents")
+        obj.logger.i("No incidents")
         return
     end
 
