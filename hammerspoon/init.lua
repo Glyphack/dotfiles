@@ -113,6 +113,6 @@ end)
 
 local PagerDuty = hs.loadSpoon("PagerDuty")
 
-PagerDuty:start(10, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
+PagerDuty:start(60, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
 
 reloadWatcher = hs.pathwatcher.new(os.getenv('HOME') .. '/.hammerspoon/', Reload):start()
