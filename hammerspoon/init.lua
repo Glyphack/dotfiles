@@ -1,10 +1,10 @@
-HOME_MONITOR     = "DELL U2723QE"
-MACBOOK_MONITOR  = 'Built-in Retina Display'
+HOME_MONITOR              = "DELL U2723QE"
+MACBOOK_MONITOR           = 'Built-in Retina Display'
 
-local secrets    = require("secrets")
-local hyper      = { "alt" }
-local lesshyper  = { "ctrl", "alt" }
-local GlobalMute = hs.loadSpoon("GlobalMute")
+local hasSecrets, secrets = pcall(require, 'secrets')
+local hyper               = { "alt" }
+local lesshyper           = { "ctrl", "alt" }
+local GlobalMute          = hs.loadSpoon("GlobalMute")
 GlobalMute:bindHotkeys({
   toggle = { hyper, "t" }
 })
@@ -111,8 +111,24 @@ hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'r', function()
 end)
 
 
-local PagerDuty = hs.loadSpoon("PagerDuty")
 
-PagerDuty:start(60, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
+if hasSecrets then
+  local PagerDuty = hs.loadSpoon("PagerDuty")
+  PagerDuty:start(60, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
+end
+
+local function isSevenDigitNumber(str)
+  return str:match("^%d%d%d%d%d%d%d$") ~= nil
+end
+
+local clipboardWatcher = hs.pasteboard.watcher.new(function()
+  local newValue = hs.pasteboard.getContents()
+  if isSevenDigitNumber(newValue) then
+    local url = "https://example.com/" .. newValue -- Replace 'example.com'
+    hs.urlevent.openURL(url)
+  end
+end)
+
+clipboardWatcher:start()
 
 reloadWatcher = hs.pathwatcher.new(os.getenv('HOME') .. '/.hammerspoon/', Reload):start()
