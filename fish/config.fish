@@ -51,14 +51,24 @@ starship init fish | source
 # Enable AWS CLI autocompletion: github.com/aws/aws-cli/issues/1079
 complete --command aws --no-files --arguments '(begin; set --local --export COMP_SHELL fish; set --local --export COMP_LINE (commandline); aws_completer | sed \'s/ $//\'; end)'
 
-function __nvm_auto --on-variable PWD
-  nvm use --silent 2>/dev/null
+function __check_rvm --on-variable PWD --description 'Do rvm stuff'
+    if test "$PWD" != "$PROGRAMMING_DIR"
+        return
+    end
+    rvm use 2.7
+    nvm use 18.17.1 --silent
 end
-__nvm_auto
 
-# function __rvm_auto --on-variable PWD
-#   rvm default
+nvm use 20 --silent
+__check_rvm
+
+# function on_directory_change --on-event fish_prompt
+#     # Check if the current directory is different from the previous one
+#     if not set -q __prev_dir
+#         set -g __prev_dir $PWD
+#     else if test "$PWD" != "$__prev_dir"
+#         echo "Directory changed: $__prev_dir -> $PWD"
+#         set -g __prev_dir $PWD
+#         # Add your custom actions here
+#     end
 # end
-#
-# # __rvm_auto
-# rvm default
