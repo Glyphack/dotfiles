@@ -48,6 +48,7 @@ brew "pnpm"
 brew "postgresql@11", link: true
 brew "pyenv"
 brew "ripgrep"
+brew "ruby"
 brew "shared-mime-info"
 brew "stow"
 brew "terraform"
