@@ -6,6 +6,11 @@ ft('go'):fmt('lsp')
 ft('rb'):fmt('rubocop')
     :lint('rubocop')
 
+ft('kt'):fmt({
+    fn = function()
+
+    end
+})
 
 require('guard').setup({
 
