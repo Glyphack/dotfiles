@@ -1,5 +1,6 @@
 HOME_MONITOR              = "DELL U2723QE"
 MACBOOK_MONITOR           = 'Built-in Retina Display'
+LG_MONITOR                = 'LG HDR 4K'
 
 local hasSecrets, secrets = pcall(require, 'secrets')
 local hyper               = { "alt" }
@@ -71,6 +72,20 @@ hs.audiodevice.watcher.setCallback(audiodeviceDeviceCallback)
 hs.audiodevice.watcher.start()
 
 switchOutputAfterExternalMicConnected()
+
+-- set the other screen than macbook as primary
+local function setPrimary()
+  local screens = hs.screen.allScreens()
+  local primary = hs.screen.find(MACBOOK_MONITOR)
+  for _, screen in pairs(screens) do
+    if screen ~= primary then
+      print("Setting " .. screen:name() .. " as primary")
+      screen:setPrimary()
+    end
+  end
+end
+
+setPrimary()
 
 -- half of screen
 hs.hotkey.bind({ 'alt', 'cmd' }, 'h', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 0.5, 1 }) end)
