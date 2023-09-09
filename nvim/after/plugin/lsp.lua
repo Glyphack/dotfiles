@@ -354,6 +354,22 @@ lsp.configure("tsserver", {
     cmd = { "typescript-language-server", "--stdio" }
 })
 
+lsp.configure("pyright", {
+    settings = {
+        python = {
+            -- not working for some reason
+            analysis = {
+                exclude = {
+                    "**/testdata/**",
+                },
+                ignore = {
+                    "**/testdata/**",
+                },
+            }
+        }
+    }
+})
+
 lsp.setup()
 
 require("glyphack.null-ls")
