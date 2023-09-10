@@ -8,6 +8,7 @@ require('fidget').setup()
 lsp.ensure_installed({
     'tsserver',
     'lua_ls',
+    'sumneko_lua',
     'rust_analyzer',
     'jsonls',
     'pyright',
@@ -19,7 +20,6 @@ lsp.ensure_installed({
     'emmet_ls',
     'eslint',
     'graphql',
-    'rome',
     'yamlls',
     'gopls',
     'golangci_lint_ls',
