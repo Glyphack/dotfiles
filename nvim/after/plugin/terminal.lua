@@ -5,19 +5,17 @@ end
 
 toggleterm.setup({
   size = 20,
-  open_mapping = [[tt]],
   hide_numbers = true,
   shade_filetypes = {},
   shade_terminals = true,
   shading_factor = 2,
-  start_in_insert = true,
-  insert_mappings = true,
+  start_in_insert = false,
+  insert_mappings = false,
   persist_size = true,
   direction = "float",
   close_on_exit = true,
   shell = vim.o.shell,
   on_create = function(term)
-    term:send("if test -r $VIRTUALFISH_ACTIVATION_FILE; vf activate $(cat $VIRTUALFISH_ACTIVATION_FILE); end")
   end,
   float_opts = {
     border = "curved",
@@ -32,6 +30,7 @@ toggleterm.setup({
 local keymap = vim.api.nvim_set_keymap
 local opts = { noremap = true, silent = true }
 keymap("n", "<leader>gg", ":lua _LAZYGIT_TOGGLE()<CR>", opts)
+keymap("n", "tt", ":ToggleTerm<CR>", opts)
 
 
 function _G.set_terminal_keymaps()

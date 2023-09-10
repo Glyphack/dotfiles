@@ -14,7 +14,7 @@ ft('kt'):fmt({
 
 require('guard').setup({
 
-    fmt_on_save = true,
+    fmt_on_save = false,
 
     lsp_as_default_formatter = true,
 })
