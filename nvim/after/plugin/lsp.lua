@@ -30,7 +30,7 @@ lsp.ensure_installed({
     'kotlin_language_server',
     'terraformls',
     'jdtls',
-    'ltex',
+    -- 'ltex',
     -- 'marksman',
 })
 
