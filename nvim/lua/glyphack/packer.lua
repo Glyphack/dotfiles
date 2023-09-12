@@ -13,6 +13,7 @@ require("lazy").setup({
     "nvim-telescope/telescope-live-grep-args.nvim",
     "nvim-telescope/telescope-frecency.nvim",
     "Marskey/telescope-sg",
+    "Marskey/telescope-sg",
     { 'prochri/telescope-all-recent.nvim',          dependencies = "kkharji/sqlite.lua", lazy = false },
     { 'nvim-telescope/telescope-smart-history.nvim' },
     {
