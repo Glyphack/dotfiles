@@ -9,104 +9,20 @@ local reloader = function()
   end
 end
 
-local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local themes = require "telescope.themes"
-
-local set_prompt_to_entry_value = function(prompt_bufnr)
-  local entry = action_state.get_selected_entry()
-  if not entry or not type(entry) == "table" then
-    return
-  end
-
-  action_state.get_current_picker(prompt_bufnr):reset_prompt(entry.ordinal)
-end
 
 local _ = pcall(require, "nvim-nonicons")
 
 local M = {}
 
-function M.edit_neovim()
-  local opts_with_preview, opts_without_preview
-
-  opts_with_preview = {
-    prompt_title = "~ dotfiles ~",
-    shorten_path = false,
-    cwd = "~/.config/nvim",
-
-    layout_strategy = "flex",
-    layout_config = {
-      width = 0.9,
-      height = 0.8,
-
-      horizontal = {
-        width = { padding = 0.15 },
-      },
-      vertical = {
-        preview_height = 0.75,
-      },
-    },
-
-    mappings = {
-      i = {
-        ["<C-y>"] = false,
-      },
-    },
-
-    attach_mappings = function(_, map)
-      map("i", "<c-y>", set_prompt_to_entry_value)
-      map("i", "<M-c>", function(prompt_bufnr)
-        actions.close(prompt_bufnr)
-        vim.schedule(function()
-          require("telescope.builtin").find_files(opts_without_preview)
-        end)
-      end)
-
-      return true
-    end,
-  }
-
-  opts_without_preview = vim.deepcopy(opts_with_preview)
-  opts_without_preview.previewer = false
-
-  require("telescope.builtin").find_files(opts_with_preview)
-end
-
-function M.find_nvim_source()
-  require("telescope.builtin").find_files {
-    prompt_title = "~ nvim ~",
-    shorten_path = false,
-    cwd = "~/build/neovim/",
-
-    layout_strategy = "horizontal",
-    layout_config = {
-      preview_width = 0.35,
-    },
-  }
-end
-
 function M.find_files()
-  -- local opts = themes.get_ivy {
-  --   hidden = false,
-  --   sorting_strategy = "ascending",
-  --   layout_config = { height = 9 },
-  -- }
   require("telescope.builtin").find_files {
     sorting_strategy = "descending",
     scroll_strategy = "cycle",
     layout_config = {
-      -- height = 10,
     },
   }
-end
-
-function M.fs()
-  local opts = themes.get_ivy { hidden = false, sorting_strategy = "descending" }
-  require("telescope.builtin").find_files(opts)
-end
-
-function M.builtin()
-  require("telescope.builtin").builtin()
 end
 
 function M.git_files()
@@ -135,44 +51,8 @@ function M.git_files()
   require("telescope.builtin").git_files(opts)
 end
 
-function M.buffer_git_files()
-  require("telescope.builtin").git_files(themes.get_dropdown {
-    cwd = vim.fn.expand "%:p:h",
-    winblend = 10,
-    border = true,
-    previewer = false,
-    shorten_path = false,
-  })
-end
-
-function M.lsp_code_actions()
-  local opts = themes.get_dropdown {
-    winblend = 10,
-    border = true,
-    previewer = false,
-    shorten_path = false,
-  }
-
-  require("telescope.builtin").lsp_code_actions(opts)
-end
-
-function M.live_grep()
-  require("telescope.builtin").live_grep {
-    -- shorten_path = true,
-    previewer = false,
-    fzf_separator = "|>",
-  }
-end
-
 function M.grep_with_args()
   require('telescope').extensions.live_grep_args.live_grep_args()
-end
-
-function M.grep_prompt()
-  require("telescope.builtin").grep_string {
-    path_display = { "shorten" },
-    search = vim.fn.input "Grep String > ",
-  }
 end
 
 function M.grep_last_search(opts)
@@ -191,26 +71,6 @@ end
 
 function M.oldfiles()
   require("telescope").extensions.frecency.frecency(themes.get_ivy {})
-end
-
-function M.my_plugins()
-  require("telescope.builtin").find_files {
-    cwd = "~/plugins/",
-  }
-end
-
-function M.installed_plugins()
-  require("telescope.builtin").find_files {
-    cwd = vim.fn.stdpath "data" .. "/lazy/",
-  }
-end
-
-function M.project_search()
-  require("telescope.builtin").find_files {
-    previewer = false,
-    layout_strategy = "vertical",
-    cwd = require("nvim_lsp.util").root_pattern ".git" (vim.fn.expand "%:p"),
-  }
 end
 
 function M.buffers()
@@ -272,17 +132,6 @@ function M.file_browser()
         modify_cwd(vim.fn.expand "~")
       end)
 
-      -- local modify_depth = function(mod)
-      --   return function()
-      --     opts.depth = opts.depth + mod
-      --
-      --     current_picker:refresh(false, { reset_prompt = true })
-      --   end
-      -- end
-      --
-      -- map("i", "<M-=>", modify_depth(1))
-      -- map("i", "<M-+>", modify_depth(-1))
-
       map("n", "yy", function()
         local entry = action_state.get_selected_entry()
         vim.fn.setreg("+", entry.value)
@@ -293,22 +142,6 @@ function M.file_browser()
   }
 
   require("telescope").extensions.file_browser.file_browser(opts)
-end
-
-function M.git_status()
-  local opts = themes.get_dropdown {
-    winblend = 10,
-    border = true,
-    previewer = false,
-    shorten_path = false,
-  }
-
-  -- Can change the git icons using this.
-  -- opts.git_icons = {
-  --   changed = "M"
-  -- }
-
-  require("telescope.builtin").git_status(opts)
 end
 
 function M.git_commits()
@@ -361,6 +194,13 @@ end
 
 function M.neoclip()
   require('telescope').extensions.neoclip.default()
+end
+
+function M.grep_highlighted()
+  -- get current text highlighted in visual mode
+  local search = vim.fn.getreg "/"
+  print(search)
+  require('telescope').extensions.live_grep_args.live_grep_args(search)
 end
 
 return setmetatable({}, {

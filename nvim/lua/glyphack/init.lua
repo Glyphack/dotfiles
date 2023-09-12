@@ -2,8 +2,6 @@ require("glyphack.options")
 require("glyphack.remap")
 
 local augroup = vim.api.nvim_create_augroup
-local MyGroup = augroup('group', {})
-
 local autocmd = vim.api.nvim_create_autocmd
 local yank_group = augroup('HighlightYank', {})
 
@@ -20,12 +18,6 @@ autocmd('TextYankPost', {
             timeout = 40,
         })
     end,
-})
-
-autocmd({ "BufWritePre" }, {
-    group = MyGroup,
-    pattern = "*",
-    command = [[%s/\s\+$//e]],
 })
 
 vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, {

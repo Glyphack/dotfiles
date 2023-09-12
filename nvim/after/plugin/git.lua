@@ -29,7 +29,7 @@ map('n', '[g', function()
     return '<Ignore>'
 end, { expr = true })
 
-vim.api.nvim_set_keymap('n', '<leader>g', '<cmd>:G<cr>', {})
+vim.api.nvim_set_keymap('n', '<leader>gg', '<cmd>:G<cr>', {})
 vim.api.nvim_set_keymap('n', '<leader>gup', '<cmd>:G push<cr>', {})
 vim.api.nvim_set_keymap('n', '<leader>gdo', '<cmd>:G pull<cr>', {})
 vim.api.nvim_set_keymap('n', '<leader>gr', '<cmd>:Gitsigns reset_hunk<cr>', {})
@@ -45,6 +45,10 @@ require("gitlinker").setup({
         ["github.*.io"] = require("gitlinker.hosts").get_github_type_url,
     },
 })
-vim.api.nvim_set_keymap('v', '<leader>go',
-    '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".open_in_browser})<cr>'
-    , {})
+
+vim.api.nvim_set_keymap(
+    'n',
+    '<leader>gc',
+    '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".copy_to_clipboard})<cr>',
+    {}
+)
