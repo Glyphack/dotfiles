@@ -1,6 +1,7 @@
 set -x VIMCONFIG $HOME/.config/nvim/
 set -x VISUAL nvim
 set -x PROGRAMMING_DIR ~/Programming
+set -x DOTFILES_DIR ~/Programming/dotfiles
 set --universal FZF_DEFAULT_COMMAND "fd --hidden"
 set -x FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
 set -x FZF_ALT_C_COMMAND "fd -t d . $PROGRAMMING_DIR -d 3"
@@ -51,24 +52,7 @@ starship init fish | source
 # Enable AWS CLI autocompletion: github.com/aws/aws-cli/issues/1079
 complete --command aws --no-files --arguments '(begin; set --local --export COMP_SHELL fish; set --local --export COMP_LINE (commandline); aws_completer | sed \'s/ $//\'; end)'
 
-function __check_rvm --on-variable PWD --description 'Do rvm stuff'
-    if test "$PWD" != "$PROGRAMMING_DIR"
-        return
-    end
-    rvm use 2.7
-    nvm use 18.17.1 --silent
-end
-
 nvm use 20 --silent
-__check_rvm
 
-# function on_directory_change --on-event fish_prompt
-#     # Check if the current directory is different from the previous one
-#     if not set -q __prev_dir
-#         set -g __prev_dir $PWD
-#     else if test "$PWD" != "$__prev_dir"
-#         echo "Directory changed: $__prev_dir -> $PWD"
-#         set -g __prev_dir $PWD
-#         # Add your custom actions here
-#     end
-# end
+source $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
+setup_env
