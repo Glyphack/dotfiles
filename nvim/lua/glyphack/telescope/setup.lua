@@ -147,7 +147,6 @@ require("telescope").setup {
       override_file_sorter = true,
       case_mode = "smart_case",
     },
-
     fzf_writer = {
       use_highlighter = false,
       minimum_grep_characters = 6,
@@ -179,5 +178,4 @@ require("telescope").load_extension("neoclip")
 require("telescope").load_extension("advanced_git_search")
 require("telescope").load_extension("live_grep_args")
 require("telescope").load_extension("smart_history")
-require("telescope").load_extension("frecency")
 require("telescope").load_extension("ast_grep")
