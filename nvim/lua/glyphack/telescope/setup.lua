@@ -37,7 +37,7 @@ require("telescope").setup {
     entry_prefix = "  ",
     multi_icon = "<>",
 
-    path_display = "truncate",
+    path_display = {"truncate"},
 
     winblend = 0,
 
