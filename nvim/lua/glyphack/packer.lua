@@ -93,6 +93,7 @@ require("lazy").setup({
             { "hrsh7th/cmp-nvim-lua" },
             { "hrsh7th/cmp-nvim-lsp-signature-help" },
             { "lukas-reineke/cmp-rg" },
+            { "hrsh7th/cmp-nvim-lsp-signature-help" },
 
             -- Snippets
             { "L3MON4D3/LuaSnip" },
@@ -100,7 +101,6 @@ require("lazy").setup({
         }
     },
     { "folke/zen-mode.nvim" },
-    { "ray-x/lsp_signature.nvim" },
     { 'yamatsum/nvim-nonicons' },
     {
         "folke/trouble.nvim",
@@ -165,14 +165,12 @@ require("lazy").setup({
     { "simrat39/symbols-outline.nvim" },
     { "tpope/vim-surround" },
     { "ray-x/guihua.lua" },
-    { "hrsh7th/cmp-nvim-lsp-signature-help" },
     { "ray-x/cmp-treesitter" },
     -- { "wakatime/vim-wakatime" },
     { "krivahtoo/silicon.nvim",             build = "./install.sh" },
     {
         "iamcco/markdown-preview.nvim",
-        build = "cd app && npm install",
-        config = function() vim.g.mkdp_filetypes = { "markdown" } end,
+        build = function() vim.fn["mkdp#util#install"]() end,
         ft = { "markdown" },
     },
     { "mbbill/undotree" },
@@ -246,7 +244,6 @@ require("lazy").setup({
     { "nvim-treesitter/nvim-treesitter-textobjects" },
     { "ThePrimeagen/refactoring.nvim" },
     { "tpope/vim-sleuth" },
-    { "mrjones2014/nvim-ts-rainbow" },
     { "phelipetls/jsonpath.nvim" },
     { "folke/neodev.nvim" },
 
@@ -307,4 +304,5 @@ require("lazy").setup({
         end
     },
     { 'chaoren/vim-wordmotion' },
+    { 'echasnovski/mini.nvim', version = '*' },
 })

@@ -1,16 +1,16 @@
 local ft = require('guard.filetype')
 
-ft('go'):fmt('lsp')
-    :append('golines')
-
-ft('rb'):fmt('rubocop')
-    :lint('rubocop')
-
-ft('kt'):fmt({
-    fn = function()
-
-    end
-})
+-- ft('go'):fmt('lsp')
+--     :append('golines')
+--
+-- ft('rb'):fmt('rubocop')
+--     :lint('rubocop')
+--
+-- ft('kt'):fmt({
+--     fn = function()
+--
+--     end
+-- })
 
 require('guard').setup({
 
