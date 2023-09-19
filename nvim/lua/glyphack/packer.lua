@@ -305,5 +305,6 @@ require("lazy").setup({
         config = function()
             require('fundo').install()
         end
-    }
+    },
+    { 'chaoren/vim-wordmotion' },
 })
