@@ -1,44 +1,14 @@
-local lsp = require("lsp-zero")
+local lsp_zero = require('lsp-zero')
 require("neodev").setup({})
 
-lsp.preset("recommended")
+require("mason").setup({})
 
 require('fidget').setup()
 
-lsp.ensure_installed({
-    'tsserver',
-    'lua_ls',
-    'rust_analyzer',
-    'jsonls',
-    'pyright',
-    'bufls',
-    'ruff_lsp',
-    'bashls',
-    'dockerls',
-    'tailwindcss',
-    'emmet_ls',
-    'eslint',
-    'graphql',
-    'yamlls',
-    'gopls',
-    'golangci_lint_ls',
-    'prismals',
-    'ruff_lsp',
-    'ruby_ls',
-    'sorbet',
-    'kotlin_language_server',
-    'terraformls',
-    'jdtls',
-    -- 'ltex',
-    -- 'marksman',
-})
-
-
-lsp.skip_server_setup({ 'rome' })
-
 local cmp = require('cmp')
+local cmp_format = lsp_zero.cmp_format()
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
-local cmp_mappings = lsp.defaults.cmp_mappings({
+local cmp_mappings = lsp_zero.defaults.cmp_mappings({
     ['<C-k>'] = cmp.mapping.select_prev_item(cmp_select),
     ['<C-j>'] = cmp.mapping.select_next_item(cmp_select),
     ['<C-i>'] = cmp.mapping.confirm({
@@ -56,7 +26,8 @@ cmp_mappings['<Tab>'] = nil
 cmp_mappings['<S-Tab>'] = nil
 cmp_mappings['<CR>'] = nil
 
-lsp.setup_nvim_cmp({
+cmp.setup({
+    formatting = cmp_format,
     mapping = cmp_mappings,
     sources = {
         { name = "path" },
@@ -96,7 +67,7 @@ lsp.setup_nvim_cmp({
 })
 
 
-lsp.set_preferences({
+lsp_zero.set_preferences({
     suggest_lsp_servers = false,
     sign_icons = {
         error = 'E',
@@ -106,7 +77,7 @@ lsp.set_preferences({
     }
 })
 
-lsp.on_attach(function(client, bufnr)
+lsp_zero.on_attach(function(client, bufnr)
     local opts = { buffer = bufnr, remap = false }
 
     if client.name == 'tsserver' then
@@ -312,64 +283,102 @@ end
 
 local extended_schemas = extend(schemas, default_schemas)
 
-lsp.configure("jsonls", {
-    settings = {
-        json = {
-            schemas = extended_schemas,
-        },
+require('mason-lspconfig').setup({
+    ensure_installed = {
+        'tsserver',
+        'lua_ls',
+        'rust_analyzer',
+        'jsonls',
+        'pyright',
+        'bufls',
+        'ruff_lsp',
+        'bashls',
+        'dockerls',
+        'tailwindcss',
+        'emmet_ls',
+        'eslint',
+        'graphql',
+        'yamlls',
+        'gopls',
+        'golangci_lint_ls',
+        'prismals',
+        'ruff_lsp',
+        'ruby_ls',
+        'sorbet',
+        'kotlin_language_server',
+        'terraformls',
+        'jdtls',
+        -- 'ltex',
+        -- 'marksman',
     },
-})
-
-lsp.configure("lua_ls", {
-    settings = {
-        Lua = {
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = { 'vim', 'hs' },
-            },
-
-            workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true),
-                checkThirdParty = false
-            },
-        },
-    }
-})
-
-lsp.configure("ruff_lsp", {})
-
-lsp.configure("yamlls", {
-    settings = {
-        yaml = {
-            keyOrdering = false
-        }
-    }
-})
-
-lsp.configure("flow", {})
-
-lsp.configure("tsserver", {
-    filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
-    cmd = { "typescript-language-server", "--stdio" }
-})
-
-lsp.configure("pyright", {
-    settings = {
-        python = {
-            -- not working for some reason
-            analysis = {
-                exclude = {
-                    "**/testdata/**",
+    handlers = {
+        lsp_zero.default_setup,
+        jsonls = function()
+            require("lspconfig").jsonls.setup({
+                settings = {
+                    json = {
+                        schemas = extended_schemas,
+                    },
                 },
-                ignore = {
-                    "**/testdata/**",
-                },
-            }
-        }
+            })
+        end,
+        tsserver = function()
+            require("lspconfig").tsserver.setup({
+                filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
+                cmd = { "typescript-language-server", "--stdio" }
+            })
+        end,
+        pyright = function()
+            require("lspconfig").pyright.setup({
+                settings = {
+                    python = {
+                        -- not working for some reason
+                        analysis = {
+                            exclude = {
+                                "**/testdata/**",
+                            },
+                            ignore = {
+                                "**/testdata/**",
+                            },
+                        }
+                    }
+                }
+            })
+        end,
+        yaml = function()
+            require("lspconfig").yamlls.setup({
+                settings = {
+                    yaml = {
+                        keyOrdering = false
+                    }
+                }
+            })
+        end,
+        ruff_lsp = function()
+            require("lspconfig").ruff_lsp.setup({})
+        end,
+        lua_ls = function()
+            require("lspconfig").lua_ls.setup({
+                settings = {
+                    Lua = {
+                        diagnostics = {
+                            -- Get the language server to recognize the `vim` global
+                            globals = { 'vim', 'hs' },
+                        },
+
+                        workspace = {
+                            -- Make the server aware of Neovim runtime files
+                            library = vim.api.nvim_get_runtime_file("", true),
+                            checkThirdParty = false
+                        },
+                    },
+                }
+            })
+        end,
+        flow = function()
+            require("lspconfig").flow.setup({})
+        end,
     }
 })
-
-lsp.setup()
 
 require("glyphack.null-ls")
