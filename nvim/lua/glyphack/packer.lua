@@ -98,7 +98,8 @@ require("lazy").setup({
             -- Snippets
             { "L3MON4D3/LuaSnip" },
             { "rafamadriz/friendly-snippets" },
-        }
+        },
+        branch = "v3.x",
     },
     { "folke/zen-mode.nvim" },
     { 'yamatsum/nvim-nonicons' },
@@ -188,12 +189,15 @@ require("lazy").setup({
     { "jose-elias-alvarez/null-ls.nvim" },
     {
         "numToStr/Comment.nvim",
-        config = function(plugin)
-            require("Comment").setup()
-            -- disable the block comment because I use visuals.
-            vim.api.nvim_del_keymap('n', 'gbc')
+        config = function()
+            require("Comment").setup({
+                toggler = {
+                    block = nil,
+                },
+            })
         end
     },
+    { "wellle/targets.vim" },
     { "nvim-lualine/lualine.nvim" },
     { "github/copilot.vim" },
     { "akinsho/toggleterm.nvim" },
