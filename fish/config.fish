@@ -56,3 +56,10 @@ nvm use 20 --silent
 
 source $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
 setup_env
+
+# pnpm
+set -gx PNPM_HOME "/Users/glyphack/Library/pnpm"
+if not string match -q -- $PNPM_HOME $PATH
+  set -gx PATH "$PNPM_HOME" $PATH
+end
+# pnpm end
