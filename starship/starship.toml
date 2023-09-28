@@ -17,6 +17,9 @@ eu-central-1 = "eu-c1"
 format = 'on [⛵ \($namespace\)](dimmed green) '
 disabled = false
 
+[docker_context]
+disabled = true
+
 [conda]
 symbol = "conda "
 

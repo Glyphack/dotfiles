@@ -38,3 +38,5 @@
 	default = current
 [fetch]
 	prune = true
+[safe]
+	directory = /home/app
