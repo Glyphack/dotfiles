@@ -19,15 +19,15 @@ end
 
 local history_db_file = os.getenv("VIMDATA") .. "/telescope_history.sqlite3"
 
-local file = io.open(history_db_file, "w")
-if not file then
-  -- create file
-  os.execute("touch " .. history_db_file)
-  local file, file_err = io.open(history_db_file, "w")
-  if not file then
-    print("Error opening file:", file_err)
-  end
-end
+-- local file = io.open(history_db_file, "w")
+-- if not file then
+--   -- create file
+--   os.execute("touch " .. history_db_file)
+--   local file, file_err = io.open(history_db_file, "w")
+--   if not file then
+--     print("Error opening file:", file_err)
+--   end
+-- end
 
 
 require("telescope").setup {
