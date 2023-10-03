@@ -23,7 +23,7 @@ matches:
       - name: mydate
         type: date
         params:
-          format: "%m/%d/%Y"
+          format: "%m-%d-%Y"
 
   # Print the output of a shell command
   - trigger: ":shell"

@@ -345,7 +345,7 @@ require('mason-lspconfig').setup({
                 }
             })
         end,
-        yaml = function()
+        yamlls = function()
             require("lspconfig").yamlls.setup({
                 settings = {
                     yaml = {
@@ -375,9 +375,9 @@ require('mason-lspconfig').setup({
                 }
             })
         end,
-        flow = function()
-            require("lspconfig").flow.setup({})
-        end,
+        -- flow = function()
+        --     require("lspconfig").flow.setup({})
+        -- end,
     }
 })
 
