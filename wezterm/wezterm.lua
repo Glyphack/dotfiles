@@ -18,5 +18,5 @@ return {
       },
     },
   },
-  color_scheme = 'tokyonight_day',
+  color_scheme = 'tokyonight_dark',
 }

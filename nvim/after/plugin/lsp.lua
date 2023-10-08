@@ -1,4 +1,10 @@
 local lsp_zero = require('lsp-zero')
+local nvim_navic = require('nvim-navic')
+
+-- Enable if slow
+-- nvim_navic.setup {
+--     lazy_update_context = true,
+-- }
 require("neodev").setup({})
 
 require("mason").setup({})
@@ -80,6 +86,9 @@ lsp_zero.set_preferences({
 lsp_zero.on_attach(function(client, bufnr)
     local opts = { buffer = bufnr, remap = false }
 
+    if client.server_capabilities.documentSymbolProvider then
+        nvim_navic.attach(client, bufnr)
+    end
     if client.name == 'tsserver' then
         client.server_capabilities.documentFormattingProvider = false
         client.server_capabilities.documentFormattingRangeProvider = false

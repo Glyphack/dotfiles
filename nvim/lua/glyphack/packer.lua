@@ -168,7 +168,7 @@ require("lazy").setup({
     { "ray-x/guihua.lua" },
     { "ray-x/cmp-treesitter" },
     -- { "wakatime/vim-wakatime" },
-    { "krivahtoo/silicon.nvim",             build = "./install.sh" },
+    { "krivahtoo/silicon.nvim",       build = "./install.sh" },
     {
         "iamcco/markdown-preview.nvim",
         build = function() vim.fn["mkdp#util#install"]() end,
@@ -307,5 +307,29 @@ require("lazy").setup({
         end
     },
     { 'chaoren/vim-wordmotion' },
-    { 'echasnovski/mini.nvim', version = '*' },
+    { 'echasnovski/mini.nvim', version = '*' , config = function ()
+        require('mini.bracketed').setup()
+        require('mini.fuzzy').setup()
+        require('mini.trailspace').setup()
+    end},
+    {
+        'eandrju/cellular-automaton.nvim',
+        config = function()
+            vim.keymap.set("n", "<leader>fml", "<cmd>CellularAutomaton game_of_life<CR>")
+        end
+    },
+    { 'SmiteshP/nvim-navic' },
+    {
+        'gelguy/wilder.nvim',
+        config = function()
+            require('wilder').setup {
+                modes = {
+                    ':',
+                    '/',
+                    '?',
+                },
+            }
+        end
+    },
+    { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {}, ft = { "json", "yaml" } },
 })
