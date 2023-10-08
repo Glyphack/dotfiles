@@ -1,5 +1,5 @@
--- Set lualine as statusline
--- See `:help lualine.txt`
+local navic = require('nvim-navic')
+
 require('lualine').setup {
     options = {
         icons_enabled = false,
@@ -42,5 +42,17 @@ require('lualine').setup {
         lualine_z = {}
     },
     tabline = {},
-    extensions = { 'fugitive' }
+    extensions = { 'fugitive' },
+    winbar = {
+        lualine_c = {
+            {
+              function()
+                  return navic.get_location()
+              end,
+              cond = function()
+                  return navic.is_available()
+              end
+            },
+        }
+    }
 }

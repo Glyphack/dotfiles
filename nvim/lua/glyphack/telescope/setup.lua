@@ -141,12 +141,13 @@ require("telescope").setup {
   },
 
   extensions = {
-    fzf = {
-      fuzzy = true,
-      override_generic_sorter = true,
-      override_file_sorter = true,
-      case_mode = "smart_case",
-    },
+    --  using mini fuzzy instead
+    -- fzf = {
+    --   fuzzy = true,
+    --   override_generic_sorter = true,
+    --   override_file_sorter = true,
+    --   case_mode = "smart_case",
+    -- },
     fzf_writer = {
       use_highlighter = false,
       minimum_grep_characters = 6,

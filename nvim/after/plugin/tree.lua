@@ -13,3 +13,7 @@ require("neo-tree").setup({
 
 
 vim.keymap.set("n", "<C-p>", ":Neotree toggle current reveal_force_cwd<cr>", { noremap = true, silent = true })
+
+require('mini.files').setup()
+
+vim.keymap.set("n", "<C-t>", ":lua MiniFiles.open()<cr>", { noremap = true, silent = true })

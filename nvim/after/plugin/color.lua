@@ -46,7 +46,7 @@ function solary()
 end
 
 function GoTokiyo()
-    vim.o.background = "light"
+    vim.o.background = "dark"
     vim.cmd.colorscheme "tokyonight"
 end
 
