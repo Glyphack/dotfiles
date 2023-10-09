@@ -15,5 +15,8 @@ require("neo-tree").setup({
 vim.keymap.set("n", "<C-p>", ":Neotree toggle current reveal_force_cwd<cr>", { noremap = true, silent = true })
 
 require('mini.files').setup()
+local minifiles_toggle = function()
+  if not MiniFiles.close() then MiniFiles.open() end
+end
 
-vim.keymap.set("n", "<C-t>", ":lua MiniFiles.open()<cr>", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-t>", minifiles_toggle, { noremap = true, silent = true })
