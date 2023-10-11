@@ -20,3 +20,6 @@ matches:
 
   - trigger: "api"
     replace: "API"
+
+  - trigger: "python"
+    replace: "Python"
