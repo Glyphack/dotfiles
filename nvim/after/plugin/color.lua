@@ -55,4 +55,5 @@ function Everforest()
     vim.cmd.colorscheme "everforest"
 end
 
-vim.cmd('colorscheme flexoki')
+vim.o.background = "light" 
+vim.cmd([[colorscheme gruvbox]])

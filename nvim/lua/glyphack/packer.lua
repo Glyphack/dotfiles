@@ -65,6 +65,8 @@ require("lazy").setup({
     },
     { "svrana/neosolarized.nvim" },
     { "folke/tokyonight.nvim" },
+    { 'stevedylandev/flexoki-nvim',          name = 'flexoki' },
+    { "ellisonleao/gruvbox.nvim", priority = 1000},
     -- language supports
     -- scala
     { "scalameta/nvim-metals" },
@@ -336,6 +338,5 @@ require("lazy").setup({
         end
     },
     { "lukas-reineke/indent-blankline.nvim", main = "ibl",    opts = {}, ft = { "json", "yaml" } },
-    { 'stevedylandev/flexoki-nvim',          name = 'flexoki' },
     { 'tzachar/highlight-undo.nvim' },
 })
