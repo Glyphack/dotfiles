@@ -307,11 +307,15 @@ require("lazy").setup({
         end
     },
     { 'chaoren/vim-wordmotion' },
-    { 'echasnovski/mini.nvim', version = '*' , config = function ()
-        require('mini.bracketed').setup()
-        require('mini.fuzzy').setup()
-        require('mini.trailspace').setup()
-    end},
+    {
+        'echasnovski/mini.nvim',
+        version = '*',
+        config = function()
+            require('mini.bracketed').setup()
+            require('mini.fuzzy').setup()
+            require('mini.trailspace').setup()
+        end
+    },
     {
         'eandrju/cellular-automaton.nvim',
         config = function()
@@ -331,6 +335,7 @@ require("lazy").setup({
             }
         end
     },
-    { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {}, ft = { "json", "yaml" } },
-    { 'stevedylandev/flexoki-nvim', name = 'flexoki' },
+    { "lukas-reineke/indent-blankline.nvim", main = "ibl",    opts = {}, ft = { "json", "yaml" } },
+    { 'stevedylandev/flexoki-nvim',          name = 'flexoki' },
+    { 'tzachar/highlight-undo.nvim' },
 })
