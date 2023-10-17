@@ -332,4 +332,5 @@ require("lazy").setup({
         end
     },
     { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {}, ft = { "json", "yaml" } },
+    { 'stevedylandev/flexoki-nvim', name = 'flexoki' },
 })
