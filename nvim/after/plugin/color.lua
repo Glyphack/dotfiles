@@ -50,9 +50,9 @@ function GoTokiyo()
     vim.cmd.colorscheme "tokyonight"
 end
 
-function everforest()
+function Everforest()
     vim.o.background = "light"
     vim.cmd.colorscheme "everforest"
 end
 
-GoTokiyo()
+vim.cmd('colorscheme flexoki')
