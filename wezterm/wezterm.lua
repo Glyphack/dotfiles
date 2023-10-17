@@ -18,5 +18,5 @@ return {
       },
     },
   },
-  color_scheme = 'Flexoki Dark',
+  color_scheme = "Gruvbox (Gogh)",
 }
