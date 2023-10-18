@@ -31,14 +31,14 @@ submodule:
 
 # write a command to add and commit all the changes in the dotfiles-private and dotfiles-flexport folders. And update the submodule
 commit-private:
-	cd ./dotfiles-private/ && git checkout master && git add . && git commit -m "update dotfiles" && git push
+	cd ./dotfiles-private/ && git stash && git checkout master && git stash pop && git add . && git commit -m "update dotfiles" && git push
 	git submodule update --remote --recursive
 	git add dotfiles-private dotfiles-flexport
 	git commit -m "private update"
 	git push
 
 commit-work:
-	cd ./dotfiles-flexport/ && git checkout master && git add . && git commit -m "update dotfiles" && git push
+	cd ./dotfiles-flexport/ && git stash && git checkout master && git stash pop && git add . && git commit -m "update dotfiles" && git push
 	git submodule update --remote --recursive
 	git add dotfiles-flexport
 	git commit -m "work update"
