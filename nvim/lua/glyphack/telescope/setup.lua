@@ -53,7 +53,7 @@ require("telescope").setup {
           if cols > 200 then
             return math.floor(cols * 0.4)
           else
-            return math.floor(cols * 0.6)
+            return math.floor(cols * 0.4)
           end
         end,
       },
@@ -71,7 +71,7 @@ require("telescope").setup {
       },
     },
 
-    selection_strategy = "follow",
+    selection_strategy = "closest",
     sorting_strategy = "descending",
     scroll_strategy = "cycle",
     color_devicons = true,
@@ -116,7 +116,6 @@ require("telescope").setup {
       "package-lock.json",
     },
 
-    file_previewer = require("telescope.previewers").vim_buffer_cat.new,
     grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
     qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
 
@@ -127,13 +126,6 @@ require("telescope").setup {
   },
 
   pickers = {
-    find_files = {
-      mappings = {
-        n = {
-          ["kj"] = "close",
-        },
-      },
-    },
     buffers = {
       sort_lastused = true,
       sort_mru = true,
@@ -173,7 +165,6 @@ require("telescope").setup {
   },
 }
 
-require("telescope").load_extension("file_browser")
 require("telescope").load_extension("fzf")
 require("telescope").load_extension("neoclip")
 require("telescope").load_extension("advanced_git_search")
