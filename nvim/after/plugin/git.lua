@@ -29,8 +29,16 @@ map('n', '[g', function()
     return '<Ignore>'
 end, { expr = true })
 
-vim.api.nvim_set_keymap('n', '<leader>gg', '<cmd>:G<cr>', {})
-vim.api.nvim_set_keymap('n', '<leader>gup', '<cmd>:G push<cr>', {})
+-- toggles fugitive by checking if the current buffer is fugitive
+local fugitive_toggle = function()
+    if vim.fn.bufname():match('.git') then
+        vim.cmd('bd')
+    else
+        vim.cmd(':G')
+    end
+end
+vim.keymap.set('n', '<C-g>', fugitive_toggle, {})
+vim.api.nvim_set_keymap('n', '<leader>gg', '<cmd>:G push<cr>', {})
 vim.api.nvim_set_keymap('n', '<leader>gdo', '<cmd>:G pull<cr>', {})
 vim.api.nvim_set_keymap('n', '<leader>gr', '<cmd>:Gitsigns reset_hunk<cr>', {})
 vim.api.nvim_set_keymap('n', '<leader>gR', '<cmd>:Gitsigns reset_buffer<cr>', {})
