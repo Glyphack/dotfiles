@@ -2,6 +2,9 @@ HOME_MONITOR              = "DELL U2723QE"
 MACBOOK_MONITOR           = 'Built-in Retina Display'
 LG_MONITOR                = 'LG HDR 4K'
 
+package.path              = package.path ..
+    ";" .. os.getenv('HOME') .. '/Programming/dotfiles/dotfiles-flexport/Spoons/?.spoon/init.lua'
+
 local hasSecrets, secrets = pcall(require, 'secrets')
 local hyper               = { "alt" }
 local lesshyper           = { "ctrl", "alt" }
@@ -18,6 +21,14 @@ GlobalMute:configure({
   mute_title            = "<-- MUTE",
 })
 spoon.GlobalMute._logger.level = 3
+
+function SendClickableNotificaiton(notification, link)
+  local function notificationCallback()
+    hs.urlevent.openURL(link)
+  end
+  local notificationObject = hs.notify.new(notificationCallback, notification)
+  notificationObject:send()
+end
 
 function Reload(files)
   for _, file in pairs(files) do
@@ -125,25 +136,16 @@ hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'r', function()
   hs.window.focusedWindow():setSize({ w = 640, h = 360 })
 end)
 
-
-
-if hasSecrets then
-  local PagerDuty = hs.loadSpoon("PagerDuty")
-  PagerDuty:start(60, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
-end
-
-local function isSevenDigitNumber(str)
-  return str:match("^%d%d%d%d%d%d%d$") ~= nil
-end
-
-local clipboardWatcher = hs.pasteboard.watcher.new(function()
-  local newValue = hs.pasteboard.getContents()
-  if isSevenDigitNumber(newValue) then
-    local url = "https://example.com/" .. newValue -- Replace 'example.com'
-    hs.urlevent.openURL(url)
-  end
-end)
-
-clipboardWatcher:start()
-
 reloadWatcher = hs.pathwatcher.new(os.getenv('HOME') .. '/.hammerspoon/', Reload):start()
+
+-- Special config
+if string.match(hs.host.localizedName(), "mbp") then
+  pcall(function()
+    hs.loadSpoon("FPowerTools"):start()
+  end)
+
+  if hasSecrets then
+    local PagerDuty = hs.loadSpoon("PagerDuty")
+    PagerDuty:start(60, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
+  end
+end
