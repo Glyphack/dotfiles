@@ -148,7 +148,7 @@ if string.match(hs.host.localizedName(), "mbp") then
 
   if hasSecrets then
     local PagerDuty = hs.loadSpoon("PagerDuty")
-    if secrets.pagerduty_user_id and secrets.pagerduty_api_key then
+    if secrets.pagerduty_user_id and secrets.pagerduty_api_key ~= "" then
       PagerDuty:start(60, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
     end
   end
