@@ -5,6 +5,8 @@ LG_MONITOR                = 'LG HDR 4K'
 package.path              = package.path ..
     ";" .. os.getenv('HOME') .. '/Programming/dotfiles/dotfiles-flexport/Spoons/?.spoon/init.lua'
 
+SpoonInstall = hs.loadSpoon("SpoonInstall")
+
 local hasSecrets, secrets = pcall(require, 'secrets')
 local hyper               = { "alt" }
 local lesshyper           = { "ctrl", "alt" }
@@ -146,6 +148,30 @@ if string.match(hs.host.localizedName(), "mbp") then
 
   if hasSecrets then
     local PagerDuty = hs.loadSpoon("PagerDuty")
-    PagerDuty:start(60, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
+    if secrets.pagerduty_user_id and secrets.pagerduty_api_key then
+      PagerDuty:start(60, secrets.pagerduty_user_id, secrets.pagerduty_api_key)
+    end
   end
 end
+
+
+-- Define the Lua table that maps names to URLs
+local urlTable = {
+    john = "https://example.com/john",
+    alice = "https://example.com/alice",
+    bob = "https://example.com/bob",
+}
+
+-- Register a callback for the custom hammerspoon:// URLs
+hs.urlevent.bind("example", function(eventName, params, senderPID)
+    local event = eventName -- The event name is the host in hammerspoon://host
+    local name = params["name"]
+    local matchedLink = urlTable[name]
+    if name and matchedLink then
+        hs.urlevent.openURL(matchedLink)
+    else
+        print("name not found or no action specified.")
+        print(event, name)
+    end
+end)
+
