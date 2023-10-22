@@ -32,5 +32,5 @@ return {
       },
     },
   },
-  color_scheme = "Gruvbox (Gogh)",
+  color_scheme = "Gruvbox light, hard (base16)",
 }
