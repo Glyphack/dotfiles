@@ -5,7 +5,7 @@ LG_MONITOR                = 'LG HDR 4K'
 package.path              = package.path ..
     ";" .. os.getenv('HOME') .. '/Programming/dotfiles/dotfiles-flexport/Spoons/?.spoon/init.lua'
 
-SpoonInstall = hs.loadSpoon("SpoonInstall")
+SpoonInstall              = hs.loadSpoon("SpoonInstall")
 
 local hasSecrets, secrets = pcall(require, 'secrets')
 local hyper               = { "alt" }
@@ -140,6 +140,65 @@ end)
 
 reloadWatcher = hs.pathwatcher.new(os.getenv('HOME') .. '/.hammerspoon/', Reload):start()
 
+
+-- HANDLE SCROLLING WITH MOUSE BUTTON PRESSED
+local scrollMouseButton = 2
+local deferred = false
+
+overrideOtherMouseDown = hs.eventtap.new({ hs.eventtap.event.types.otherMouseDown }, function(e)
+  -- print("down")
+  local pressedMouseButton = e:getProperty(hs.eventtap.event.properties['mouseEventButtonNumber'])
+  if scrollMouseButton == pressedMouseButton
+  then
+    deferred = true
+    return true
+  end
+end)
+
+overrideOtherMouseUp = hs.eventtap.new({ hs.eventtap.event.types.otherMouseUp }, function(e)
+  -- print("up")
+  local pressedMouseButton = e:getProperty(hs.eventtap.event.properties['mouseEventButtonNumber'])
+  if scrollMouseButton == pressedMouseButton
+  then
+    if (deferred) then
+      overrideOtherMouseDown:stop()
+      overrideOtherMouseUp:stop()
+      hs.eventtap.otherClick(e:location(), pressedMouseButton)
+      overrideOtherMouseDown:start()
+      overrideOtherMouseUp:start()
+      return true
+    end
+    return false
+  end
+  return false
+end)
+
+local oldmousepos = {}
+local scrollmult = -4 -- negative multiplier makes mouse work like traditional scrollwheel
+
+dragOtherToScroll = hs.eventtap.new({ hs.eventtap.event.types.otherMouseDragged }, function(e)
+  local pressedMouseButton = e:getProperty(hs.eventtap.event.properties['mouseEventButtonNumber'])
+  -- print ("pressed mouse " .. pressedMouseButton)
+  if scrollMouseButton == pressedMouseButton
+  then
+    -- print("scroll");
+    deferred = false
+    oldmousepos = hs.mouse.getAbsolutePosition()
+    local dx = e:getProperty(hs.eventtap.event.properties['mouseEventDeltaX'])
+    local dy = e:getProperty(hs.eventtap.event.properties['mouseEventDeltaY'])
+    local scroll = hs.eventtap.event.newScrollEvent({ -dx * scrollmult, dy * scrollmult }, {}, 'pixel')
+    -- put the mouse back
+    hs.mouse.setAbsolutePosition(oldmousepos)
+    return true, { scroll }
+  else
+    return false, {}
+  end
+end)
+
+overrideOtherMouseDown:start()
+overrideOtherMouseUp:start()
+dragOtherToScroll:start()
+
 -- Special config
 if string.match(hs.host.localizedName(), "mbp") then
   pcall(function()
@@ -157,21 +216,20 @@ end
 
 -- Define the Lua table that maps names to URLs
 local urlTable = {
-    john = "https://example.com/john",
-    alice = "https://example.com/alice",
-    bob = "https://example.com/bob",
+  john = "https://example.com/john",
+  alice = "https://example.com/alice",
+  bob = "https://example.com/bob",
 }
 
 -- Register a callback for the custom hammerspoon:// URLs
 hs.urlevent.bind("example", function(eventName, params, senderPID)
-    local event = eventName -- The event name is the host in hammerspoon://host
-    local name = params["name"]
-    local matchedLink = urlTable[name]
-    if name and matchedLink then
-        hs.urlevent.openURL(matchedLink)
-    else
-        print("name not found or no action specified.")
-        print(event, name)
-    end
+  local event = eventName   -- The event name is the host in hammerspoon://host
+  local name = params["name"]
+  local matchedLink = urlTable[name]
+  if name and matchedLink then
+    hs.urlevent.openURL(matchedLink)
+  else
+    print("name not found or no action specified.")
+    print(event, name)
+  end
 end)
-
