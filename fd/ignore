@@ -1,4 +1,4 @@
-.git
+.git/
 .idea
 .vscode
 node_modules
