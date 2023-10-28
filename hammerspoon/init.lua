@@ -232,3 +232,6 @@ hs.urlevent.bind("example", function(eventName, params, senderPID)
     print(event, name)
   end
 end)
+
+
+-- local keyboard = hs.loadSpoon("Keyboard")
