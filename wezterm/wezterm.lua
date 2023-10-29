@@ -14,7 +14,7 @@ wezterm.on('update-right-status', function(window, pane)
   })
 end)
 
-return {
+local config = {
   font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" }),
   font_size = 19.0,
   keys = {
@@ -32,5 +32,9 @@ return {
       },
     },
   },
-  color_scheme = "Gruvbox light, hard (base16)",
+  color_scheme = "catppuccin-mocha",
 }
+
+config.window_background_opacity = .9
+
+return config

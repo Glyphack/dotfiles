@@ -55,5 +55,5 @@ function Everforest()
     vim.cmd.colorscheme "everforest"
 end
 
-vim.o.background = "light" 
-vim.cmd([[colorscheme gruvbox]])
+vim.o.background = "dark"
+vim.cmd([[colorscheme catppuccin-mocha]])

@@ -67,6 +67,7 @@ require("lazy").setup({
     { "folke/tokyonight.nvim" },
     { 'stevedylandev/flexoki-nvim',          name = 'flexoki' },
     { "ellisonleao/gruvbox.nvim", priority = 1000},
+    { "catppuccin/nvim" },
     -- language supports
     -- scala
     { "scalameta/nvim-metals" },
