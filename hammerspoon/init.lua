@@ -100,24 +100,25 @@ end
 setPrimary()
 
 -- half of screen
-hs.hotkey.bind({ 'alt', 'cmd' }, 'h', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 0.5, 1 }) end)
-hs.hotkey.bind({ 'alt', 'cmd' }, 'l', function() hs.window.focusedWindow():moveToUnit({ 0.5, 0, 0.5, 1 }) end)
-hs.hotkey.bind({ 'alt', 'cmd' }, 'k', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 0.5 }) end)
-hs.hotkey.bind({ 'alt', 'cmd' }, 'j', function() hs.window.focusedWindow():moveToUnit({ 0, 0.5, 1, 0.5 }) end)
+local window_management_key = { 'alt', 'ctrl', 'shift' }
+hs.hotkey.bind(window_management_key, 'h', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 0.5, 1 }) end)
+hs.hotkey.bind(window_management_key, 'l', function() hs.window.focusedWindow():moveToUnit({ 0.5, 0, 0.5, 1 }) end)
+hs.hotkey.bind(window_management_key, 'k', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 0.5 }) end)
+hs.hotkey.bind(window_management_key, 'j', function() hs.window.focusedWindow():moveToUnit({ 0, 0.5, 1, 0.5 }) end)
 -- full screen
-hs.hotkey.bind({ 'alt', 'cmd' }, 'f', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 1 }) end)
--- center screen
-hs.hotkey.bind({ 'alt', 'cmd' }, 'c', function() hs.window.focusedWindow():centerOnScreen() end)
+hs.hotkey.bind(window_management_key, 'f', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 1 }) end)
+-- center screewindow_management_key
+hs.hotkey.bind(window_management_key, 'c', function() hs.window.focusedWindow():centerOnScreen() end)
 
 -- move between displays
-hs.hotkey.bind({ 'shift', 'alt', 'cmd' }, 'l', function()
+hs.hotkey.bind(window_management_key, 'u', function()
   local win = hs.window.focusedWindow()
   local next = win:screen():toEast()
   if next then
     win:moveToScreen(next, true)
   end
 end)
-hs.hotkey.bind({ 'shift', 'alt', 'cmd' }, 'h', function()
+hs.hotkey.bind(window_management_key, 'o', function()
   local win = hs.window.focusedWindow()
   local next = win:screen():toWest()
   if next then
@@ -127,7 +128,7 @@ end)
 
 -- grid gui
 hs.grid.setMargins({ w = 0, h = 0 })
-hs.hotkey.bind({ 'shift', 'cmd' }, 'g', hs.grid.show)
+hs.hotkey.bind(window_management_key, 'g', hs.grid.show)
 
 -- auto layout
 hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'l', function() autoLayout() end)
