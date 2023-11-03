@@ -6,8 +6,6 @@ local actions = require "telescope.actions"
 local action_state = require "telescope.actions.state"
 local action_layout = require "telescope.actions.layout"
 
-require 'telescope-all-recent'.setup {}
-
 local set_prompt_to_entry_value = function(prompt_bufnr)
   local entry = action_state.get_selected_entry()
   if not entry or not type(entry) == "table" then
