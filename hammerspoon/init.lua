@@ -100,25 +100,26 @@ end
 setPrimary()
 
 -- half of screen
-local window_management_key = { 'alt', 'ctrl', 'shift' }
-hs.hotkey.bind(window_management_key, 'h', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 0.5, 1 }) end)
-hs.hotkey.bind(window_management_key, 'l', function() hs.window.focusedWindow():moveToUnit({ 0.5, 0, 0.5, 1 }) end)
-hs.hotkey.bind(window_management_key, 'k', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 0.5 }) end)
-hs.hotkey.bind(window_management_key, 'j', function() hs.window.focusedWindow():moveToUnit({ 0, 0.5, 1, 0.5 }) end)
--- full screen
-hs.hotkey.bind(window_management_key, 'f', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 1 }) end)
+local window_management_key = { 'command', 'alt', 'ctrl', 'shift' }
+-- hs.hotkey.bind(window_management_key, 'h', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 0.5, 1 }) end)
+-- hs.hotkey.bind(window_management_key, 'l', function() hs.window.focusedWindow():moveToUnit({ 0.5, 0, 0.5, 1 }) end)
+-- hs.hotkey.bind(window_management_key, 'k', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 0.5 }) end)
+-- hs.hotkey.bind(window_management_key, 'j', function() hs.window.focusedWindow():moveToUnit({ 0, 0.5, 1, 0.5 }) end)
 -- center screewindow_management_key
-hs.hotkey.bind(window_management_key, 'c', function() hs.window.focusedWindow():centerOnScreen() end)
+-- hs.hotkey.bind(window_management_key, 'c', function() hs.window.focusedWindow():centerOnScreen() end)
+
+-- full screen
+hs.hotkey.bind(window_management_key, 'i', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 1 }) end)
 
 -- move between displays
-hs.hotkey.bind(window_management_key, 'u', function()
+hs.hotkey.bind(window_management_key, 'o', function()
   local win = hs.window.focusedWindow()
   local next = win:screen():toEast()
   if next then
     win:moveToScreen(next, true)
   end
 end)
-hs.hotkey.bind(window_management_key, 'o', function()
+hs.hotkey.bind(window_management_key, 'u', function()
   local win = hs.window.focusedWindow()
   local next = win:screen():toWest()
   if next then
@@ -128,10 +129,7 @@ end)
 
 -- grid gui
 hs.grid.setMargins({ w = 0, h = 0 })
-hs.hotkey.bind(window_management_key, 'g', hs.grid.show)
-
--- auto layout
-hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'l', function() autoLayout() end)
+hs.hotkey.bind(window_management_key, 'o', hs.grid.show)
 
 -- size for recording
 hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'r', function()
@@ -146,7 +144,6 @@ local scrollMouseButton = 2
 local deferred = false
 
 overrideOtherMouseDown = hs.eventtap.new({ hs.eventtap.event.types.otherMouseDown }, function(e)
-  -- print("down")
   local pressedMouseButton = e:getProperty(hs.eventtap.event.properties['mouseEventButtonNumber'])
   if scrollMouseButton == pressedMouseButton
   then
@@ -156,7 +153,6 @@ overrideOtherMouseDown = hs.eventtap.new({ hs.eventtap.event.types.otherMouseDow
 end)
 
 overrideOtherMouseUp = hs.eventtap.new({ hs.eventtap.event.types.otherMouseUp }, function(e)
-  -- print("up")
   local pressedMouseButton = e:getProperty(hs.eventtap.event.properties['mouseEventButtonNumber'])
   if scrollMouseButton == pressedMouseButton
   then
@@ -271,8 +267,3 @@ end
 require('keyboard')
 
 hs.notify.new({title='Hammerspoon', informativeText='Ready to rock 🤘'}):send()
--- require('keyboard.delete-words')
--- require('keyboard.hyper')
--- require('keyboard.markdown')
--- require('keyboard.panes')
--- require('keyboard.windows')
