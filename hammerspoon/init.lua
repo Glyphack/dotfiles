@@ -129,7 +129,7 @@ end)
 
 -- grid gui
 hs.grid.setMargins({ w = 0, h = 0 })
-hs.hotkey.bind(window_management_key, 'o', hs.grid.show)
+hs.hotkey.bind(window_management_key, 'y', hs.grid.show)
 
 -- size for recording
 hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'r', function()
