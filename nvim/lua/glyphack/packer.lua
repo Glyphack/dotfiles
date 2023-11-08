@@ -340,4 +340,5 @@ require("lazy").setup({
     },
     { "lukas-reineke/indent-blankline.nvim", main = "ibl",    opts = {}, ft = { "json", "yaml" } },
     { 'tzachar/highlight-undo.nvim' },
+    { "hdiniz/vim-gradle" },
 })
