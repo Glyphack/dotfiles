@@ -109,23 +109,23 @@ local window_management_key = { 'command', 'alt', 'ctrl', 'shift' }
 -- hs.hotkey.bind(window_management_key, 'c', function() hs.window.focusedWindow():centerOnScreen() end)
 
 -- full screen
-hs.hotkey.bind(window_management_key, 'i', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 1 }) end)
-
--- move between displays
-hs.hotkey.bind(window_management_key, 'o', function()
-  local win = hs.window.focusedWindow()
-  local next = win:screen():toEast()
-  if next then
-    win:moveToScreen(next, true)
-  end
-end)
-hs.hotkey.bind(window_management_key, 'u', function()
-  local win = hs.window.focusedWindow()
-  local next = win:screen():toWest()
-  if next then
-    win:moveToScreen(next, true)
-  end
-end)
+-- hs.hotkey.bind(window_management_key, 'i', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 1 }) end)
+--
+-- -- move between displays
+-- hs.hotkey.bind(window_management_key, 'o', function()
+--   local win = hs.window.focusedWindow()
+--   local next = win:screen():toEast()
+--   if next then
+--     win:moveToScreen(next, true)
+--   end
+-- end)
+-- hs.hotkey.bind(window_management_key, 'u', function()
+--   local win = hs.window.focusedWindow()
+--   local next = win:screen():toWest()
+--   if next then
+--     win:moveToScreen(next, true)
+--   end
+-- end)
 
 -- grid gui
 hs.grid.setMargins({ w = 0, h = 0 })
