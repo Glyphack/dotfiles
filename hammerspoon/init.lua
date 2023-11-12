@@ -100,18 +100,18 @@ end
 setPrimary()
 
 -- half of screen
-local window_management_key = { 'command', 'alt', 'ctrl', 'shift' }
--- hs.hotkey.bind(window_management_key, 'h', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 0.5, 1 }) end)
--- hs.hotkey.bind(window_management_key, 'l', function() hs.window.focusedWindow():moveToUnit({ 0.5, 0, 0.5, 1 }) end)
--- hs.hotkey.bind(window_management_key, 'k', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 0.5 }) end)
--- hs.hotkey.bind(window_management_key, 'j', function() hs.window.focusedWindow():moveToUnit({ 0, 0.5, 1, 0.5 }) end)
+local window_management_key = { 'alt', 'command', 'ctrl', 'shift' }
+hs.hotkey.bind(window_management_key, 'a', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 0.5, 1 }) end)
+hs.hotkey.bind(window_management_key, 'd', function() hs.window.focusedWindow():moveToUnit({ 0.5, 0, 0.5, 1 }) end)
+hs.hotkey.bind(window_management_key, 'w', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 0.5 }) end)
+hs.hotkey.bind(window_management_key, 's', function() hs.window.focusedWindow():moveToUnit({ 0, 0.5, 1, 0.5 }) end)
 -- center screewindow_management_key
--- hs.hotkey.bind(window_management_key, 'c', function() hs.window.focusedWindow():centerOnScreen() end)
+hs.hotkey.bind(window_management_key, 'c', function() hs.window.focusedWindow():centerOnScreen() end)
 
 -- full screen
--- hs.hotkey.bind(window_management_key, 'i', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 1 }) end)
---
--- -- move between displays
+hs.hotkey.bind(window_management_key, 'i', function() hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 1 }) end)
+
+-- move between displays
 -- hs.hotkey.bind(window_management_key, 'o', function()
 --   local win = hs.window.focusedWindow()
 --   local next = win:screen():toEast()
@@ -129,7 +129,7 @@ local window_management_key = { 'command', 'alt', 'ctrl', 'shift' }
 
 -- grid gui
 hs.grid.setMargins({ w = 0, h = 0 })
-hs.hotkey.bind(window_management_key, 'y', hs.grid.show)
+hs.hotkey.bind(window_management_key, 'g', hs.grid.show)
 
 -- size for recording
 hs.hotkey.bind({ 'ctrl', 'alt', 'cmd' }, 'r', function()
