@@ -247,6 +247,7 @@ require("lazy").setup({
 
     { "tpope/vim-fugitive" },
     { "tpope/vim-repeat" },
+    { "tpope/vim-unimpaired" },
     { "RRethy/nvim-treesitter-textsubjects" },
     { "nvim-treesitter/nvim-treesitter-textobjects" },
     { "ThePrimeagen/refactoring.nvim" },
