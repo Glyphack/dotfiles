@@ -39,7 +39,6 @@ end
 set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $JAVA_HOME/bin $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $KOTLIN_LANGUAGE_SERVER
 
 
-set -gx GITHUB_USERNAME shooshyari
 
 # setting the default kube config
 set -gx KUBECONFIG $HOME/.kube/config
