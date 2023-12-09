@@ -5,6 +5,9 @@ matches:
   - trigger: "kafka "
     replace: "Kafka "
 
+  - trigger: "flexport"
+    replace: "Flexport"
+
   - trigger: ". a"
     replace: ". A"
   - trigger: ". b"
