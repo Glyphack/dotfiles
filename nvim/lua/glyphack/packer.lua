@@ -65,8 +65,8 @@ require("lazy").setup({
     },
     { "svrana/neosolarized.nvim" },
     { "folke/tokyonight.nvim" },
-    { 'stevedylandev/flexoki-nvim',          name = 'flexoki' },
-    { "ellisonleao/gruvbox.nvim", priority = 1000},
+    { 'stevedylandev/flexoki-nvim',  name = 'flexoki' },
+    { "ellisonleao/gruvbox.nvim",    priority = 1000 },
     { "catppuccin/nvim" },
     -- language supports
     -- scala
@@ -255,18 +255,42 @@ require("lazy").setup({
     { "phelipetls/jsonpath.nvim" },
     { "folke/neodev.nvim" },
     {
-      "folke/flash.nvim",
-      event = "VeryLazy",
-      ---@type Flash.Config
-      opts = {},
-      -- stylua: ignore
-      keys = {
-        { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-        { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-        { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-        { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-        { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
-      },
+        "folke/flash.nvim",
+        event = "VeryLazy",
+        ---@type Flash.Config
+        opts = {},
+        -- stylua: ignore
+        keys = {
+            { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+            {
+                "S",
+                mode = { "n", "x", "o" },
+                function() require("flash").treesitter() end,
+                desc =
+                "Flash Treesitter"
+            },
+            {
+                "r",
+                mode = "o",
+                function() require("flash").remote() end,
+                desc =
+                "Remote Flash"
+            },
+            {
+                "R",
+                mode = { "o", "x" },
+                function() require("flash").treesitter_search() end,
+                desc =
+                "Treesitter Search"
+            },
+            {
+                "<c-s>",
+                mode = { "c" },
+                function() require("flash").toggle() end,
+                desc =
+                "Toggle Flash Search"
+            },
+        },
     },
     { "antosha417/nvim-lsp-file-operations" },
     {
@@ -292,7 +316,12 @@ require("lazy").setup({
             require('rayso').setup {}
         end
     },
-    { "nvimdev/guard.nvim" },
+    {
+        "nvimdev/guard.nvim",
+        dependencies = {
+            "nvimdev/guard-collection",
+        },
+    },
     { "tpope/vim-dadbod" },
     { "hrsh7th/cmp-nvim-lua" },
     { "mtoohey31/cmp-fish" },
@@ -352,7 +381,20 @@ require("lazy").setup({
             }
         end
     },
-    { "lukas-reineke/indent-blankline.nvim", main = "ibl",    opts = {}, ft = { "json", "yaml" } },
+    { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {}, ft = { "json", "yaml" } },
     { 'tzachar/highlight-undo.nvim' },
     { "hdiniz/vim-gradle" },
+    {
+        'stevearc/aerial.nvim',
+        opts = {},
+        -- Optional dependencies
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "nvim-tree/nvim-web-devicons"
+        },
+    },
+    {
+        'stevearc/conform.nvim',
+        opts = {},
+    }
 })
