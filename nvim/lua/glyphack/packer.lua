@@ -396,5 +396,9 @@ require("lazy").setup({
     {
         'stevearc/conform.nvim',
         opts = {},
-    }
+    },
+    {
+  'stevearc/overseer.nvim',
+  opts = {},
+}
 })
