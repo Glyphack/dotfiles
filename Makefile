@@ -1,5 +1,3 @@
-MacAppLib := /Users/glyphack/Library/Application\ Support
-
 link:
 	echo "outdated"
 	stow --target=${HOME}/.config/fish fish
@@ -10,8 +8,9 @@ link:
 	stow --target=${HOME}/.config starship
 	stow --target=${HOME} gitconf
 
-link-mac:
-	git submodule update --remote --recursive
+link-personal:
+	git submodule update --init dotfiles-private
+	git submodule update --remote dotfiles-private
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
 	mkdir -p ${HOME}/.config/starship && stow --adopt --target=${HOME}/.config starship
 	stow --target=${HOME} gitconf
@@ -22,14 +21,13 @@ link-mac:
 	mkdir -p ${HOME}/.hammerspoon && stow --adopt --target=${HOME}/.hammerspoon hammerspoon
 	mkdir -p ${HOME}/Library/Application\ Support/espanso/ && stow --adopt --target=${HOME}/Library/Application\ Support/espanso/ espanso
 	cd ./dotfiles-private/ && $(MAKE) link
-	cd ./dotfiles-flexport/ && $(MAKE) link
 	# to load new changes
 	espanso restart
 
-submodule:
+link-work: link-personal
 	git submodule update --remote --recursive
+	cd ./dotfiles-flexport/ && $(MAKE) link
 
-# write a command to add and commit all the changes in the dotfiles-private and dotfiles-flexport folders. And update the submodule
 commit-private:
 	cd ./dotfiles-private/ && git stash && git checkout master && git stash pop && git add . && git commit -m "update dotfiles" && git push
 	git submodule update --remote --recursive
