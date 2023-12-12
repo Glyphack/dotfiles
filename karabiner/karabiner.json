@@ -1125,7 +1125,7 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "period",
+                                        "key_code": "8",
                                         "modifiers": [
                                             "left_shift"
                                         ]
@@ -1169,7 +1169,7 @@
                                         }
                                     },
                                     {
-                                        "key_code": "period",
+                                        "key_code": "8",
                                         "modifiers": [
                                             "left_shift"
                                         ]

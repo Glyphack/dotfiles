@@ -53,8 +53,10 @@ complete --command aws --no-files --arguments '(begin; set --local --export COMP
 
 nvm use 20 --silent
 
-source $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
-setup_env
+if test -e $DOTFILES_DIR/dotfiless-flexport/fish/env.fish
+  source $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
+  setup_env
+end
 
 # pnpm
 set -gx PNPM_HOME "/Users/glyphack/Library/pnpm"
