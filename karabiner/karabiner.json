@@ -839,7 +839,6 @@
                                     }
                                 }
                             },
-
                             {
                                 "from": {
                                     "key_code": "j",
@@ -1312,13 +1311,6 @@
                                 "type": "basic"
                             },
                             {
-                                "conditions": [
-                                    {
-                                        "name": "f-mode",
-                                        "type": "variable_if",
-                                        "value": 1
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "h",
                                     "modifiers": {
@@ -1329,8 +1321,9 @@
                                 },
                                 "to": [
                                     {
-                                        "key_code": "8",
+                                        "key_code": "period",
                                         "modifiers": [
+
                                             "left_shift"
                                         ]
                                     }
