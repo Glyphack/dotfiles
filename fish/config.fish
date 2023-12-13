@@ -25,7 +25,7 @@ set -x KOTLIN_LANGUAGE_SERVER $HOME/Programming/kotlin-language-server/server/bu
 # Python
 set -x VIRTUALFISH_ACTIVATION_FILE .venv
 
-#os dependant
+#os dependent
 switch (uname)
     case Linux
         set -x VIMDATA ~/.local/share/nvim
@@ -53,7 +53,7 @@ complete --command aws --no-files --arguments '(begin; set --local --export COMP
 
 nvm use 20 --silent
 
-if test -e $DOTFILES_DIR/dotfiless-flexport/fish/env.fish
+if test -e $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
   source $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
   setup_env
 end
