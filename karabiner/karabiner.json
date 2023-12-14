@@ -1264,6 +1264,13 @@
                                         ]
                                     }
                                 ],
+                                "conditions": [
+                                    {
+                                        "name": "f-mode",
+                                        "value": 1,
+                                        "type": "variable_if"
+                                    }
+                                ],
                                 "type": "basic"
                             },
                             {
@@ -1323,7 +1330,6 @@
                                     {
                                         "key_code": "period",
                                         "modifiers": [
-
                                             "left_shift"
                                         ]
                                     }
