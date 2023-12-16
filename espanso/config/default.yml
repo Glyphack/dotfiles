@@ -29,7 +29,7 @@
 # --- Auto-restart
 
 # Enable/disable the config auto-reload after a file change is detected.
-# auto_restart: false
+auto_restart: false
 
 # --- Clipboard threshold
 

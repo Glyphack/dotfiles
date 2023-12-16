@@ -36,3 +36,6 @@ matches:
   # Snippets
   - trigger: "rtrace"
     replace: "RUST_BACKTRACE=1 "
+
+  - trigger: ":coauthor"
+    replace: "Co-authored-by: name <@.COM>"
