@@ -83,7 +83,7 @@ require("lazy").setup({
         "VonHeikemen/lsp-zero.nvim",
         dependencies = {
             -- LSP Support
-            { "neovim/nvim-lspconfig" },
+            { "Glyphack/nvim-lspconfig" , branch = "kotlin-lsp-storage-path"},
             { "williamboman/mason.nvim" },
             { "williamboman/mason-lspconfig.nvim" },
 
