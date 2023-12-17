@@ -4,7 +4,7 @@
 ---
 --- Download: [https://github.com/Hammerspoon/Spoons/raw/master/Spoons/MicMute.spoon.zip](https://github.com/Hammerspoon/Spoons/raw/master/Spoons/MicMute.spoon.zip)
 
-local obj={}
+local obj = {}
 obj.__index = obj
 
 -- Metadata
@@ -31,24 +31,24 @@ end
 ---
 function obj:toggleMicMute()
 	local mic = hs.audiodevice.defaultInputDevice()
-	local zoom = hs.application'Zoom'
+	local zoom = hs.application 'Zoom'
 	if mic:muted() then
 		mic:setMuted(false)
 		if zoom then
-			local ok = zoom:selectMenuItem'Unmute Audio'
+			local ok = zoom:selectMenuItem 'Unmute Audio'
 			if not ok then
 				hs.timer.doAfter(0.5, function()
-					zoom:selectMenuItem'Unmute Audio'
+					zoom:selectMenuItem 'Unmute Audio'
 				end)
 			end
 		end
 	else
 		mic:setMuted(true)
 		if zoom then
-			local ok = zoom:selectMenuItem'Mute Audio'
+			local ok = zoom:selectMenuItem 'Mute Audio'
 			if not ok then
 				hs.timer.doAfter(0.5, function()
-					zoom:selectMenuItem'Mute Audio'
+					zoom:selectMenuItem 'Mute Audio'
 				end)
 			end
 		end
@@ -88,7 +88,6 @@ function obj:bindHotkeys(mapping, latch_timeout)
 
 	return self
 end
-
 
 function obj:init()
 	obj.time_since_mute = 0
