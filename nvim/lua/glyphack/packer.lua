@@ -13,7 +13,7 @@ require("lazy").setup({
 	"nvim-telescope/telescope-frecency.nvim",
 	"Marskey/telescope-sg",
 	"Marskey/telescope-sg",
-	{ "prochri/telescope-all-recent.nvim", dependencies = "kkharji/sqlite.lua", lazy = false },
+	{ "prochri/telescope-all-recent.nvim",          dependencies = "kkharji/sqlite.lua", lazy = false },
 	{ "nvim-telescope/telescope-smart-history.nvim" },
 	{
 		"ThePrimeagen/git-worktree.nvim",
@@ -64,8 +64,8 @@ require("lazy").setup({
 	},
 	{ "svrana/neosolarized.nvim" },
 	{ "folke/tokyonight.nvim" },
-	{ "stevedylandev/flexoki-nvim", name = "flexoki" },
-	{ "ellisonleao/gruvbox.nvim", priority = 1000 },
+	{ "stevedylandev/flexoki-nvim",  name = "flexoki" },
+	{ "ellisonleao/gruvbox.nvim",    priority = 1000 },
 	{ "catppuccin/nvim" },
 	-- language supports
 	-- scala
@@ -82,7 +82,7 @@ require("lazy").setup({
 		"VonHeikemen/lsp-zero.nvim",
 		dependencies = {
 			-- LSP Support
-			{ "neovim/nvim-lspconfig"},
+			{ "neovim/nvim-lspconfig" },
 			{ "williamboman/mason.nvim" },
 			{ "williamboman/mason-lspconfig.nvim" },
 
@@ -169,7 +169,7 @@ require("lazy").setup({
 	{ "ray-x/guihua.lua" },
 	{ "ray-x/cmp-treesitter" },
 	-- { "wakatime/vim-wakatime" },
-	{ "krivahtoo/silicon.nvim", build = "./install.sh" },
+	{ "krivahtoo/silicon.nvim",       build = "./install.sh" },
 	{
 		"iamcco/markdown-preview.nvim",
 		build = function()
@@ -204,7 +204,7 @@ require("lazy").setup({
 	{ "nvim-lualine/lualine.nvim" },
 	{ "github/copilot.vim" },
 	{ "akinsho/toggleterm.nvim" },
-	{ "j-hui/fidget.nvim", tag = "legacy" },
+	{ "j-hui/fidget.nvim",              tag = "legacy" },
 	-- it's getting annoying when takes control of the cursor and adjusts everything I write
 	-- {
 	--     "gaoDean/autolist.nvim",
@@ -259,38 +259,38 @@ require("lazy").setup({
 		event = "VeryLazy",
 		---@type Flash.Config
 		opts = {},
-        -- stylua: ignore
-        keys = {
-            { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-            {
-                "S",
-                mode = { "n", "x", "o" },
-                function() require("flash").treesitter() end,
-                desc =
-                "Flash Treesitter"
-            },
-            {
-                "r",
-                mode = "o",
-                function() require("flash").remote() end,
-                desc =
-                "Remote Flash"
-            },
-            {
-                "R",
-                mode = { "o", "x" },
-                function() require("flash").treesitter_search() end,
-                desc =
-                "Treesitter Search"
-            },
-            {
-                "<c-s>",
-                mode = { "c" },
-                function() require("flash").toggle() end,
-                desc =
-                "Toggle Flash Search"
-            },
-        },
+		-- stylua: ignore
+		keys = {
+			{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+			{
+				"S",
+				mode = { "n", "x", "o" },
+				function() require("flash").treesitter() end,
+				desc =
+				"Flash Treesitter"
+			},
+			{
+				"r",
+				mode = "o",
+				function() require("flash").remote() end,
+				desc =
+				"Remote Flash"
+			},
+			{
+				"R",
+				mode = { "o", "x" },
+				function() require("flash").treesitter_search() end,
+				desc =
+				"Treesitter Search"
+			},
+			{
+				"<c-s>",
+				mode = { "c" },
+				function() require("flash").toggle() end,
+				desc =
+				"Toggle Flash Search"
+			},
+		},
 	},
 	{ "antosha417/nvim-lsp-file-operations" },
 	{
