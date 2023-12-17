@@ -15,14 +15,9 @@ GlobalMute:bindHotkeys({
   toggle = { hyper, "t" }
 })
 GlobalMute:configure({
-  unmute_background     = 'file:///Library/Desktop%20Pictures/Solid%20Colors/Red%20Orange.png',
-  mute_background       = 'file:///Library/Desktop%20Pictures/Solid%20Colors/Turquoise%20Green.png',
-  enforce_desired_state = true,
-  stop_sococo_for_zoom  = true,
-  unmute_title          = "<---- UNMUTE -----",
-  mute_title            = "<-- MUTE",
+  unmute_background = 'file:///Library/Desktop%20Pictures/Solid%20Colors/Red%20Orange.png',
+  mute_background   = 'file:///Library/Desktop%20Pictures/Solid%20Colors/Turquoise%20Green.png',
 })
-spoon.GlobalMute._logger.level = 3
 
 function SendClickableNotificaiton(notification, link)
   local function notificationCallback()
@@ -219,7 +214,7 @@ local urlTable = {
 
 -- Register a callback for the custom hammerspoon:// URLs
 hs.urlevent.bind("example", function(eventName, params, senderPID)
-  local event = eventName   -- The event name is the host in hammerspoon://host
+  local event = eventName -- The event name is the host in hammerspoon://host
   local name = params["name"]
   local matchedLink = urlTable[name]
   if name and matchedLink then
@@ -234,7 +229,7 @@ end)
 local log = hs.logger.new('init.lua', 'debug')
 
 -- Use Control+` to reload Hammerspoon config
-hs.hotkey.bind({'ctrl'}, '`', nil, function()
+hs.hotkey.bind({ 'ctrl' }, '`', nil, function()
   hs.reload()
 end)
 
@@ -266,4 +261,4 @@ end
 
 require('keyboard')
 
-hs.notify.new({title='Hammerspoon', informativeText='Ready to rock 🤘'}):send()
+hs.notify.new({ title = 'Hammerspoon', informativeText = 'Ready to rock 🤘' }):send()
