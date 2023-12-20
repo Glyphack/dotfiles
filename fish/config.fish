@@ -6,6 +6,8 @@ set --universal FZF_DEFAULT_COMMAND "fd --hidden"
 set -x FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
 set -x FZF_ALT_C_COMMAND "fd -t d . $PROGRAMMING_DIR -d 3"
 set -x NPM_PRE $HOME/.npm-global/bin
+
+bind \ex 'find ~/Downloads ~/Documents -print | fzf'
 #
 # # programming languages
 set -x PYENV_ROOT $HOME/.pyenv
