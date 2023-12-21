@@ -22,3 +22,5 @@ local_script*.py
 # cspell
 cspell.json
 
+# asdf
+*.tool-versions
