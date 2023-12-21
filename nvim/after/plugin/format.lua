@@ -26,6 +26,7 @@ require("conform").setup({
 })
 
 vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+vim.keymap.set("n", "<leader>ff", "", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua require'conform'.format()<cr>", { noremap = true })
 
 vim.api.nvim_create_augroup("format_on_save", {})
@@ -40,3 +41,10 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 		require("conform").format({ bufnr = args.buf })
 	end,
 })
+
+-- Make configuration per project
+require("conform").formatters.yamlfmt = {
+	prepend_args = function(self, ctx)
+		return { "-formatter", "retain_line_breaks=true,pad_line_comments=2,include_document_start=true" }
+	end,
+}
