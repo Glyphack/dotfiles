@@ -1,52 +1,54 @@
-local wezterm = require 'wezterm'
+local wezterm = require("wezterm")
 local act = wezterm.action
 
-wezterm.on('update-right-status', function(window, pane)
-  local date = wezterm.strftime '%a %b %-d %H:%M '
+wezterm.on("update-right-status", function(window, pane)
+	local date = wezterm.strftime("%a %b %-d %H:%M ")
 
-  local bat = ''
-  for _, b in ipairs(wezterm.battery_info()) do
-    bat = '🔋 ' .. string.format('%.0f%%', b.state_of_charge * 100)
-  end
+	local bat = ""
+	for _, b in ipairs(wezterm.battery_info()) do
+		bat = "🔋 " .. string.format("%.0f%%", b.state_of_charge * 100)
+	end
 
-  window:set_right_status(wezterm.format {
-    { Text = bat .. '   ' .. date },
-  })
+	window:set_right_status(wezterm.format({
+		{ Text = bat .. "   " .. date },
+	}))
 end)
 
 local config = {
-  font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" }),
-  font_size = 19.0,
-  keys = {
-    {
-      key = 'm',
-      mods = 'CMD',
-      action = act.DisableDefaultAssignment,
-    },
-    {
-      key = 'K',
-      mods = 'CTRL|SHIFT',
-      action = act.Multiple {
-        act.ClearScrollback 'ScrollbackAndViewport',
-        act.SendKey { key = 'L', mods = 'CTRL' },
-      },
-    },
-    {
-      key = "p",
-      mods = "CMD",
-      action = wezterm.action { QuickSelectArgs = {
-        patterns = {
-          "https?://\\S+"
-        },
-        action = wezterm.action_callback(function(window, pane)
-          local url = window:get_selection_text_for_pane(pane)
-          wezterm.log_info("opening: " .. url)
-          wezterm.open_with(url)
-        end)
-      } }
-    },
-  },
-  color_scheme = "catppuccin-mocha",
+	font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" }),
+	font_size = 23,
+	keys = {
+		{
+			key = "m",
+			mods = "CMD",
+			action = act.DisableDefaultAssignment,
+		},
+		{
+			key = "K",
+			mods = "CTRL|SHIFT",
+			action = act.Multiple({
+				act.ClearScrollback("ScrollbackAndViewport"),
+				act.SendKey({ key = "L", mods = "CTRL" }),
+			}),
+		},
+		{
+			key = "p",
+			mods = "CMD",
+			action = wezterm.action({
+				QuickSelectArgs = {
+					patterns = {
+						"https?://\\S+",
+					},
+					action = wezterm.action_callback(function(window, pane)
+						local url = window:get_selection_text_for_pane(pane)
+						wezterm.log_info("opening: " .. url)
+						wezterm.open_with(url)
+					end),
+				},
+			}),
+		},
+	},
+	color_scheme = "catppuccin-mocha",
 }
 
 -- config.window_background_opacity = .9
@@ -55,26 +57,26 @@ local config = {
 local dimmer = { brightness = 0.1 }
 
 config.enable_scroll_bar = true
-config.min_scroll_bar_height = '2cell'
+config.min_scroll_bar_height = "2cell"
 config.colors = {
-  scrollbar_thumb = 'gray',
+	scrollbar_thumb = "gray",
 }
 config.background = {
-  -- This is the deepest/back-most layer. It will be rendered first
-  {
-    source = {
-      File = wezterm.home_dir .. '/Programming/dotfiles/bg-1.jpeg',
-    },
-    -- The texture tiles vertically but not horizontally.
-    -- When we repeat it, mirror it so that it appears "more seamless".
-    -- An alternative to this is to set `width = "100%"` and have
-    -- it stretch across the display
-    repeat_x = 'Mirror',
-    hsb = dimmer,
-    -- When the viewport scrolls, move this layer 10% of the number of
-    -- pixels moved by the main viewport. This makes it appear to be
-    -- further behind the text.
-  },
+	-- This is the deepest/back-most layer. It will be rendered first
+	{
+		source = {
+			File = wezterm.home_dir .. "/Programming/dotfiles/bg-1.jpeg",
+		},
+		-- The texture tiles vertically but not horizontally.
+		-- When we repeat it, mirror it so that it appears "more seamless".
+		-- An alternative to this is to set `width = "100%"` and have
+		-- it stretch across the display
+		repeat_x = "Mirror",
+		hsb = dimmer,
+		-- When the viewport scrolls, move this layer 10% of the number of
+		-- pixels moved by the main viewport. This makes it appear to be
+		-- further behind the text.
+	},
 }
 
 return config

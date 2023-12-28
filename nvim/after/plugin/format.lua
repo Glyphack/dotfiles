@@ -4,7 +4,7 @@ require("conform").setup({
 		lua = { "stylua" },
 		go = { "goimports", "golines" },
 		javascript = { { "prettierd", "prettier" } },
-		python = { "ruff_format", "ruff_fix" },
+		python = { "ruff_format" },
 		kotlin = { "ktlint" },
 		rust = { "rustfmt" },
 		yaml = { "yamlfmt" },
@@ -35,7 +35,7 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 	group = "format_on_save",
 	pattern = { "*" },
 	callback = function(args)
-		if vim.bo.filetype == "kotlin" then
+		if vim.bo.filetype == "kotlin" or vim.bo.filetype == "python" then
 			return
 		end
 		require("conform").format({ bufnr = args.buf })
