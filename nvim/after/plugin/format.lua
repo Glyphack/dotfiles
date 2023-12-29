@@ -35,7 +35,7 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 	group = "format_on_save",
 	pattern = { "*" },
 	callback = function(args)
-		if vim.bo.filetype == "kotlin" or vim.bo.filetype == "python" then
+		if vim.bo.filetype == "kotlin" or vim.bo.filetype == "python" or vim.bo.filetype == "yaml" then
 			return
 		end
 		require("conform").format({ bufnr = args.buf })
