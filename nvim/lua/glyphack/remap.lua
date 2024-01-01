@@ -48,10 +48,12 @@ vim.keymap.set("n", "<M-Down>", ":resize -2<CR>")
 vim.keymap.set("n", "<M-Left>", ":vertical resize -2<CR>")
 vim.keymap.set("n", "<M-Right>", ":vertical resize +2<CR>")
 
-
-vim.keymap.set("n", "<leader>xx", ":source %<CR>")
-vim.keymap.set("n", "<leader>xv", ":source $MYVIMRC<CR>")
+vim.keymap.set("n", "<leader>zx", ":source %<CR>")
+vim.keymap.set("n", "<leader>zv", ":source $MYVIMRC<CR>")
 
 -- save my pinky
 vim.keymap.set("i", "<Home>", "<Esc>")
 vim.keymap.set("i", "jk", "<Esc>")
+
+-- LSP and diagnostics
+vim.keymap.set("n", "<leader>xx", function() require("trouble").toggle() end)
