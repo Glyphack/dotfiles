@@ -16,6 +16,7 @@ set -x POETRY $HOME/.poetry
 set -x GOPATH $HOME/go
 set -x GOBIN $GOPATH/bin
 set -x RUST_HOME $HOME/.cargo/bin
+set -x FLUTTER_BIN $HOME/flutter/bin
 #
 # place for software I install
 set -x HOME_BIN $HOME/bin
@@ -38,8 +39,7 @@ switch (uname)
         set -x PATH $PATH  /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
 end
 
-set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $JAVA_HOME/bin $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $KOTLIN_LANGUAGE_SERVER
-
+set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAVA_HOME/bin $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $KOTLIN_LANGUAGE_SERVER
 
 
 # setting the default kube config
@@ -57,7 +57,6 @@ nvm use 20 --silent
 
 if test -e $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
   source $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
-  setup_env
 end
 
 # pnpm

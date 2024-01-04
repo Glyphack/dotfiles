@@ -25,6 +25,10 @@
 [pull]
 	rebase = true
 
+[push]
+	useForceIfIncludes = true
+
+
 [url "git@github.com:"]
 	insteadOf = https://github.com/
 

@@ -317,6 +317,7 @@ require("mason-lspconfig").setup({
 		"ltex",
 		"marksman",
 		"typos_lsp",
+		"vale_ls",
 	},
 	handlers = {
 		lsp_zero.default_setup,
@@ -387,5 +388,7 @@ require("mason-lspconfig").setup({
 		-- end,
 	},
 })
+
+require("lspconfig").dartls.setup({})
 
 require("glyphack.null-ls")
