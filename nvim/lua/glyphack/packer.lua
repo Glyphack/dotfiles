@@ -13,7 +13,7 @@ require("lazy").setup({
 	"nvim-telescope/telescope-frecency.nvim",
 	"Marskey/telescope-sg",
 	"Marskey/telescope-sg",
-	{ "prochri/telescope-all-recent.nvim",          dependencies = "kkharji/sqlite.lua", lazy = false },
+	{ "prochri/telescope-all-recent.nvim", dependencies = "kkharji/sqlite.lua", lazy = false },
 	{ "nvim-telescope/telescope-smart-history.nvim" },
 	{
 		"ThePrimeagen/git-worktree.nvim",
@@ -64,8 +64,8 @@ require("lazy").setup({
 	},
 	{ "svrana/neosolarized.nvim" },
 	{ "folke/tokyonight.nvim" },
-	{ "stevedylandev/flexoki-nvim",  name = "flexoki" },
-	{ "ellisonleao/gruvbox.nvim",    priority = 1000 },
+	{ "stevedylandev/flexoki-nvim", name = "flexoki" },
+	{ "ellisonleao/gruvbox.nvim", priority = 1000 },
 	{ "catppuccin/nvim" },
 	-- language supports
 	-- scala
@@ -169,7 +169,7 @@ require("lazy").setup({
 	{ "ray-x/guihua.lua" },
 	{ "ray-x/cmp-treesitter" },
 	-- { "wakatime/vim-wakatime" },
-	{ "krivahtoo/silicon.nvim",       build = "./install.sh" },
+	{ "krivahtoo/silicon.nvim", build = "./install.sh" },
 	{
 		"iamcco/markdown-preview.nvim",
 		build = function()
@@ -204,7 +204,7 @@ require("lazy").setup({
 	{ "nvim-lualine/lualine.nvim" },
 	{ "github/copilot.vim" },
 	{ "akinsho/toggleterm.nvim" },
-	{ "j-hui/fidget.nvim",              tag = "legacy" },
+	{ "j-hui/fidget.nvim", tag = "legacy" },
 	-- it's getting annoying when takes control of the cursor and adjusts everything I write
 	-- {
 	--     "gaoDean/autolist.nvim",
@@ -339,12 +339,9 @@ require("lazy").setup({
 			require("hlsearch").setup()
 		end,
 	},
-	-- {
-	--     "sourcegraph/sg.nvim",
-	--     dependencies = { "nvim-lua/plenary.nvim" },
-	--
-	--     build = "nvim -l build/init.lua",
-	-- },
+	{
+		"sourcegraph/sg.nvim",
+	},
 	{
 		"kevinhwang91/nvim-fundo",
 		config = function()
