@@ -95,7 +95,6 @@ lsp_zero.on_attach(function(client, bufnr)
 
 	vim.keymap.set("n", "grn", vim.lsp.buf.rename, opts)
 	vim.keymap.set("n", "gws", vim.lsp.buf.workspace_symbol, opts)
-	vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
 	vim.diagnostic.config({ virtual_text = true })
 
 	vim.keymap.set("n", "[[,", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts)
@@ -111,7 +110,7 @@ lsp_zero.on_attach(function(client, bufnr)
 	vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts)
 	vim.keymap.set("n", "grn", "<cmd>Lspsaga rename<CR>", opts)
 	vim.keymap.set("n", "grnp", "<cmd>Lspsaga rename ++project<CR>", opts)
-	vim.keymap.set("i", "<C-k>", "<cmd>Lspsaga signature_help<CR>", opts)
+	vim.keymap.set("i", "<C-h>", "<cmd>Lspsaga signature_help<CR>", opts)
 	vim.keymap.set({ "n", "v" }, "gca", "<cmd>Lspsaga code_action<CR>")
 end)
 

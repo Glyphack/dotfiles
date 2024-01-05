@@ -260,3 +260,24 @@ end
 
 require("keyboard")
 hs.notify.new({ title = "Hammerspoon", informativeText = "Ready to rock 🤘" }):send()
+
+SpoonInstall:andUse("WindowScreenLeftAndRight", {
+	config = {
+		animationDuration = 0,
+	},
+	hotkeys = {
+		screen_left = { WINDOW_MANAGEMENT_KEY, "[" },
+		screen_right = { WINDOW_MANAGEMENT_KEY, "]" },
+	},
+})
+
+local wm = hs.webview.windowMasks
+SpoonInstall:andUse("PopupTranslateSelection", {
+	disable = false,
+	config = {
+		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,
+	},
+	hotkeys = {
+		translate_to_en = { WINDOW_MANAGEMENT_KEY, "\\" },
+	},
+})
