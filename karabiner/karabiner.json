@@ -404,6 +404,13 @@
             "description": "f-mode for delimiters and ^ & *",
             "manipulators": [
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "u",
                   "modifiers": {
@@ -420,34 +427,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "open_bracket",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -471,9 +453,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "open_bracket",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "i",
                   "modifiers": {
@@ -490,34 +497,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "close_bracket",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -541,9 +523,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "close_bracket",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "o",
                   "modifiers": {
@@ -560,34 +567,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "6",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -611,9 +593,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "6",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "n",
                   "modifiers": {
@@ -630,34 +637,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "period",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -681,9 +663,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "period",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "h",
                   "modifiers": {
@@ -700,34 +707,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "comma",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -751,9 +733,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "comma",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "j",
                   "modifiers": {
@@ -770,34 +777,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "9",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -821,9 +803,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "9",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "k",
                   "modifiers": {
@@ -840,34 +847,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "0",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -891,9 +873,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "0",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "l",
                   "modifiers": {
@@ -910,34 +917,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "7",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -961,9 +943,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "7",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "n",
                   "modifiers": {
@@ -980,34 +987,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "comma",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1031,9 +1013,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "comma",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "m",
                   "modifiers": {
@@ -1047,31 +1054,9 @@
                     "key_code": "open_bracket"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "open_bracket"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1095,9 +1080,31 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "open_bracket"
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "comma",
                   "modifiers": {
@@ -1111,31 +1118,9 @@
                     "key_code": "close_bracket"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "close_bracket"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1159,9 +1144,31 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "close_bracket"
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "period",
                   "modifiers": {
@@ -1176,13 +1183,6 @@
                     "modifiers": [
                       "left_shift"
                     ]
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
                   }
                 ],
                 "type": "basic"
@@ -1232,6 +1232,13 @@
                 "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "h",
                   "modifiers": {
@@ -1248,34 +1255,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "8",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1299,7 +1281,25 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "8",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               }
             ]
           },
@@ -1307,6 +1307,13 @@
             "description": "s-mode for punctuation",
             "manipulators": [
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "y",
                   "modifiers": {
@@ -1320,31 +1327,9 @@
                     "key_code": "grave_accent_and_tilde"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "grave_accent_and_tilde"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1368,9 +1353,31 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "grave_accent_and_tilde"
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "u",
                   "modifiers": {
@@ -1387,34 +1394,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "3",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1438,9 +1420,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "3",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "i",
                   "modifiers": {
@@ -1457,34 +1464,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "4",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1508,9 +1490,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "4",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "o",
                   "modifiers": {
@@ -1527,17 +1534,33 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "s"
+                    },
+                    {
+                      "key_code": "o"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "s-mode",
+                          "value": 0
+                        }
+                      }
+                    ]
+                  }
+                },
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -1555,32 +1578,16 @@
                     ]
                   }
                 ],
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "s"
-                    },
-                    {
-                      "key_code": "o"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "s-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                }
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "h",
                   "modifiers": {
@@ -1597,34 +1604,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "grave_accent_and_tilde",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1648,9 +1630,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "grave_accent_and_tilde",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "j",
                   "modifiers": {
@@ -1667,34 +1674,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "hyphen",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1718,9 +1700,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "hyphen",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "k",
                   "modifiers": {
@@ -1734,31 +1741,9 @@
                     "key_code": "hyphen"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "hyphen"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1782,9 +1767,31 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "hyphen"
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "l",
                   "modifiers": {
@@ -1801,34 +1808,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "1",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1852,9 +1834,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "1",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "m",
                   "modifiers": {
@@ -1868,31 +1875,9 @@
                     "key_code": "equal_sign"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "equal_sign"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1916,9 +1901,31 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "equal_sign"
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "comma",
                   "modifiers": {
@@ -1935,34 +1942,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "equal_sign",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -1986,9 +1968,34 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "equal_sign",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "period",
                   "modifiers": {
@@ -2005,34 +2012,9 @@
                     ]
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "s-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "s-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "2",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -2056,7 +2038,25 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "2",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
               }
             ]
           },
@@ -2064,6 +2064,13 @@
             "description": "a-mode for hjkl movement and nm enter and ui tab and ,. PageDn/Up",
             "manipulators": [
               {
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "u",
                   "modifiers": {
@@ -2077,31 +2084,9 @@
                     "key_code": "tab"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "a-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "a-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "tab"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -2125,9 +2110,31 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "a-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "tab"
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "i",
                   "modifiers": {
@@ -2140,38 +2147,14 @@
                   {
                     "key_code": "tab",
                     "modifiers": [
+                      "left_shift",
                       "left_control"
                     ]
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "a-mode",
-                    "value": 1,
-                    "type": "variable_if"
                   }
                 ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "a-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "tab",
-                    "modifiers": [
-                      "left_control"
-                    ]
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -2195,9 +2178,105 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "a-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "tab",
+                    "modifiers": [
+                      "left_shift",
+                      "left_control"
+                    ]
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "o",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "tab",
+                    "modifiers": [
+                      "left_control"
+                    ]
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "a"
+                    },
+                    {
+                      "key_code": "o"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "a-mode",
+                          "value": 0
+                        }
+                      }
+                    ]
+                  }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "a-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "tab",
+                    "modifiers": [
+                      "left_control"
+                    ]
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "h",
                   "modifiers": {
@@ -2211,31 +2290,9 @@
                     "key_code": "left_arrow"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "a-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "a-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "left_arrow"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -2259,9 +2316,31 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "a-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "left_arrow"
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "j",
                   "modifiers": {
@@ -2275,31 +2354,9 @@
                     "key_code": "down_arrow"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "a-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "a-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "down_arrow"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -2323,9 +2380,31 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "a-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "down_arrow"
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "k",
                   "modifiers": {
@@ -2339,31 +2418,9 @@
                     "key_code": "up_arrow"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "a-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "a-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "up_arrow"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -2387,9 +2444,31 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "a-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "up_arrow"
+                  }
+                ],
+                "type": "basic"
               },
               {
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "l",
                   "modifiers": {
@@ -2403,31 +2482,9 @@
                     "key_code": "right_arrow"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "a-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "a-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "right_arrow"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -2451,28 +2508,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "comma"
                 },
-                "to": [
-                  {
-                    "key_code": "page_down"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "a-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -2484,9 +2520,30 @@
                     }
                   },
                   {
+                    "key_code": "right_arrow"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "comma"
+                },
+                "to": [
+                  {
                     "key_code": "page_down"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -2510,28 +2567,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "period"
                 },
-                "to": [
-                  {
-                    "key_code": "page_up"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "a-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -2543,9 +2579,30 @@
                     }
                   },
                   {
+                    "key_code": "page_down"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "period"
+                },
+                "to": [
+                  {
                     "key_code": "page_up"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -2569,7 +2626,22 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "a-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "page_up"
+                  }
+                ],
+                "type": "basic"
               }
             ]
           },
@@ -2577,6 +2649,13 @@
             "description": "v-mode for number pad",
             "manipulators": [
               {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "u"
                 },
@@ -2585,31 +2664,9 @@
                     "key_code": "7"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "v-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "7"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -2633,28 +2690,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "i"
                 },
-                "to": [
-                  {
-                    "key_code": "8"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -2666,9 +2702,30 @@
                     }
                   },
                   {
+                    "key_code": "7"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "i"
+                },
+                "to": [
+                  {
                     "key_code": "8"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -2692,28 +2749,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "o"
                 },
-                "to": [
-                  {
-                    "key_code": "9"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -2725,9 +2761,30 @@
                     }
                   },
                   {
+                    "key_code": "8"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "o"
+                },
+                "to": [
+                  {
                     "key_code": "9"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -2751,28 +2808,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "j"
                 },
-                "to": [
-                  {
-                    "key_code": "4"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -2784,9 +2820,30 @@
                     }
                   },
                   {
+                    "key_code": "9"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "j"
+                },
+                "to": [
+                  {
                     "key_code": "4"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -2810,28 +2867,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "k"
                 },
-                "to": [
-                  {
-                    "key_code": "5"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -2843,9 +2879,30 @@
                     }
                   },
                   {
+                    "key_code": "4"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "k"
+                },
+                "to": [
+                  {
                     "key_code": "5"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -2869,28 +2926,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "l"
                 },
-                "to": [
-                  {
-                    "key_code": "6"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -2902,9 +2938,30 @@
                     }
                   },
                   {
+                    "key_code": "5"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "l"
+                },
+                "to": [
+                  {
                     "key_code": "6"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -2928,28 +2985,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "m"
                 },
-                "to": [
-                  {
-                    "key_code": "1"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -2961,9 +2997,30 @@
                     }
                   },
                   {
+                    "key_code": "6"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "m"
+                },
+                "to": [
+                  {
                     "key_code": "1"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -2987,28 +3044,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "comma"
                 },
-                "to": [
-                  {
-                    "key_code": "2"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -3020,9 +3056,30 @@
                     }
                   },
                   {
+                    "key_code": "1"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "comma"
+                },
+                "to": [
+                  {
                     "key_code": "2"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -3046,28 +3103,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "period"
                 },
-                "to": [
-                  {
-                    "key_code": "3"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -3079,9 +3115,30 @@
                     }
                   },
                   {
+                    "key_code": "2"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "period"
+                },
+                "to": [
+                  {
                     "key_code": "3"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -3105,31 +3162,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "p"
                 },
-                "to": [
-                  {
-                    "key_code": "equal_sign",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -3141,12 +3174,33 @@
                     }
                   },
                   {
+                    "key_code": "3"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "p"
+                },
+                "to": [
+                  {
                     "key_code": "equal_sign",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -3170,28 +3224,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "semicolon"
                 },
-                "to": [
-                  {
-                    "key_code": "hyphen"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -3203,9 +3236,33 @@
                     }
                   },
                   {
+                    "key_code": "equal_sign",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "semicolon"
+                },
+                "to": [
+                  {
                     "key_code": "hyphen"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -3229,28 +3286,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "slash"
                 },
-                "to": [
-                  {
-                    "key_code": "return_or_enter"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -3264,7 +3300,43 @@
                   {
                     "key_code": "hyphen"
                   }
-                ]
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "slash"
+                },
+                "to": [
+                  {
+                    "key_code": "return_or_enter"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "v-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "hyphen"
+                  }
+                ],
+                "type": "basic"
               },
               {
                 "conditions": [
@@ -3305,6 +3377,13 @@
                 ]
               },
               {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
                 "from": {
                   "key_code": "h"
                 },
@@ -3313,31 +3392,9 @@
                     "key_code": "period"
                   }
                 ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
                 "type": "basic"
               },
               {
-                "type": "basic",
-                "parameters": {
-                  "basic.simultaneous_threshold_milliseconds": 250
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "v-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "period"
-                  }
-                ],
                 "from": {
                   "simultaneous": [
                     {
@@ -3361,28 +3418,7 @@
                       }
                     ]
                   }
-                }
-              },
-              {
-                "from": {
-                  "key_code": "n"
                 },
-                "to": [
-                  {
-                    "key_code": "0"
-                  }
-                ],
-                "conditions": [
-                  {
-                    "name": "v-mode",
-                    "value": 1,
-                    "type": "variable_if"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "type": "basic",
                 "parameters": {
                   "basic.simultaneous_threshold_milliseconds": 250
                 },
@@ -3394,9 +3430,30 @@
                     }
                   },
                   {
+                    "key_code": "period"
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "v-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "n"
+                },
+                "to": [
+                  {
                     "key_code": "0"
                   }
                 ],
+                "type": "basic"
+              },
+              {
                 "from": {
                   "simultaneous": [
                     {
@@ -3420,7 +3477,22 @@
                       }
                     ]
                   }
-                }
+                },
+                "parameters": {
+                  "basic.simultaneous_threshold_milliseconds": 250
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "v-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "0"
+                  }
+                ],
+                "type": "basic"
               }
             ]
           }
@@ -3646,21 +3718,21 @@
       "simple_modifications": [
         {
           "from": {
-            "key_code": "right_option"
-          },
-          "to": [
-            {
-              "key_code": "left_option"
-            }
-          ]
-        },
-        {
-          "from": {
             "key_code": "right_command"
           },
           "to": [
             {
               "key_code": "right_control"
+            }
+          ]
+        },
+        {
+          "from": {
+            "key_code": "right_option"
+          },
+          "to": [
+            {
+              "key_code": "left_option"
             }
           ]
         }
@@ -3673,3 +3745,4 @@
     }
   ]
 }
+
