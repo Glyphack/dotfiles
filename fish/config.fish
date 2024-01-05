@@ -6,6 +6,7 @@ set --universal FZF_DEFAULT_COMMAND "fd --hidden"
 set -x FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
 set -x FZF_ALT_C_COMMAND "fd -t d . $PROGRAMMING_DIR -d 3"
 set -x NPM_PRE $HOME/.npm-global/bin
+set -x RIPGREP_CONFIG_PATH $HOME/.ripgreprc
 
 bind \ex "fd -t d . $HOME -d 5 | fzf"
 bind \ez "cd $HOME && echo $PWD"
