@@ -175,7 +175,7 @@ require("lazy").setup({
 		end,
 		ft = { "markdown" },
 	},
-	{ "mbbill/undotree" },
+	-- { "mbbill/undotree" },
 	{ "lewis6991/gitsigns.nvim" },
 	{ "andweeb/presence.nvim" },
 	{
@@ -340,12 +340,12 @@ require("lazy").setup({
 	{
 		"sourcegraph/sg.nvim",
 	},
-	{
-		"kevinhwang91/nvim-fundo",
-		config = function()
-			require("fundo").install()
-		end,
-	},
+	-- {
+	-- 	"kevinhwang91/nvim-fundo",
+	-- 	config = function()
+	-- 		require("fundo").install()
+	-- 	end,
+	-- },
 	{ "chaoren/vim-wordmotion" },
 	{
 		"echasnovski/mini.nvim",
@@ -376,7 +376,7 @@ require("lazy").setup({
 		end,
 	},
 	{ "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {}, ft = { "json", "yaml" } },
-	{ "tzachar/highlight-undo.nvim" },
+	-- { "tzachar/highlight-undo.nvim" },
 	{ "hdiniz/vim-gradle" },
 	{
 		"stevearc/aerial.nvim",
