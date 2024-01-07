@@ -8,7 +8,7 @@ set -x FZF_ALT_C_COMMAND "fd -t d . $PROGRAMMING_DIR -d 3"
 set -x NPM_PRE $HOME/.npm-global/bin
 set -x RIPGREP_CONFIG_PATH $HOME/.ripgreprc
 
-bind \ex "fd -t d . $HOME -d 5 | fzf"
+bind \ex "cd (fd -t d . $HOME -d 5 --hidden | fzf)"
 bind \ez "cd $HOME && echo $PWD"
 #
 # # programming languages
