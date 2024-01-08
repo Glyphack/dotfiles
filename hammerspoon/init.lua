@@ -20,7 +20,7 @@ WINDOWS_SHORTCUTS = {
 	{ "O", "Obsidian" },
 	{ "P", "OBS" },
 	{ "Y", "Discord" },
-	{ "E", "Slack" },
+	{ "U", "Slack" },
 }
 
 TOGGLE_MUTE_SHORTCUT = { "alt", "t" }
