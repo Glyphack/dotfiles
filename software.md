@@ -36,7 +36,6 @@ cd /tmp/
 curl -sS https://starship.rs/install.sh | sh
 curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
 fisher install jorgebucaran/nvm.fish
-nvm install 16
 
 curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
 sudo installer -pkg ./AWSCLIV2.pkg -target /
