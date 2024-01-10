@@ -7,7 +7,7 @@ asdf global java JAVA_V
 
 export ASDF_NODEJS_LEGACY_FILE_DYNAMIC_STRATEGY latest_available
 asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-asdf install nodejs 18.19.0
+asdf install nodejs 18.17.1
 asdf install nodejs latest
 asdf global nodejs latest
 

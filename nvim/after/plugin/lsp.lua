@@ -320,6 +320,25 @@ require("mason-lspconfig").setup({
 	},
 	handlers = {
 		lsp_zero.default_setup,
+		ltex = function()
+			require("lspconfig").ltex.setup({
+				filetypes = {
+					{
+						"bib",
+						"gitcommit",
+						"markdown",
+						"org",
+						"plaintex",
+						"rst",
+						"rnoweb",
+						"tex",
+						"pandoc",
+						"quarto",
+						"rmd",
+					},
+				},
+			})
+		end,
 		jsonls = function()
 			require("lspconfig").jsonls.setup({
 				settings = {
