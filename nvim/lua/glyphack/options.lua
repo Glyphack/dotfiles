@@ -15,7 +15,7 @@ local options = {
 
 	splitbelow = true, -- force all horizontal splits to go below current window
 	splitright = true, -- force all vertical splits to go to the right of current window
-	swapfile = false, -- creates a swapfile
+	swapfile = false, -- creates a swap file
 	backup = false, -- creates a backup file
 	termguicolors = true, -- set term gui colors (most terminals support this)
 	undofile = true, -- enable persistent undo
@@ -29,16 +29,13 @@ local options = {
 	numberwidth = 4, -- set number column width to 2 {default 4}
 	signcolumn = "yes", -- always show the sign column, otherwise it would shift the text each time
 	wrap = false, -- display lines as one long line
-	scrolloff = 8, -- is one of my fav
+	scrolloff = 8, -- is one of my favorite
 	sidescrolloff = 8,
 	guifont = "monospace:h17", -- the font used in graphical neovim applications
 	winbar = "1",
+	spell = true,
 }
-
-vim.opt.shortmess:append("c")
 
 for k, v in pairs(options) do
 	vim.opt[k] = v
 end
-
-vim.wo.number = true
