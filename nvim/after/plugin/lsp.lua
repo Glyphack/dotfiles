@@ -317,6 +317,7 @@ require("mason-lspconfig").setup({
 		"marksman",
 		"typos_lsp",
 		"vale_ls",
+		"efm",
 	},
 	handlers = {
 		lsp_zero.default_setup,
@@ -396,6 +397,23 @@ require("mason-lspconfig").setup({
 							-- Make the server aware of Neovim runtime files
 							library = vim.api.nvim_get_runtime_file("", true),
 							checkThirdParty = false,
+						},
+					},
+				},
+			})
+		end,
+		efm = function()
+			require("lspconfig").efm.setup({
+				init_options = { documentFormatting = true, codeAction = true },
+				settings = {
+					rootMarkers = { ".git/" },
+					languages = {
+						["="] = {
+							require("efmls-configs.linters.cspell"),
+							require("efmls-configs.linters.codespell"),
+						},
+						lua = {
+							{ formatCommand = "lua-format -i", formatStdin = true },
 						},
 					},
 				},
