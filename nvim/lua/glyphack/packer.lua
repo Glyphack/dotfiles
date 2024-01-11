@@ -394,4 +394,8 @@ require("lazy").setup({
 		"stevearc/overseer.nvim",
 		opts = {},
 	},
+	{
+		"creativenull/efmls-configs-nvim",
+		dependencies = { "neovim/nvim-lspconfig" },
+	},
 })

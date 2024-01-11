@@ -15,7 +15,7 @@ require("conform").setup({
 		ruby = { "rubocop" },
 		markdown = { "prettierd", "prettier", "markdownlint" },
 		json = { "jq" },
-		dart = { "dartfmt" },
+		-- dart = { "dartfmt" },
 
 		-- Try out injected formatter later
 

@@ -15,3 +15,6 @@ asdf global nodejs latest
 asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
 asdf install ruby 2.7.7
 asdf install ruby "$(asdf latest ruby)"
+
+asdf plugin-add python
+asdf install python latest
