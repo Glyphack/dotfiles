@@ -16,5 +16,8 @@ asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
 asdf install ruby 2.7.7
 asdf install ruby "$(asdf latest ruby)"
 
-asdf plugin-add python
-asdf install python latest
+asdf plugin add python
+asdf install python 3.12.1
+
+python -m pip install virtualfish
+vf install
