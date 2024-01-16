@@ -12,7 +12,7 @@ bind \ex "cd (fd -t d . $HOME -d 5 --hidden | fzf)"
 bind \ez "cd $HOME && echo $PWD"
 #
 # # programming languages
-set -x PYENV_ROOT $HOME/.pyenv
+# set -x PYENV_ROOT $HOME/.pyenv
 set -x POETRY $HOME/.poetry
 set -x GOPATH $HOME/go
 set -x GOBIN $GOPATH/bin
@@ -40,7 +40,7 @@ switch (uname)
         set -x PATH $PATH  /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
 end
 
-set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAVA_HOME/bin $HOME/.local/bin $HOME/.pyenv/shims /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $KOTLIN_LANGUAGE_SERVER
+set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAVA_HOME/bin $HOME/.local/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $KOTLIN_LANGUAGE_SERVER
 
 
 # setting the default kube config
