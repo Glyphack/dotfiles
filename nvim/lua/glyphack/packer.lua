@@ -178,16 +178,6 @@ require("lazy").setup({
 	{ "lewis6991/gitsigns.nvim" },
 	{ "andweeb/presence.nvim" },
 	{
-		"nvim-neo-tree/neo-tree.nvim",
-		branch = "v3.x",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-			"MunifTanjim/nui.nvim",
-		},
-	},
-	{ "jose-elias-alvarez/null-ls.nvim" },
-	{
 		"numToStr/Comment.nvim",
 		config = function()
 			require("Comment").setup({
