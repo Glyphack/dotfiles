@@ -2,8 +2,11 @@ local mini_s = require("mini.surround")
 
 mini_s.setup {
     mapping = {
-      add = 'ys',
     },
+
+
+  respect_selection_type = true,
+
 }
 
 
