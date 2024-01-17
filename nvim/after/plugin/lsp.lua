@@ -429,5 +429,3 @@ require("mason-lspconfig").setup({
 })
 
 require("lspconfig").dartls.setup({})
-
-require("glyphack.null-ls")
