@@ -42,6 +42,7 @@ cmp.setup({
 		{ name = "luasnip", keyword_length = 2 },
 		{ name = "fish" },
 		{ name = "nvim_lua" },
+		{ name = "git" },
 		{ name = "nvim_lsp_signature_help" },
 		{ name = "rg" },
 	},
@@ -71,6 +72,8 @@ cmp.setup({
 		},
 	},
 })
+
+require("cmp_git").setup()
 
 lsp_zero.set_preferences({
 	suggest_lsp_servers = false,
