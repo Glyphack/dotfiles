@@ -12,9 +12,9 @@ require("conform").setup({
 		shell = { "shfmt" },
 		sql = { "sqlfluff" },
 		terraform = { "terraform_fmt" },
-		ruby = { "rubocop" },
 		markdown = { "prettierd", "prettier", "markdownlint" },
 		json = { "jq" },
+		-- ruby = { "rubocop" },
 		-- dart = { "dartfmt" },
 
 		-- Try out injected formatter later

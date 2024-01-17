@@ -1,12 +1,9 @@
 matches:
-  - trigger: "canada "
-    replace: "Canada "
+  - trigger: " canada "
+    replace: " Canada "
 
-  - trigger: "kafka "
-    replace: "Kafka "
-
-  - trigger: "flexport"
-    replace: "Flexport"
+  - trigger: " kafka "
+    replace: " Kafka "
 
   - trigger: ". a"
     replace: ". A"

@@ -91,6 +91,7 @@ require("lazy").setup({
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "hrsh7th/cmp-nvim-lua" },
 			{ "hrsh7th/cmp-nvim-lsp-signature-help" },
+			{"petertriho/cmp-git", requires = "nvim-lua/plenary.nvim"},
 			{ "lukas-reineke/cmp-rg" },
 			{ "hrsh7th/cmp-nvim-lsp-signature-help" },
 
