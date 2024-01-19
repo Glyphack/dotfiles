@@ -1,3 +1,5 @@
 */secrets/*
 pv_*
 secret*
+
+!asdf/.tool-versions
