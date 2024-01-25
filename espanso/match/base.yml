@@ -18,21 +18,6 @@ matches:
         params:
           cmd: "echo 'Hello from your shell'"
 
-  - trigger: "api"
-    replace: "API"
-
-  - trigger: "python"
-    replace: "Python"
-
-  # Capitalize the first character of a sentence
-  - regex: (?P<before>\w\[.?])\s(?P<firstchar>[a-z])(?P<therest>\w*\s)
-    replace: "{{before}} {{capital}}{{therest}}"
-    vars:
-      - name: capital
-        type: shell
-        params:
-          cmd: "echo \"${ESPANSO_FIRSTCHAR^}\""
-
   # Snippets
   - trigger: "rtrace"
     replace: "RUST_BACKTRACE=1 "

@@ -1,10 +1,4 @@
 matches:
-  - trigger: " canada "
-    replace: " Canada "
-
-  - trigger: " kafka "
-    replace: " Kafka "
-
   - trigger: ". a"
     replace: ". A"
   - trigger: ". b"
