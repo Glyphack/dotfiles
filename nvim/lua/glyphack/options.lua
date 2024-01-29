@@ -34,6 +34,8 @@ local options = {
 	guifont = "monospace:h17", -- the font used in graphical neovim applications
 	winbar = "1",
 	spell = true,
+	ignorecase = true,
+	smartcase = true,
 }
 
 for k, v in pairs(options) do
