@@ -15,7 +15,7 @@ wezterm.on("update-right-status", function(window, pane)
 end)
 
 local config = {
-	font = wezterm.font("CaskaydiaCove Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" }),
+	font = wezterm.font("Hack Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" }),
 	font_size = 23,
 	keys = {
 		{
