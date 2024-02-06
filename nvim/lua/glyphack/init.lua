@@ -20,16 +20,6 @@ autocmd("TextYankPost", {
 	end,
 })
 
--- Create a new command called :Link that will wrap the current word under the cursor with
-
--- Lua function to wrap the word under the cursor with []
-function Link()
-	local word = vim.fn.expand("<cWORD>")
-	vim.api.nvim_command("normal ciW[](" .. word .. ")")
-	vim.api.nvim_exec("normal! F[", true)
-end
-vim.cmd("command! Link :lua Link()")
-
 vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, {
 	callback = function()
 		if vim.bo.modified and not vim.bo.readonly and vim.fn.expand("%") ~= "" and vim.bo.buftype == "" then
@@ -45,5 +35,19 @@ vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
 		end
 	end,
 })
+
+-- Lua function to wrap the word under the cursor with []
+function Link()
+	local word = vim.fn.expand("<cWORD>")
+	-- if the word starts with http, don't wrap it in []
+	if word:match("^http") then
+		vim.api.nvim_command("normal ciW[](" .. word .. ")")
+		vim.api.nvim_exec("normal! F[", true)
+		return
+	end
+	vim.api.nvim_command("normal ciW[" .. word .. "]()")
+	vim.api.nvim_exec("normal! F(", true)
+end
+vim.cmd("command! Link :lua Link()")
 
 require("glyphack.packer")

@@ -5,13 +5,7 @@ require("lazy").setup({
 		priority = 100,
 		config = function() end,
 	},
-	"nvim-telescope/telescope-file-browser.nvim",
-	"nvim-telescope/telescope-hop.nvim",
-	"nvim-telescope/telescope-ui-select.nvim",
-	"nvim-telescope/telescope-file-browser.nvim",
 	"nvim-telescope/telescope-live-grep-args.nvim",
-	"nvim-telescope/telescope-frecency.nvim",
-	"Marskey/telescope-sg",
 	"Marskey/telescope-sg",
 	{ "prochri/telescope-all-recent.nvim", dependencies = "kkharji/sqlite.lua", lazy = false },
 	{ "nvim-telescope/telescope-smart-history.nvim" },
@@ -26,13 +20,15 @@ require("lazy").setup({
 		config = function()
 			require("neoclip").setup()
 		end,
+		lazy = true,
 	},
 	{
 		"nvim-telescope/telescope-fzf-native.nvim",
 		build = "make",
 		lazy = false,
 	},
-	-- telescope end
+
+	-- treesitter
 	{ "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 	{
 		"nvim-treesitter/nvim-treesitter-context",
@@ -51,7 +47,25 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{ "nvim-treesitter/playground" },
+	{ "RRethy/nvim-treesitter-textsubjects" },
+	{ "nvim-treesitter/nvim-treesitter-textobjects" },
+	{
+		"stevearc/aerial.nvim",
+		opts = {
+			on_attach = function(bufnr)
+				vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr })
+				vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr })
+			end,
+		},
+		keys = {
+			{ "<leader>ta", "<cmd>AerialToggle<CR>" },
+			dependencies = {
+				"nvim-treesitter/nvim-treesitter",
+				"nvim-tree/nvim-web-devicons",
+			},
+		},
+	},
+
 	-- colorschemes
 	{
 		"rose-pine/neovim",
@@ -64,17 +78,9 @@ require("lazy").setup({
 	{ "stevedylandev/flexoki-nvim", name = "flexoki" },
 	{ "ellisonleao/gruvbox.nvim", priority = 1000 },
 	{ "catppuccin/nvim" },
-	-- language supports
-	-- scala
-	{ "scalameta/nvim-metals" },
-	-- go
-	{ "leoluz/nvim-dap-go" },
-	{ "ray-x/go.nvim" },
-	-- python
-	{ "acksld/swenv.nvim" },
-	{ "mfussenegger/nvim-dap-python" },
-	-- lsp features
-	{ "lvimuser/lsp-inlayhints.nvim" },
+	{ "sainnhe/everforest" },
+
+	-- lsp
 	{
 		"VonHeikemen/lsp-zero.nvim",
 		dependencies = {
@@ -91,22 +97,18 @@ require("lazy").setup({
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "hrsh7th/cmp-nvim-lua" },
 			{ "hrsh7th/cmp-nvim-lsp-signature-help" },
-			{"petertriho/cmp-git", requires = "nvim-lua/plenary.nvim"},
+			{ "petertriho/cmp-git", requires = "nvim-lua/plenary.nvim" },
 			{ "lukas-reineke/cmp-rg" },
 			{ "hrsh7th/cmp-nvim-lsp-signature-help" },
+			{ "hrsh7th/cmp-nvim-lua" },
+			{ "ray-x/cmp-treesitter" },
+			{ "mtoohey31/cmp-fish" },
 
 			-- Snippets
 			{ "L3MON4D3/LuaSnip" },
 			{ "rafamadriz/friendly-snippets" },
 		},
 		branch = "v3.x",
-	},
-	{ "folke/zen-mode.nvim" },
-	{ "yamatsum/nvim-nonicons" },
-	{
-		"folke/trouble.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {},
 	},
 	{
 		"glepnir/lspsaga.nvim",
@@ -127,13 +129,51 @@ require("lazy").setup({
 		end,
 		dependencies = { { "nvim-tree/nvim-web-devicons" } },
 	},
+	{ "antosha417/nvim-lsp-file-operations" },
+	{ "sourcegraph/sg.nvim" },
+
+	-- format and lint
+	{
+		"stevearc/conform.nvim",
+		opts = {},
+	},
+	{
+		"creativenull/efmls-configs-nvim",
+		dependencies = { "neovim/nvim-lspconfig" },
+	},
+
+	-- language supports
+	{
+		"stevearc/overseer.nvim",
+		opts = {},
+	},
+	-- scala
+	{ "scalameta/nvim-metals", lazy = true },
+	-- go
+	{ "leoluz/nvim-dap-go" },
+	{ "ray-x/go.nvim" },
+	-- python
+	{ "acksld/swenv.nvim" },
+	{ "mfussenegger/nvim-dap-python" },
+	-- ruby
+	{ "tpope/vim-rake", lazy = true },
+	{ "tpope/vim-rails", lazy = true },
+
+	{
+		"folke/trouble.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		opts = {},
+	},
+
 	-- debugger
 	{ "mfussenegger/nvim-dap" },
 	{
 		"rcarriga/nvim-dap-ui",
 		dependencies = { { "mfussenegger/nvim-dap" } },
 	},
-	-- editor assist
+
+	-- coding
+	{ "folke/zen-mode.nvim" },
 	{
 		"danymat/neogen",
 		config = function(plugin)
@@ -160,14 +200,15 @@ require("lazy").setup({
 		end,
 	},
 	{ "mzlogin/vim-markdown-toc" },
-	{ "sainnhe/everforest" },
 	{ "theprimeagen/harpoon" },
-	{ "simrat39/symbols-outline.nvim" },
-	{ "tpope/vim-surround" },
-	{ "ray-x/guihua.lua" },
-	{ "ray-x/cmp-treesitter" },
-	-- { "wakatime/vim-wakatime" },
 	{ "krivahtoo/silicon.nvim", build = "./install.sh" },
+	{
+		"TobinPalmer/rayso.nvim",
+		cmd = { "Rayso" },
+		config = function()
+			require("rayso").setup({})
+		end,
+	},
 	{
 		"iamcco/markdown-preview.nvim",
 		build = function()
@@ -178,6 +219,12 @@ require("lazy").setup({
 	-- { "mbbill/undotree" },
 	{ "lewis6991/gitsigns.nvim" },
 	{ "andweeb/presence.nvim" },
+	{ "nvim-lualine/lualine.nvim" },
+	{ "j-hui/fidget.nvim", tag = "legacy" },
+	{ "tpope/vim-repeat", event = "VeryLazy" },
+	{ "tpope/vim-unimpaired" },
+	{ "tpope/vim-sleuth" },
+	{ "phelipetls/jsonpath.nvim" },
 	{
 		"numToStr/Comment.nvim",
 		config = function()
@@ -188,104 +235,35 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{ "wellle/targets.vim" },
-	{ "nvim-lualine/lualine.nvim" },
 	{ "github/copilot.vim" },
-	{ "akinsho/toggleterm.nvim" },
-	{ "j-hui/fidget.nvim", tag = "legacy" },
-	-- it's getting annoying when takes control of the cursor and adjusts everything I write
-	-- {
-	--     "gaoDean/autolist.nvim",
-	--     ft = {
-	--         "markdown",
-	--         "text",
-	--         "tex",
-	--         "plaintex",
-	--     },
-	--     config = function()
-	--         require("autolist").setup()
-	--
-	--         vim.keymap.set("i", "<tab>", "<cmd>AutolistTab<cr>")
-	--         vim.keymap.set("i", "<s-tab>", "<cmd>AutolistShiftTab<cr>")
-	--         vim.keymap.set("i", "<CR>", "<CR><cmd>AutolistNewBullet<cr>")
-	--         vim.keymap.set("n", "o", "o<cmd>AutolistNewBullet<cr>")
-	--         vim.keymap.set("n", "O", "O<cmd>AutolistNewBulletBefore<cr>")
-	--         vim.keymap.set("n", "<CR>", "<cmd>AutolistToggleCheckbox<cr><CR>")
-	--         vim.keymap.set("n", "<C-r>", "<cmd>AutolistRecalculate<cr>")
-	--
-	--         -- cycle list types with dot-repeat
-	--         vim.keymap.set("n", "<leader>cn", require("autolist").cycle_next_dr, { expr = true })
-	--         vim.keymap.set("n", "<leader>cp", require("autolist").cycle_prev_dr, { expr = true })
-	--
-	--         -- if you don't want dot-repeat
-	--         -- vim.keymap.set("n", "<leader>cn", "<cmd>AutolistCycleNext<cr>")
-	--         -- vim.keymap.set("n", "<leader>cp", "<cmd>AutolistCycleNext<cr>")
-	--
-	--         -- functions to recalculate list on edit
-	--         vim.keymap.set("n", ">>", ">><cmd>AutolistRecalculate<cr>")
-	--         vim.keymap.set("n", "<<", "<<<cmd>AutolistRecalculate<cr>")
-	--         vim.keymap.set("n", "dd", "dd<cmd>AutolistRecalculate<cr>")
-	--         vim.keymap.set("v", "d", "d<cmd>AutolistRecalculate<cr>")
-	--     end,
-	-- },
-	{
-		"ruifm/gitlinker.nvim",
-		dependencies = "nvim-lua/plenary.nvim",
-	},
-
-	{ "tpope/vim-fugitive" },
-	{ "tpope/vim-repeat" },
-	{ "tpope/vim-unimpaired" },
-	{ "RRethy/nvim-treesitter-textsubjects" },
-	{ "nvim-treesitter/nvim-treesitter-textobjects" },
-	{ "ThePrimeagen/refactoring.nvim" },
-	{ "tpope/vim-sleuth" },
-	{ "phelipetls/jsonpath.nvim" },
-	{ "folke/neodev.nvim" },
 	{
 		"folke/flash.nvim",
 		event = "VeryLazy",
 		---@type Flash.Config
 		opts = {},
-		-- stylua: ignore
-		keys = {
-			{ "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-			{
-				"S",
-				mode = { "n", "x", "o" },
-				function() require("flash").treesitter() end,
-				desc =
-				"Flash Treesitter"
-			},
-			{
-				"r",
-				mode = "o",
-				function() require("flash").remote() end,
-				desc =
-				"Remote Flash"
-			},
-			{
-				"R",
-				mode = { "o", "x" },
-				function() require("flash").treesitter_search() end,
-				desc =
-				"Treesitter Search"
-			},
-			{
-				"<c-s>",
-				mode = { "c" },
-				function() require("flash").toggle() end,
-				desc =
-				"Toggle Flash Search"
-			},
-		},
-	},
-	{ "antosha417/nvim-lsp-file-operations" },
-	{
-		"DNLHC/glance.nvim",
-		config = function(plugin)
-			require("glance").setup({})
-		end,
+        -- stylua: ignore
+        keys = {
+            {
+                "<leader>sj",
+                mode = { "n", "x", "o" },
+                function() require("flash").jump() end,
+                desc = "Flash"
+            },
+            {
+                "<leader>st",
+                mode = { "n", "x", "o" },
+                function() require("flash").treesitter() end,
+                desc =
+                "Flash Treesitter"
+            },
+            {
+                "<c-s>",
+                mode = { "c" },
+                function() require("flash").toggle() end,
+                desc =
+                "Toggle Flash Search"
+            },
+        },
 	},
 	{
 		"AckslD/nvim-neoclip.lua",
@@ -293,25 +271,30 @@ require("lazy").setup({
 			require("neoclip").setup()
 		end,
 	},
-	{ "tpope/vim-rake" },
-	{ "tpope/vim-rails" },
-	{ "ActivityWatch/aw-watcher-vim" },
 	{
-		"TobinPalmer/rayso.nvim",
-		cmd = { "Rayso" },
+		"echasnovski/mini.nvim",
+		version = "*",
 		config = function()
-			require("rayso").setup({})
+			require("mini.bracketed").setup()
+			require("mini.fuzzy").setup()
+			require("mini.trailspace").setup()
+			require("mini.ai").setup()
+			if vim.bo.filetype == "yaml" or vim.bo.filetype == "json" then
+				require("mini.indent").setup()
+			end
 		end,
 	},
+	{ "SmiteshP/nvim-navic", lazy = true },
+
+	-- terminal
+	{ "akinsho/toggleterm.nvim" },
+
+	-- git
 	{
-		"nvimdev/guard.nvim",
-		dependencies = {
-			"nvimdev/guard-collection",
-		},
+		"ruifm/gitlinker.nvim",
+		dependencies = "nvim-lua/plenary.nvim",
 	},
-	{ "tpope/vim-dadbod" },
-	{ "hrsh7th/cmp-nvim-lua" },
-	{ "mtoohey31/cmp-fish" },
+	{ "tpope/vim-fugitive" },
 	{
 		"aaronhallaert/advanced-git-search.nvim",
 		dependencies = {
@@ -320,6 +303,12 @@ require("lazy").setup({
 			"tpope/vim-rhubarb",
 		},
 	},
+
+	{ "ActivityWatch/aw-watcher-vim" },
+	{ "tpope/vim-dadbod" },
+
+	-- vim overrides
+	{ "chaoren/vim-wordmotion" },
 	{
 		"nvimdev/hlsearch.nvim",
 		event = "BufRead",
@@ -327,32 +316,7 @@ require("lazy").setup({
 			require("hlsearch").setup()
 		end,
 	},
-	{
-		"sourcegraph/sg.nvim",
-	},
-	-- {
-	-- 	"kevinhwang91/nvim-fundo",
-	-- 	config = function()
-	-- 		require("fundo").install()
-	-- 	end,
-	-- },
-	{ "chaoren/vim-wordmotion" },
-	{
-		"echasnovski/mini.nvim",
-		version = "*",
-		config = function()
-			require("mini.bracketed").setup()
-			require("mini.fuzzy").setup()
-			require("mini.trailspace").setup()
-		end,
-	},
-	{
-		"eandrju/cellular-automaton.nvim",
-		config = function()
-			vim.keymap.set("n", "<leader>fml", "<cmd>CellularAutomaton game_of_life<CR>")
-		end,
-	},
-	{ "SmiteshP/nvim-navic" },
+
 	{
 		"gelguy/wilder.nvim",
 		config = function()
@@ -365,28 +329,12 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{ "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {}, ft = { "json", "yaml" } },
-	-- { "tzachar/highlight-undo.nvim" },
-	{ "hdiniz/vim-gradle" },
+
+	{ "folke/neodev.nvim" },
 	{
-		"stevearc/aerial.nvim",
-		opts = {},
-		-- Optional dependencies
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"nvim-tree/nvim-web-devicons",
-		},
-	},
-	{
-		"stevearc/conform.nvim",
-		opts = {},
-	},
-	{
-		"stevearc/overseer.nvim",
-		opts = {},
-	},
-	{
-		"creativenull/efmls-configs-nvim",
-		dependencies = { "neovim/nvim-lspconfig" },
+		"eandrju/cellular-automaton.nvim",
+		config = function()
+			vim.keymap.set("n", "<leader>fml", "<cmd>CellularAutomaton game_of_life<CR>")
+		end,
 	},
 })
