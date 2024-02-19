@@ -2,7 +2,7 @@ require("conform").setup({
 	-- Map of filetype to formatters
 	formatters_by_ft = {
 		lua = { "stylua" },
-		go = { "goimports", "golines" },
+		go = { "goimports", "golines", "gofmt" },
 		javascript = { { "prettierd", "prettier" } },
 		python = { "ruff_format" },
 		kotlin = { "ktlint" },
