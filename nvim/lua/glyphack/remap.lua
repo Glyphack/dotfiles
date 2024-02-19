@@ -55,5 +55,3 @@ vim.keymap.set("n", "<leader>zv", ":source $MYVIMRC<CR>")
 vim.keymap.set("i", "<Home>", "<Esc>")
 vim.keymap.set("i", "jk", "<Esc>")
 
--- LSP and diagnostics
-vim.keymap.set("n", "<leader>xx", function() require("trouble").toggle() end)

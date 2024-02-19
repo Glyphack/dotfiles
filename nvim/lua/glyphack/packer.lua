@@ -88,7 +88,6 @@ require("lazy").setup({
 			{ "neovim/nvim-lspconfig" },
 			{ "williamboman/mason.nvim" },
 			{ "williamboman/mason-lspconfig.nvim" },
-
 			-- Autocompletion
 			{ "hrsh7th/nvim-cmp" },
 			{ "hrsh7th/cmp-buffer" },
@@ -103,7 +102,6 @@ require("lazy").setup({
 			{ "hrsh7th/cmp-nvim-lua" },
 			{ "ray-x/cmp-treesitter" },
 			{ "mtoohey31/cmp-fish" },
-
 			-- Snippets
 			{ "L3MON4D3/LuaSnip" },
 			{ "rafamadriz/friendly-snippets" },
@@ -131,6 +129,14 @@ require("lazy").setup({
 	},
 	{ "antosha417/nvim-lsp-file-operations" },
 	{ "sourcegraph/sg.nvim" },
+	{
+		"dgagn/diagflow.nvim",
+		opts = {
+			placement = "inline",
+			toggle_event = { "InsertEnter" },
+			inline_padding_left = 3,
+		},
+	},
 
 	-- format and lint
 	{
@@ -162,7 +168,42 @@ require("lazy").setup({
 	{
 		"folke/trouble.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {},
+		opts = { auto_preview = false },
+		keys = {
+			{
+				"<leader>xx",
+				mode = { "n" },
+				function()
+					require("trouble").toggle()
+				end,
+				desc = "Trouble Toggle",
+			},
+			{
+				"gR",
+				mode = { "n" },
+				function()
+					require("trouble").toggle("lsp_references")
+				end,
+				desc = "Trouble Toggle",
+			},
+			-- Not working properly
+			-- {
+			-- 	"[d",
+			-- 	mode = { "n" },
+			-- 	function()
+			-- 		require("trouble").previous({ skip_groups = true, jump = true })
+			-- 	end,
+			-- 	desc = "Trouble Toggle",
+			-- },
+			-- {
+			-- 	"]d",
+			-- 	mode = { "n" },
+			-- 	function()
+			-- 		require("trouble").next({ skip_groups = true, jump = true })
+			-- 	end,
+			-- 	desc = "Trouble Toggle",
+			-- },
+		},
 	},
 
 	-- debugger
@@ -236,35 +277,36 @@ require("lazy").setup({
 		end,
 	},
 	{ "github/copilot.vim" },
-	{
-		"folke/flash.nvim",
-		event = "VeryLazy",
-		---@type Flash.Config
-		opts = {},
-        -- stylua: ignore
-        keys = {
-            {
-                "<leader>sj",
-                mode = { "n", "x", "o" },
-                function() require("flash").jump() end,
-                desc = "Flash"
-            },
-            {
-                "<leader>st",
-                mode = { "n", "x", "o" },
-                function() require("flash").treesitter() end,
-                desc =
-                "Flash Treesitter"
-            },
-            {
-                "<c-s>",
-                mode = { "c" },
-                function() require("flash").toggle() end,
-                desc =
-                "Toggle Flash Search"
-            },
-        },
-	},
+	-- Experimenting with mini jumps
+	-- {
+	-- 	"folke/flash.nvim",
+	-- 	event = "VeryLazy",
+	-- 	---@type Flash.Config
+	-- 	opts = {},
+	--        -- stylua: ignore
+	--        keys = {
+	--            {
+	--                "<leader>sj",
+	--                mode = { "n", "x", "o" },
+	--                function() require("flash").jump() end,
+	--                desc = "Flash"
+	--            },
+	--            {
+	--                "<leader>st",
+	--                mode = { "n", "x", "o" },
+	--                function() require("flash").treesitter() end,
+	--                desc =
+	--                "Flash Treesitter"
+	--            },
+	--            {
+	--                "<c-s>",
+	--                mode = { "c" },
+	--                function() require("flash").toggle() end,
+	--                desc =
+	--                "Toggle Flash Search"
+	--            },
+	--        },
+	-- },
 	{
 		"AckslD/nvim-neoclip.lua",
 		config = function()
@@ -282,6 +324,8 @@ require("lazy").setup({
 			if vim.bo.filetype == "yaml" or vim.bo.filetype == "json" then
 				require("mini.indent").setup()
 			end
+			require("mini.jump").setup()
+			require("mini.jump2d").setup()
 		end,
 	},
 	{ "SmiteshP/nvim-navic", lazy = true },
@@ -316,7 +360,9 @@ require("lazy").setup({
 			require("hlsearch").setup()
 		end,
 	},
-
+	{
+		"gx-extended.vim",
+	},
 	{
 		"gelguy/wilder.nvim",
 		config = function()
