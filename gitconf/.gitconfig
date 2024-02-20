@@ -25,9 +25,23 @@
 [pull]
 	rebase = true
 
+[rebase]
+	autostash = true
+
+[commit]
+	verbose = true
+
+[rerere]
+	enabled = true
+
+[branch]
+	sort = committerdate
+
 [push]
 	useForceIfIncludes = true
 
+[merge]
+	conflictstyle = zdiff3
 
 [url "git@github.com:"]
 	insteadOf = https://github.com/
@@ -42,5 +56,6 @@
 	default = current
 [fetch]
 	prune = true
+
 [safe]
 	directory = /home/app
