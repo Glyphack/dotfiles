@@ -40,7 +40,7 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 vim.keymap.set("n", "<leader>r", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 vim.keymap.set("n", "<leader>w", "<cmd>w<CR>")
-vim.keymap.set("n", "<C-x>", ":q<CR>")
+vim.keymap.set("n", "<C-w>", ":q<CR>")
 
 -- Resize with arrows
 vim.keymap.set("n", "<M-Up>", ":resize +2<CR>")
@@ -54,4 +54,3 @@ vim.keymap.set("n", "<leader>zv", ":source $MYVIMRC<CR>")
 -- save my pinky
 vim.keymap.set("i", "<Home>", "<Esc>")
 vim.keymap.set("i", "jk", "<Esc>")
-
