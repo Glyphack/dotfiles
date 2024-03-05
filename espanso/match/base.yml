@@ -24,3 +24,9 @@ matches:
 
   - trigger: ":coauthor"
     replace: "Co-authored-by: name <@.COM>"
+  - trigger: ":linkedin"
+    replace: "https://www.linkedin.com/in/shayegan-hooshyari"
+
+  - trigger: ":site"
+    replace: "https://glyphack.com"
+
