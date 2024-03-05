@@ -47,6 +47,7 @@ local config = {
 				},
 			}),
 		},
+		{ key = "u", mods = "CMD", action = act.CopyMode("ClearPattern") },
 	},
 	color_scheme = "catppuccin-mocha",
 }

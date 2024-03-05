@@ -2,7 +2,7 @@ require("conform").setup({
 	-- Map of filetype to formatters
 	formatters_by_ft = {
 		lua = { "stylua" },
-		go = { "goimports", "golines" },
+		go = { "goimports", "golines", "gofmt" },
 		javascript = { { "prettierd", "prettier" } },
 		python = { "ruff_format" },
 		kotlin = { "ktlint" },
@@ -14,6 +14,7 @@ require("conform").setup({
 		terraform = { "terraform_fmt" },
 		markdown = { "prettierd", "prettier", "markdownlint" },
 		json = { "jq" },
+		html = { "prettierd" },
 		-- ruby = { "rubocop" },
 		-- dart = { "dartfmt" },
 
@@ -49,3 +50,12 @@ require("conform").formatters.yamlfmt = {
 		return { "-formatter", "retain_line_breaks=true,pad_line_comments=2,include_document_start=true" }
 	end,
 }
+
+-- local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+-- 	pattern = "*.go",
+-- 	callback = function()
+-- 		require("go.format").goimport()
+-- 	end,
+-- 	group = format_sync_grp,
+-- })
