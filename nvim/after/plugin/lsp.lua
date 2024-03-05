@@ -100,8 +100,6 @@ lsp_zero.on_attach(function(client, bufnr)
 	vim.keymap.set("n", "gws", vim.lsp.buf.workspace_symbol, opts)
 	vim.diagnostic.config({ virtual_text = true })
 
-	vim.keymap.set("n", "[[,", "<cmd>Lspsaga diagnostic_jump_prev<CR>", opts)
-	vim.keymap.set("n", "]],", "<cmd>Lspsaga diagnostic_jump_next<CR>", opts)
 	vim.keymap.set("n", "gl", "<Cmd>Lspsaga show_line_diagnostics<CR>", opts)
 	vim.keymap.set("n", "gb", "<cmd>Lspsaga show_buf_diagnostics<CR>")
 	vim.keymap.set("n", "gf", "<cmd>Lspsaga finder<CR>", opts)
