@@ -228,7 +228,6 @@ require("lazy").setup({
 	{
 		"nvim-telescope/telescope.nvim",
 		event = "VimEnter",
-		branch = "0.1.x",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			{
@@ -247,6 +246,7 @@ require("lazy").setup({
 				lazy = true,
 				opts = {},
 			},
+			"jonarrien/telescope-cmdline.nvim",
 		},
 
 		config = function()
@@ -308,6 +308,8 @@ require("lazy").setup({
 						["<C-j>"] = actions.cycle_history_prev,
 						["<c-a>s"] = actions.select_all,
 						["<c-a>a"] = actions.add_selection,
+						["<M-f>"] = actions.results_scrolling_left,
+						["<M-k>"] = actions.results_scrolling_right,
 					},
 					n = {
 						["<leader>oo"] = lga_actions.quote_prompt(),
@@ -334,6 +336,7 @@ require("lazy").setup({
 			pcall(require("telescope").load_extension, "fzf")
 			pcall(require("telescope").load_extension, "ui-select")
 			require("telescope").load_extension("neoclip")
+			require("telescope").load_extension("cmdline")
 			require("telescope").load_extension("smart_history")
 
 			local function find_files()
@@ -390,6 +393,8 @@ require("lazy").setup({
 					previewer = false,
 				}))
 			end, { desc = "[/] Fuzzily search in current buffer" })
+
+			vim.keymap.set("n", "<leader>sc", "<cmd>Telescope cmdline<cr>", { desc = "Cmdline" })
 		end,
 	},
 
@@ -522,7 +527,8 @@ require("lazy").setup({
 			vim.list_extend(ensure_installed, {
 				"stylua", -- Used to format lua code
 			})
-			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+			-- NOTE: uncomment for installation, otherwise it's slow
+			-- require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 			require("mason-lspconfig").setup({
 				handlers = {
 					function(server_name)
@@ -717,6 +723,32 @@ require("lazy").setup({
 					MiniFiles.reveal_cwd()
 				end
 			end
+
+			require("mini.visits").setup()
+
+			local map_vis = function(keys, call, desc)
+				local rhs = "<Cmd>lua MiniVisits." .. call .. "<CR>"
+				vim.keymap.set("n", "<Leader>" .. keys, rhs, { desc = desc })
+			end
+
+			map_vis("vv", 'add_label("core")', "Add to core")
+			map_vis("vV", 'remove_label("core")', "Remove from core")
+			map_vis("vC", 'select_path("", { filter = "core" })', "Select core (all)")
+			map_vis("vc", 'select_path(nil, { filter = "core" })', "Select core (cwd)")
+
+			-- Iterate based on recency
+			local map_iterate_core = function(lhs, direction, desc)
+				local opts = { filter = "core", sort = sort_latest, wrap = true }
+				local rhs = function()
+					MiniVisits.iterate_paths(direction, vim.fn.getcwd(), opts)
+				end
+				vim.keymap.set("n", lhs, rhs, { desc = desc })
+			end
+
+			map_iterate_core("[{", "last", "Core label (earliest)")
+			map_iterate_core("[[", "forward", "Core label (earlier)")
+			map_iterate_core("]]", "backward", "Core label (later)")
+			map_iterate_core("]}", "first", "Core label (latest)")
 
 			vim.keymap.set("n", "<C-t>", minifiles_toggle, { noremap = true, silent = true })
 		end,
