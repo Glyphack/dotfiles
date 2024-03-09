@@ -170,6 +170,14 @@ require("lazy").setup({
 	{
 		"ruifm/gitlinker.nvim",
 		dependencies = "nvim-lua/plenary.nvim",
+
+		keys = {
+			{
+				"<leader>gb",
+				'<cmd>lua require"gitlinker".get_buf_range_url()<cr>',
+				desc = "Get File URL in Git Remote",
+			},
+		},
 	},
 	{
 		"tpope/vim-fugitive",
@@ -742,13 +750,13 @@ require("lazy").setup({
 				local rhs = function()
 					MiniVisits.iterate_paths(direction, vim.fn.getcwd(), opts)
 				end
-				vim.keymap.set("n", lhs, rhs, { desc = desc })
+				vim.keymap.set("n", "<C-" .. lhs .. ">", rhs, { desc = desc })
 			end
 
-			map_iterate_core("[{", "last", "Core label (earliest)")
-			map_iterate_core("[[", "forward", "Core label (earlier)")
-			map_iterate_core("]]", "backward", "Core label (later)")
-			map_iterate_core("]}", "first", "Core label (latest)")
+			-- map_iterate_core("[{", "last", "Core label (earliest)")
+			map_iterate_core("n", "forward", "Core label (earlier)")
+			map_iterate_core("/", "backward", "Core label (later)")
+			-- map_iterate_core("]}", "first", "Core label (latest)")
 
 			vim.keymap.set("n", "<C-t>", minifiles_toggle, { noremap = true, silent = true })
 		end,
