@@ -170,7 +170,13 @@ require("lazy").setup({
 	{
 		"ruifm/gitlinker.nvim",
 		dependencies = "nvim-lua/plenary.nvim",
-
+    config = function() 
+      require("gitlinker").setup({
+			callbacks = {
+				["github.*.io"] = require("gitlinker.hosts").get_github_type_url,
+			},
+		})
+    end,
 		keys = {
 			{
 				"<leader>gb",
@@ -309,7 +315,7 @@ require("lazy").setup({
 						["<C-t>"] = "move_selection_previous",
 						["<C-u>"] = actions.results_scrolling_down,
 						["<C-d>"] = actions.results_scrolling_up,
-						["<C-p>"] = action_layout.toggle_preview,
+						["<C-h>"] = action_layout.toggle_preview,
 						["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
 						["<C-w>"] = actions.send_selected_to_qflist + actions.open_qflist,
 						["<C-k>"] = actions.cycle_history_next,
@@ -731,6 +737,7 @@ require("lazy").setup({
 					MiniFiles.reveal_cwd()
 				end
 			end
+			vim.keymap.set("n", "<leader>t", minifiles_toggle, { noremap = true, silent = true })
 
 			require("mini.visits").setup()
 
@@ -758,7 +765,7 @@ require("lazy").setup({
 			map_iterate_core("/", "backward", "Core label (later)")
 			-- map_iterate_core("]}", "first", "Core label (latest)")
 
-			vim.keymap.set("n", "<C-t>", minifiles_toggle, { noremap = true, silent = true })
+			require("mini.splitjoin").setup()
 		end,
 	},
 
@@ -826,5 +833,21 @@ require("lazy").setup({
 		import = "custom.plugins",
 	},
 })
+
+-- Lua function to wrap the word under the cursor with []
+function Link()
+	local word = vim.fn.expand("<cWORD>")
+	-- if the word starts with http, don't wrap it in []
+	if word:match("^http") then
+		vim.api.nvim_command("normal ciW[](" .. word .. ")")
+		vim.api.nvim_exec("normal! F[", true)
+		return
+	end
+	vim.api.nvim_command("normal ciW[" .. word .. "]()")
+	vim.api.nvim_exec("normal! F(", true)
+end
+vim.cmd("command! Link :lua Link()")
+
+vim.cmd([[command! Replace :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
 -- vim: ts=2 sts=2 sw=2 et
