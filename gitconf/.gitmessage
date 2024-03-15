@@ -1,0 +1,23 @@
+
+
+# <type>[(optional scope)]: <subject>
+# <BLANK LINE>
+# [optional body]
+# <BLANK LINE>
+# [optional footer(s)]
+# type
+#   fix:      A bug fix
+#   feat:     A new features
+#   docs:     Documentation only changes
+#   style:    Changes that do not affect the meaning of the code
+#   refactor: A code change that neither fixes a bug nor adds a feature
+#   perf:     A code change that improves performance
+#   test:     Adding missing or correcting existing tests
+#   build:    Changes that affect the build system or external dependencies
+#   ci:       Changes to our CI configuration files and scripts
+#   chore:    Other changes that don't modify src or test files
+#   revert:   Reverts a previous commit
+# optional scope
+#   init:     Initialize commit
+#   security: Security to invite users to upgrade in case of vulnerabilities
+#   deps:     Dependencies upgrading or downgrading
