@@ -30,6 +30,7 @@
 
 [commit]
 	verbose = true
+	template = ~/.gitmessage
 
 [rerere]
 	enabled = true
