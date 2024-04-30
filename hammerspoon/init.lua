@@ -5,7 +5,7 @@ LG_MONITOR = "LG HDR 4K"
 package.path = package.path
 	.. ";"
 	.. os.getenv("HOME")
-	.. "/Programming/dotfiles/dotfiles-flexport/Spoons/?.spoon/init.lua"
+	.. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
 
 SpoonInstall = hs.loadSpoon("SpoonInstall")
 

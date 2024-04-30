@@ -170,13 +170,9 @@ require("lazy").setup({
 	{
 		"ruifm/gitlinker.nvim",
 		dependencies = "nvim-lua/plenary.nvim",
-    config = function() 
-      require("gitlinker").setup({
-			callbacks = {
-				["github.*.io"] = require("gitlinker.hosts").get_github_type_url,
-			},
-		})
-    end,
+		config = function()
+			require("gitlinker").setup()
+		end,
 		keys = {
 			{
 				"<leader>gb",
@@ -807,7 +803,30 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{ "nvim-treesitter/nvim-treesitter-textobjects" },
+	{
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		opts = {
+			textobjects = {
+				select = {
+					enable = true,
+					lookahead = true,
+					keymaps = {
+						["af"] = "@function.outer",
+						["if"] = "@function.inner",
+						["ac"] = "@class.outer",
+						["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+						["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+					},
+					selection_modes = {
+						["@parameter.outer"] = "v", -- charwise
+						["@function.outer"] = "V", -- linewise
+						["@class.outer"] = "<c-v>", -- blockwise
+					},
+					include_surrounding_whitespace = true,
+				},
+			},
+		},
+	},
 	{
 		"nvim-treesitter/nvim-treesitter-context",
 		config = function()
@@ -827,6 +846,7 @@ require("lazy").setup({
 	},
 	{ "github/copilot.vim" },
 	{ "andweeb/presence.nvim", opts = {} },
+	{ "stsewd/gx-extended.vim" },
 	require("kickstart.plugins.debug"),
 
 	{

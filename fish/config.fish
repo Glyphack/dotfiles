@@ -53,10 +53,6 @@ starship init fish | source
 # Enable AWS CLI autocompletion: github.com/aws/aws-cli/issues/1079
 complete --command aws --no-files --arguments '(begin; set --local --export COMP_SHELL fish; set --local --export COMP_LINE (commandline); aws_completer | sed \'s/ $//\'; end)'
 
-if test -e $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
-  source $DOTFILES_DIR/dotfiles-flexport/fish/env.fish
-end
-
 # pnpm
 set -gx PNPM_HOME "/Users/glyphack/Library/pnpm"
 if not string match -q -- $PNPM_HOME $PATH
