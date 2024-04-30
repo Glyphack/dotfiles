@@ -18,10 +18,6 @@
 	tidy = "!f() { if [ -z $1 ]; then BRANCH=$(git branch --show-current); else BRANCH=$1; fi; git branch --merged $BRANCH | grep -v $BRANCH$ | xargs git branch -d; }; f"
 	st = status
 
-[includeIf "gitdir:~/Programming/flexport/"]
-	path = ~/Programming/dotfiles/dotfiles-flexport/gitconf/gitconfig
-
-
 [pull]
 	rebase = true
 
