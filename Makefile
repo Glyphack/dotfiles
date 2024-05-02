@@ -1,13 +1,3 @@
-link:
-	echo "outdated"
-	stow --target=${HOME}/.config/fish fish
-	mkdir -p ${HOME}/.config/nvim && stow --target=${HOME}/.config/nvim nvim
-	mkdir -p ${HOME}/.local/share/nvim && stow --target=${HOME}/.local/share/nvim nvim-data
-	mkdir -p ${HOME}/.config/wezterm && stow --adopt --target=${HOME}/.config/wezterm wezterm
-	mkdir -p ${HOME}/.config/fd && stow --target=${HOME}/.config/fd fd
-	stow --target=${HOME}/.config starship
-	stow --target=${HOME} gitconf
-
 link-personal:
 	git submodule update --init dotfiles-private
 	git submodule update --remote dotfiles-private
@@ -17,6 +7,7 @@ link-personal:
 	stow --target=${HOME} asdf
 	stow --target=${HOME} ripgrep
 	mkdir -p ${HOME}/.config/nvim && stow --adopt --target=${HOME}/.config/nvim nvim
+	mkdir -p ${HOME}/.config/mise && stow --adopt --target=${HOME}/.config/mise mise
 	mkdir -p ${HOME}/.config/fd && stow --adopt --target=${HOME}/.config/fd fd
 	mkdir -p ${HOME}/.config/karabiner && stow --adopt --target=${HOME}/.config/karabiner karabiner
 	mkdir -p ${HOME}/.config/wezterm && stow --adopt --target=${HOME}/.config/wezterm wezterm

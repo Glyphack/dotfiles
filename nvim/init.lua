@@ -50,6 +50,8 @@ vim.opt.scrolloff = 10
 -- spell checker
 vim.opt.spell = true
 
+vim.bo.swapfile = false
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -79,6 +81,10 @@ vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left wind
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+
+-- quickfix list navigation
+vim.keymap.set("n", "<M-j>", ":cn<CR>", { desc = "Move focus to the next quickfix item" })
+vim.keymap.set("n", "<M-k>", ":cp<CR>", { desc = "Move focus to the previous quickfix item" })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -188,7 +194,7 @@ require("lazy").setup({
 				if vim.bo.ft == "fugitive" then
 					vim.cmd("bd")
 				else
-					vim.cmd(":G")
+					vim.cmd("tab :G")
 				end
 			end
 			vim.keymap.set("n", "<leader>hs", fugitive_toggle, { desc = "Toggle Git" })
@@ -462,7 +468,40 @@ require("lazy").setup({
 				clangd = {},
 				gopls = {},
 				pyright = {},
-				rust_analyzer = {},
+				rust_analyzer = {
+					settings = {
+						["rust-analyzer"] = {
+							checkOnSave = {
+								allFeatures = true,
+								overrideCommand = {
+									"cargo",
+									"clippy",
+									"--workspace",
+									"--message-format=json",
+									"--all-targets",
+									"--all-features",
+								},
+							},
+							imports = {
+								granularity = {
+									group = "module",
+								},
+								prefix = "self",
+							},
+							cargo = {
+								buildScripts = {
+									enable = true,
+								},
+							},
+							procMacro = {
+								enable = true,
+							},
+						},
+					},
+					on_attach = function(client, bufnr)
+						vim.lsp.inlay_hint.enable(bufnr)
+					end,
+				},
 				tsserver = {},
 				ruff_lsp = {},
 				efm = {},
@@ -563,6 +602,16 @@ require("lazy").setup({
 
 			conform.setup({
 				notify_on_error = false,
+				format_on_save = function(bufnr)
+					-- Disable "format_on_save lsp_fallback" for languages that don't
+					-- have a well standardized coding style. You can add additional
+					-- languages here or re-enable it for the disabled ones.
+					local disable_filetypes = { c = true, cpp = true, yaml = true, python = true }
+					return {
+						timeout_ms = 500,
+						lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+					}
+				end,
 				formatters_by_ft = {
 					lua = { "stylua" },
 					go = { "goimports", "golines", "gofmt" },
@@ -582,19 +631,6 @@ require("lazy").setup({
 				},
 			})
 			vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua require'conform'.format()<cr>", { noremap = true })
-
-			vim.api.nvim_create_augroup("format_on_save", {})
-
-			vim.api.nvim_create_autocmd("BufWritePost", {
-				group = "format_on_save",
-				pattern = { "*" },
-				callback = function(args)
-					if vim.bo.filetype == "kotlin" or vim.bo.filetype == "python" or vim.bo.filetype == "yaml" then
-						return
-					end
-					conform.format({ bufnr = args.buf })
-				end,
-			})
 		end,
 	},
 
@@ -726,14 +762,30 @@ require("lazy").setup({
 				return "%2l:%-2v"
 			end
 
-			require("mini.files").setup()
+			require("mini.files").setup({
+				mappings = {
+					go_in = "l",
+				},
+			})
 			local minifiles_toggle = function()
 				if not MiniFiles.close() then
 					MiniFiles.open(vim.api.nvim_buf_get_name(0))
 					MiniFiles.reveal_cwd()
 				end
 			end
+
 			vim.keymap.set("n", "<leader>t", minifiles_toggle, { noremap = true, silent = true })
+
+			vim.keymap.set("n", "<leader>gf", function()
+				if vim.bo.ft == "minifiles" then
+					local path = MiniFiles.get_fs_entry()["path"]
+					-- notify the path change
+					vim.notify("Path: " .. path)
+					vim.fn.setreg('"', path)
+					return
+				end
+				vim.fn.setreg('"', vim.fn.expand("%"))
+			end, { noremap = true, silent = true })
 
 			require("mini.visits").setup()
 
@@ -756,17 +808,17 @@ require("lazy").setup({
 				vim.keymap.set("n", "<C-" .. lhs .. ">", rhs, { desc = desc })
 			end
 
-			-- map_iterate_core("[{", "last", "Core label (earliest)")
 			map_iterate_core("n", "forward", "Core label (earlier)")
 			map_iterate_core("/", "backward", "Core label (later)")
-			-- map_iterate_core("]}", "first", "Core label (latest)")
 
 			require("mini.splitjoin").setup()
+			require("mini.bracketed").setup()
 		end,
 	},
 
 	{
 		"nvim-treesitter/nvim-treesitter",
+
 		build = ":TSUpdate",
 		config = function()
 			-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -804,49 +856,49 @@ require("lazy").setup({
 		end,
 	},
 	{
-		"nvim-treesitter/nvim-treesitter-textobjects",
-		opts = {
-			textobjects = {
-				select = {
-					enable = true,
-					lookahead = true,
-					keymaps = {
-						["af"] = "@function.outer",
-						["if"] = "@function.inner",
-						["ac"] = "@class.outer",
-						["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-						["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
-					},
-					selection_modes = {
-						["@parameter.outer"] = "v", -- charwise
-						["@function.outer"] = "V", -- linewise
-						["@class.outer"] = "<c-v>", -- blockwise
-					},
-					include_surrounding_whitespace = true,
-				},
-			},
-		},
-	},
-	{
 		"nvim-treesitter/nvim-treesitter-context",
+		dependencies = "nvim-treesitter/nvim-treesitter-textobjects",
 		config = function()
 			require("treesitter-context").setup({
-				enable = true,
-				max_lines = 5,
-				min_window_height = 0,
+				enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+				max_lines = 7, -- How many lines the window should span. Values <= 0 mean no limit.
+				min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
 				line_numbers = true,
 				multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
 				trim_scope = "outer", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
 				mode = "cursor", -- Line used to calculate context. Choices: 'cursor', 'topline'
+				-- Separator between context and content. Should be a single character string, like '-'.
+				-- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
 				separator = nil,
 				zindex = 20, -- The Z-index of the context window
 				on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+				textobjects = {
+					select = {
+						enable = true,
+						lookahead = true,
+						keymaps = {
+							["af"] = "@function.outer",
+							["if"] = "@function.inner",
+							["ac"] = "@class.outer",
+							["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+							["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+						},
+						selection_modes = {
+							["@parameter.outer"] = "v", -- charwise
+							["@function.outer"] = "V", -- linewise
+							["@class.outer"] = "<c-v>", -- blockwise
+						},
+						include_surrounding_whitespace = true,
+					},
+				},
 			})
 		end,
 	},
-	{ "github/copilot.vim" },
+	-- { "github/copilot.vim" },
 	{ "andweeb/presence.nvim", opts = {} },
 	{ "stsewd/gx-extended.vim" },
+	{ "sourcegraph/sg.nvim" },
+
 	require("kickstart.plugins.debug"),
 
 	{
