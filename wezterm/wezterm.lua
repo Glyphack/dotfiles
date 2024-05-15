@@ -19,9 +19,14 @@ local config = {
 	font_size = 23,
 	keys = {
 		{
-			key = "m",
+			key = "a",
 			mods = "CMD",
-			action = act.DisableDefaultAssignment,
+			action = act.ActivatePaneDirection 'Left',
+		},
+		{
+			key = "d",
+			mods = "CMD",
+			action = act.ActivatePaneDirection 'Right',
 		},
 		{
 			key = "K",

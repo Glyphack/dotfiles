@@ -2,10 +2,7 @@ HOME_MONITOR = "DELL U2723QE"
 MACBOOK_MONITOR = "Built-in Retina Display"
 LG_MONITOR = "LG HDR 4K"
 
-package.path = package.path
-	.. ";"
-	.. os.getenv("HOME")
-	.. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
+package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
 
 SpoonInstall = hs.loadSpoon("SpoonInstall")
 
@@ -197,7 +194,7 @@ dragOtherToScroll = hs.eventtap.new({ hs.eventtap.event.types.otherMouseDragged 
 	if scrollMouseButton == pressedMouseButton then
 		-- print("scroll");
 		deferred = false
-		oldmousepos = hs.mouse.getAbsolutePosition()
+		oldmousepos = hs.mouse.absolutePosition()
 		local dx = e:getProperty(hs.eventtap.event.properties["mouseEventDeltaX"])
 		local dy = e:getProperty(hs.eventtap.event.properties["mouseEventDeltaY"])
 		local scroll = hs.eventtap.event.newScrollEvent({ -dx * scrollmult, dy * scrollmult }, {}, "pixel")
