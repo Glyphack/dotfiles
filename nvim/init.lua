@@ -597,15 +597,27 @@ require("lazy").setup({
 
 	{ -- Autoformat
 		"stevearc/conform.nvim",
+		event = { "BufWritePre" },
+		cmd = { "ConformInfo" },
+		keys = {
+			{
+				"<leader>ff",
+				function()
+					require("conform").format({ async = true, lsp_fallback = true })
+				end,
+				mode = "",
+				desc = "Format buffer",
+			},
+		},
 		config = function()
 			local conform = require("conform")
-
+			vim.g.noformat = true
 			conform.setup({
 				notify_on_error = false,
 				format_on_save = function(bufnr)
-					-- Disable "format_on_save lsp_fallback" for languages that don't
-					-- have a well standardized coding style. You can add additional
-					-- languages here or re-enable it for the disabled ones.
+					if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+						return
+					end
 					local disable_filetypes = { c = true, cpp = true, yaml = true, python = true }
 					return {
 						timeout_ms = 500,
@@ -630,7 +642,23 @@ require("lazy").setup({
 					["*"] = { "trim_whitespace", "trim_newlines" },
 				},
 			})
-			vim.api.nvim_set_keymap("n", "<leader>ff", "<cmd>lua require'conform'.format()<cr>", { noremap = true })
+			vim.api.nvim_create_user_command("FormatDisable", function(args)
+				if args.bang then
+					-- FormatDisable! will disable formatting just for this buffer
+					vim.b.disable_autoformat = true
+				else
+					vim.g.disable_autoformat = true
+				end
+			end, {
+				desc = "Disable autoformat-on-save",
+				bang = true,
+			})
+			vim.api.nvim_create_user_command("FormatEnable", function()
+				vim.b.disable_autoformat = false
+				vim.g.disable_autoformat = false
+			end, {
+				desc = "Re-enable autoformat-on-save",
+			})
 		end,
 	},
 
@@ -787,6 +815,9 @@ require("lazy").setup({
 				vim.fn.setreg('"', vim.fn.expand("%"))
 			end, { noremap = true, silent = true })
 
+			require("mini.extra").setup()
+			require("mini.pick").setup()
+			vim.ui.select = MiniPick.ui_select
 			require("mini.visits").setup()
 
 			local map_vis = function(keys, call, desc)
@@ -795,9 +826,9 @@ require("lazy").setup({
 			end
 
 			map_vis("vv", 'add_label("core")', "Add to core")
+			map_vis("vc", 'select_path(nil, { filter = "core" })', "Select core")
 			map_vis("vV", 'remove_label("core")', "Remove from core")
-			map_vis("vC", 'select_path("", { filter = "core" })', "Select core (all)")
-			map_vis("vc", 'select_path(nil, { filter = "core" })', "Select core (cwd)")
+			map_vis("vC", 'remove_label("core", "")', "Remove all paths")
 
 			-- Iterate based on recency
 			local map_iterate_core = function(lhs, direction, desc)
@@ -807,7 +838,6 @@ require("lazy").setup({
 				end
 				vim.keymap.set("n", "<C-" .. lhs .. ">", rhs, { desc = desc })
 			end
-
 			map_iterate_core("n", "forward", "Core label (earlier)")
 			map_iterate_core("/", "backward", "Core label (later)")
 

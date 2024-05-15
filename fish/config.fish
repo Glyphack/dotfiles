@@ -60,8 +60,6 @@ if not string match -q -- $PNPM_HOME $PATH
 end
 # pnpm end
 
- source /opt/homebrew/opt/asdf/libexec/asdf.fish
-
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 # if test -f ~/miniconda3/bin/conda

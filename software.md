@@ -12,6 +12,8 @@
 - https://obsidian.md/
 - https://iina.io/
 - https://github.com/ActivityWatch/activitywatch/releases
+- https://www.raycast.com/
+- hammerspoon
 
 ## Other
 
