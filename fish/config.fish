@@ -8,6 +8,8 @@ set -x FZF_ALT_C_COMMAND "fd -t d . $PROGRAMMING_DIR -d 3"
 set -x NPM_PRE $HOME/.npm-global/bin
 set -x RIPGREP_CONFIG_PATH $HOME/.ripgreprc
 
+fzf --fish | source
+
 bind \ex "cd (fd -t d . $HOME -d 5 --hidden | fzf)"
 bind \ez "cd $HOME && echo $PWD"
 #
@@ -51,14 +53,7 @@ starship init fish | source
 # status is-interactive; and pyenv init - | source
 #
 # Enable AWS CLI autocompletion: github.com/aws/aws-cli/issues/1079
-complete --command aws --no-files --arguments '(begin; set --local --export COMP_SHELL fish; set --local --export COMP_LINE (commandline); aws_completer | sed \'s/ $//\'; end)'
-
-# pnpm
-set -gx PNPM_HOME "/Users/glyphack/Library/pnpm"
-if not string match -q -- $PNPM_HOME $PATH
-  set -gx PATH "$PNPM_HOME" $PATH
-end
-# pnpm end
+# complete --command aws --no-files --arguments '(begin; set --local --export COMP_SHELL fish; set --local --export COMP_LINE (commandline); aws_completer | sed \'s/ $//\'; end)'
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
