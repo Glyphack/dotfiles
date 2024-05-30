@@ -420,6 +420,7 @@ require("lazy").setup({
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
+			{ "creativenull/efmls-configs-nvim" },
 			{ "j-hui/fidget.nvim", opts = {} },
 		},
 		config = function()
@@ -464,9 +465,41 @@ require("lazy").setup({
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
+			local languages = {
+				lua = { require("efmls-configs.formatters.stylua") },
+				proto = {
+					require("efmls-configs.linters.buf"),
+					require("efmls-configs.formatters.buf"),
+				},
+				bash = {
+					require("efmls-configs.linters.shellcheck"),
+				},
+				["="] = {
+					require("efmls-configs.linters.codespell"),
+				},
+			}
+
+			local efmls_config = {
+				settings = {
+					rootMarkers = { ".git/" },
+					languages = languages,
+				},
+				init_options = {
+					documentRangeFormatting = true,
+					documentFormatting = true,
+					codeAction = true,
+				},
+			}
+
 			local servers = {
 				clangd = {},
-				gopls = {},
+				gopls = {
+					settings = {
+						gopls = {
+							gofumpt = true,
+						},
+					},
+				},
 				pyright = {},
 				rust_analyzer = {
 					settings = {
@@ -504,7 +537,6 @@ require("lazy").setup({
 				},
 				tsserver = {},
 				ruff_lsp = {},
-				efm = {},
 				yamlls = {},
 				jsonls = {},
 				ltex = {},
@@ -512,6 +544,7 @@ require("lazy").setup({
 				bashls = {},
 				dockerls = {},
 				tailwindcss = {},
+				marksman = {},
 				emmet_ls = {
 					-- on_attach = on_attach,
 					capabilities = capabilities,
@@ -538,8 +571,18 @@ require("lazy").setup({
 						},
 					},
 				},
-				golangci_lint_ls = {},
-				ruby_ls = {},
+				golangci_lint_ls = {
+					init_options = {
+						command = {
+							"golangci-lint",
+							"run",
+							"--out-format",
+							"json",
+							"--issues-exit-code=1",
+						},
+					},
+				},
+				ruby_lsp = {},
 				sorbet = {},
 				kotlin_language_server = {},
 				vale_ls = {},
@@ -569,6 +612,7 @@ require("lazy").setup({
 						},
 					},
 				},
+				typos_lsp = {},
 			}
 
 			require("mason").setup()
@@ -592,7 +636,22 @@ require("lazy").setup({
 			})
 			-- TODO: Add this to servers table but exclude from mason install
 			require("lspconfig").dartls.setup({})
+			require("lspconfig").efm.setup(efmls_config)
 		end,
+	},
+	{
+		"ray-x/go.nvim",
+		dependencies = { -- optional packages
+			"ray-x/guihua.lua",
+			"neovim/nvim-lspconfig",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		config = function()
+			require("go").setup()
+		end,
+		event = { "CmdlineEnter" },
+		ft = { "go", "gomod" },
+		build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
 	},
 
 	{ -- Autoformat
@@ -620,13 +679,13 @@ require("lazy").setup({
 					end
 					local disable_filetypes = { c = true, cpp = true, yaml = true, python = true }
 					return {
-						timeout_ms = 500,
+						timeout_ms = 1000,
 						lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
 					}
 				end,
 				formatters_by_ft = {
 					lua = { "stylua" },
-					go = { "goimports", "golines", "gofmt" },
+					go = { "goimports" },
 					javascript = { { "prettierd", "prettier" } },
 					python = { "ruff_format" },
 					kotlin = { "ktlint" },
@@ -926,8 +985,34 @@ require("lazy").setup({
 	},
 	-- { "github/copilot.vim" },
 	{ "andweeb/presence.nvim", opts = {} },
-	{ "stsewd/gx-extended.vim" },
-	{ "sourcegraph/sg.nvim" },
+	-- { "stsewd/gx-extended.vim" },
+	{
+		"rmagatti/gx-extended.nvim",
+		config = function()
+			require("gx-extended").setup({
+				extensions = {
+					-- TODO: incomplete match file path
+					-- {
+					-- patterns = { "*" },
+					-- name = "local files",
+					-- match_to_url = function(line_string)
+					-- 	local line = string.match(line_string, "(/[^/\0]+)+/?")
+					-- 	vim.notify(line)
+					-- 	return line or nil
+					-- end,
+					-- },
+				},
+			})
+		end,
+	},
+	-- { "sourcegraph/sg.nvim" },
+	{ "mzlogin/vim-markdown-toc" },
+	-- {
+	-- 	"rcarriga/nvim-notify",
+	-- 	config = function()
+	-- 		vim.notify = require("notify")
+	-- 	end,
+	-- },
 
 	require("kickstart.plugins.debug"),
 
