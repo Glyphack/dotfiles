@@ -31,10 +31,15 @@ local function launchOrFocusOrRotate(app)
 		-- hs.application.get needs the name as per hs.application:name() and not the name on disk
 		-- It can also take pid or bundle, but that doesn't help here
 		-- Since I have the name already from above, I can use that though
-		local appWindows = hs.application.get(focusedWindowAppName):allWindows()
+		local currentApp = hs.application.get(focusedWindowAppName)
+		local appWindows = currentApp:allWindows()
 
 		-- https://www.hammerspoon.org/docs/hs.application.html#allWindows
 		-- A table of zero or more hs.window objects owned by the application. From the current space.
+		if #appWindows == 1 then
+			currentApp:hide()
+			return
+		end
 
 		if #appWindows > 0 then
 			-- It seems that this list order changes after one window get focused,

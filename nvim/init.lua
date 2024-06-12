@@ -13,6 +13,8 @@ vim.opt.showmode = false
 vim.opt.breakindent = true
 vim.opt.showbreak = ">>"
 
+vim.cmd("filetype plugin on")
+
 -- Save undo history
 vim.opt.undofile = true
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
@@ -24,6 +26,7 @@ vim.opt.smartcase = true
 -- Keep signcolumn on by default
 vim.opt.signcolumn = "yes"
 
+vim.o.background = "dark"
 vim.opt.termguicolors = true
 
 -- Decrease update time
@@ -60,12 +63,12 @@ vim.opt.hlsearch = true
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
 -- Diagnostic keymaps
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
+-- vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]iagnostic message" })
+-- vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
 
-vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
 -- Copy and paste and cut keymaps
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste without overwriting clipboard" })
@@ -81,6 +84,10 @@ vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left wind
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
+vim.keymap.set("t", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
+vim.keymap.set("t", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
+vim.keymap.set("t", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
+vim.keymap.set("t", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
 -- quickfix list navigation
 vim.keymap.set("n", "<M-j>", ":cn<CR>", { desc = "Move focus to the next quickfix item" })
@@ -222,6 +229,7 @@ require("lazy").setup({
 			})
 		end,
 	},
+	{ "sindrets/diffview.nvim" },
 
 	-- Useful plugin to show you pending keybinds.
 	{
@@ -263,6 +271,11 @@ require("lazy").setup({
 				opts = {},
 			},
 			"jonarrien/telescope-cmdline.nvim",
+			-- To view the current file history in git
+			{
+				"isak102/telescope-git-file-history.nvim",
+				dependencies = { "tpope/vim-fugitive" },
+			},
 		},
 
 		config = function()
@@ -351,6 +364,7 @@ require("lazy").setup({
 
 			pcall(require("telescope").load_extension, "fzf")
 			pcall(require("telescope").load_extension, "ui-select")
+			pcall(require("telescope").load_extension, "git_file_history")
 			require("telescope").load_extension("neoclip")
 			require("telescope").load_extension("cmdline")
 			require("telescope").load_extension("smart_history")
@@ -431,7 +445,7 @@ require("lazy").setup({
 						vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
 					map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-					map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+					map("gr", vim.lsp.buf.references, "Goto References")
 					map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
 					map("gt", require("telescope.builtin").lsp_type_definitions, "Goto type definition")
 
@@ -469,7 +483,6 @@ require("lazy").setup({
 				lua = { require("efmls-configs.formatters.stylua") },
 				proto = {
 					require("efmls-configs.linters.buf"),
-					require("efmls-configs.formatters.buf"),
 				},
 				bash = {
 					require("efmls-configs.linters.shellcheck"),
@@ -492,7 +505,7 @@ require("lazy").setup({
 			}
 
 			local servers = {
-				clangd = {},
+				-- clangd = {},
 				gopls = {
 					settings = {
 						gopls = {
@@ -532,7 +545,7 @@ require("lazy").setup({
 						},
 					},
 					on_attach = function(client, bufnr)
-						vim.lsp.inlay_hint.enable(bufnr)
+						-- vim.lsp.inlay_hint.enable(bufnr)
 					end,
 				},
 				tsserver = {},
@@ -571,17 +584,7 @@ require("lazy").setup({
 						},
 					},
 				},
-				golangci_lint_ls = {
-					init_options = {
-						command = {
-							"golangci-lint",
-							"run",
-							"--out-format",
-							"json",
-							"--issues-exit-code=1",
-						},
-					},
-				},
+				golangci_lint_ls = {},
 				ruby_lsp = {},
 				sorbet = {},
 				kotlin_language_server = {},
@@ -639,21 +642,23 @@ require("lazy").setup({
 			require("lspconfig").efm.setup(efmls_config)
 		end,
 	},
-	{
-		"ray-x/go.nvim",
-		dependencies = { -- optional packages
-			"ray-x/guihua.lua",
-			"neovim/nvim-lspconfig",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		config = function()
-			require("go").setup()
-		end,
-		event = { "CmdlineEnter" },
-		ft = { "go", "gomod" },
-		build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
-	},
-
+	-- {
+	-- 	"ray-x/go.nvim",
+	-- 	dependencies = {
+	-- 		"ray-x/guihua.lua",
+	-- 		"neovim/nvim-lspconfig",
+	-- 		"nvim-treesitter/nvim-treesitter",
+	-- 		"theHamsta/nvim-dap-virtual-text",
+	-- 	},
+	-- 	config = function()
+	-- 		require("go").setup({
+	-- 			lsp_codelens = false,
+	-- 		})
+	-- 	end,
+	-- 	event = { "CmdlineEnter" },
+	-- 	ft = { "go", "gomod" },
+	-- 	build = ':lua require("go.install").update_all_sync()',
+	-- },
 	{ -- Autoformat
 		"stevearc/conform.nvim",
 		event = { "BufWritePre" },
@@ -670,14 +675,13 @@ require("lazy").setup({
 		},
 		config = function()
 			local conform = require("conform")
-			vim.g.noformat = true
 			conform.setup({
 				notify_on_error = false,
 				format_on_save = function(bufnr)
 					if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
 						return
 					end
-					local disable_filetypes = { c = true, cpp = true, yaml = true, python = true }
+					local disable_filetypes = { c = true, cpp = true, yaml = true }
 					return {
 						timeout_ms = 1000,
 						lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
@@ -687,7 +691,6 @@ require("lazy").setup({
 					lua = { "stylua" },
 					go = { "goimports" },
 					javascript = { { "prettierd", "prettier" } },
-					python = { "ruff_format" },
 					kotlin = { "ktlint" },
 					rust = { "rustfmt" },
 					yaml = { "yamlfmt" },
@@ -738,7 +741,7 @@ require("lazy").setup({
 			{ "hrsh7th/cmp-path" },
 			{ "saadparwaiz1/cmp_luasnip" },
 			{ "hrsh7th/cmp-nvim-lua" },
-			{ "petertriho/cmp-git", requires = "nvim-lua/plenary.nvim", opts = {} },
+			{ "petertriho/cmp-git", dependencies = "nvim-lua/plenary.nvim", opts = {} },
 			"lukas-reineke/cmp-rg",
 			"hrsh7th/cmp-path",
 		},
@@ -746,6 +749,7 @@ require("lazy").setup({
 			local cmp = require("cmp")
 			local luasnip = require("luasnip")
 			luasnip.config.setup({})
+			vim.api.nvim_set_hl(0, "CmpItemKindCody", { fg = "Red" })
 
 			cmp.setup({
 				snippet = {
@@ -755,6 +759,13 @@ require("lazy").setup({
 				},
 				completion = { completeopt = "menu,menuone,noinsert" },
 				mapping = cmp.mapping.preset.insert({
+					["<c-a>"] = cmp.mapping.complete({
+						config = {
+							sources = {
+								{ name = "cody" },
+							},
+						},
+					}),
 					["<C-n>"] = cmp.mapping.select_next_item(),
 					["<C-p>"] = cmp.mapping.select_prev_item(),
 					["<C-i>"] = cmp.mapping.confirm({ select = true }),
@@ -780,6 +791,7 @@ require("lazy").setup({
 					end, { "i", "s" }),
 				}),
 				sources = {
+					{ name = "cody" },
 					{ name = "nvim_lsp", keyword_length = 1 },
 					{ name = "luasnip", keyword_length = 2 },
 					{ name = "path" },
@@ -794,14 +806,24 @@ require("lazy").setup({
 		end,
 	},
 
+	-- color schemes
 	{
 		"folke/tokyonight.nvim",
 		lazy = false, -- make sure we load this during startup if it is your main colorscheme
 		priority = 1000, -- make sure to load this before all the other start plugins
 		config = function()
-			vim.cmd.colorscheme("tokyonight-night")
-			vim.cmd.hi("Comment gui=none")
+			-- vim.cmd.colorscheme("tokyonight-night")
+			-- vim.cmd.hi("Comment gui=none")
 		end,
+	},
+	{
+		"neanias/everforest-nvim",
+		priority = 1000, -- make sure to load this before all the other start plugins
+	},
+	{
+		"scottmckendry/cyberdream.nvim",
+		lazy = false,
+		priority = 1000,
 	},
 
 	{
@@ -826,7 +848,7 @@ require("lazy").setup({
 				require("mini.indent").setup()
 			end
 			require("mini.jump").setup()
-			require("mini.jump2d").setup()
+			-- require("mini.jump2d").setup()
 
 			-- Add/delete/replace surroundings (brackets, quotes, etc.)
 			--
@@ -835,11 +857,35 @@ require("lazy").setup({
 			-- - sr)'  - [S]urround [R]eplace [)] [']
 			require("mini.surround").setup()
 
-			-- Simple and easy statusline.
-			--  You could remove this setup call if you don't like it,
-			--  and try some other statusline plugin
 			local statusline = require("mini.statusline")
 			statusline.setup()
+
+			MiniStatusline.config = {
+				content = {
+					active = function()
+						local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
+						local git = MiniStatusline.section_git({ trunc_width = 75 })
+						local diagnostics = MiniStatusline.section_diagnostics({ trunc_width = 75 })
+						local filename = MiniStatusline.section_filename({ trunc_width = 140 })
+						local fileinfo = MiniStatusline.section_fileinfo({ trunc_width = 120 })
+						local location = MiniStatusline.section_location({ trunc_width = 75 })
+						local search = MiniStatusline.section_searchcount({ trunc_width = 75 })
+
+						return MiniStatusline.combine_groups({
+							{ hl = mode_hl, strings = { mode } },
+							{ hl = "MiniStatuslineFilename", strings = { filename } },
+							"%<", -- Mark general truncate point
+							{ hl = "MiniStatuslineDevinfo", strings = { git, diagnostics } },
+							"%=", -- End left alignment
+							{ hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
+							{ hl = mode_hl, strings = { search, location } },
+						})
+					end,
+					inactive = nil,
+				},
+				use_icons = true,
+				set_vim_settings = true,
+			}
 
 			-- You can configure sections in the statusline by overriding their
 			-- default behavior. For example, here we set the section for
@@ -861,7 +907,7 @@ require("lazy").setup({
 				end
 			end
 
-			vim.keymap.set("n", "<leader>t", minifiles_toggle, { noremap = true, silent = true })
+			vim.keymap.set("n", "<leader>t", minifiles_toggle, { noremap = true, silent = true, desc = "Tree" })
 
 			vim.keymap.set("n", "<leader>gf", function()
 				if vim.bo.ft == "minifiles" then
@@ -1005,7 +1051,16 @@ require("lazy").setup({
 			})
 		end,
 	},
-	-- { "sourcegraph/sg.nvim" },
+	{
+		"sourcegraph/sg.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		build = "nvim -l build/init.lua",
+		config = function()
+			require("sg").setup({})
+		end,
+	},
 	{ "mzlogin/vim-markdown-toc" },
 	-- {
 	-- 	"rcarriga/nvim-notify",
@@ -1013,6 +1068,20 @@ require("lazy").setup({
 	-- 		vim.notify = require("notify")
 	-- 	end,
 	-- },
+	--
+	{
+		"akinsho/toggleterm.nvim",
+		version = "*",
+		opts = {
+			direction = "vertical",
+			size = function(term)
+				if term.direction == "vertical" then
+					return vim.o.columns * 0.4
+				end
+				return 30
+			end,
+		},
+	},
 
 	require("kickstart.plugins.debug"),
 
@@ -1033,8 +1102,8 @@ function Link()
 	vim.api.nvim_command("normal ciW[" .. word .. "]()")
 	vim.api.nvim_exec("normal! F(", true)
 end
-vim.cmd("command! Link :lua Link()")
 
-vim.cmd([[command! Replace :%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+vim.cmd("command! Link :lua Link()")
+vim.cmd("colorscheme cyberdream")
 
 -- vim: ts=2 sts=2 sw=2 et

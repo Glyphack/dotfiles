@@ -22,9 +22,11 @@ cd /tmp/
 curl -sS https://starship.rs/install.sh | sh
 curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
 
-echo /opt/homebrew/bin//fish | sudo tee -a /etc/shells
-chsh -s /opt/homebrew/bin//fish
+echo /opt/homebrew/bin/fish | sudo tee -a /etc/shells
+chsh -s /opt/homebrew/bin/fish
 
 cargo install samply
+
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ```
