@@ -1,8 +1,8 @@
 [env]
 
 [tools]
-node = 'lts'
-python = ['3.10', '3.12']
+node = "22"
+python = "3.12"
 
 [settings]
 experimental = true

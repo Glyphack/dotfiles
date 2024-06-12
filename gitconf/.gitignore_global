@@ -24,3 +24,5 @@ cspell.json
 
 # asdf
 *.tool-versions
+
+*.mise

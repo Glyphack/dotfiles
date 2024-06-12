@@ -6,6 +6,12 @@ package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfile
 
 SpoonInstall = hs.loadSpoon("SpoonInstall")
 
+local hasCustom, custom = pcall(require, "custom")
+
+if hasCustom then
+	print("Loaded custom settings")
+end
+
 -- My shortcuts
 -- Some of the shortcuts are still on Raycast, need to move them here
 -- 1. Move between screens
@@ -19,6 +25,9 @@ WINDOWS_SHORTCUTS = {
 	{ "Y", "Discord" },
 	{ "U", "Slack" },
 }
+if hasCustom then
+	WINDOWS_SHORTCUTS = custom.WINDOWS_SHORTCUTS
+end
 
 TOGGLE_MUTE_SHORTCUT = { "alt", "t" }
 
@@ -224,7 +233,6 @@ if string.match(hs.host.localizedName(), "mbp") then
 	end
 end
 
--- Use Control+` to reload Hammerspoon config
 hs.hotkey.bind({ "ctrl" }, "`", nil, function()
 	hs.reload()
 end)

@@ -27,6 +27,7 @@
 [commit]
 	verbose = true
 	template = ~/.gitmessage
+	; gpgSign = true
 
 [rerere]
 	enabled = true
@@ -56,3 +57,12 @@
 
 [safe]
 	directory = /home/app
+
+[includeIf "gitdir:~/Programming/vio/"]
+	path = ~/Programming/vio/gitconf/.gitconfig
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
