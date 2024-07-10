@@ -75,6 +75,8 @@ vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste without overwriting c
 vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank to clipboard" })
 vim.keymap.set("n", "<leader>Y", [["+Y]], { desc = "Yank line to clipboard" })
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+vim.keymap.set("n", "x", '"_x')
+vim.keymap.set("n", "X", '"_X')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -1073,6 +1075,7 @@ require("lazy").setup({
 		"akinsho/toggleterm.nvim",
 		version = "*",
 		opts = {
+			open_mapping = "<c-e>",
 			direction = "vertical",
 			size = function(term)
 				if term.direction == "vertical" then
