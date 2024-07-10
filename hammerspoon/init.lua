@@ -29,7 +29,7 @@ if hasCustom then
 	WINDOWS_SHORTCUTS = custom.WINDOWS_SHORTCUTS
 end
 
-TOGGLE_MUTE_SHORTCUT = { "alt", "t" }
+TOGGLE_MUTE_SHORTCUT = { WINDOW_MANAGEMENT_KEY, "t" }
 
 local hasSecrets, secrets = pcall(require, "secrets")
 local GlobalMute = hs.loadSpoon("GlobalMute")
@@ -64,17 +64,17 @@ hs.hotkey.bind({ "alt" }, "R", function()
 end)
 
 local function useDefaultAudioDevice()
-	jbl_speaker = hs.audiodevice.findOutputByName("JBL Flip 6")
+	local jbl_speaker = hs.audiodevice.findOutputByName("JBL Flip 6")
 	if jbl_speaker then
 		jbl_speaker:setDefaultOutputDevice()
 		return
 	end
-	mbp_speaker = hs.audiodevice.findOutputByName("MacBook Pro Speakers")
+	local mbp_speaker = hs.audiodevice.findOutputByName("MacBook Pro Speakers")
 	if mbp_speaker then
 		mbp_speaker:setDefaultOutputDevice()
 		return
 	end
-	mac_mini_speaker = hs.audiodevice.findOutputByName("Mac mini Speakers")
+	local mac_mini_speaker = hs.audiodevice.findOutputByName("Mac mini Speakers")
 	if mac_mini_speaker then
 		mac_mini_speaker:setDefaultOutputDevice()
 		return
@@ -82,7 +82,7 @@ local function useDefaultAudioDevice()
 end
 
 local function switchOutputAfterExternalMicConnected()
-	current = hs.audiodevice.defaultInputDevice():name()
+	local current = hs.audiodevice.defaultInputDevice():name()
 	print("Current device: " .. current)
 	if current == "External Microphone" then
 		print("Forcing default output to Internal Speakers")
@@ -90,14 +90,25 @@ local function switchOutputAfterExternalMicConnected()
 	end
 end
 
-local function audiodeviceDeviceCallback(event)
+local function switchToJblFilip6AfterConnect()
+	local jbl_speaker = hs.audiodevice.findOutputByName("JBL Flip 6")
+	if jbl_speaker then
+		jbl_speaker:setDefaultOutputDevice()
+		return
+	end
+end
+
+local function audiodeviceCallback(event)
 	print("audiodeviceDeviceCallback: " .. event)
 	if event == "dIn " then
 		switchOutputAfterExternalMicConnected()
 	end
+	if even == "dOut" then
+		switchToJblFilip6AfterConnect()
+	end
 end
 
-hs.audiodevice.watcher.setCallback(audiodeviceDeviceCallback)
+hs.audiodevice.watcher.setCallback(audiodeviceCallback)
 hs.audiodevice.watcher.start()
 
 switchOutputAfterExternalMicConnected()

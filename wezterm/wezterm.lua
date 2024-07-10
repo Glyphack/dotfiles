@@ -21,12 +21,12 @@ local config = {
 		{
 			key = "a",
 			mods = "CMD",
-			action = act.ActivatePaneDirection 'Left',
+			action = act.ActivatePaneDirection("Left"),
 		},
 		{
 			key = "d",
 			mods = "CMD",
-			action = act.ActivatePaneDirection 'Right',
+			action = act.ActivatePaneDirection("Right"),
 		},
 		{
 			key = "K",
