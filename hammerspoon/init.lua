@@ -18,12 +18,12 @@ end
 -- 2. Daily Schedule
 WINDOW_MANAGEMENT_KEY = { "alt", "command", "ctrl", "shift" }
 WINDOWS_SHORTCUTS = {
-	{ "J", "qutebrowser" },
+	{ "J", "Brave Browser" },
 	{ "K", "WezTerm" },
 	{ "O", "Obsidian" },
 	{ "P", "OBS" },
 	{ "Y", "Discord" },
-	{ "U", "Brave Browser" },
+	{ "U", "qutebrowser" },
 }
 if hasCustom then
 	WINDOWS_SHORTCUTS = custom.WINDOWS_SHORTCUTS
