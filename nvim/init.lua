@@ -631,6 +631,13 @@ require("lazy").setup({
 			-- TODO: Add this to servers table but exclude from mason install
 			require("lspconfig").dartls.setup({})
 			require("lspconfig").efm.setup(efmls_config)
+			require("lspconfig").gopls.setup({
+				settings = {
+					gopls = {
+						gofumpt = true,
+					},
+				},
+			})
 		end,
 	},
 	-- {
@@ -1074,6 +1081,8 @@ require("lazy").setup({
 			end,
 		},
 	},
+
+	{ "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
 
 	require("kickstart.plugins.debug"),
 
