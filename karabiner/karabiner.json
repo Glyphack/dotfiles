@@ -285,6 +285,25 @@
             ]
           },
           {
+            "description": "Disable Command-Shift-Option-Control-Period (.)",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "period",
+                  "modifiers": {
+                    "mandatory": [
+                      "command",
+                      "shift",
+                      "option",
+                      "control"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
             "description": "Lock screen and sleep by fn+s (rev 2)",
             "manipulators": [
               {
