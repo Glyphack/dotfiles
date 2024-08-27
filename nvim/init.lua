@@ -508,17 +508,7 @@ require("lazy").setup({
 				rust_analyzer = {
 					settings = {
 						["rust-analyzer"] = {
-							checkOnSave = {
-								allFeatures = true,
-								overrideCommand = {
-									"cargo",
-									"clippy",
-									"--workspace",
-									"--message-format=json",
-									"--all-targets",
-									"--all-features",
-								},
-							},
+							checkOnSave = {},
 							imports = {
 								granularity = {
 									group = "module",
@@ -809,10 +799,13 @@ require("lazy").setup({
 		"folke/tokyonight.nvim",
 		lazy = false, -- make sure we load this during startup if it is your main colorscheme
 		priority = 1000, -- make sure to load this before all the other start plugins
-		config = function()
-			-- vim.cmd.colorscheme("tokyonight-night")
-			-- vim.cmd.hi("Comment gui=none")
-		end,
+		opts = {
+			transparent = true,
+			styles = {
+				sidebars = "transparent",
+				floats = "transparent",
+			},
+		},
 	},
 	{
 		"neanias/everforest-nvim",
@@ -1105,6 +1098,6 @@ function Link()
 end
 
 vim.cmd("command! Link :lua Link()")
-vim.cmd("colorscheme cyberdream")
+vim.cmd("colorscheme tokyonight")
 
 -- vim: ts=2 sts=2 sw=2 et
