@@ -49,21 +49,7 @@ set -gx KUBECONFIG $HOME/.kube/config
 
 
 starship init fish | source
-# status is-login; and pyenv init --path | source
-# status is-interactive; and pyenv init - | source
-#
-# Enable AWS CLI autocompletion: github.com/aws/aws-cli/issues/1079
-# complete --command aws --no-files --arguments '(begin; set --local --export COMP_SHELL fish; set --local --export COMP_LINE (commandline); aws_completer | sed \'s/ $//\'; end)'
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-# if test -f ~/miniconda3/bin/conda
-#     eval ~/miniconda3/bin/conda "shell.fish" "hook" $argv | source
-# else
-#     if test -f "$HOME/miniconda3/etc/fish/conf.d/conda.fish"
-#         . "$HOME/miniconda3/etc/fish/conf.d/conda.fish"
-#     else
-#         set -x PATH "$HOME/miniconda3/bin" $PATH
-#     end
-# end
-# <<< conda initialize <<<
+alias prc="gh pr create --fill-first"
+alias prr="bash $__fish_config_dir/functions/pr-review.sh $argv"
+alias prr="bash $__fish_config_dir/functions/myprs.sh $argv"

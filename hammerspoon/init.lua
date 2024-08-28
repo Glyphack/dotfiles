@@ -124,7 +124,22 @@ local function setPrimary()
 	end
 end
 
-setPrimary()
+local function screenCallback(layout)
+	if layout == true then
+		print("Screen did not change")
+		return
+	end
+	setPrimary()
+
+	local flameshot_bundle = "/Applications/flameshot.app"
+	local flameshot = hs.application.find(flameshot_bundle, false, false)
+	if flameshot then
+		flameshot:kill()
+	end
+	hs.application.open(flameshot_bundle)
+end
+
+hs.screen.watcher.newWithActiveScreen(screenCallback):start()
 
 -- half of screen
 hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "a", function()
