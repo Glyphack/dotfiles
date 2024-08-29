@@ -530,7 +530,7 @@ require("lazy").setup({
 					end,
 				},
 				tsserver = {},
-				ruff_lsp = {},
+				ruff = {},
 				yamlls = {},
 				jsonls = {},
 				ltex = {},
