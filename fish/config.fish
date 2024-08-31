@@ -52,4 +52,5 @@ starship init fish | source
 
 alias prc="gh pr create --fill-first"
 alias prr="bash $__fish_config_dir/functions/pr-review.sh $argv"
-alias prr="bash $__fish_config_dir/functions/myprs.sh $argv"
+alias myprs="bash $__fish_config_dir/functions/myprs.sh $argv"
+alias vim="nvim"
