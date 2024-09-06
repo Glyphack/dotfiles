@@ -480,6 +480,9 @@ require("lazy").setup({
 				bash = {
 					require("efmls-configs.linters.shellcheck"),
 				},
+				markdown = {
+					require("efmls-configs.linters.proselint"),
+				},
 				["="] = {},
 			}
 
@@ -808,16 +811,6 @@ require("lazy").setup({
 		},
 	},
 	{
-		"neanias/everforest-nvim",
-		priority = 1000, -- make sure to load this before all the other start plugins
-	},
-	{
-		"scottmckendry/cyberdream.nvim",
-		lazy = false,
-		priority = 1000,
-	},
-
-	{
 		"folke/todo-comments.nvim",
 		event = "VimEnter",
 		dependencies = { "nvim-lua/plenary.nvim" },
@@ -827,20 +820,9 @@ require("lazy").setup({
 	{
 		"echasnovski/mini.nvim",
 		config = function()
-			-- Better Around/Inside textobjects
-			--
-			-- Examples:
-			--  - va)  - [V]isually select [A]round [)]paren
-			--  - yinq - [Y]ank [I]nside [N]ext [']quote
-			--  - ci'  - [C]hange [I]nside [']quote
 			require("mini.ai").setup({ n_lines = 500 })
 
-			if vim.bo.filetype == "yaml" or vim.bo.filetype == "json" then
-				require("mini.indent").setup()
-			end
 			require("mini.jump").setup()
-			-- require("mini.jump2d").setup()
-
 			-- Add/delete/replace surroundings (brackets, quotes, etc.)
 			--
 			-- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
@@ -1084,20 +1066,28 @@ require("lazy").setup({
 	},
 })
 
--- Lua function to wrap the word under the cursor with []
-function Link()
-	local word = vim.fn.expand("<cWORD>")
-	-- if the word starts with http, don't wrap it in []
-	if word:match("^http") then
-		vim.api.nvim_command("normal ciW[](" .. word .. ")")
-		vim.api.nvim_exec("normal! F[", true)
-		return
-	end
-	vim.api.nvim_command("normal ciW[" .. word .. "]()")
-	vim.api.nvim_exec("normal! F(", true)
-end
+vim.api.nvim_create_user_command("Link", function(opts)
+	local start_pos = vim.fn.getpos("'<")
+	local end_pos = vim.fn.getpos("'>")
 
-vim.cmd("command! Link :lua Link()")
+	local selected_text = vim.fn.getline(start_pos[2]):sub(start_pos[3], end_pos[3])
+
+	vim.api.nvim_command("normal! gv")
+	if selected_text:match("^http") then
+		vim.fn.setreg('"', "[](" .. selected_text .. ")")
+		vim.api.nvim_command("normal! P")
+		local new_pos = { start_pos[2], start_pos[3] - 1 }
+		vim.api.nvim_win_set_cursor(0, new_pos)
+	else
+		vim.fn.setreg('"', "[" .. selected_text .. "]()")
+		vim.api.nvim_command("normal! P")
+		local new_pos = { start_pos[2], start_pos[3] + #selected_text + 2 }
+		vim.api.nvim_win_set_cursor(0, new_pos)
+	end
+end, { range = true })
+
+vim.keymap.set("v", "<D-k>", ":Link<CR>", { noremap = true, silent = true })
+
 vim.cmd("colorscheme tokyonight")
 
 -- vim: ts=2 sts=2 sw=2 et
