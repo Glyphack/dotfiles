@@ -78,19 +78,6 @@ vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 vim.keymap.set("n", "x", '"_x')
 vim.keymap.set("n", "X", '"_X')
 
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
-vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
-vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
-vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
-vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
-vim.keymap.set("t", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
-vim.keymap.set("t", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
-vim.keymap.set("t", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
-vim.keymap.set("t", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
-
 -- quickfix list navigation
 vim.keymap.set("n", "<M-j>", ":cn<CR>", { desc = "Move focus to the next quickfix item" })
 vim.keymap.set("n", "<M-k>", ":cp<CR>", { desc = "Move focus to the previous quickfix item" })
@@ -969,11 +956,11 @@ require("lazy").setup({
 		config = function()
 			require("treesitter-context").setup({
 				enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-				max_lines = 7, -- How many lines the window should span. Values <= 0 mean no limit.
-				min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+				max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
+				min_window_height = 15, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
 				line_numbers = true,
-				multiline_threshold = 20, -- Maximum number of lines to collapse for a single context line
-				trim_scope = "outer", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+				multiline_threshold = 1, -- Maximum number of lines to collapse for a single context line
+				trim_scope = "inner", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
 				mode = "cursor", -- Line used to calculate context. Choices: 'cursor', 'topline'
 				-- Separator between context and content. Should be a single character string, like '-'.
 				-- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
@@ -1045,16 +1032,31 @@ require("lazy").setup({
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",
-		opts = {
-			open_mapping = "<c-e>",
-			direction = "vertical",
-			size = function(term)
-				if term.direction == "vertical" then
-					return vim.o.columns * 0.4
-				end
-				return 30
-			end,
-		},
+		config = function()
+			require("toggleterm").setup({
+				open_mapping = { "<c-e>" },
+				direction = "vertical",
+				size = function(term)
+					if term.direction == "vertical" then
+						return vim.o.columns * 0.4
+					end
+					return 30
+				end,
+			})
+
+			local toggleterm = require("toggleterm")
+			local big_terminal = function()
+				toggleterm.toggle(1, nil, nil, "tab", "general")
+			end
+			vim.keymap.set("t", "<leader>ot", big_terminal, { desc = "Toggle Big Terminal" })
+			vim.keymap.set("n", "<leader>ot", big_terminal, { desc = "Toggle Big Terminal" })
+
+			local floating_term = function()
+				toggleterm.toggle(2, vim.o.columns * 0.4, nil, "vertical", "vertical")
+			end
+			vim.keymap.set("t", "<leader>of", floating_term, { desc = "Toggle Vertical Terminal" })
+			vim.keymap.set("n", "<leader>of", floating_term, { desc = "Toggle Vertical Terminal" })
+		end,
 	},
 
 	{ "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
