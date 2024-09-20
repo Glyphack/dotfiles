@@ -82,6 +82,12 @@ vim.keymap.set("n", "X", '"_X')
 vim.keymap.set("n", "<M-j>", ":cn<CR>", { desc = "Move focus to the next quickfix item" })
 vim.keymap.set("n", "<M-k>", ":cp<CR>", { desc = "Move focus to the previous quickfix item" })
 
+-- useless motion can be used for something else
+vim.api.nvim_set_keymap("n", "<CR>", "<nop>", { noremap = true })
+vim.api.nvim_set_keymap("v", "<CR>", "<nop>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<BS>", "<nop>", { noremap = true })
+vim.api.nvim_set_keymap("v", "<BS>", "<nop>", { noremap = true })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -108,7 +114,6 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
-	-- "gc" to comment visual regions/lines
 	{ "numToStr/Comment.nvim", opts = {
 		toggler = {
 			block = nil,
@@ -263,7 +268,10 @@ require("lazy").setup({
 			local actions = require("telescope.actions")
 			local action_layout = require("telescope.actions.layout")
 			local lga_actions = require("telescope-live-grep-args.actions")
+			local action_state = require("telescope.actions.state")
 			local live_grep_args_shortcuts = require("telescope-live-grep-args.shortcuts")
+			local builtin = require("telescope.builtin")
+
 			require("telescope").setup({
 				selection_strategy = "closest",
 				sorting_strategy = "descending",
@@ -363,11 +371,25 @@ require("lazy").setup({
 				})
 			end
 
-			local builtin = require("telescope.builtin")
+			local git_changed_files = function()
+				builtin.git_status({
+					attach_mappings = function(prompt_bufnr, map)
+						local switch_to_file = function()
+							local selection = action_state.get_selected_entry()
+							actions.close(prompt_bufnr)
+							vim.cmd(":e " .. selection.value)
+						end
+						map("i", "<CR>", switch_to_file)
+						map("n", "<CR>", switch_to_file)
+						return true
+					end,
+				})
+			end
+
 			vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 			vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
 			vim.keymap.set("n", "<leader>sf", find_files, { desc = "[S]earch [F]iles" })
-			vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
+			vim.keymap.set("n", "<leader>ss", git_changed_files, { desc = "[E]dited [F]iles" })
 			vim.keymap.set("n", "<leader>sp", neoclip, { desc = "Search clipboard history" })
 			vim.keymap.set(
 				"n",
@@ -418,6 +440,16 @@ require("lazy").setup({
 			{ "j-hui/fidget.nvim", opts = {} },
 		},
 		config = function()
+			vim.diagnostic.config({
+				virtual_text = {
+					source = true,
+				},
+				float = {
+					source = true,
+				},
+				update_in_insert = true,
+				severity_sort = true,
+			})
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
 				callback = function(event)
@@ -737,13 +769,13 @@ require("lazy").setup({
 				},
 				completion = { completeopt = "menu,menuone,noinsert" },
 				mapping = cmp.mapping.preset.insert({
-					["<c-a>"] = cmp.mapping.complete({
-						config = {
-							sources = {
-								{ name = "cody" },
-							},
-						},
-					}),
+					-- ["<c-a>"] = cmp.mapping.complete({
+					-- 	config = {
+					-- 		sources = {
+					-- 			{ name = "cody" },
+					-- 		},
+					-- 	},
+					-- }),
 					["<C-n>"] = cmp.mapping.select_next_item(),
 					["<C-p>"] = cmp.mapping.select_prev_item(),
 					["<C-i>"] = cmp.mapping.confirm({ select = true }),
@@ -769,7 +801,7 @@ require("lazy").setup({
 					end, { "i", "s" }),
 				}),
 				sources = {
-					{ name = "cody" },
+					-- { name = "cody" },
 					{ name = "nvim_lsp", keyword_length = 1 },
 					{ name = "luasnip", keyword_length = 2 },
 					{ name = "path" },
