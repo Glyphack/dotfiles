@@ -214,6 +214,11 @@ require("lazy").setup({
 					vim.keymap.set("n", "<leader>p", function()
 						vim.cmd.Git("push")
 					end, opts)
+					vim.keymap.set("n", "<leader>fp", function()
+						vim.cmd("Git! forgot")
+						vim.cmd("Git push --force-with-lease")
+						vim.api.nvim_command("normal! <CR>")
+					end, opts)
 					vim.keymap.set("n", "<leader>P", function()
 						vim.cmd.Git({ "pul" })
 					end, opts)
@@ -502,6 +507,9 @@ require("lazy").setup({
 				markdown = {
 					require("efmls-configs.linters.proselint"),
 				},
+				gitcommit = {
+					require("efmls-configs.linters.proselint"),
+				},
 				["="] = {},
 			}
 
@@ -555,7 +563,11 @@ require("lazy").setup({
 				ruff = {},
 				yamlls = {},
 				jsonls = {},
-				ltex = {},
+				ltex = { settings = {
+					ltex = {
+						language = "en-GB",
+					},
+				} },
 				terraformls = {},
 				bashls = {},
 				dockerls = {},
@@ -643,13 +655,6 @@ require("lazy").setup({
 			-- TODO: Add this to servers table but exclude from mason install
 			require("lspconfig").dartls.setup({})
 			require("lspconfig").efm.setup(efmls_config)
-			require("lspconfig").gopls.setup({
-				settings = {
-					gopls = {
-						gofumpt = true,
-					},
-				},
-			})
 		end,
 	},
 	-- {
@@ -1017,6 +1022,22 @@ require("lazy").setup({
 						},
 						include_surrounding_whitespace = true,
 					},
+					move = {
+						enable = true,
+						set_jumps = true,
+						goto_next_start = {
+							["]m"] = "@function.outer",
+						},
+						goto_next_end = {
+							["]M"] = "@function.outer",
+						},
+						goto_previous_start = {
+							["[m"] = "@function.outer",
+						},
+						goto_previous_end = {
+							["[M"] = "@function.outer",
+						},
+					},
 				},
 			})
 		end,
@@ -1088,6 +1109,13 @@ require("lazy").setup({
 			end
 			vim.keymap.set("t", "<leader>of", floating_term, { desc = "Toggle Vertical Terminal" })
 			vim.keymap.set("n", "<leader>of", floating_term, { desc = "Toggle Vertical Terminal" })
+
+			-- watchexec
+
+			vim.api.nvim_create_user_command("Watch", function(opts)
+				local ft = vim.bo.ft
+				vim.cmd(string.format('2TermExec cmd="watchexec -e %s %s"', ft, opts.args))
+			end, { nargs = "*" })
 		end,
 	},
 
@@ -1121,6 +1149,28 @@ vim.api.nvim_create_user_command("Link", function(opts)
 end, { range = true })
 
 vim.keymap.set("v", "<D-k>", ":Link<CR>", { noremap = true, silent = true })
+
+-- For when editing text files with very long lines
+local wrap_mode = false
+local function toggle_wrap_mode()
+	wrap_mode = not wrap_mode
+
+	if wrap_mode then
+		vim.keymap.set("n", "j", "gj", { noremap = true, silent = true })
+		vim.keymap.set("n", "k", "gk", { noremap = true, silent = true })
+		vim.keymap.set("v", "j", "gj", { noremap = true, silent = true })
+		vim.keymap.set("v", "k", "gk", { noremap = true, silent = true })
+		print("Wrap mode enabled")
+	else
+		vim.keymap.set("n", "j", "j", { noremap = true, silent = true })
+		vim.keymap.set("n", "k", "k", { noremap = true, silent = true })
+		vim.keymap.set("v", "k", "k", { noremap = true, silent = true })
+		vim.keymap.set("v", "j", "j", { noremap = true, silent = true })
+		print("Wrap mode disabled")
+	end
+end
+
+vim.api.nvim_create_user_command("GJ", toggle_wrap_mode, {})
 
 vim.cmd("colorscheme tokyonight")
 
