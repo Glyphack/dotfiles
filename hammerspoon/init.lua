@@ -16,7 +16,7 @@ end
 -- Some of the shortcuts are still on Raycast, need to move them here
 -- 1. Move between screens
 -- 2. Daily Schedule
-WINDOW_MANAGEMENT_KEY = { "alt", "command", "ctrl", "shift" }
+WINDOW_MANAGEMENT_KEY = { "alt", "command", "ctrl" }
 WINDOWS_SHORTCUTS = {
 	{ "J", "Brave Browser" },
 	{ "K", "WezTerm" },

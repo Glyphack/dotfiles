@@ -88,6 +88,12 @@ vim.api.nvim_set_keymap("v", "<CR>", "<nop>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<BS>", "<nop>", { noremap = true })
 vim.api.nvim_set_keymap("v", "<BS>", "<nop>", { noremap = true })
 
+-- terminal navigation
+vim.api.nvim_set_keymap("t", "<c-w><c-h>", "<ESC><c-w><c-h>", {})
+vim.api.nvim_set_keymap("t", "<c-w><c-j>", "<ESC><c-w><c-j>", {})
+vim.api.nvim_set_keymap("t", "<c-w><c-k>", "<ESC><c-w><c-k>", {})
+vim.api.nvim_set_keymap("t", "<c-w><c-l>", "<ESC><c-w><c-l>", {})
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -538,7 +544,9 @@ require("lazy").setup({
 				rust_analyzer = {
 					settings = {
 						["rust-analyzer"] = {
-							checkOnSave = {},
+							checkOnSave = {
+								command = "clippy",
+							},
 							imports = {
 								granularity = {
 									group = "module",
@@ -716,6 +724,7 @@ require("lazy").setup({
 					markdown = { "prettierd", "markdownlint" },
 					json = { "jq" },
 					html = { "prettierd" },
+					c = { "clang-format" },
 					["*"] = { "trim_whitespace", "trim_newlines" },
 				},
 			})
@@ -772,7 +781,8 @@ require("lazy").setup({
 						luasnip.lsp_expand(args.body)
 					end,
 				},
-				completion = { completeopt = "menu,menuone,noinsert" },
+				completion = { completeopt = "menu,menuone" },
+				preselect = cmp.PreselectMode.None,
 				mapping = cmp.mapping.preset.insert({
 					-- ["<c-a>"] = cmp.mapping.complete({
 					-- 	config = {
@@ -1071,7 +1081,7 @@ require("lazy").setup({
 		},
 		build = "nvim -l build/init.lua",
 		config = function()
-			require("sg").setup({})
+			require("sg").setup({ cody = true })
 		end,
 	},
 	{ "mzlogin/vim-markdown-toc" },

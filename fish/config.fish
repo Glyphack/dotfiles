@@ -52,6 +52,7 @@ set -gx KUBECONFIG $HOME/.kube/config
 starship init fish | source
 
 alias prc="gh pr create --fill-first"
+alias pro="gh pr view --web"
 alias prr="bash $__fish_config_dir/functions/pr-review.sh $argv"
 alias myprs="bash $__fish_config_dir/functions/myprs.sh $argv"
 alias vim="nvim"
