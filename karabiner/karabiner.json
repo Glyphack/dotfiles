@@ -1346,7 +1346,10 @@
                 },
                 "to": [
                   {
-                    "key_code": "page_down"
+                    "key_code": "left_arrow",
+                    "modifiers": [
+                      "option"
+                    ]
                   }
                 ],
                 "type": "basic"
@@ -1384,7 +1387,10 @@
                     }
                   },
                   {
-                    "key_code": "page_down"
+                    "key_code": "left_arrow",
+                    "modifiers": [
+                      "option"
+                    ]
                   }
                 ],
                 "type": "basic"
@@ -1402,7 +1408,10 @@
                 },
                 "to": [
                   {
-                    "key_code": "page_up"
+                    "key_code": "right_arrow",
+                    "modifiers": [
+                      "option"
+                    ]
                   }
                 ],
                 "type": "basic"
@@ -1440,7 +1449,10 @@
                     }
                   },
                   {
-                    "key_code": "page_up"
+                    "key_code": "right_arrow",
+                    "modifiers": [
+                      "option"
+                    ]
                   }
                 ],
                 "type": "basic"
@@ -1870,10 +1882,7 @@
                 },
                 "to": [
                   {
-                    "key_code": "comma",
-                    "modifiers": [
-                      "left_shift"
-                    ]
+                    "key_code": "open_bracket"
                   }
                 ],
                 "type": "basic"
@@ -1911,10 +1920,7 @@
                     }
                   },
                   {
-                    "key_code": "comma",
-                    "modifiers": [
-                      "left_shift"
-                    ]
+                    "key_code": "open_bracket"
                   }
                 ],
                 "type": "basic"
@@ -1937,10 +1943,7 @@
                 },
                 "to": [
                   {
-                    "key_code": "period",
-                    "modifiers": [
-                      "left_shift"
-                    ]
+                    "key_code": "close_bracket"
                   }
                 ],
                 "type": "basic"
@@ -1978,10 +1981,7 @@
                     }
                   },
                   {
-                    "key_code": "period",
-                    "modifiers": [
-                      "left_shift"
-                    ]
+                    "key_code": "close_bracket"
                   }
                 ],
                 "type": "basic"
@@ -2773,6 +2773,73 @@
                   }
                 ],
                 "from": {
+                  "key_code": "n",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "period",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "s"
+                    },
+                    {
+                      "key_code": "n"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "s-mode",
+                          "value": 0
+                        }
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "s-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "key_code": "period",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "name": "s-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
                   "key_code": "m",
                   "modifiers": {
                     "optional": [
@@ -2983,7 +3050,7 @@
                 },
                 "to": [
                   {
-                    "key_code": "non_us_backslash",
+                    "key_code": "backslash",
                     "modifiers": [
                       "left_shift"
                     ]
@@ -3024,7 +3091,7 @@
                     }
                   },
                   {
-                    "key_code": "non_us_backslash",
+                    "key_code": "backslash",
                     "modifiers": [
                       "left_shift"
                     ]
