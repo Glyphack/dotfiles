@@ -1,6 +1,11 @@
-link-personal:
+.PHONY: link link-personal
+
+link-personal: link
 	git submodule update --init dotfiles-private
 	git submodule update --remote dotfiles-private
+	cd ./dotfiles-private/ && $(MAKE) link
+
+link:
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
 	mkdir -p ${HOME}/.config/starship && stow --adopt --target=${HOME}/.config starship
 	stow --target=${HOME} gitconf
@@ -13,6 +18,5 @@ link-personal:
 	mkdir -p ${HOME}/.config/wezterm && stow --adopt --target=${HOME}/.config/wezterm wezterm
 	mkdir -p ${HOME}/.hammerspoon && stow --adopt --target=${HOME}/.hammerspoon hammerspoon
 	mkdir -p ${HOME}/Library/Application\ Support/espanso/ && stow --adopt --target=${HOME}/Library/Application\ Support/espanso/ espanso
-	cd ./dotfiles-private/ && $(MAKE) link
 	# to load new changes
 	espanso restart
