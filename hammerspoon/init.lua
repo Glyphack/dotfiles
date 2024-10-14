@@ -23,7 +23,7 @@ WINDOWS_SHORTCUTS = {
 	{ "O", "Obsidian" },
 	{ "P", "OBS" },
 	{ "Y", "Discord" },
-	{ "U", "qutebrowser" },
+	{ "U", "Firefox" },
 }
 if hasCustom then
 	WINDOWS_SHORTCUTS = custom.WINDOWS_SHORTCUTS
