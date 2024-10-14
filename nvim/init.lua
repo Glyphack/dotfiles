@@ -134,6 +134,15 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+	-- UI
+	{
+		"nvim-focus/focus.nvim",
+		version = false,
+		config = function()
+			require("focus").setup()
+		end,
+	},
+
 	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
 	{ "numToStr/Comment.nvim", opts = {
@@ -300,10 +309,68 @@ require("lazy").setup({
 			local builtin = require("telescope.builtin")
 
 			require("telescope").setup({
-				selection_strategy = "closest",
-				sorting_strategy = "descending",
-				scroll_strategy = "cycle",
-				color_devicons = true,
+				defaults = {
+					selection_strategy = "closest",
+					sorting_strategy = "descending",
+					scroll_strategy = "cycle",
+					color_devicons = true,
+					layout_strategy = "horizontal",
+					use_less = true,
+					layout_config = {
+						width = 0.99,
+						height = 0.85,
+						preview_cutoff = 120,
+						prompt_position = "bottom",
+						horizontal = {
+							preview_width = function(_, cols, _)
+								if cols > 200 then
+									return math.floor(cols * 0.4)
+								else
+									return math.floor(cols * 0.4)
+								end
+							end,
+						},
+						vertical = {
+							width = 0.9,
+							height = 0.95,
+							preview_height = 0.5,
+						},
+						flex = {
+							horizontal = {
+								preview_width = 0.9,
+							},
+						},
+					},
+					mappings = {
+						i = {
+							["<C-h>"] = action_layout.toggle_preview,
+							["<C-k>"] = lga_actions.quote_prompt(),
+							["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+							-- freeze the current list and start a fuzzy search in the frozen list
+							["<C-f>"] = actions.to_fuzzy_refine,
+						},
+						n = {
+							["<C-h>"] = action_layout.toggle_preview,
+							["<leader>oo"] = lga_actions.quote_prompt,
+						},
+					},
+
+					history = {
+						path = history_db_file,
+						limit = 100,
+					},
+
+					file_ignore_patterns = {
+						"node_modules",
+						"vendor",
+						".git/",
+						"*.lock",
+						"package-lock.json",
+					},
+
+					grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
+					qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
+				},
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
@@ -312,69 +379,6 @@ require("lazy").setup({
 						initial_mode = "normal",
 					},
 				},
-				layout_strategy = "horizontal",
-				layout_config = {
-					width = 0.99,
-					height = 0.85,
-					preview_cutoff = 120,
-					prompt_position = "bottom",
-					horizontal = {
-						preview_width = function(_, cols, _)
-							if cols > 200 then
-								return math.floor(cols * 0.4)
-							else
-								return math.floor(cols * 0.4)
-							end
-						end,
-					},
-					vertical = {
-						width = 0.9,
-						height = 0.95,
-						preview_height = 0.5,
-					},
-					flex = {
-						horizontal = {
-							preview_width = 0.9,
-						},
-					},
-				},
-				mappings = {
-					i = {
-						["<C-s>"] = actions.select_horizontal,
-						["<C-g>"] = "move_selection_next",
-						["<C-t>"] = "move_selection_previous",
-						["<C-u>"] = actions.results_scrolling_down,
-						["<C-d>"] = actions.results_scrolling_up,
-						["<C-h>"] = action_layout.toggle_preview,
-						["<C-q>"] = actions.send_to_qflist + actions.open_qflist,
-						["<C-w>"] = actions.send_selected_to_qflist + actions.open_qflist,
-						["<C-k>"] = actions.cycle_history_next,
-						["<C-j>"] = actions.cycle_history_prev,
-						["<c-a>s"] = actions.select_all,
-						["<c-a>a"] = actions.add_selection,
-						["<M-f>"] = actions.results_scrolling_left,
-						["<M-k>"] = actions.results_scrolling_right,
-					},
-					n = {
-						["<leader>oo"] = lga_actions.quote_prompt(),
-					},
-				},
-
-				history = {
-					path = history_db_file,
-					limit = 100,
-				},
-
-				file_ignore_patterns = {
-					"node_modules",
-					"vendor",
-					".git/",
-					"*.lock",
-					"package-lock.json",
-				},
-
-				grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
-				qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
 			})
 
 			pcall(require("telescope").load_extension, "fzf")
@@ -483,7 +487,7 @@ require("lazy").setup({
 					local map = function(keys, func, desc)
 						vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
-					map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+					map("gd", vim.lsp.buf.declaration, "[G]oto [D]efinition")
 					map("gr", vim.lsp.buf.references, "Goto References")
 					map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
 					map("gt", require("telescope.builtin").lsp_type_definitions, "Goto type definition")
@@ -498,7 +502,6 @@ require("lazy").setup({
 					map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
 					map("<leader>ps", vim.lsp.buf.signature_help, "Peek signature")
 					map("K", vim.lsp.buf.hover, "Hover Documentation")
-					map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
 					-- highlight references to symbol under cursor
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
@@ -557,32 +560,6 @@ require("lazy").setup({
 					},
 				},
 				pyright = {},
-				rust_analyzer = {
-					settings = {
-						["rust-analyzer"] = {
-							checkOnSave = {
-								command = "clippy",
-							},
-							imports = {
-								granularity = {
-									group = "module",
-								},
-								prefix = "self",
-							},
-							cargo = {
-								buildScripts = {
-									enable = true,
-								},
-							},
-							procMacro = {
-								enable = true,
-							},
-						},
-					},
-					on_attach = function(client, bufnr)
-						-- vim.lsp.inlay_hint.enable(bufnr)
-					end,
-				},
 				tsserver = {},
 				ruff = {},
 				yamlls = {},
@@ -667,6 +644,9 @@ require("lazy").setup({
 			require("mason-lspconfig").setup({
 				handlers = {
 					function(server_name)
+						if server_name == "rust_analyzer" then
+							return
+						end
 						local server = servers[server_name] or {}
 						-- This handles overriding only values explicitly passed
 						-- by the server configuration above. Useful when disabling
@@ -679,6 +659,25 @@ require("lazy").setup({
 			-- TODO: Add this to servers table but exclude from mason install
 			require("lspconfig").dartls.setup({})
 			require("lspconfig").efm.setup(efmls_config)
+		end,
+	},
+	{
+		"mrcjkb/rustaceanvim",
+		version = "^5",
+		lazy = false,
+		config = function()
+			-- local mason_registry = require("mason-registry")
+			-- local codelldb = mason_registry.get_package("codelldb")
+			-- local extension_path = codelldb:get_install_path() .. "/extension/"
+			-- local codelldb_path = extension_path .. "adapter/codelldb"
+			-- local liblldb_path = extension_path .. "lldb/lib/liblldb.dylib"
+			-- local cfg = require("rustaceanvim.config")
+
+			-- vim.g.rustaceanvim = {
+			-- 	dap = {
+			-- 		adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path),
+			-- 	},
+			-- }
 		end,
 	},
 	-- {
@@ -1147,10 +1146,60 @@ require("lazy").setup({
 
 	{ "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
 
-	require("kickstart.plugins.debug"),
-
 	{
-		import = "custom.plugins",
+		"mfussenegger/nvim-dap",
+		dependencies = {
+			"rcarriga/nvim-dap-ui",
+			"williamboman/mason.nvim",
+			"jay-babu/mason-nvim-dap.nvim",
+			"leoluz/nvim-dap-go",
+			"nvim-neotest/nvim-nio",
+			"theHamsta/nvim-dap-virtual-text",
+		},
+		config = function()
+			local dap = require("dap")
+			local dapui = require("dapui")
+
+			require("mason-nvim-dap").setup({
+				automatic_installation = true,
+				handlers = {},
+				ensure_installed = {
+					"delve",
+				},
+			})
+
+			vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
+			vim.keymap.set("n", "<F1>", dap.step_into, { desc = "Debug: Step Into" })
+			vim.keymap.set("n", "<F2>", dap.step_over, { desc = "Debug: Step Over" })
+			vim.keymap.set("n", "<F3>", dap.step_out, { desc = "Debug: Step Out" })
+			vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+			vim.keymap.set("n", "<leader>B", function()
+				dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+			end, { desc = "Debug: Set Breakpoint" })
+
+			dapui.setup({
+				icons = { expanded = "▾", collapsed = "▸", current_frame = "*" },
+				controls = {
+					icons = {
+						pause = "⏸",
+						play = "▶",
+						step_into = "⏎",
+						step_over = "⏭",
+						step_out = "⏮",
+						step_back = "b",
+						run_last = "▶▶",
+						terminate = "⏹",
+						disconnect = "⏏",
+					},
+				},
+			})
+
+			vim.keymap.set("n", "<F7>", dapui.toggle, { desc = "Debug: See last session result." })
+			dap.listeners.after.event_initialized["dapui_config"] = dapui.open
+			dap.listeners.before.event_terminated["dapui_config"] = dapui.close
+			dap.listeners.before.event_exited["dapui_config"] = dapui.close
+			require("dap-go").setup()
+		end,
 	},
 })
 
