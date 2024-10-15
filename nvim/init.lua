@@ -389,7 +389,7 @@ require("lazy").setup({
 			require("telescope").load_extension("smart_history")
 
 			local function find_files()
-				require("telescope.builtin").find_files({
+				builtin.find_files({
 					sorting_strategy = "descending",
 					scroll_strategy = "cycle",
 					layout_config = {},
@@ -487,7 +487,7 @@ require("lazy").setup({
 					local map = function(keys, func, desc)
 						vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
-					map("gd", vim.lsp.buf.declaration, "[G]oto [D]efinition")
+					map("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
 					map("gr", vim.lsp.buf.references, "Goto References")
 					map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
 					map("gt", require("telescope.builtin").lsp_type_definitions, "Goto type definition")
@@ -508,11 +508,21 @@ require("lazy").setup({
 					if client and client.server_capabilities.documentHighlightProvider then
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 							buffer = event.buf,
-							callback = vim.lsp.buf.document_highlight,
+							callback = function()
+								if next(vim.lsp.get_clients()) ~= nil then
+									return
+								end
+								vim.lsp.buf.document_highlight()
+							end,
 						})
 						vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
 							buffer = event.buf,
-							callback = vim.lsp.buf.clear_references,
+							callback = function()
+								if next(vim.lsp.get_clients()) ~= nil then
+									return
+								end
+								vim.lsp.buf.clear_references()
+							end,
 						})
 					end
 				end,
@@ -1139,7 +1149,7 @@ require("lazy").setup({
 
 			vim.api.nvim_create_user_command("Watch", function(opts)
 				local ft = vim.bo.ft
-				vim.cmd(string.format('2TermExec cmd="watchexec -e %s %s"', ft, opts.args))
+				vim.cmd(string.format('2TermExec cmd="watchexec -r -e %s %s"', ft, opts.args))
 			end, { nargs = "*" })
 		end,
 	},
@@ -1202,6 +1212,13 @@ require("lazy").setup({
 		end,
 	},
 })
+
+function term_clear()
+	vim.fn.feedkeys("\\<C-l>", "n")
+	local sb = vim.bo.scrollback
+	vim.bo.scrollback = 1
+	vim.bo.scrollback = sb
+end
 
 vim.api.nvim_create_user_command("Link", function(opts)
 	local start_pos = vim.fn.getpos("'<")
