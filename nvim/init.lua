@@ -487,6 +487,7 @@ require("lazy").setup({
 					local map = function(keys, func, desc)
 						vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
+					map("gs", ":vsplit | lua vim.lsp.buf.definition()<CR>", "Goto definition in split")
 					map("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
 					map("gr", vim.lsp.buf.references, "Goto References")
 					map("gi", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
