@@ -18,6 +18,8 @@ local config = {
 	font = wezterm.font("Hack Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" }),
 	font_size = 23,
 	keys = {
+		{ key = "[", mods = "CMD", action = act.ScrollToPrompt(-1) },
+		{ key = "]", mods = "CMD", action = act.ScrollToPrompt(1) },
 		{
 			key = "a",
 			mods = "CMD",
