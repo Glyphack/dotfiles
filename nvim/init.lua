@@ -1241,7 +1241,7 @@ vim.api.nvim_create_user_command("Link", function(opts)
 	end
 end, { range = true })
 
-vim.keymap.set("v", "<D-k>", ":Link<CR>", { noremap = true, silent = true })
+vim.keymap.set("v", "<leader>k", ":Link<CR>", { noremap = true, silent = true })
 
 -- For when editing text files with very long lines
 local wrap_mode = false
@@ -1262,6 +1262,25 @@ local function toggle_wrap_mode()
 		print("Wrap mode disabled")
 	end
 end
+
+vim.api.nvim_create_user_command("GotoTest", function()
+	local current_file = vim.fn.expand("%:p")
+	local file_type = vim.bo.filetype
+	local test_file
+
+	if file_type == "go" then
+		test_file = vim.fn.fnamemodify(current_file, ":r") .. "_test.go"
+	else
+		vim.api.nvim_err_writeln("Test file location not defined for filetype: " .. file_type)
+		return
+	end
+
+	if vim.fn.filereadable(test_file) == 1 then
+		vim.cmd("edit " .. test_file)
+	else
+		vim.api.nvim_err_writeln("Test file not found: " .. test_file)
+	end
+end, {})
 
 vim.api.nvim_create_user_command("GJ", toggle_wrap_mode, {})
 

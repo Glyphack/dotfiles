@@ -56,3 +56,6 @@ alias pro="gh pr view --web"
 alias prr="bash $__fish_config_dir/functions/pr-review.sh $argv"
 alias myprs="bash $__fish_config_dir/functions/myprs.sh $argv"
 alias vim="nvim"
+function pre_command --on-event fish_preexec
+    printf '\033]133;A\033\\'
+end
