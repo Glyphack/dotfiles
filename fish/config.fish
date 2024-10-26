@@ -11,43 +11,33 @@ set -x RIPGREP_CONFIG_PATH $HOME/.ripgreprc
 fzf --fish | source
 
 bind \ex "cd (fd -t d . $HOME -d 5 --hidden | fzf)"
-bind \ez "cd $HOME && echo $PWD"
-#
-# # programming languages
-# set -x PYENV_ROOT $HOME/.pyenv
+bind \ez "cd $HOME; commandline -f repaint"
+
+# programming languages
 set -x POETRY $HOME/.poetry
 set -x GOPATH $HOME/go
 set -x GOBIN $GOPATH/bin
 set -x RUST_HOME $HOME/.cargo/bin
 set -x FLUTTER_BIN $HOME/flutter/bin
-#
+set -x VIRTUALFISH_ACTIVATION_FILE .venv
+
 # place for software I install
 set -x HOME_BIN $HOME/bin
+# setting the default kube config
+set -gx KUBECONFIG $HOME/.kube/config
 
-# kotlin language server
-set -x KOTLIN_LANGUAGE_SERVER $HOME/Programming/kotlin-language-server/server/build/install/server/bin/
-
-
-# Python
-set -x VIRTUALFISH_ACTIVATION_FILE .venv
 
 #os dependent
 switch (uname)
     case Linux
         set -x VIMDATA ~/.local/share/nvim
     case '*'
-        set -U fish_user_paths /opt/homebrew/bin/ $fish_user_paths
+        fish_add_path -U /opt/homebrew/bin
         set -x VIMDATA ~/.local/share/nvim
-        set -x PATH $PATH  /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
+        set -x PATH $PATH /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
 end
 
 set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAVA_HOME/bin $HOME/.local/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $HOME/.rd/bin
-
-
-
-# setting the default kube config
-set -gx KUBECONFIG $HOME/.kube/config
-
 
 starship init fish | source
 
