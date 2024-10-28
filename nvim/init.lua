@@ -680,10 +680,18 @@ require("lazy").setup({
 			vim.g.rustaceanvim = {
 				tools = {},
 				server = {
+					on_attach = function(client, bufnr)
+						local function map(mode, l, r, opts)
+							opts = opts or {}
+							opts.buffer = bufnr
+							vim.keymap.set(mode, l, r, opts)
+						end
+						map("n", "<leader>cc", ":RustLsp flyCheck<CR>", { desc = "check code" })
+					end,
 					default_settings = {
 						["rust-analyzer"] = {
 							checkOnSave = {
-								enabled = false,
+								enable = false,
 							},
 						},
 					},

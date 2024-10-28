@@ -1,8 +1,10 @@
 .PHONY: link link-personal
 
-link-personal: link
+submodule:
 	git submodule update --init dotfiles-private
 	git submodule update --remote dotfiles-private
+
+link-personal: submodule link
 	cd ./dotfiles-private/ && $(MAKE) link
 
 link:
