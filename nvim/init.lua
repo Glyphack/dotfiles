@@ -643,6 +643,7 @@ require("lazy").setup({
 					},
 				},
 				typos_lsp = {},
+				lemminx = {},
 			}
 
 			require("mason").setup()
@@ -799,6 +800,7 @@ require("lazy").setup({
 			{ "hrsh7th/cmp-path" },
 			{ "saadparwaiz1/cmp_luasnip" },
 			{ "hrsh7th/cmp-nvim-lua" },
+			{ "hrsh7th/cmp-nvim-lsp-signature-help" },
 			{ "petertriho/cmp-git", dependencies = "nvim-lua/plenary.nvim", opts = {} },
 			"lukas-reineke/cmp-rg",
 			"hrsh7th/cmp-path",
@@ -855,6 +857,7 @@ require("lazy").setup({
 					{ name = "luasnip", keyword_length = 2 },
 					{ name = "path" },
 					{ name = "buffer", keyword_length = 3 },
+					{ name = "nvim_lsp_signature_help" },
 					{ name = "fish" },
 					{ name = "nvim_lua" },
 					{ name = "git" },
@@ -1219,6 +1222,21 @@ require("lazy").setup({
 			dap.listeners.before.event_exited["dapui_config"] = dapui.close
 			require("dap-go").setup()
 		end,
+	},
+	{
+		"farmergreg/vim-lastplace",
+		config = function()
+			vim.g.lastplace_ignore = "gitcommit,gitrebase,svn,hgcommit"
+			vim.g.lastplace_ignore_buftype = "quickfix,nofile,help"
+			vim.g.lastplace_open_folds = 1
+		end,
+	},
+	{
+		"andrewferrier/debugprint.nvim",
+		dependencies = {
+			"echasnovski/mini.nvim",
+		},
+		opts = {},
 	},
 })
 
