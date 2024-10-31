@@ -14,8 +14,7 @@ end
 
 -- My shortcuts
 -- Some of the shortcuts are still on Raycast, need to move them here
--- 1. Move between screens
--- 2. Daily Schedule
+-- 1. Daily Schedule
 WINDOW_MANAGEMENT_KEY = { "alt", "command", "ctrl" }
 WINDOWS_SHORTCUTS = {
 	{ "J", "Brave Browser" },
@@ -41,27 +40,13 @@ GlobalMute:configure({
 	mute_background = "file:///Library/Desktop%20Pictures/Solid%20Colors/Turquoise%20Green.png",
 })
 
-function SendClickableNotificaiton(notification, link)
+function SendClickableNotification(notification, link)
 	local function notificationCallback()
 		hs.urlevent.openURL(link)
 	end
 	local notificationObject = hs.notify.new(notificationCallback, notification)
 	notificationObject:send()
 end
-
-function Reload(files)
-	for _, file in pairs(files) do
-		if file:sub(-4) == ".lua" then
-			hs.notify.new({ title = "Reloading", informativeText = "Reloading Hammerspoon config" }):send()
-			hs.reload()
-			return
-		end
-	end
-end
-
-hs.hotkey.bind({ "alt" }, "R", function()
-	hs.reload()
-end)
 
 local function useDefaultAudioDevice()
 	local jbl_speaker = hs.audiodevice.findOutputByName("JBL Flip 6")
@@ -188,9 +173,6 @@ hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "g", hs.grid.show)
 hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "r", function()
 	hs.window.focusedWindow():setSize({ w = 640, h = 360 })
 end)
-
-reloadWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", Reload):start()
-reloadWatcher:start()
 
 -- HANDLE SCROLLING WITH MOUSE BUTTON PRESSED
 local scrollMouseButton = 2
