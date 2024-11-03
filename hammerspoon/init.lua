@@ -66,12 +66,16 @@ local function useDefaultAudioDevice()
 	end
 end
 
-local function switchOutputAfterExternalMicConnected()
+local function selectInputDecide()
 	local current = hs.audiodevice.defaultInputDevice():name()
 	print("Current device: " .. current)
 	if current == "External Microphone" then
 		print("Forcing default output to Internal Speakers")
 		useDefaultAudioDevice()
+	end
+	local blue_yeti_mic = hs.audiodevice.findInputByName("Yeti Stereo Microphone")
+	if blue_yeti_mic ~= nil then
+		blue_yeti_mic:setDefaultInputDevice()
 	end
 end
 
@@ -86,7 +90,7 @@ end
 local function audiodeviceCallback(event)
 	print("audiodeviceDeviceCallback: " .. event)
 	if event == "dIn " then
-		switchOutputAfterExternalMicConnected()
+		selectInputDecide()
 	end
 	if even == "dOut" then
 		switchToJblFilip6AfterConnect()
@@ -96,7 +100,7 @@ end
 hs.audiodevice.watcher.setCallback(audiodeviceCallback)
 hs.audiodevice.watcher.start()
 
-switchOutputAfterExternalMicConnected()
+selectInputDecide()
 
 -- set the other screen than macbook as primary
 local function setPrimary()
