@@ -468,7 +468,14 @@ require("lazy").setup({
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 			{ "creativenull/efmls-configs-nvim" },
-			{ "j-hui/fidget.nvim", opts = {} },
+			{
+				"j-hui/fidget.nvim",
+				opts = {
+					progress = {
+						suppress_on_insert = true,
+					},
+				},
+			},
 		},
 		config = function()
 			vim.diagnostic.config({
