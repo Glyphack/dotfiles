@@ -1,4 +1,6 @@
 matches:
+  - trigger: " i "
+    replace: " I "
   - trigger: ". a"
     replace: ". A"
   - trigger: ". b"
