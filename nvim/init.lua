@@ -99,7 +99,6 @@ vim.keymap.set("n", "<M-j>", ":cn<CR>", { desc = "Move focus to the next quickfi
 vim.keymap.set("n", "<M-k>", ":cp<CR>", { desc = "Move focus to the previous quickfix item" })
 
 -- useless motion can be used for something else
-vim.api.nvim_set_keymap("n", "<CR>", "<nop>", { noremap = true })
 vim.api.nvim_set_keymap("v", "<CR>", "<nop>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<BS>", "<nop>", { noremap = true })
 vim.api.nvim_set_keymap("v", "<BS>", "<nop>", { noremap = true })
@@ -577,9 +576,32 @@ require("lazy").setup({
 						},
 					},
 				},
-				pyright = {},
+				pyright = {
+					pyright = {
+						-- Using Ruff's import organizer
+						disableOrganizeImports = true,
+					},
+					python = {
+						analysis = {
+							-- Ignore all files for analysis to exclusively use Ruff for linting
+							ignore = { "*" },
+						},
+					},
+				},
 				tsserver = {},
-				ruff = {},
+				ruff = {
+					init_options = {
+						settings = {
+							fixAll = true,
+							formatter = {
+								enabled = true,
+							},
+							linter = {
+								enabled = true,
+							},
+						},
+					},
+				},
 				yamlls = {},
 				jsonls = {},
 				ltex = { settings = {
@@ -675,6 +697,20 @@ require("lazy").setup({
 					end,
 				},
 			})
+			vim.api.nvim_create_autocmd("LspAttach", {
+				group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
+				callback = function(args)
+					local client = vim.lsp.get_client_by_id(args.data.client_id)
+					if client == nil then
+						return
+					end
+					if client.name == "ruff" then
+						-- Disable hover in favor of Pyright
+						client.server_capabilities.hoverProvider = false
+					end
+				end,
+				desc = "LSP: Disable hover capability from Ruff",
+			})
 			-- TODO: Add this to servers table but exclude from mason install
 			require("lspconfig").dartls.setup({})
 			require("lspconfig").efm.setup(efmls_config)
@@ -755,6 +791,11 @@ require("lazy").setup({
 				formatters_by_ft = {
 					lua = { "stylua" },
 					go = { "goimports" },
+					python = {
+						"ruff_fix",
+						"ruff_format",
+						"ruff_organize_imports",
+					},
 					javascript = { { "prettierd", "prettier" } },
 					kotlin = { "ktlint" },
 					rust = { "rustfmt" },
@@ -859,7 +900,6 @@ require("lazy").setup({
 					end, { "i", "s" }),
 				}),
 				sources = {
-					-- { name = "cody" },
 					{ name = "nvim_lsp", keyword_length = 1 },
 					{ name = "luasnip", keyword_length = 2 },
 					{ name = "path" },
@@ -1254,6 +1294,28 @@ function term_clear()
 	vim.bo.scrollback = sb
 end
 
+-- For when editing text files with very long lines
+local wrap_mode = false
+local function toggle_wrap_mode()
+	wrap_mode = not wrap_mode
+
+	if wrap_mode then
+		vim.keymap.set("n", "j", "gj", { noremap = true, silent = true })
+		vim.keymap.set("n", "k", "gk", { noremap = true, silent = true })
+		vim.keymap.set("v", "j", "gj", { noremap = true, silent = true })
+		vim.keymap.set("v", "k", "gk", { noremap = true, silent = true })
+		print("Wrap mode enabled")
+	else
+		vim.keymap.set("n", "j", "j", { noremap = true, silent = true })
+		vim.keymap.set("n", "k", "k", { noremap = true, silent = true })
+		vim.keymap.set("v", "k", "k", { noremap = true, silent = true })
+		vim.keymap.set("v", "j", "j", { noremap = true, silent = true })
+		print("Wrap mode disabled")
+	end
+end
+
+vim.api.nvim_create_user_command("GJ", toggle_wrap_mode, {})
+
 vim.api.nvim_create_user_command("Link", function(opts)
 	local start_pos = vim.fn.getpos("'<")
 	local end_pos = vim.fn.getpos("'>")
@@ -1276,26 +1338,6 @@ end, { range = true })
 
 vim.keymap.set("v", "<leader>k", ":Link<CR>", { noremap = true, silent = true })
 
--- For when editing text files with very long lines
-local wrap_mode = false
-local function toggle_wrap_mode()
-	wrap_mode = not wrap_mode
-
-	if wrap_mode then
-		vim.keymap.set("n", "j", "gj", { noremap = true, silent = true })
-		vim.keymap.set("n", "k", "gk", { noremap = true, silent = true })
-		vim.keymap.set("v", "j", "gj", { noremap = true, silent = true })
-		vim.keymap.set("v", "k", "gk", { noremap = true, silent = true })
-		print("Wrap mode enabled")
-	else
-		vim.keymap.set("n", "j", "j", { noremap = true, silent = true })
-		vim.keymap.set("n", "k", "k", { noremap = true, silent = true })
-		vim.keymap.set("v", "k", "k", { noremap = true, silent = true })
-		vim.keymap.set("v", "j", "j", { noremap = true, silent = true })
-		print("Wrap mode disabled")
-	end
-end
-
 vim.api.nvim_create_user_command("GotoTest", function()
 	local current_file = vim.fn.expand("%:p")
 	local file_type = vim.bo.filetype
@@ -1314,8 +1356,6 @@ vim.api.nvim_create_user_command("GotoTest", function()
 		vim.api.nvim_err_writeln("Test file not found: " .. test_file)
 	end
 end, {})
-
-vim.api.nvim_create_user_command("GJ", toggle_wrap_mode, {})
 
 vim.cmd("colorscheme tokyonight")
 

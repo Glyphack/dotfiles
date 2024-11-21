@@ -55,6 +55,8 @@ matches:
     replace: ". Z"
   - trigger: " i "
     replace: " I "
+  - trigger: " i'm "
+    replace: " I'm "
   - trigger: "monday "
     replace: "Monday "
   - trigger: "tuesday "
