@@ -8,7 +8,7 @@ matches:
       - name: mydate
         type: date
         params:
-          format: "%d-%m-%Y"
+          format: "%Y-%m-%d"
 
   - trigger: ":shell"
     replace: "{{output}}"
@@ -29,4 +29,3 @@ matches:
 
   - trigger: ":site"
     replace: "https://glyphack.com"
-

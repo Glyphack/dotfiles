@@ -23,6 +23,7 @@ WINDOWS_SHORTCUTS = {
 	{ "P", "OBS" },
 	{ "Y", "Discord" },
 	{ "U", "Firefox" },
+	{ "'", "Visual Studio Code" },
 }
 if hasCustom then
 	WINDOWS_SHORTCUTS = custom.WINDOWS_SHORTCUTS

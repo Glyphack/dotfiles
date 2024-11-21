@@ -9,8 +9,8 @@ metals.sbt
 .venv
 .nvmrc
 
-# local scripts
-local_script*.py
+# my stuff 
+my_local_*
 
 # env files
 .env.prod
@@ -26,3 +26,5 @@ cspell.json
 *.tool-versions
 
 *mise*
+
+typos.toml
