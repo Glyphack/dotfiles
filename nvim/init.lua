@@ -604,11 +604,29 @@ require("lazy").setup({
 				},
 				yamlls = {},
 				jsonls = {},
-				ltex = { settings = {
-					ltex = {
-						language = "en-GB",
+				ltex = {
+					settings = {
+						ltex = {
+							language = "en-GB",
+						},
 					},
-				} },
+					filetypes = {
+						"bib",
+						"gitcommit",
+						"markdown",
+						"org",
+						"plaintex",
+						"rst",
+						"rnoweb",
+						"tex",
+						"pandoc",
+						"quarto",
+						"rmd",
+						"context",
+						"mail",
+						"text",
+					},
+				},
 				terraformls = {},
 				bashls = {},
 				dockerls = {},
@@ -806,8 +824,9 @@ require("lazy").setup({
 					terraform = { "terraform_fmt" },
 					markdown = { "prettierd", "markdownlint" },
 					json = { "jq" },
-					html = { "prettierd" },
 					c = { "clang-format" },
+					html = { "djlint" },
+					htmldjango = { "djlint" },
 					["*"] = { "trim_whitespace", "trim_newlines" },
 				},
 			})
