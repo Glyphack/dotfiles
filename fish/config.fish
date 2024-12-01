@@ -35,6 +35,7 @@ switch (uname)
         fish_add_path -U /opt/homebrew/bin
         set -x VIMDATA ~/.local/share/nvim
         set -x PATH $PATH /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
+        set --export --prepend PATH "$HOME/.rd/bin"
 end
 
 set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAVA_HOME/bin $HOME/.local/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $HOME/.rd/bin /opt/homebrew/opt/llvm/bin
@@ -58,6 +59,12 @@ function pre_command --on-event fish_preexec
     printf '\033]133;A\033\\'
 end
 
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-set --export --prepend PATH "/Users/light/.rd/bin"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+function some_setup --on-variable PWD 
+    if test -d "$PWD/.venv"
+        source "$PWD/.venv/bin/activate.fish"
+    end
+end
+
+if test -d "$PWD/.venv"
+    source "$PWD/.venv/bin/activate.fish"
+end
