@@ -8,7 +8,7 @@ matches:
       - name: mydate
         type: date
         params:
-          format: "%Y-%m-%d"
+          format: "%d-%m-%Y"
 
   - trigger: ":shell"
     replace: "{{output}}"
@@ -23,7 +23,7 @@ matches:
     replace: "RUST_BACKTRACE=1 "
 
   - trigger: ":coauthor"
-    replace: "Co-authored-by: name <@.COM>"
+    replace: "Co-authored-by: name <@.com>"
   - trigger: ":linkedin"
     replace: "https://www.linkedin.com/in/shayegan-hooshyari"
 

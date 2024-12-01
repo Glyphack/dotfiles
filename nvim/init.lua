@@ -658,7 +658,16 @@ require("lazy").setup({
 						},
 					},
 				},
-				-- golangci_lint_ls = {},
+				html = {
+					init_options = {
+						configurationSection = { "html", "css", "javascript" },
+						embeddedLanguages = {
+							css = true,
+							javascript = true,
+						},
+					},
+				},
+				golangci_lint_ls = {},
 				ruby_lsp = {},
 				sorbet = {},
 				kotlin_language_server = {},
@@ -759,6 +768,18 @@ require("lazy").setup({
 					},
 				},
 			}
+			-- local mason_registry = require("mason-registry")
+			-- local codelldb = mason_registry.get_package("codelldb")
+			-- local extension_path = codelldb:get_install_path() .. "/extension/"
+			-- local codelldb_path = extension_path .. "adapter/codelldb"
+			-- local liblldb_path = extension_path .. "lldb/lib/liblldb.dylib"
+			-- local cfg = require("rustaceanvim.config")
+
+			-- vim.g.rustaceanvim = {
+			-- 	dap = {
+			-- 		adapter = cfg.get_codelldb_adapter(codelldb_path, liblldb_path),
+			-- 	},
+			-- }
 		end,
 	},
 	-- {
@@ -1243,8 +1264,13 @@ require("lazy").setup({
 			"leoluz/nvim-dap-go",
 			"nvim-neotest/nvim-nio",
 			"theHamsta/nvim-dap-virtual-text",
+			{
+				"Joakker/lua-json5",
+				build = "./install.sh",
+			},
 		},
 		config = function()
+			require("dap.ext.vscode").json_decode = require("json5").parse
 			local dap = require("dap")
 			local dapui = require("dapui")
 
@@ -1303,6 +1329,43 @@ require("lazy").setup({
 			"echasnovski/mini.nvim",
 		},
 		opts = {},
+	},
+	{
+		"yetone/avante.nvim",
+		event = "VeryLazy",
+		lazy = false,
+		version = false,
+		opts = {
+			provider = "openai",
+		},
+		build = "make",
+		dependencies = {
+			"stevearc/dressing.nvim",
+			"nvim-lua/plenary.nvim",
+			"MunifTanjim/nui.nvim",
+			"hrsh7th/nvim-cmp",
+			"nvim-tree/nvim-web-devicons",
+			{
+				"HakonHarnes/img-clip.nvim",
+				event = "VeryLazy",
+				opts = {
+					default = {
+						embed_image_as_base64 = false,
+						prompt_for_file_name = false,
+						drag_and_drop = {
+							insert_mode = true,
+						},
+					},
+				},
+			},
+			{
+				"MeanderingProgrammer/render-markdown.nvim",
+				opts = {
+					file_types = { "markdown", "Avante" },
+				},
+				ft = { "markdown", "Avante" },
+			},
+		},
 	},
 })
 
