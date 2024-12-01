@@ -576,19 +576,17 @@ require("lazy").setup({
 						},
 					},
 				},
-				pyright = {
-					pyright = {
-						-- Using Ruff's import organizer
-						disableOrganizeImports = true,
-					},
-					python = {
-						analysis = {
-							-- Ignore all files for analysis to exclusively use Ruff for linting
-							ignore = { "*" },
+				basedpyright = {
+					settings = {
+						basedpyright = {
+							disableOrganizeImports = true,
+							analysis = {
+								ignore = { "*" },
+							},
 						},
 					},
 				},
-				tsserver = {},
+				ts_ls = {},
 				ruff = {
 					init_options = {
 						settings = {
@@ -630,7 +628,28 @@ require("lazy").setup({
 				terraformls = {},
 				bashls = {},
 				dockerls = {},
-				tailwindcss = {},
+				tailwindcss = {
+					tailwindCSS = {
+						classAttributes = { "class", "className", "class:list", "classList", "ngClass" },
+						includeLanguages = {
+							eelixir = "html-eex",
+							eruby = "erb",
+							htmlangular = "html",
+							templ = "html",
+						},
+						lint = {
+							cssConflict = "warning",
+							invalidApply = "error",
+							invalidConfigPath = "error",
+							invalidScreen = "error",
+							invalidTailwindDirective = "error",
+							invalidVariant = "error",
+							recommendedVariantOrder = "warning",
+						},
+						validate = true,
+					},
+				},
+				html = { filetypes = { "html", "templ", "htmldjango" } },
 				marksman = {},
 				emmet_ls = {
 					-- on_attach = on_attach,
@@ -708,7 +727,7 @@ require("lazy").setup({
 				"stylua", -- Used to format lua code
 			})
 			-- NOTE: uncomment for installation, otherwise it's slow
-			-- require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 			require("mason-lspconfig").setup({
 				handlers = {
 					function(server_name)
@@ -781,6 +800,17 @@ require("lazy").setup({
 			-- 	},
 			-- }
 		end,
+	},
+	{
+		"luckasRanarison/tailwind-tools.nvim",
+		name = "tailwind-tools",
+		build = ":UpdateRemotePlugins",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"nvim-telescope/telescope.nvim",
+			"neovim/nvim-lspconfig",
+		},
+		opts = {},
 	},
 	-- {
 	-- 	"ray-x/go.nvim",
@@ -1052,8 +1082,6 @@ require("lazy").setup({
 			end, { noremap = true, silent = true })
 
 			require("mini.extra").setup()
-			require("mini.pick").setup()
-			vim.ui.select = MiniPick.ui_select
 			require("mini.visits").setup()
 
 			local map_vis = function(keys, call, desc)
@@ -1100,6 +1128,10 @@ require("lazy").setup({
 					"rust",
 					"typescript",
 					"javascript",
+					"tsx",
+					"css",
+					"html",
+					"htmldjango",
 					"ruby",
 					"vim",
 					"sql",
