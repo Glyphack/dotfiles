@@ -50,6 +50,10 @@ alias prr="bash $__fish_config_dir/functions/pr-review.sh $argv"
 alias myprs="bash $__fish_config_dir/functions/myprs.sh $argv"
 alias vim="nvim"
 
+if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish
+    source ~/Programming/dotfiles/dotfiles-private/personal.fish
+end
+
 function pre_command --on-event fish_preexec
     printf '\033]133;A\033\\'
 end
