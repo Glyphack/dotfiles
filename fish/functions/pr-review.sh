@@ -47,8 +47,8 @@ then
     exit
 fi
 
-# Format the text for clipboard
-text="please review: $pr_title\n$pr_link"
+text="✨ Please review: $pr_title \n$pr_link"
+
 
 # Copy the formatted text to clipboard
 echo -e $text | $clipboard_cmd

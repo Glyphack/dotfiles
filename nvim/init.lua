@@ -1302,7 +1302,7 @@ require("lazy").setup({
 			},
 		},
 		config = function()
-			require("dap.ext.vscode").json_decode = require("json5").parse
+			-- require("dap.ext.vscode").json_decode = require("json5").parse
 			local dap = require("dap")
 			local dapui = require("dapui")
 
