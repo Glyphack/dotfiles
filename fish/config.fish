@@ -51,6 +51,8 @@ alias prr="bash $__fish_config_dir/functions/pr-review.sh $argv"
 alias myprs="bash $__fish_config_dir/functions/myprs.sh $argv"
 alias vim="nvim"
 
+set -x fish_vi_key_bindings
+
 if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish
     source ~/Programming/dotfiles/dotfiles-private/personal.fish
 end
