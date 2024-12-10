@@ -12,6 +12,8 @@ fzf --fish | source
 
 bind \ex "cd (fd -t d . $HOME -d 5 --hidden | fzf)"
 bind \ez "cd $HOME; commandline -f repaint"
+# because of fish vi bindings. Emacs bindings are disabled.
+bind -M insert \cf accept-autosuggestion
 
 # programming languages
 set -x POETRY $HOME/.poetry
@@ -52,6 +54,19 @@ alias myprs="bash $__fish_config_dir/functions/myprs.sh $argv"
 alias vim="nvim"
 
 set -x fish_vi_key_bindings
+function fuller_prompt_cwd --description 'Print the current working directory, NOT shortened to fit the prompt'
+  if test "$PWD" != "$HOME"
+    printf "%s" (echo $PWD|sed -e 's|/private||' -e "s|^$HOME|~|")
+  else
+    echo '~'
+  end
+end
+
+function fish_right_prompt
+  set_color -o green
+  echo -n (fuller_prompt_cwd)
+  set_color normal
+end
 
 if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish
     source ~/Programming/dotfiles/dotfiles-private/personal.fish
