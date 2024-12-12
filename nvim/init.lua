@@ -61,7 +61,7 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.inccommand = "split"
 
 -- Show which line your cursor is on
-vim.opt.cursorline = true
+vim.opt.cursorline = false
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
@@ -988,8 +988,8 @@ require("lazy").setup({
 	-- color schemes
 	{
 		"folke/tokyonight.nvim",
-		lazy = false, -- make sure we load this during startup if it is your main colorscheme
-		priority = 1000, -- make sure to load this before all the other start plugins
+		lazy = false,
+		priority = 1000,
 		opts = {
 			transparent = true,
 			styles = {
@@ -998,6 +998,7 @@ require("lazy").setup({
 			},
 		},
 	},
+	{ "lunarvim/templeos.nvim" },
 	{
 		"folke/todo-comments.nvim",
 		event = "VimEnter",
@@ -1287,66 +1288,66 @@ require("lazy").setup({
 
 	{ "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
 
-	{
-		"mfussenegger/nvim-dap",
-		dependencies = {
-			"rcarriga/nvim-dap-ui",
-			"williamboman/mason.nvim",
-			"jay-babu/mason-nvim-dap.nvim",
-			"leoluz/nvim-dap-go",
-			"nvim-neotest/nvim-nio",
-			"theHamsta/nvim-dap-virtual-text",
-			{
-				"Joakker/lua-json5",
-				build = "./install.sh",
-			},
-		},
-		config = function()
-			-- require("dap.ext.vscode").json_decode = require("json5").parse
-			local dap = require("dap")
-			local dapui = require("dapui")
-
-			require("mason-nvim-dap").setup({
-				automatic_installation = true,
-				handlers = {},
-				ensure_installed = {
-					"delve",
-				},
-			})
-
-			vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
-			vim.keymap.set("n", "<F1>", dap.step_into, { desc = "Debug: Step Into" })
-			vim.keymap.set("n", "<F2>", dap.step_over, { desc = "Debug: Step Over" })
-			vim.keymap.set("n", "<F3>", dap.step_out, { desc = "Debug: Step Out" })
-			vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
-			vim.keymap.set("n", "<leader>B", function()
-				dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
-			end, { desc = "Debug: Set Breakpoint" })
-
-			dapui.setup({
-				icons = { expanded = "▾", collapsed = "▸", current_frame = "*" },
-				controls = {
-					icons = {
-						pause = "⏸",
-						play = "▶",
-						step_into = "⏎",
-						step_over = "⏭",
-						step_out = "⏮",
-						step_back = "b",
-						run_last = "▶▶",
-						terminate = "⏹",
-						disconnect = "⏏",
-					},
-				},
-			})
-
-			vim.keymap.set("n", "<F7>", dapui.toggle, { desc = "Debug: See last session result." })
-			dap.listeners.after.event_initialized["dapui_config"] = dapui.open
-			dap.listeners.before.event_terminated["dapui_config"] = dapui.close
-			dap.listeners.before.event_exited["dapui_config"] = dapui.close
-			require("dap-go").setup()
-		end,
-	},
+	-- {
+	-- 	"mfussenegger/nvim-dap",
+	-- 	dependencies = {
+	-- 		"rcarriga/nvim-dap-ui",
+	-- 		"williamboman/mason.nvim",
+	-- 		"jay-babu/mason-nvim-dap.nvim",
+	-- 		"leoluz/nvim-dap-go",
+	-- 		"nvim-neotest/nvim-nio",
+	-- 		"theHamsta/nvim-dap-virtual-text",
+	-- 		{
+	-- 			"Joakker/lua-json5",
+	-- 			build = "./install.sh",
+	-- 		},
+	-- 	},
+	-- 	config = function()
+	-- 		-- require("dap.ext.vscode").json_decode = require("json5").parse
+	-- 		local dap = require("dap")
+	-- 		local dapui = require("dapui")
+	--
+	-- 		require("mason-nvim-dap").setup({
+	-- 			automatic_installation = true,
+	-- 			handlers = {},
+	-- 			ensure_installed = {
+	-- 				"delve",
+	-- 			},
+	-- 		})
+	--
+	-- 		vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
+	-- 		vim.keymap.set("n", "<F1>", dap.step_into, { desc = "Debug: Step Into" })
+	-- 		vim.keymap.set("n", "<F2>", dap.step_over, { desc = "Debug: Step Over" })
+	-- 		vim.keymap.set("n", "<F3>", dap.step_out, { desc = "Debug: Step Out" })
+	-- 		vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+	-- 		vim.keymap.set("n", "<leader>B", function()
+	-- 			dap.set_breakpoint(vim.fn.input("Breakpoint condition: "))
+	-- 		end, { desc = "Debug: Set Breakpoint" })
+	--
+	-- 		dapui.setup({
+	-- 			icons = { expanded = "▾", collapsed = "▸", current_frame = "*" },
+	-- 			controls = {
+	-- 				icons = {
+	-- 					pause = "⏸",
+	-- 					play = "▶",
+	-- 					step_into = "⏎",
+	-- 					step_over = "⏭",
+	-- 					step_out = "⏮",
+	-- 					step_back = "b",
+	-- 					run_last = "▶▶",
+	-- 					terminate = "⏹",
+	-- 					disconnect = "⏏",
+	-- 				},
+	-- 			},
+	-- 		})
+	--
+	-- 		vim.keymap.set("n", "<F7>", dapui.toggle, { desc = "Debug: See last session result." })
+	-- 		dap.listeners.after.event_initialized["dapui_config"] = dapui.open
+	-- 		dap.listeners.before.event_terminated["dapui_config"] = dapui.close
+	-- 		dap.listeners.before.event_exited["dapui_config"] = dapui.close
+	-- 		require("dap-go").setup()
+	-- 	end,
+	-- },
 	{
 		"farmergreg/vim-lastplace",
 		config = function()
@@ -1471,6 +1472,6 @@ vim.api.nvim_create_user_command("GotoTest", function()
 	end
 end, {})
 
-vim.cmd("colorscheme tokyonight")
+vim.cmd("colorscheme templeos")
 
 -- vim: ts=2 sts=2 sw=2 et
