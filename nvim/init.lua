@@ -1495,6 +1495,6 @@ vim.api.nvim_create_user_command("GotoTest", function()
 	end
 end, {})
 
-vim.cmd("colorscheme templeos")
+vim.cmd("colorscheme tokyonight")
 
 -- vim: ts=2 sts=2 sw=2 et
