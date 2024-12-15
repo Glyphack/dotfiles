@@ -568,7 +568,46 @@ require("lazy").setup({
 			}
 
 			local servers = {
-				-- clangd = {},
+				clangd = {
+					keys = {
+						{
+							"<leader>ch",
+							"<cmd>ClangdSwitchSourceHeader<cr>",
+							desc = "Switch Source/Header (C/C++)",
+						},
+					},
+					root_dir = function(fname)
+						return require("lspconfig.util").root_pattern(
+							"Makefile",
+							"configure.ac",
+							"configure.in",
+							"config.h.in",
+							"meson.build",
+							"meson_options.txt",
+							"build.ninja"
+						)(fname) or require("lspconfig.util").root_pattern(
+							"compile_commands.json",
+							"compile_flags.txt"
+						)(fname) or require("lspconfig.util").find_git_ancestor(fname)
+					end,
+					capabilities = {
+						offsetEncoding = { "utf-16" },
+					},
+					cmd = {
+						"clangd",
+						"--background-index",
+						"--clang-tidy",
+						"--header-insertion=iwyu",
+						"--completion-style=detailed",
+						"--function-arg-placeholders",
+						"--fallback-style=llvm",
+					},
+					init_options = {
+						usePlaceholders = true,
+						completeUnimported = true,
+						clangdFileStatus = true,
+					},
+				},
 				gopls = {
 					settings = {
 						gopls = {
@@ -722,12 +761,16 @@ require("lazy").setup({
 			}
 
 			require("mason").setup()
-			local ensure_installed = vim.tbl_keys(servers or {})
-			vim.list_extend(ensure_installed, {
+			local tool_ensure_installed = vim.tbl_keys(servers or {})
+			vim.list_extend(tool_ensure_installed, {
 				"stylua", -- Used to format lua code
 			})
 			-- NOTE: uncomment for installation, otherwise it's slow
-			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+			require("mason-tool-installer").setup({
+				ensure_installed = tool_ensure_installed,
+				debounce_hours = 72,
+				auto_update = true,
+			})
 			require("mason-lspconfig").setup({
 				handlers = {
 					function(server_name)
@@ -742,6 +785,8 @@ require("lazy").setup({
 						require("lspconfig")[server_name].setup(server)
 					end,
 				},
+				ensure_installed = servers,
+				automatic_installation = true,
 			})
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
@@ -757,6 +802,7 @@ require("lazy").setup({
 				end,
 				desc = "LSP: Disable hover capability from Ruff",
 			})
+
 			-- TODO: Add this to servers table but exclude from mason install
 			require("lspconfig").dartls.setup({})
 			require("lspconfig").efm.setup(efmls_config)

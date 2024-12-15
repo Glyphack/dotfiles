@@ -21,6 +21,16 @@ local config = {
 		{ key = "[", mods = "CMD", action = act.ScrollToPrompt(-1) },
 		{ key = "]", mods = "CMD", action = act.ScrollToPrompt(1) },
 		{
+			key = "i",
+			mods = "CMD",
+			action = act.CloseCurrentPane({ confirm = true }),
+		},
+		{
+			key = "s",
+			mods = "CMD",
+			action = act.SplitHorizontal,
+		},
+		{
 			key = "a",
 			mods = "CMD",
 			action = act.ActivatePaneDirection("Left"),

@@ -62,12 +62,6 @@ function fuller_prompt_cwd --description 'Print the current working directory, N
   end
 end
 
-function fish_right_prompt
-  set_color -o green
-  echo -n (fuller_prompt_cwd)
-  set_color normal
-end
-
 if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish
     source ~/Programming/dotfiles/dotfiles-private/personal.fish
 end
