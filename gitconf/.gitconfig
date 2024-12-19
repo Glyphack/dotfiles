@@ -58,8 +58,8 @@
 [safe]
 	directory = /home/app
 
-[includeIf "gitdir:~/Programming/vio/"]
-	path = ~/Programming/vio/gitconf/.gitconfig
+[includeIf "gitdir:~/Programming/work/"]
+	path = ~/Programming/work/gitconf/.gitconfig
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f

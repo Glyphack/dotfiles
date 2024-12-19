@@ -3063,6 +3063,33 @@
             "vendor_id": 6645
           },
           "ignore": false
+        },
+        {
+          "identifiers": {
+            "is_keyboard": true,
+            "product_id": 12869,
+            "vendor_id": 6645
+          },
+          "simple_modifications": [
+            {
+              "from": {
+                "key_code": "page_down"
+              },
+              "to": [
+                {
+                  "key_code": "left_option"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "identifiers": {
+            "device_address": "f0-81-d4-b9-f3-29",
+            "is_keyboard": true,
+            "is_pointing_device": true
+          },
+          "ignore": false
         }
       ],
       "fn_function_keys": [
