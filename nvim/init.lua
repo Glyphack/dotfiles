@@ -924,7 +924,7 @@ require("lazy").setup({
 					c = { "clang-format" },
 					html = { "djlint" },
 					htmldjango = { "djlint" },
-					["*"] = { "trim_whitespace", "trim_newlines" },
+					["*"] = { "trim_newlines" },
 				},
 			})
 			vim.api.nvim_create_user_command("FormatDisable", function(args)
@@ -1255,9 +1255,6 @@ require("lazy").setup({
 			})
 		end,
 	},
-	-- { "github/copilot.vim" },
-	{ "andweeb/presence.nvim", opts = {} },
-	-- { "stsewd/gx-extended.vim" },
 	{
 		"rmagatti/gx-extended.nvim",
 		config = function()
@@ -1277,30 +1274,18 @@ require("lazy").setup({
 			})
 		end,
 	},
+	{ "mzlogin/vim-markdown-toc" },
 	{
-		"sourcegraph/sg.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-		},
-		build = "nvim -l build/init.lua",
+		"rcarriga/nvim-notify",
 		config = function()
-			require("sg").setup({ cody = true })
+			vim.notify = require("notify")
 		end,
 	},
-	{ "mzlogin/vim-markdown-toc" },
-	-- {
-	-- 	"rcarriga/nvim-notify",
-	-- 	config = function()
-	-- 		vim.notify = require("notify")
-	-- 	end,
-	-- },
-	--
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",
 		config = function()
 			require("toggleterm").setup({
-				open_mapping = { "<c-e>" },
 				direction = "vertical",
 				size = function(term)
 					if term.direction == "vertical" then
@@ -1331,8 +1316,6 @@ require("lazy").setup({
 			end, { nargs = "*" })
 		end,
 	},
-
-	{ "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
 
 	-- {
 	-- 	"mfussenegger/nvim-dap",
@@ -1471,13 +1454,6 @@ require("lazy").setup({
 	},
 })
 
-function term_clear()
-	vim.fn.feedkeys("\\<C-l>", "n")
-	local sb = vim.bo.scrollback
-	vim.bo.scrollback = 1
-	vim.bo.scrollback = sb
-end
-
 -- For when editing text files with very long lines
 local wrap_mode = false
 local function toggle_wrap_mode()
@@ -1538,6 +1514,29 @@ vim.api.nvim_create_user_command("GotoTest", function()
 		vim.cmd("edit " .. test_file)
 	else
 		vim.api.nvim_err_writeln("Test file not found: " .. test_file)
+	end
+end, {})
+
+-- Finds the test function name that you are currently inside in a go test file and run that using
+-- go test ./... -run <function_name>
+vim.api.nvim_create_user_command("GRunTest", function()
+	local current_line = vim.fn.line(".")
+	local lines = vim.fn.getline(1, current_line)
+	local test_function
+
+	for i = #lines, 1, -1 do
+		local line = lines[i]
+		if line:match("^func%s+Test") then
+			test_function = line:match("^func%s+(Test%w+)")
+			break
+		end
+	end
+
+	if test_function then
+		local cmd = string.format('2TermExec cmd="go test ./... -run ^%s$"', test_function)
+		vim.cmd(cmd)
+	else
+		vim.api.nvim_err_writeln("No test function found above the current line.")
 	end
 end, {})
 

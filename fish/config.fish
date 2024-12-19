@@ -44,7 +44,7 @@ set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAV
 
 starship init fish | source
 
-# Git 
+# Git
 alias prc="gh pr create --fill-first"
 alias pro="gh pr view --web"
 alias forks="git fetch upstream && git reset --hard upstream/main"
@@ -53,14 +53,8 @@ alias prr="bash $__fish_config_dir/functions/pr-review.sh $argv"
 alias myprs="bash $__fish_config_dir/functions/myprs.sh $argv"
 alias vim="nvim"
 
-set -x fish_vi_key_bindings
-function fuller_prompt_cwd --description 'Print the current working directory, NOT shortened to fit the prompt'
-  if test "$PWD" != "$HOME"
-    printf "%s" (echo $PWD|sed -e 's|/private||' -e "s|^$HOME|~|")
-  else
-    echo '~'
-  end
-end
+fish_hybrid_key_bindings
+
 
 if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish
     source ~/Programming/dotfiles/dotfiles-private/personal.fish
@@ -70,7 +64,7 @@ function pre_command --on-event fish_preexec
     printf '\033]133;A\033\\'
 end
 
-function some_setup --on-variable PWD 
+function some_setup --on-variable PWD
     if test -d "$PWD/.venv"
         source "$PWD/.venv/bin/activate.fish"
     end
@@ -79,3 +73,7 @@ end
 if test -d "$PWD/.venv"
     source "$PWD/.venv/bin/activate.fish"
 end
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+set --export --prepend PATH "/Users/sysadmin/.rd/bin"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
