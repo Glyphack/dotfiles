@@ -1407,6 +1407,7 @@ require("lazy").setup({
 			"MunifTanjim/nui.nvim",
 			"hrsh7th/nvim-cmp",
 			"nvim-tree/nvim-web-devicons",
+			"zbirenbaum/copilot.lua",
 			{
 				"HakonHarnes/img-clip.nvim",
 				event = "VeryLazy",
