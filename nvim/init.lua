@@ -1407,7 +1407,14 @@ require("lazy").setup({
 			"MunifTanjim/nui.nvim",
 			"hrsh7th/nvim-cmp",
 			"nvim-tree/nvim-web-devicons",
-			"zbirenbaum/copilot.lua",
+			{
+				"zbirenbaum/copilot.lua",
+				cmd = "Copilot",
+				event = "InsertEnter",
+				config = function()
+					require("copilot").setup({})
+				end,
+			},
 			{
 				"HakonHarnes/img-clip.nvim",
 				event = "VeryLazy",
