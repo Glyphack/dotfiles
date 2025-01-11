@@ -1398,7 +1398,8 @@ require("lazy").setup({
 		lazy = false,
 		version = false,
 		opts = {
-			provider = "openai",
+			provider = "claude",
+			auto_suggestions_provider = "copilot",
 		},
 		build = "make",
 		dependencies = {
