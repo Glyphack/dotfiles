@@ -588,7 +588,7 @@ require("lazy").setup({
 						)(fname) or require("lspconfig.util").root_pattern(
 							"compile_commands.json",
 							"compile_flags.txt"
-						)(fname) or require("lspconfig.util").find_git_ancestor(fname)
+						)(fname) or vim.fs.dirname(vim.fs.find(".git", { path = fname, upward = true })[1])
 					end,
 					capabilities = {
 						offsetEncoding = { "utf-16" },
@@ -1018,6 +1018,7 @@ require("lazy").setup({
 				sources = {
 					{ name = "nvim_lsp", keyword_length = 1 },
 					{ name = "luasnip", keyword_length = 2 },
+					{ name = "copilot", group_index = 2 },
 					{ name = "path" },
 					{ name = "buffer", keyword_length = 3 },
 					{ name = "nvim_lsp_signature_help" },
@@ -1162,9 +1163,6 @@ require("lazy").setup({
 
 		build = ":TSUpdate",
 		config = function()
-			-- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-
-			---@diagnostic disable-next-line: missing-fields
 			require("nvim-treesitter.configs").setup({
 				ensure_installed = {
 					"c",
@@ -1195,8 +1193,8 @@ require("lazy").setup({
 					"dart",
 				}, -- Autoinstall languages that are not installed
 				auto_install = true,
-				highlight = { enable = true },
-				indent = { enable = true },
+				sync_install = false,
+				ignore_install = {},
 			})
 		end,
 	},
@@ -1399,7 +1397,6 @@ require("lazy").setup({
 		version = false,
 		opts = {
 			provider = "claude",
-			auto_suggestions_provider = "copilot",
 		},
 		build = "make",
 		dependencies = {
@@ -1408,14 +1405,6 @@ require("lazy").setup({
 			"MunifTanjim/nui.nvim",
 			"hrsh7th/nvim-cmp",
 			"nvim-tree/nvim-web-devicons",
-			{
-				"zbirenbaum/copilot.lua",
-				cmd = "Copilot",
-				event = "InsertEnter",
-				config = function()
-					require("copilot").setup({})
-				end,
-			},
 			{
 				"HakonHarnes/img-clip.nvim",
 				event = "VeryLazy",
@@ -1437,6 +1426,20 @@ require("lazy").setup({
 				ft = { "markdown", "Avante" },
 			},
 		},
+	},
+	{
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		event = "InsertEnter",
+		config = function()
+			require("copilot").setup({})
+		end,
+	},
+	{
+		"zbirenbaum/copilot-cmp",
+		config = function()
+			require("copilot_cmp").setup()
+		end,
 	},
 	{
 		"IogaMaster/neocord",
