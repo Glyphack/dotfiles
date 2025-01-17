@@ -1045,6 +1045,7 @@ require("lazy").setup({
 			},
 		},
 	},
+	{ "rebelot/kanagawa.nvim" },
 	{ "lunarvim/templeos.nvim" },
 	{
 		"folke/todo-comments.nvim",
@@ -1552,6 +1553,6 @@ vim.api.nvim_create_user_command("GRunTest", function()
 	end
 end, {})
 
-vim.cmd("colorscheme tokyonight")
+vim.cmd("colorscheme kanagawa")
 
 -- vim: ts=2 sts=2 sw=2 et
