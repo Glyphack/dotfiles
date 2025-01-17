@@ -4,6 +4,7 @@
 	signingkey = 145D38B03F8621FF
 [core]
 	excludesfile = ~/.gitignore_global
+	hooksPath = ~/.config/git/hooks
 
 [alias]
 	pul = pull -q
