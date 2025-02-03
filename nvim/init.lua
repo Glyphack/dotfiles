@@ -809,6 +809,15 @@ require("lazy").setup({
 		end,
 	},
 	{
+		"MagicDuck/grug-far.nvim",
+		config = function()
+			require("grug-far").setup({ prefills = { search = vim.fn.expand("<cword>") } })
+			vim.keymap.set("v", "<leader>se", function()
+				require("grug-far").with_visual_selection({ prefills = { paths = vim.fn.expand("%") } })
+			end, { desc = "Search replace visual selection" })
+		end,
+	},
+	{
 		"mrcjkb/rustaceanvim",
 		version = "^5",
 		lazy = false,
@@ -899,7 +908,7 @@ require("lazy").setup({
 					end
 					local disable_filetypes = { c = true, cpp = true, yaml = true }
 					return {
-						timeout_ms = 1000,
+						timeout_ms = 1800,
 						lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
 					}
 				end,
@@ -1428,20 +1437,24 @@ require("lazy").setup({
 			},
 		},
 	},
-	{
-		"zbirenbaum/copilot.lua",
-		cmd = "Copilot",
-		event = "InsertEnter",
-		config = function()
-			require("copilot").setup({})
-		end,
-	},
-	{
-		"zbirenbaum/copilot-cmp",
-		config = function()
-			require("copilot_cmp").setup()
-		end,
-	},
+	-- {
+	-- 	"zbirenbaum/copilot.lua",
+	-- 	cmd = "Copilot",
+	-- 	event = "InsertEnter",
+	-- 	config = function()
+	-- 		require("copilot").setup({
+	-- 			suggestion = {
+	-- 				enabled = true,
+	-- 			},
+	-- 		})
+	-- 	end,
+	-- },
+	-- {
+	-- 	"zbirenbaum/copilot-cmp",
+	-- 	config = function()
+	-- 		require("copilot_cmp").setup()
+	-- 	end,
+	-- },
 	{
 		"IogaMaster/neocord",
 		event = "VeryLazy",
@@ -1464,6 +1477,13 @@ require("lazy").setup({
 			line_number_text = "Line %s out of %s", -- Format string rendered when `enable_line_number` is set to true (either string or function(line_number: number, line_count: number): string)
 			terminal_text = "Using Terminal", -- Format string rendered when in terminal mode.
 		},
+	},
+	{
+		"TobinPalmer/rayso.nvim",
+		cmd = { "Rayso" },
+		config = function()
+			require("rayso").setup({})
+		end,
 	},
 })
 

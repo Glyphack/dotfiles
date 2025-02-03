@@ -110,6 +110,8 @@ local function setPrimary()
 		if screen:name() ~= MACBOOK_MONITOR then
 			print("Setting " .. screen:name() .. " as primary")
 			screen:setPrimary()
+			local monitor_control_bundle = "/Applications/MonitorControl.app"
+			hs.application.open(monitor_control_bundle)
 		end
 	end
 end
@@ -130,6 +132,7 @@ local function screenCallback(layout)
 end
 
 hs.screen.watcher.newWithActiveScreen(screenCallback):start()
+setPrimary()
 
 -- half of screen
 hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "a", function()
