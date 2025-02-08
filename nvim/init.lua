@@ -641,29 +641,29 @@ require("lazy").setup({
 				},
 				yamlls = {},
 				jsonls = {},
-				ltex = {
-					settings = {
-						ltex = {
-							language = "en-GB",
-						},
-					},
-					filetypes = {
-						"bib",
-						"gitcommit",
-						"markdown",
-						"org",
-						"plaintex",
-						"rst",
-						"rnoweb",
-						"tex",
-						"pandoc",
-						"quarto",
-						"rmd",
-						"context",
-						"mail",
-						"text",
-					},
-				},
+				-- ltex = {
+				-- 	settings = {
+				-- 		ltex = {
+				-- 			language = "en-GB",
+				-- 		},
+				-- 	},
+				-- 	filetypes = {
+				-- 		"bib",
+				-- 		"gitcommit",
+				-- 		"markdown",
+				-- 		"org",
+				-- 		"plaintex",
+				-- 		"rst",
+				-- 		"rnoweb",
+				-- 		"tex",
+				-- 		"pandoc",
+				-- 		"quarto",
+				-- 		"rmd",
+				-- 		"context",
+				-- 		"mail",
+				-- 		"text",
+				-- 	},
+				-- },
 				terraformls = {},
 				bashls = {},
 				dockerls = {},
@@ -757,6 +757,7 @@ require("lazy").setup({
 					},
 				},
 				typos_lsp = {},
+				harper_ls = {},
 				lemminx = {},
 			}
 
