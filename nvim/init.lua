@@ -57,6 +57,8 @@ vim.opt.splitbelow = true
 vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
+vim.diagnostic.config({ signs = false })
+
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = "split"
 
@@ -133,7 +135,6 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	-- UI
 	{
 		"nvim-focus/focus.nvim",
 		version = false,
@@ -615,9 +616,9 @@ require("lazy").setup({
 						},
 					},
 				},
-				basedpyright = {
+				pyright = {
 					settings = {
-						basedpyright = {
+						pyright = {
 							disableOrganizeImports = true,
 							analysis = {
 								ignore = { "*" },
@@ -757,7 +758,14 @@ require("lazy").setup({
 					},
 				},
 				typos_lsp = {},
-				harper_ls = {},
+				harper_ls = {
+					settings = {
+						["harper-ls"] = {
+							linters = {},
+						},
+					},
+					filetypes = { "markdown" },
+				},
 				lemminx = {},
 			}
 
@@ -1432,30 +1440,30 @@ require("lazy").setup({
 			{
 				"MeanderingProgrammer/render-markdown.nvim",
 				opts = {
-					file_types = { "markdown", "Avante" },
+					file_types = { "Avante" },
 				},
-				ft = { "markdown", "Avante" },
+				ft = { "Avante" },
 			},
 		},
 	},
-	-- {
-	-- 	"zbirenbaum/copilot.lua",
-	-- 	cmd = "Copilot",
-	-- 	event = "InsertEnter",
-	-- 	config = function()
-	-- 		require("copilot").setup({
-	-- 			suggestion = {
-	-- 				enabled = true,
-	-- 			},
-	-- 		})
-	-- 	end,
-	-- },
-	-- {
-	-- 	"zbirenbaum/copilot-cmp",
-	-- 	config = function()
-	-- 		require("copilot_cmp").setup()
-	-- 	end,
-	-- },
+	{
+		"zbirenbaum/copilot.lua",
+		cmd = "Copilot",
+		event = "InsertEnter",
+		config = function()
+			require("copilot").setup({
+				suggestion = {
+					enabled = true,
+				},
+			})
+		end,
+	},
+	{
+		"zbirenbaum/copilot-cmp",
+		config = function()
+			require("copilot_cmp").setup()
+		end,
+	},
 	{
 		"IogaMaster/neocord",
 		event = "VeryLazy",
