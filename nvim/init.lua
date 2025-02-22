@@ -940,7 +940,7 @@ require("lazy").setup({
 					markdown = { "prettierd", "markdownlint" },
 					json = { "jq" },
 					c = { "clang-format" },
-					html = { "djlint" },
+					html = { "djlint", "prettierd" },
 					htmldjango = { "djlint" },
 					["*"] = { "trim_newlines" },
 				},
