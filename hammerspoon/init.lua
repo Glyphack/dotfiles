@@ -134,24 +134,26 @@ end
 hs.screen.watcher.newWithActiveScreen(screenCallback):start()
 setPrimary()
 
--- half of screen
+-- left
 hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "a", function()
 	hs.window.focusedWindow():moveToUnit({ 0, 0, 0.5, 1 })
 end)
+-- right
 hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "d", function()
 	hs.window.focusedWindow():moveToUnit({ 0.5, 0, 0.5, 1 })
 end)
+-- up
 hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "w", function()
 	hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 0.5 })
 end)
+-- down
 hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "s", function()
 	hs.window.focusedWindow():moveToUnit({ 0, 0.5, 1, 0.5 })
 end)
--- center screewindow_management_key
+-- center
 hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "c", function()
 	hs.window.focusedWindow():centerOnScreen()
 end)
-
 -- full screen
 hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "i", function()
 	hs.window.focusedWindow():moveToUnit({ 0, 0, 1, 1 })

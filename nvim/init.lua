@@ -145,11 +145,14 @@ require("lazy").setup({
 
 	"tpope/vim-sleuth", -- Detect tabstop and shiftwidth automatically
 
-	{ "numToStr/Comment.nvim", opts = {
-		toggler = {
-			block = nil,
+	{
+		"numToStr/Comment.nvim",
+		opts = {
+			toggler = {
+				block = nil,
+			},
 		},
-	} },
+	},
 
 	-- Here is a more advanced example where we pass configuration
 	-- options to `gitsigns.nvim`. This is equivalent to the following lua:
@@ -726,7 +729,8 @@ require("lazy").setup({
 						},
 					},
 				},
-				golangci_lint_ls = {},
+				-- memory problem
+				-- golangci_lint_ls = {},
 				ruby_lsp = {},
 				sorbet = {},
 				kotlin_language_server = {},
@@ -770,11 +774,17 @@ require("lazy").setup({
 			}
 
 			require("mason").setup()
+			local server_ensure_installed = vim.tbl_keys(servers or {})
 			local tool_ensure_installed = vim.tbl_keys(servers or {})
 			vim.list_extend(tool_ensure_installed, {
-				"stylua", -- Used to format lua code
+				"stylua",
+				"prettierd",
+				"markdownlint",
+				"shfmt",
+				"taplo",
+				"yamlfmt",
+				"djlint",
 			})
-			-- NOTE: uncomment for installation, otherwise it's slow
 			require("mason-tool-installer").setup({
 				ensure_installed = tool_ensure_installed,
 				debounce_hours = 72,
@@ -794,7 +804,7 @@ require("lazy").setup({
 						require("lspconfig")[server_name].setup(server)
 					end,
 				},
-				ensure_installed = servers,
+				ensure_installed = server_ensure_installed,
 				automatic_installation = true,
 			})
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -924,12 +934,8 @@ require("lazy").setup({
 				formatters_by_ft = {
 					lua = { "stylua" },
 					go = { "goimports" },
-					python = {
-						"ruff_fix",
-						"ruff_format",
-						"ruff_organize_imports",
-					},
-					javascript = { { "prettierd", "prettier" } },
+					python = { "ruff_format" },
+					javascript = { "prettierd" },
 					kotlin = { "ktlint" },
 					rust = { "rustfmt" },
 					yaml = { "yamlfmt" },
@@ -937,7 +943,7 @@ require("lazy").setup({
 					shell = { "shfmt" },
 					sql = { "sqlfluff" },
 					terraform = { "terraform_fmt" },
-					markdown = { "prettierd", "markdownlint" },
+					markdown = { "markdownlint" },
 					json = { "jq" },
 					c = { "clang-format" },
 					html = { "djlint", "prettierd" },

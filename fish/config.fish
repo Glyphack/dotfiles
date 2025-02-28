@@ -45,7 +45,7 @@ set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAV
 starship init fish | source
 
 # Git
-alias prc="gh pr create --fill-first"
+alias prc="gh pr create --fill-first && prr"
 alias pro="gh pr view --web"
 alias forks="git fetch upstream && git reset --hard upstream/main"
 
