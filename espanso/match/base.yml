@@ -1,15 +1,13 @@
 matches:
   - trigger: ":espanso"
     replace: "Hi there!"
-
   - trigger: ":date"
     replace: "{{mydate}}"
     vars:
       - name: mydate
         type: date
         params:
-          format: "%d-%m-%Y"
-
+          format: "%Y-%d-%m"
   - trigger: ":shell"
     replace: "{{output}}"
     vars:
@@ -17,15 +15,12 @@ matches:
         type: shell
         params:
           cmd: "echo 'Hello from your shell'"
-
   # Snippets
   - trigger: "rtrace"
     replace: "RUST_BACKTRACE=1 "
-
   - trigger: ":coauthor"
     replace: "Co-authored-by: name <@.com>"
   - trigger: ":linkedin"
     replace: "https://www.linkedin.com/in/shayegan-hooshyari"
-
   - trigger: ":site"
     replace: "https://glyphack.com"

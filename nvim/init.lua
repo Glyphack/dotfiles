@@ -1422,6 +1422,7 @@ require("lazy").setup({
 		version = false,
 		opts = {
 			provider = "claude",
+			auto_suggestions_provider = "claude",
 		},
 		build = "make",
 		dependencies = {
@@ -1451,24 +1452,6 @@ require("lazy").setup({
 				ft = { "Avante" },
 			},
 		},
-	},
-	{
-		"zbirenbaum/copilot.lua",
-		cmd = "Copilot",
-		event = "InsertEnter",
-		config = function()
-			require("copilot").setup({
-				suggestion = {
-					enabled = true,
-				},
-			})
-		end,
-	},
-	{
-		"zbirenbaum/copilot-cmp",
-		config = function()
-			require("copilot_cmp").setup()
-		end,
 	},
 	{
 		"IogaMaster/neocord",
