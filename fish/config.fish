@@ -40,7 +40,7 @@ switch (uname)
         set --export --prepend PATH "$HOME/.rd/bin"
 end
 
-set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAVA_HOME/bin $HOME/.local/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $HOME/.rd/bin /opt/homebrew/opt/llvm/bin
+set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAVA_HOME/bin $HOME/.local/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $HOME/.rd/bin /opt/homebrew/opt/llvm/bin $HOME/flutter/flutter/bin $HOME/.gem/bin
 
 starship init fish | source
 
