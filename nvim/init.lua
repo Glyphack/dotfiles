@@ -111,6 +111,26 @@ vim.api.nvim_set_keymap("t", "<c-w><c-j>", "<ESC><c-w><c-j>", {})
 vim.api.nvim_set_keymap("t", "<c-w><c-k>", "<ESC><c-w><c-k>", {})
 vim.api.nvim_set_keymap("t", "<c-w><c-l>", "<ESC><c-w><c-l>", {})
 
+vim.keymap.set("v", "<leader>r", function()
+	local save_previous = vim.fn.getreg("a")
+	local save_previous_type = vim.fn.getregtype("a")
+
+	vim.cmd('normal! "ay')
+	local selection = vim.fn.getreg("a")
+	vim.fn.setreg("a", save_previous, save_previous_type)
+
+	local magic_chars = { "%", ".", "*", "^", "$", "[", "]", "(", ")", "\\", "/", "?", "+", "-" }
+	for _, char in ipairs(magic_chars) do
+		selection = selection:gsub("%" .. char, "\\" .. char)
+	end
+
+	vim.api.nvim_feedkeys(
+		vim.api.nvim_replace_termcodes(":%s/" .. selection .. "//g<Left><Left>", true, true, true),
+		"n",
+		false
+	)
+end, { noremap = true, silent = true })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
