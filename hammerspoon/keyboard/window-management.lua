@@ -5,6 +5,7 @@ local function launchOrFocusOrRotate(app)
 		return
 	end
 
+	-- See https://www.hammerspoon.org/docs/hs.window.html#application
 	local focusedWindowApp = focusedWindow:application()
 	local focusedWindowAppName = focusedWindowApp:name()
 	local focusedWindowPath = focusedWindowApp:path()
@@ -14,8 +15,6 @@ local function launchOrFocusOrRotate(app)
 	if focusedWindow and appNameOnDisk == app then
 		local currentApp = hs.application.get(focusedWindowAppName)
 		local appWindows = currentApp:allWindows()
-		-- https://www.hammerspoon.org/docs/hs.application.html#allWindows
-		-- A table of zero or more hs.window objects owned by the application. From the current space.
 		if #appWindows == 1 then
 			currentApp:hide()
 			return

@@ -28,6 +28,7 @@ WINDOWS_SHORTCUTS = {
 if hasCustom then
 	WINDOWS_SHORTCUTS = custom.WINDOWS_SHORTCUTS
 end
+require("keyboard")
 
 TOGGLE_MUTE_SHORTCUT = { WINDOW_MANAGEMENT_KEY, "t" }
 
@@ -111,7 +112,10 @@ local function setPrimary()
 			print("Setting " .. screen:name() .. " as primary")
 			screen:setPrimary()
 			local monitor_control_bundle = "/Applications/MonitorControl.app"
-			hs.application.open(monitor_control_bundle)
+			local monitor_c = hs.application.find(monitor_control_bundle, false, false)
+			if monitor_c == nil then
+				hs.application.open(monitor_control_bundle)
+			end
 		end
 	end
 end
@@ -281,7 +285,6 @@ enableHotkeyForWindowsMatchingFilter = function(windowFilter, hotkey)
 	end)
 end
 
-require("keyboard")
 hs.notify.new({ title = "Hammerspoon", informativeText = "Ready to rock 🤘" }):send()
 
 SpoonInstall:andUse("WindowScreenLeftAndRight", {

@@ -83,7 +83,7 @@ config.background = {
 	-- This is the deepest/back-most layer. It will be rendered first
 	{
 		source = {
-			File = wezterm.home_dir .. "/Programming/dotfiles/wezterm/backgrounds/bg-1.jpeg",
+			File = wezterm.home_dir .. "/Programming/dotfiles/wezterm/backgrounds/planet.jpg",
 		},
 		-- The texture tiles vertically but not horizontally.
 		-- When we repeat it, mirror it so that it appears "more seamless".
