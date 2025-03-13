@@ -71,7 +71,7 @@ vim.opt.scrolloff = 10
 -- spell checker
 vim.opt.spell = true
 
-vim.bo.swapfile = false
+vim.opt.swapfile = false
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
