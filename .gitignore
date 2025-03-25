@@ -4,3 +4,4 @@ pv_*
 secret*
 
 !asdf/.tool-versions
+.aider*
