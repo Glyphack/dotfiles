@@ -74,6 +74,8 @@ if test -d "$PWD/.venv"
     source "$PWD/.venv/bin/activate.fish"
 end
 
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-set --export --prepend PATH "/Users/sysadmin/.rd/bin"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+## Programs
+
+alias playwright="uvx playwright"
+alias aider="uvx --from aider-chat@latest aider"
