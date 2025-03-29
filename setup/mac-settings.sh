@@ -316,6 +316,8 @@ bot "Dock & Dashboard"
 
 defaults delete com.apple.dock persistent-apps
 defaults delete com.apple.dock persistent-others
+defaults write com.apple.dock persistent-apps -array; defaults write com.apple.dock persistent-others -array; killall Dock
+
 
 running "Enable highlight hover effect for the grid view of a stack (Dock)"
 defaults write com.apple.dock mouse-over-hilite-stack -bool true;ok

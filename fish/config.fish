@@ -20,7 +20,12 @@ set -x POETRY $HOME/.poetry
 set -x GOPATH $HOME/go
 set -x GOBIN $GOPATH/bin
 set -x RUST_HOME $HOME/.cargo/bin
-set -x FLUTTER_BIN $HOME/flutter/bin
+
+if test -d "$HOME/flutter"
+    set -x FLUTTER_PATH $HOME/flutter/bin
+else
+    set -x FLUTTER_PATH /Users/Shared/flutter/bin
+end
 set -x VIRTUALFISH_ACTIVATION_FILE .venv
 
 # place for software I install
@@ -40,7 +45,7 @@ switch (uname)
         set --export --prepend PATH "$HOME/.rd/bin"
 end
 
-set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_BIN $JAVA_HOME/bin $HOME/.local/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $HOME/.rd/bin /opt/homebrew/opt/llvm/bin $HOME/flutter/flutter/bin $HOME/.gem/bin
+set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_PATH $JAVA_HOME/bin $HOME/.local/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $HOME/.rd/bin /opt/homebrew/opt/llvm/bin $HOME/flutter/flutter/bin $HOME/.gem/bin
 
 starship init fish | source
 
@@ -78,4 +83,4 @@ end
 ## Programs
 
 alias playwright="uvx playwright"
-alias aider="uvx --from aider-chat@latest aider"
+alias aider="uvx --from aider-chat@latest aider --no-show-release-notes --cache-prompts --no-auto-commits"
