@@ -5,10 +5,9 @@ set -e
 sudo softwareupdate --install-rosetta --agree-to-license
 
 echo "Setup fish"
-chsh -s /opt/homebrew/bin/fish
 echo /opt/homebrew/bin/fish | sudo tee -a /etc/shells
+chsh -s /opt/homebrew/bin/fish
 
-fish
 
 echo "Languages setup"
 
@@ -24,3 +23,5 @@ sh ./setup/mac-settings.sh
 echo "tools"
 
 playwright install --with-deps chromium
+
+fish

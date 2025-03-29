@@ -8,7 +8,9 @@ Install brew apps
 
 ```
 mkdir -p ~/Programming/ && cd ~/Programming
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 git clone https://github.com/Glyphack/dotfiles.git
-sh setup/ssh-key-gen.sh
+cd dotfiles/
+sh setup.sh
 gh auth login
 ```
