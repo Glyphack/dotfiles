@@ -297,6 +297,7 @@ require("lazy").setup({
 		"nvim-telescope/telescope.nvim",
 		event = "VimEnter",
 		dependencies = {
+			"kkharji/sqlite.lua",
 			"nvim-lua/plenary.nvim",
 			{
 				"nvim-telescope/telescope-fzf-native.nvim",
@@ -380,7 +381,7 @@ require("lazy").setup({
 
 					history = {
 						path = history_db_file,
-						limit = 100,
+						limit = 200,
 					},
 
 					file_ignore_patterns = {
@@ -845,6 +846,18 @@ require("lazy").setup({
 			-- TODO: Add this to servers table but exclude from mason install
 			require("lspconfig").dartls.setup({})
 			require("lspconfig").efm.setup(efmls_config)
+		end,
+	},
+	{
+		"nvim-flutter/flutter-tools.nvim",
+		lazy = false,
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"stevearc/dressing.nvim",
+		},
+		filetypes = { "dart" },
+		config = function()
+			require("flutter-tools").setup({ widget_guides = { enabled = true } })
 		end,
 	},
 	{
