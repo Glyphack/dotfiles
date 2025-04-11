@@ -83,5 +83,5 @@ end
 ## Programs
 
 alias playwright="uvx playwright"
-alias aider="uvx --from aider-chat[playwright]@latest aider --no-show-release-notes --cache-prompts --no-auto-commits"
+alias aider="uvx --python 3.12 --from aider-chat[playwright]@latest aider --no-show-release-notes --cache-prompts --no-auto-commits"
 alias llm="uvx llm"
