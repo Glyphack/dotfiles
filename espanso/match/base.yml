@@ -7,7 +7,7 @@ matches:
       - name: mydate
         type: date
         params:
-          format: "%Y-%d-%m"
+          format: "%Y-%m-%d"
   - trigger: ":shell"
     replace: "{{output}}"
     vars:
@@ -16,7 +16,7 @@ matches:
         params:
           cmd: "echo 'Hello from your shell'"
   # Snippets
-  - trigger: "rtrace"
+  - trigger: ":rtrace"
     replace: "RUST_BACKTRACE=1 "
   - trigger: ":coauthor"
     replace: "Co-authored-by: name <@.com>"
