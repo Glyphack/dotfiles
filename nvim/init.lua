@@ -29,6 +29,8 @@ vim.opt.showmode = false
 vim.opt.breakindent = true
 vim.opt.showbreak = ">>"
 
+vim.opt.shiftwidth = 2
+
 vim.cmd("filetype plugin on")
 
 -- Save undo history
@@ -1187,16 +1189,14 @@ require("lazy").setup({
 
 			vim.keymap.set("n", "<leader>t", minifiles_toggle, { noremap = true, silent = true, desc = "Tree" })
 
-			vim.keymap.set("n", "<leader>gf", function()
+			vim.keymap.set("n", "<leader>cp", function()
 				if vim.bo.ft == "minifiles" then
 					local path = MiniFiles.get_fs_entry()["path"]
-					-- notify the path change
-					vim.notify("Path: " .. path)
-					vim.fn.setreg('"', path)
+					vim.fn.setreg("+", path)
 					return
 				end
-				vim.fn.setreg('"', vim.fn.expand("%"))
-			end, { noremap = true, silent = true })
+				vim.fn.setreg("+", vim.fn.expand("%"))
+			end, { noremap = true, silent = true, desc = "Copy filepath to clipboard" })
 
 			require("mini.extra").setup()
 			require("mini.visits").setup()
@@ -1497,6 +1497,7 @@ require("lazy").setup({
 			},
 		},
 	},
+	{ "github/copilot.vim" },
 	{
 		"IogaMaster/neocord",
 		event = "VeryLazy",

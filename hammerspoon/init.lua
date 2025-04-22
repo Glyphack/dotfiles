@@ -23,7 +23,7 @@ WINDOWS_SHORTCUTS = {
 	{ "P", "OBS" },
 	{ "Y", "Discord" },
 	{ "U", "qutebrowser" },
-	{ "'", "Cursor" },
+	{ "'", "Visual Studio Code" },
 }
 if hasCustom then
 	WINDOWS_SHORTCUTS = custom.WINDOWS_SHORTCUTS
@@ -120,19 +120,26 @@ local function setPrimary()
 	end
 end
 
+local function openApp(bundle)
+	local app = hs.application.get(bundle)
+
+	if not app then
+		app = hs.application.open(bundle, 1, false)
+		app:hide()
+	else
+		app:hide()
+	end
+
+	return app
+end
+
 local function screenCallback(layout)
+	openApp("/Applications/flameshot.app")
 	if layout == true then
 		print("Screen did not change")
 		return
 	end
 	setPrimary()
-
-	local flameshot_bundle = "/Applications/flameshot.app"
-	local flameshot = hs.application.find(flameshot_bundle, false, false)
-	if flameshot then
-		flameshot:kill()
-	end
-	hs.application.open(flameshot_bundle)
 end
 
 hs.screen.watcher.newWithActiveScreen(screenCallback):start()

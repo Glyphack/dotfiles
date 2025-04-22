@@ -1,4 +1,7 @@
 {
+  "global": {
+    "show_in_menu_bar": false
+  },
   "profiles": [
     {
       "name": "Default profile",
@@ -3086,6 +3089,14 @@
         {
           "identifiers": {
             "device_address": "f0-81-d4-b9-f3-29",
+            "is_keyboard": true,
+            "is_pointing_device": true
+          },
+          "ignore": false
+        },
+        {
+          "identifiers": {
+            "device_address": "f0-81-d4-b9-f3-2b",
             "is_keyboard": true,
             "is_pointing_device": true
           },
