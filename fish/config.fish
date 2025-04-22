@@ -61,7 +61,7 @@ alias vim="nvim"
 fish_hybrid_key_bindings
 
 
-if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish
+if test -e ~/Programming/dotfiles/dotfiles-private/personal.fish
     source ~/Programming/dotfiles/dotfiles-private/personal.fish
 end
 
@@ -70,18 +70,21 @@ function pre_command --on-event fish_preexec
 end
 
 function some_setup --on-variable PWD
+    if test -e "$PWD/poetry.lock"
+	eval (poetry env activate)
+    end
+
     if test -d "$PWD/.venv"
-        source "$PWD/.venv/bin/activate.fish"
+	source "$PWD/.venv/bin/activate.fish"
     end
 end
 
-if test -d "$PWD/.venv"
-    source "$PWD/.venv/bin/activate.fish"
-end
-
+some_setup
 
 ## Programs
 
 alias playwright="uvx playwright"
 alias aider="uvx --python 3.12 --from aider-chat[playwright]@latest aider --no-show-release-notes --cache-prompts --no-auto-commits"
 alias llm="uvx llm"
+alias codex="npx @openai/codex"
+alias claude="npx @anthropic-ai/claude-code"

@@ -30,3 +30,5 @@ cspell.json
 typos.toml
 .aider*
 CLAUDE.md
+
+.wrangler/
