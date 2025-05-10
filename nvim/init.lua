@@ -158,13 +158,6 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
 	{
-		"nvim-focus/focus.nvim",
-		version = false,
-		config = function()
-			require("focus").setup()
-		end,
-	},
-	{
 		"numToStr/Comment.nvim",
 		opts = {
 			toggler = {
@@ -907,6 +900,13 @@ require("lazy").setup({
 					},
 				},
 			}
+
+			vim.keymap.set("n", "<leader>cl", function()
+				local file = vim.fn.expand("%")
+				local line = vim.fn.line(".")
+				vim.fn.setreg("+", file .. ":" .. line)
+			end)
+
 			-- local mason_registry = require("mason-registry")
 			-- local codelldb = mason_registry.get_package("codelldb")
 			-- local extension_path = codelldb:get_install_path() .. "/extension/"
@@ -982,6 +982,7 @@ require("lazy").setup({
 					go = { "goimports" },
 					python = { "ruff_format" },
 					javascript = { "prettierd" },
+					typescript = { "prettierd" },
 					kotlin = { "ktlint" },
 					rust = { "rustfmt" },
 					yaml = { "yamlfmt" },
@@ -1343,6 +1344,15 @@ require("lazy").setup({
 	},
 	{ "mzlogin/vim-markdown-toc" },
 	{
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		build = "cd app && npm install",
+		init = function()
+			vim.g.mkdp_filetypes = { "markdown" }
+		end,
+		ft = { "markdown" },
+	},
+	{
 		"rcarriga/nvim-notify",
 		config = function()
 			vim.notify = require("notify")
@@ -1372,8 +1382,8 @@ require("lazy").setup({
 			local floating_term = function()
 				toggleterm.toggle(2, vim.o.columns * 0.4, nil, "vertical", "vertical")
 			end
-			vim.keymap.set("t", "<leader>of", floating_term, { desc = "Toggle Vertical Terminal" })
-			vim.keymap.set("n", "<leader>of", floating_term, { desc = "Toggle Vertical Terminal" })
+			vim.keymap.set("t", "<C-q>", floating_term, { desc = "Toggle Vertical Terminal" })
+			vim.keymap.set("n", "<C-q>", floating_term, { desc = "Toggle Vertical Terminal" })
 
 			-- watchexec
 
@@ -1465,8 +1475,8 @@ require("lazy").setup({
 		lazy = false,
 		version = false,
 		opts = {
-			provider = "claude",
-			auto_suggestions_provider = "claude",
+			provider = "openai",
+			auto_suggestions_provider = "openai",
 		},
 		build = "make",
 		dependencies = {
@@ -1497,7 +1507,10 @@ require("lazy").setup({
 			},
 		},
 	},
-	{ "github/copilot.vim" },
+	{
+		"Exafunction/windsurf.vim",
+		event = "BufEnter",
+	},
 	{
 		"IogaMaster/neocord",
 		event = "VeryLazy",
