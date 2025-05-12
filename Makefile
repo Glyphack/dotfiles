@@ -20,6 +20,7 @@ link:
 	mkdir -p ${HOME}/.config/wezterm && stow --adopt --target=${HOME}/.config/wezterm wezterm
 	mkdir -p ${HOME}/.hammerspoon && stow --adopt --target=${HOME}/.hammerspoon hammerspoon
 	mkdir -p ${HOME}/Library/Application\ Support/espanso/ && stow --adopt --target=${HOME}/Library/Application\ Support/espanso/ espanso
+	mkdir -p ${HOME}/.qutebrowser/ && stow --adopt --target=${HOME}/.qutebrowser/ qutebrowser
 	mkdir -p ${HOME}/Library/Application\ Support/harper-ls/ && stow --adopt --target=${HOME}/Library/Application\ Support/harper-ls harper-ls
 	# to load new changes
 	espanso restart
