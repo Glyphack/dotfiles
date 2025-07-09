@@ -174,6 +174,9 @@ defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClic
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
 defaults write -g com.apple.trackpad.scaling 10;ok
 
+running "Mouse: set cursor to 50% size"
+defaults write com.apple.universalaccess mouseDriverCursorSize -float 2.5;ok
+
 running "Disable 'natural' (Lion-style) scrolling"
 defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false;ok
 

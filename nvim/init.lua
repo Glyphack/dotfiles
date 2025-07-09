@@ -1,19 +1,3 @@
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-	if vim.v.shell_error ~= 0 then
-		vim.api.nvim_echo({
-			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-			{ out, "WarningMsg" },
-			{ "\nPress any key to exit..." },
-		}, true, {})
-		vim.fn.getchar()
-		os.exit(1)
-	end
-end
-vim.opt.rtp:prepend(lazypath)
-
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
@@ -168,6 +152,7 @@ require("lazy").setup({
 
 	{
 		"Bekaboo/dropbar.nvim",
+		event = { "BufWinEnter", "BufWritePost" },
 		dependencies = {
 			"nvim-telescope/telescope-fzf-native.nvim",
 			build = "make",
@@ -185,7 +170,7 @@ require("lazy").setup({
 	--    require('gitsigns').setup({ ... })
 	--
 	-- See `:help gitsigns` to understand what the configuration keys do
-	{ -- Adds git related signs to the gutter, as well as utilities for managing changes
+	{
 		"lewis6991/gitsigns.nvim",
 		opts = {
 			signs = {
@@ -195,7 +180,7 @@ require("lazy").setup({
 				topdelete = { text = "‾" },
 				changedelete = { text = "~" },
 			},
-			current_line_blame = true,
+			current_line_blame = false,
 			on_attach = function(bufnr)
 				local gs = package.loaded.gitsigns
 				local function map(mode, l, r, opts)
@@ -515,7 +500,7 @@ require("lazy").setup({
 				float = {
 					source = true,
 				},
-				update_in_insert = true,
+				update_in_insert = false,
 				severity_sort = true,
 			})
 			vim.api.nvim_create_autocmd("LspAttach", {
@@ -543,26 +528,26 @@ require("lazy").setup({
 
 					-- highlight references to symbol under cursor
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
-					if client and client.server_capabilities.documentHighlightProvider then
-						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-							buffer = event.buf,
-							callback = function()
-								if next(vim.lsp.get_clients()) ~= nil then
-									return
-								end
-								vim.lsp.buf.document_highlight()
-							end,
-						})
-						vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-							buffer = event.buf,
-							callback = function()
-								if next(vim.lsp.get_clients()) ~= nil then
-									return
-								end
-								vim.lsp.buf.clear_references()
-							end,
-						})
-					end
+					-- if client and client.server_capabilities.documentHighlightProvider then
+					-- 	vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+					-- 		buffer = event.buf,
+					-- 		callback = function()
+					-- 			if next(vim.lsp.get_clients()) == nil then
+					-- 					return
+					-- 			end
+					-- 			vim.lsp.buf.document_highlight()
+					-- 		end,
+					-- 	})
+					-- 	vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+					-- 		buffer = event.buf,
+					-- 		callback = function()
+					-- 				if next(vim.lsp.get_clients()) ~= nil then
+					-- 					return
+					-- 				end
+					-- 				vim.lsp.buf.clear_references()
+					-- 		end,
+					-- 	})
+					-- end
 				end,
 			})
 
@@ -763,9 +748,6 @@ require("lazy").setup({
 				kotlin_language_server = {},
 				vale_ls = {},
 				lua_ls = {
-					-- cmd = {...},
-					-- filetypes { ...},
-					-- capabilities = {},
 					settings = {
 						Lua = {
 							runtime = { version = "LuaJIT" },
@@ -789,15 +771,11 @@ require("lazy").setup({
 					},
 				},
 				typos_lsp = {},
-				harper_ls = {
-					settings = {
-						["harper-ls"] = {
-							linters = {},
-						},
-					},
-					filetypes = { "markdown" },
-				},
+				-- harper_ls = {
+				-- 	filetypes = { "markdown", "gitcommit" },
+				-- },
 				lemminx = {},
+				clojure_lsp = {},
 			}
 
 			require("mason").setup()
@@ -811,6 +789,7 @@ require("lazy").setup({
 				"taplo",
 				"yamlfmt",
 				"djlint",
+				"cljfmt",
 			})
 			require("mason-tool-installer").setup({
 				ensure_installed = tool_ensure_installed,
@@ -995,6 +974,7 @@ require("lazy").setup({
 					c = { "clang-format" },
 					html = { "djlint", "prettierd" },
 					htmldjango = { "djlint" },
+					clojure = { "cljfmt" },
 					["*"] = { "trim_newlines" },
 				},
 			})
@@ -1024,9 +1004,7 @@ require("lazy").setup({
 		dependencies = {
 			{
 				"L3MON4D3/LuaSnip",
-				build = (function()
-					return "make install_jsregexp"
-				end)(),
+				build = "make install_jsregexp",
 			},
 			"hrsh7th/cmp-nvim-lsp",
 			"saadparwaiz1/cmp_luasnip",
@@ -1199,6 +1177,15 @@ require("lazy").setup({
 				vim.fn.setreg("+", vim.fn.expand("%"))
 			end, { noremap = true, silent = true, desc = "Copy filepath to clipboard" })
 
+			vim.keymap.set("n", "<leader>cP", function()
+				if vim.bo.ft == "minifiles" then
+					local path = MiniFiles.get_fs_entry()["path"]
+					vim.fn.setreg("+", path)
+					return
+				end
+				vim.fn.setreg("+", vim.fn.expand("%:p"))
+			end, { noremap = true, silent = true, desc = "Copy full filepath to clipboard" })
+
 			require("mini.extra").setup()
 			require("mini.visits").setup()
 
@@ -1268,61 +1255,61 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{
-		"nvim-treesitter/nvim-treesitter-context",
-		dependencies = "nvim-treesitter/nvim-treesitter-textobjects",
-		config = function()
-			require("treesitter-context").setup({
-				enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-				max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
-				min_window_height = 15, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
-				line_numbers = true,
-				multiline_threshold = 1, -- Maximum number of lines to collapse for a single context line
-				trim_scope = "inner", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-				mode = "cursor", -- Line used to calculate context. Choices: 'cursor', 'topline'
-				-- Separator between context and content. Should be a single character string, like '-'.
-				-- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
-				separator = nil,
-				zindex = 20, -- The Z-index of the context window
-				on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
-				textobjects = {
-					select = {
-						enable = true,
-						lookahead = true,
-						keymaps = {
-							["af"] = "@function.outer",
-							["if"] = "@function.inner",
-							["ac"] = "@class.outer",
-							["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-							["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
-						},
-						selection_modes = {
-							["@parameter.outer"] = "v", -- charwise
-							["@function.outer"] = "V", -- linewise
-							["@class.outer"] = "<c-v>", -- blockwise
-						},
-						include_surrounding_whitespace = true,
-					},
-					move = {
-						enable = true,
-						set_jumps = true,
-						goto_next_start = {
-							["]m"] = "@function.outer",
-						},
-						goto_next_end = {
-							["]M"] = "@function.outer",
-						},
-						goto_previous_start = {
-							["[m"] = "@function.outer",
-						},
-						goto_previous_end = {
-							["[M"] = "@function.outer",
-						},
-					},
-				},
-			})
-		end,
-	},
+	-- {
+	-- 	"nvim-treesitter/nvim-treesitter-context",
+	-- 	dependencies = "nvim-treesitter/nvim-treesitter-textobjects",
+	-- 	config = function()
+	-- 		require("treesitter-context").setup({
+	-- 			enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+	-- 			max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
+	-- 			min_window_height = 15, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+	-- 			line_numbers = true,
+	-- 			multiline_threshold = 1, -- Maximum number of lines to collapse for a single context line
+	-- 			trim_scope = "inner", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+	-- 			mode = "cursor", -- Line used to calculate context. Choices: 'cursor', 'topline'
+	-- 			-- Separator between context and content. Should be a single character string, like '-'.
+	-- 			-- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+	-- 			separator = nil,
+	-- 			zindex = 20, -- The Z-index of the context window
+	-- 			on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+	-- 			textobjects = {
+	-- 				select = {
+	-- 					enable = true,
+	-- 					lookahead = true,
+	-- 					keymaps = {
+	-- 						["af"] = "@function.outer",
+	-- 						["if"] = "@function.inner",
+	-- 						["ac"] = "@class.outer",
+	-- 						["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+	-- 						["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+	-- 					},
+	-- 					selection_modes = {
+	-- 						["@parameter.outer"] = "v", -- charwise
+	-- 						["@function.outer"] = "V", -- linewise
+	-- 						["@class.outer"] = "<c-v>", -- blockwise
+	-- 					},
+	-- 					include_surrounding_whitespace = true,
+	-- 				},
+	-- 				move = {
+	-- 					enable = true,
+	-- 					set_jumps = true,
+	-- 					goto_next_start = {
+	-- 						["]m"] = "@function.outer",
+	-- 					},
+	-- 					goto_next_end = {
+	-- 						["]M"] = "@function.outer",
+	-- 					},
+	-- 					goto_previous_start = {
+	-- 						["[m"] = "@function.outer",
+	-- 					},
+	-- 					goto_previous_end = {
+	-- 						["[M"] = "@function.outer",
+	-- 					},
+	-- 				},
+	-- 			},
+	-- 		})
+	-- 	end,
+	-- },
 	{
 		"rmagatti/gx-extended.nvim",
 		config = function()
@@ -1454,14 +1441,14 @@ require("lazy").setup({
 	-- 		require("dap-go").setup()
 	-- 	end,
 	-- },
-	{
-		"farmergreg/vim-lastplace",
-		config = function()
-			vim.g.lastplace_ignore = "gitcommit,gitrebase,svn,hgcommit"
-			vim.g.lastplace_ignore_buftype = "quickfix,nofile,help"
-			vim.g.lastplace_open_folds = 1
-		end,
-	},
+	-- {
+	-- 	"farmergreg/vim-lastplace",
+	-- 	config = function()
+	-- 		vim.g.lastplace_ignore = "gitcommit,gitrebase,svn,hgcommit"
+	-- 		vim.g.lastplace_ignore_buftype = "quickfix,nofile,help"
+	-- 		vim.g.lastplace_open_folds = 1
+	-- 	end,
+	-- },
 	{
 		"andrewferrier/debugprint.nvim",
 		dependencies = {
@@ -1470,46 +1457,48 @@ require("lazy").setup({
 		opts = {},
 	},
 	{
-		"yetone/avante.nvim",
-		event = "VeryLazy",
-		lazy = false,
-		version = false,
-		opts = {
-			provider = "openai",
-			auto_suggestions_provider = "openai",
-		},
-		build = "make",
+		"olimorris/codecompanion.nvim",
+		opts = {},
+		config = function()
+			require("codecompanion").setup({
+				strategies = {
+					chat = {
+						adapter = "gemini",
+					},
+					inline = {
+						adapter = "openai",
+					},
+				},
+			})
+		end,
 		dependencies = {
-			"stevearc/dressing.nvim",
 			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			"hrsh7th/nvim-cmp",
-			"nvim-tree/nvim-web-devicons",
+			"nvim-treesitter/nvim-treesitter",
+			-- {
+			-- 	"MeanderingProgrammer/render-markdown.nvim",
+			-- 	ft = { "codecompanion" },
+			-- },
 			{
-				"HakonHarnes/img-clip.nvim",
-				event = "VeryLazy",
+				"OXY2DEV/markview.nvim",
+				lazy = false,
 				opts = {
-					default = {
-						embed_image_as_base64 = false,
-						prompt_for_file_name = false,
-						drag_and_drop = {
-							insert_mode = true,
-						},
+					preview = {
+						filetypes = { "codecompanion" },
+						ignore_buftypes = {},
 					},
 				},
 			},
 			{
-				"MeanderingProgrammer/render-markdown.nvim",
-				opts = {
-					file_types = { "Avante" },
-				},
-				ft = { "Avante" },
+				"echasnovski/mini.diff",
+				config = function()
+					local diff = require("mini.diff")
+					diff.setup({
+						-- Disabled by default
+						source = diff.gen_source.none(),
+					})
+				end,
 			},
 		},
-	},
-	{
-		"Exafunction/windsurf.vim",
-		event = "BufEnter",
 	},
 	{
 		"IogaMaster/neocord",

@@ -1,6 +1,12 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
+local function is_pane_zoomed(pane)
+	local pane_info = pane:get_foreground_process_info()
+	-- Access pane information to check zoom state
+	return pane:get_dimensions().is_zoomed
+end
+
 wezterm.on("update-right-status", function(window)
 	local bat = ""
 	for _, b in ipairs(wezterm.battery_info()) do
@@ -13,31 +19,14 @@ wezterm.on("update-right-status", function(window)
 end)
 
 local config = {
+	leader = { key = "a", mods = "CMD", timeout_milliseconds = 1000 },
+	key_tables = {
+		copy_mode = wezterm.gui.default_key_tables().copy_mode,
+	},
 	font = wezterm.font("Hack Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" }),
-	font_size = 23,
+	font_size = 20,
 	keys = {
-		{ key = "[", mods = "CMD", action = act.ScrollToPrompt(-1) },
-		{ key = "]", mods = "CMD", action = act.ScrollToPrompt(1) },
-		{
-			key = "i",
-			mods = "CMD",
-			action = act.CloseCurrentPane({ confirm = true }),
-		},
-		{
-			key = "s",
-			mods = "CMD",
-			action = act.SplitHorizontal,
-		},
-		{
-			key = "a",
-			mods = "CMD",
-			action = act.ActivatePaneDirection("Left"),
-		},
-		{
-			key = "d",
-			mods = "CMD",
-			action = act.ActivatePaneDirection("Right"),
-		},
+		{ key = "c", mods = "LEADER", action = act.ActivateCopyMode },
 		{
 			key = "K",
 			mods = "CTRL|SHIFT",
@@ -62,15 +51,39 @@ local config = {
 				},
 			}),
 		},
+		{ key = "[", mods = "LEADER", action = act.ScrollToPrompt(-1) },
+		{ key = "]", mods = "LEADER", action = act.ScrollToPrompt(1) },
 		{ key = "u", mods = "CMD", action = act.CopyMode("ClearPattern") },
+
+		-- multiplexing
+
+		{ key = "x", mods = "CMD", action = act.CloseCurrentPane({ confirm = true }) },
+		--  split
+		{ key = "s", mods = "CMD", action = act.SplitHorizontal },
+		--  move
+		{ key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") },
+		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") },
+		{ key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") },
+		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") },
+		{ key = "t", mods = "LEADER", action = act.SpawnTab("CurrentPaneDomain") },
+		{ key = "]", mods = "CMD", action = act.ActivateTabRelative(1) },
+		{ key = "[", mods = "CMD", action = act.ActivateTabRelative(-1) },
+		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
+		{
+			key = "n",
+			mods = "LEADER",
+			action = wezterm.action_callback(function(window, pane)
+				local tab = pane:tab()
+				local is_zoomed = tab:set_zoomed(false)
+				window:perform_action(act.ActivatePaneDirection("Next"), pane)
+				tab:set_zoomed(is_zoomed)
+			end),
+		},
 	},
 	color_scheme = "catppuccin-mocha",
 }
 
--- config.window_background_opacity = .9
--- The art is a bit too bright and colorful to be useful as a backdrop
--- for text, so we're going to dim it down to 10% of its normal brightness
-local dimmer = { brightness = 0.1 }
+local dimmer = { brightness = 0.05 }
 
 config.enable_scroll_bar = true
 config.min_scroll_bar_height = "2cell"
@@ -95,6 +108,21 @@ config.background = {
 	},
 }
 
+config.switch_to_last_active_tab_when_closing_tab = true
 config.scrollback_lines = 100000
+
+for i, binding in ipairs(config.key_tables.copy_mode) do
+	if binding.key == "y" and binding.mods == "NONE" then
+		config.key_tables.copy_mode[i] = {
+			key = "y",
+			mods = "NONE",
+			action = act.Multiple({
+				{ CopyTo = "ClipboardAndPrimarySelection" },
+				{ CopyMode = "ClearSelectionMode" }, -- Clear selection but stay in copy mode
+			}),
+		}
+		break
+	end
+end
 
 return config

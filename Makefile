@@ -13,6 +13,7 @@ link:
 	stow --target=${HOME} gitconf
 	stow --target=${HOME} asdf
 	stow --target=${HOME} ripgrep
+	stow --target=${HOME} zsh
 	mkdir -p ${HOME}/.config/nvim && stow --adopt --target=${HOME}/.config/nvim nvim
 	mkdir -p ${HOME}/.config/mise && stow --adopt --target=${HOME}/.config/mise mise
 	mkdir -p ${HOME}/.config/fd && stow --adopt --target=${HOME}/.config/fd fd

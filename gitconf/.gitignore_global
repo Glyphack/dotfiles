@@ -10,7 +10,7 @@ metals.sbt
 .nvmrc
 
 # my stuff 
-my_local_*
+mylocal_*
 
 # env files
 .env.prod
