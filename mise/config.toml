@@ -1,7 +1,9 @@
 [env]
 
 [tools]
+go = "1.24"
 node = "22"
+rust = { version = "1.88.0", components = "rust-src,llvm-tools" }
 
 [settings]
 experimental = true

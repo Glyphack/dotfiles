@@ -2,7 +2,7 @@ set -x VIMCONFIG $HOME/.config/nvim/
 set -x VISUAL nvim
 set -x PROGRAMMING_DIR ~/Programming
 set -x DOTFILES_DIR ~/Programming/dotfiles
-set --universal FZF_DEFAULT_COMMAND "fd --hidden"
+set -x FZF_DEFAULT_COMMAND "fd --hidden"
 set -x FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
 set -x FZF_ALT_C_COMMAND "fd -t d . $PROGRAMMING_DIR -d 3"
 set -x NPM_PRE $HOME/.npm-global/bin
@@ -28,24 +28,14 @@ else
 end
 set -x VIRTUALFISH_ACTIVATION_FILE .venv
 
+
 # place for software I install
 set -x HOME_BIN $HOME/bin
 # setting the default kube config
 set -gx KUBECONFIG $HOME/.kube/config
 
-
-#os dependent
-switch (uname)
-    case Linux
-        set -x VIMDATA ~/.local/share/nvim
-    case '*'
-        fish_add_path -U /opt/homebrew/bin
-        set -x VIMDATA ~/.local/share/nvim
-        set -x PATH $PATH /usr/local/opt/fzf/bin /Applications/WezTerm.app/Contents/MacOS
-        set --export --prepend PATH "$HOME/.rd/bin"
-end
-
-set -gx PATH $PATH $HOME_BIN $PYENV_ROOT/bin $GOBIN $RUST_HOME $FLUTTER_PATH $JAVA_HOME/bin $HOME/.local/bin /usr/local/bin /usr/bin /bin /usr/sbin /sbin /usr/local/go/bin $POETRY/bin $NPM_PRE $HOME_BIN/maelstrom $HOME/.rd/bin /opt/homebrew/opt/llvm/bin $HOME/flutter/flutter/bin $HOME/.gem/bin
+set -x VIMDATA ~/.local/share/nvim
+fish_add_path "$HOME/.rd/bin" "/opt/homebrew/bin" "$HOME_BIN" "$scripts" "$PYENV_ROOT/bin" "$GOBIN" "$RUST_HOME" "$FLUTTER_PATH" "$JAVA_HOME/bin" "$HOME/.local/bin" "$POETRY/bin" "$NPM_PRE" "$HOME_BIN/maelstrom" "/opt/homebrew/opt/llvm/bin" "$HOME/flutter/flutter/bin" "$HOME/.gem/bin" "/usr/local/opt/fzf/bin" "/Applications/WezTerm.app/Contents/MacOS" "/usr/local/go/bin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin"
 
 starship init fish | source
 
@@ -56,6 +46,7 @@ alias forks="git fetch upstream && git reset --hard upstream/main"
 
 alias prr="bash $__fish_config_dir/functions/pr-review.sh $argv"
 alias myprs="bash $__fish_config_dir/functions/myprs.sh $argv"
+alias gcmp="bash $__fish_config_dir/functions/gcmp.sh $argv"
 alias vim="nvim"
 
 fish_hybrid_key_bindings
@@ -78,13 +69,11 @@ function some_setup --on-variable PWD
 	source "$PWD/.venv/bin/activate.fish"
     end
 end
-
 some_setup
 
-## Programs
+source "$__fish_config_dir/aliases.fish"
 
-alias playwright="uvx playwright"
-alias aider="uvx --python 3.12 --from aider-chat[playwright]@latest aider --no-show-release-notes --cache-prompts --no-auto-commits"
-alias llm="uvx llm"
-alias codex="npx @openai/codex@latest"
-alias claude="npx @anthropic-ai/claude-code"
+## Development
+set -x tyty $HOME/Programming/ruff/target/debug/ty
+
+set -x scripts $HOME/Programming/dotfiles/scripts
