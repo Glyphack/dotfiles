@@ -35,7 +35,7 @@ config.load_autoconfig(False)
 #   - no-3rdparty: Accept cookies from the same origin only. This is known to break some sites, such as GMail.
 #   - no-unknown-3rdparty: Accept cookies from the same origin only, unless a cookie is already set for the domain. On QtWebEngine, this is the same as no-3rdparty.
 #   - never: Don't accept cookies at all.
-config.set("content.cookies.accept", "all", "chrome-devtools://*")
+config.set('content.cookies.accept', 'all', 'chrome-devtools://*')
 
 # Which cookies to accept. With QtWebEngine, this setting also controls
 # other features with tracking capabilities similar to those of cookies;
@@ -59,12 +59,12 @@ config.set("content.cookies.accept", "all", "chrome-devtools://*")
 #   - no-3rdparty: Accept cookies from the same origin only. This is known to break some sites, such as GMail.
 #   - no-unknown-3rdparty: Accept cookies from the same origin only, unless a cookie is already set for the domain. On QtWebEngine, this is the same as no-3rdparty.
 #   - never: Don't accept cookies at all.
-config.set("content.cookies.accept", "all", "devtools://*")
+config.set('content.cookies.accept', 'all', 'devtools://*')
 
 # Value to send in the `Accept-Language` header. Note that the value
 # read from JavaScript is always the global value.
 # Type: String
-config.set("content.headers.accept_language", "", "https://matchmaker.krunker.io/*")
+config.set('content.headers.accept_language', '', 'https://matchmaker.krunker.io/*')
 
 # User agent to send.  The following placeholders are defined:  *
 # `{os_info}`: Something like "X11; Linux x86_64". * `{webkit_version}`:
@@ -81,11 +81,7 @@ config.set("content.headers.accept_language", "", "https://matchmaker.krunker.io
 # increased compatibility.  Note that the value read from JavaScript is
 # always the global value.
 # Type: FormatString
-config.set(
-    "content.headers.user_agent",
-    "Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko) {upstream_browser_key}/{upstream_browser_version} Safari/{webkit_version}",
-    "https://web.whatsapp.com/",
-)
+config.set('content.headers.user_agent', 'Mozilla/5.0 ({os_info}) AppleWebKit/{webkit_version} (KHTML, like Gecko) {upstream_browser_key}/{upstream_browser_version} Safari/{webkit_version}', 'https://web.whatsapp.com/')
 
 # User agent to send.  The following placeholders are defined:  *
 # `{os_info}`: Something like "X11; Linux x86_64". * `{webkit_version}`:
@@ -102,19 +98,15 @@ config.set(
 # increased compatibility.  Note that the value read from JavaScript is
 # always the global value.
 # Type: FormatString
-config.set(
-    "content.headers.user_agent",
-    "Mozilla/5.0 ({os_info}; rv:136.0) Gecko/20100101 Firefox/136.0",
-    "https://accounts.google.com/*",
-)
+config.set('content.headers.user_agent', 'Mozilla/5.0 ({os_info}; rv:136.0) Gecko/20100101 Firefox/139.0', 'https://accounts.google.com/*')
 
 # Load images automatically in web pages.
 # Type: Bool
-config.set("content.images", True, "chrome-devtools://*")
+config.set('content.images', True, 'chrome-devtools://*')
 
 # Load images automatically in web pages.
 # Type: Bool
-config.set("content.images", True, "devtools://*")
+config.set('content.images', True, 'devtools://*')
 
 # Allow JavaScript to read from or write to the clipboard. With
 # QtWebEngine, writing the clipboard as response to a user interaction
@@ -126,9 +118,7 @@ config.set("content.images", True, "devtools://*")
 #   - access: Allow reading from and writing to the clipboard.
 #   - access-paste: Allow accessing the clipboard and pasting clipboard content.
 #   - ask: Prompt when requested (grants 'access-paste' permission).
-config.set(
-    "content.javascript.clipboard", "access-paste", "https://app.codecrafters.io"
-)
+config.set('content.javascript.clipboard', 'access-paste', 'https://app.codecrafters.io')
 
 # Allow JavaScript to read from or write to the clipboard. With
 # QtWebEngine, writing the clipboard as response to a user interaction
@@ -140,7 +130,7 @@ config.set(
 #   - access: Allow reading from and writing to the clipboard.
 #   - access-paste: Allow accessing the clipboard and pasting clipboard content.
 #   - ask: Prompt when requested (grants 'access-paste' permission).
-config.set("content.javascript.clipboard", "access-paste", "https://excalidraw.com")
+config.set('content.javascript.clipboard', 'access-paste', 'https://excalidraw.com')
 
 # Allow JavaScript to read from or write to the clipboard. With
 # QtWebEngine, writing the clipboard as response to a user interaction
@@ -152,7 +142,7 @@ config.set("content.javascript.clipboard", "access-paste", "https://excalidraw.c
 #   - access: Allow reading from and writing to the clipboard.
 #   - access-paste: Allow accessing the clipboard and pasting clipboard content.
 #   - ask: Prompt when requested (grants 'access-paste' permission).
-config.set("content.javascript.clipboard", "access-paste", "https://formulae.brew.sh")
+config.set('content.javascript.clipboard', 'access-paste', 'https://formulae.brew.sh')
 
 # Allow JavaScript to read from or write to the clipboard. With
 # QtWebEngine, writing the clipboard as response to a user interaction
@@ -164,7 +154,7 @@ config.set("content.javascript.clipboard", "access-paste", "https://formulae.bre
 #   - access: Allow reading from and writing to the clipboard.
 #   - access-paste: Allow accessing the clipboard and pasting clipboard content.
 #   - ask: Prompt when requested (grants 'access-paste' permission).
-config.set("content.javascript.clipboard", "access-paste", "https://github.com")
+config.set('content.javascript.clipboard', 'access-paste', 'https://github.com')
 
 # Allow JavaScript to read from or write to the clipboard. With
 # QtWebEngine, writing the clipboard as response to a user interaction
@@ -176,39 +166,39 @@ config.set("content.javascript.clipboard", "access-paste", "https://github.com")
 #   - access: Allow reading from and writing to the clipboard.
 #   - access-paste: Allow accessing the clipboard and pasting clipboard content.
 #   - ask: Prompt when requested (grants 'access-paste' permission).
-config.set("content.javascript.clipboard", "access-paste", "https://www.perplexity.ai")
+config.set('content.javascript.clipboard', 'access-paste', 'https://www.perplexity.ai')
 
 # Enable JavaScript.
 # Type: Bool
-config.set("content.javascript.enabled", True, "chrome-devtools://*")
+config.set('content.javascript.enabled', True, 'chrome-devtools://*')
 
 # Enable JavaScript.
 # Type: Bool
-config.set("content.javascript.enabled", True, "devtools://*")
+config.set('content.javascript.enabled', True, 'devtools://*')
 
 # Enable JavaScript.
 # Type: Bool
-config.set("content.javascript.enabled", True, "chrome://*/*")
+config.set('content.javascript.enabled', True, 'chrome://*/*')
 
 # Enable JavaScript.
 # Type: Bool
-config.set("content.javascript.enabled", True, "qute://*/*")
+config.set('content.javascript.enabled', True, 'qute://*/*')
 
 # Allow locally loaded documents to access remote URLs.
 # Type: Bool
-config.set(
-    "content.local_content_can_access_remote_urls",
-    True,
-    "file:///Users/glyphack/Library/Application%20Support/qutebrowser/userscripts/*",
-)
+config.set('content.local_content_can_access_remote_urls', True, 'file:///Users/glyphack/Library/Application%20Support/qutebrowser/userscripts/*')
+
+# Allow locally loaded documents to access remote URLs.
+# Type: Bool
+config.set('content.local_content_can_access_remote_urls', True, 'file:///Users/shayeganhooshyari/Library/Application%20Support/qutebrowser/userscripts/*')
 
 # Allow locally loaded documents to access other local URLs.
 # Type: Bool
-config.set(
-    "content.local_content_can_access_file_urls",
-    False,
-    "file:///Users/glyphack/Library/Application%20Support/qutebrowser/userscripts/*",
-)
+config.set('content.local_content_can_access_file_urls', False, 'file:///Users/glyphack/Library/Application%20Support/qutebrowser/userscripts/*')
+
+# Allow locally loaded documents to access other local URLs.
+# Type: Bool
+config.set('content.local_content_can_access_file_urls', False, 'file:///Users/shayeganhooshyari/Library/Application%20Support/qutebrowser/userscripts/*')
 
 # Allow websites to show notifications.
 # Type: BoolAsk
@@ -216,11 +206,41 @@ config.set(
 #   - true
 #   - false
 #   - ask
-config.set("content.notifications.enabled", False, "https://www.youtube.com")
+config.set('content.notifications.enabled', False, 'https://www.youtube.com')
+
+# Page to open if :open -t/-b/-w is used without URL. Use `about:blank`
+# for a blank page.
+# Type: FuzzyUrl
+c.url.default_page = 'about:blank'
+
+# Search engines which can be used via the address bar.  Maps a search
+# engine name (such as `DEFAULT`, or `ddg`) to a URL with a `{}`
+# placeholder. The placeholder will be replaced by the search term, use
+# `{{` and `}}` for literal `{`/`}` braces.  The following further
+# placeholds are defined to configure how special characters in the
+# search terms are replaced by safe characters (called 'quoting'):  *
+# `{}` and `{semiquoted}` quote everything except slashes; this is the
+# most   sensible choice for almost all search engines (for the search
+# term   `slash/and&amp` this placeholder expands to `slash/and%26amp`).
+# * `{quoted}` quotes all characters (for `slash/and&amp` this
+# placeholder   expands to `slash%2Fand%26amp`). * `{unquoted}` quotes
+# nothing (for `slash/and&amp` this placeholder   expands to
+# `slash/and&amp`). * `{0}` means the same as `{}`, but can be used
+# multiple times.  The search engine named `DEFAULT` is used when
+# `url.auto_search` is turned on and something else than a URL was
+# entered to be opened. Other search engines can be used by prepending
+# the search engine name to the search term, e.g. `:open google
+# qutebrowser`.
+# Type: Dict
+c.url.searchengines = {'DEFAULT': 'https://www.perplexity.ai/?q={}'}
+
+# Page(s) to open at the start.
+# Type: List of FuzzyUrl, or FuzzyUrl
+c.url.start_pages = 'about:blank'
 
 # Default zoom level.
 # Type: Perc
-c.zoom.default = "110%"
+c.zoom.default = '110%'
 
 # Render all web contents using a dark theme. On QtWebEngine < 6.7, this
 # setting requires a restart and does not support URL patterns, only the
@@ -240,24 +260,24 @@ c.colors.webpage.darkmode.enabled = True
 #   - lightness-cielab: Modify colors by converting them to CIELAB color space and inverting the L value. Not available with Qt < 5.14.
 #   - lightness-hsl: Modify colors by converting them to the HSL color space and inverting the lightness (i.e. the "L" in HSL).
 #   - brightness-rgb: Modify colors by subtracting each of r, g, and b from their maximum value.
-c.colors.webpage.darkmode.algorithm = "lightness-cielab"
+c.colors.webpage.darkmode.algorithm = 'lightness-cielab'
 
 # Default font families to use. Whenever "default_family" is used in a
 # font setting, it's replaced with the fonts listed here. If set to an
 # empty value, a system-specific monospace default is used.
 # Type: List of Font, or Font
-c.fonts.default_family = "Hack Nerd Font"
+c.fonts.default_family = 'Hack Nerd Font'
 
 # Default font size to use. Whenever "default_size" is used in a font
 # setting, it's replaced with the size listed here. Valid values are
 # either a float value with a "pt" suffix, or an integer value with a
 # "px" suffix.
 # Type: String
-c.fonts.default_size = "22pt"
+c.fonts.default_size = '22pt'
 
 # Font used for the downloadbar.
 # Type: Font
-c.fonts.downloads = "default_size default_family"
+c.fonts.downloads = 'default_size default_family'
 
 # Default font size (in pixels) for regular text.
 # Type: Int

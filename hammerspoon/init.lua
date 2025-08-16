@@ -56,6 +56,11 @@ local function useDefaultAudioDevice()
 		jbl_speaker:setDefaultOutputDevice()
 		return
 	end
+	local external_headphone = hs.audiodevice.findOutputByName("External Headphones")
+	if external_headphone then
+		external_headphone:setDefaultOutputDevice()
+		return
+	end
 	local mbp_speaker = hs.audiodevice.findOutputByName("MacBook Pro Speakers")
 	if mbp_speaker then
 		mbp_speaker:setDefaultOutputDevice()
@@ -72,7 +77,6 @@ local function selectInputDecide()
 	local current = hs.audiodevice.defaultInputDevice():name()
 	print("Current device: " .. current)
 	if current == "External Microphone" then
-		print("Forcing default output to Internal Speakers")
 		useDefaultAudioDevice()
 	end
 	local blue_yeti_mic = hs.audiodevice.findInputByName("Yeti Stereo Microphone")

@@ -61,17 +61,9 @@ local config = {
 		--  split
 		{ key = "s", mods = "CMD", action = act.SplitHorizontal },
 		--  move
-		{ key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") },
-		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") },
-		{ key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") },
-		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") },
-		{ key = "t", mods = "LEADER", action = act.SpawnTab("CurrentPaneDomain") },
-		{ key = "]", mods = "CMD", action = act.ActivateTabRelative(1) },
-		{ key = "[", mods = "CMD", action = act.ActivateTabRelative(-1) },
-		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
 		{
-			key = "n",
-			mods = "LEADER",
+			key = "e",
+			mods = "CMD",
 			action = wezterm.action_callback(function(window, pane)
 				local tab = pane:tab()
 				local is_zoomed = tab:set_zoomed(false)
@@ -79,6 +71,13 @@ local config = {
 				tab:set_zoomed(is_zoomed)
 			end),
 		},
+		{ key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") },
+		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") },
+		{ key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") },
+		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") },
+		{ key = "]", mods = "CMD", action = act.ActivateTabRelative(1) },
+		{ key = "[", mods = "CMD", action = act.ActivateTabRelative(-1) },
+		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
 	},
 	color_scheme = "catppuccin-mocha",
 }
