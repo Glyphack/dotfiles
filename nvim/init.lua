@@ -1487,6 +1487,7 @@ require("lazy").setup({
 						ignore_buftypes = {},
 					},
 				},
+				priority = 49,
 			},
 			{
 				"echasnovski/mini.diff",
