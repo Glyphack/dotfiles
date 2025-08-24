@@ -12,6 +12,18 @@ if hasCustom then
 	print("Loaded custom settings")
 end
 
+local function openApp(bundle)
+	local app = hs.application.get(bundle)
+
+	if not app then
+		app = hs.application.open(bundle, 1, false)
+	else
+		app:hide()
+	end
+
+	return app
+end
+
 -- My shortcuts
 -- Some of the shortcuts are still on Raycast, need to move them here
 -- 1. Daily Schedule
@@ -115,30 +127,12 @@ local function setPrimary()
 		if screen:name() ~= MACBOOK_MONITOR then
 			print("Setting " .. screen:name() .. " as primary")
 			screen:setPrimary()
-			local monitor_control_bundle = "/Applications/MonitorControl.app"
-			local monitor_c = hs.application.find(monitor_control_bundle, false, false)
-			if monitor_c == nil then
-				hs.application.open(monitor_control_bundle)
-			end
+			openApp("/Applications/flameshot.app")
 		end
 	end
 end
 
-local function openApp(bundle)
-	local app = hs.application.get(bundle)
-
-	if not app then
-		app = hs.application.open(bundle, 1, false)
-		app:hide()
-	else
-		app:hide()
-	end
-
-	return app
-end
-
 local function screenCallback(layout)
-	openApp("/Applications/flameshot.app")
 	if layout == true then
 		print("Screen did not change")
 		return

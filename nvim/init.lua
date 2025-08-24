@@ -776,11 +776,14 @@ require("lazy").setup({
 				-- },
 				lemminx = {},
 				clojure_lsp = {},
+				-- ty = {},
 			}
 
 			require("mason").setup()
 			local server_ensure_installed = vim.tbl_keys(servers or {})
 			local tool_ensure_installed = vim.tbl_keys(servers or {})
+			-- Build list of servers to exclude from automatic enabling
+			local automatic_enable_exclude = vim.deepcopy(server_ensure_installed)
 			vim.list_extend(tool_ensure_installed, {
 				"stylua",
 				"prettierd",
@@ -797,21 +800,7 @@ require("lazy").setup({
 				auto_update = true,
 			})
 			require("mason-lspconfig").setup({
-				handlers = {
-					function(server_name)
-						if server_name == "rust_analyzer" then
-							return
-						end
-						local server = servers[server_name] or {}
-						-- This handles overriding only values explicitly passed
-						-- by the server configuration above. Useful when disabling
-						-- certain features of an LSP (for example, turning off formatting for tsserver)
-						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-						require("lspconfig")[server_name].setup(server)
-					end,
-				},
-				ensure_installed = server_ensure_installed,
-				automatic_installation = true,
+				automatic_enable = automatic_enable_exclude,
 			})
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("lsp_attach_disable_ruff_hover", { clear = true }),
@@ -828,7 +817,6 @@ require("lazy").setup({
 				desc = "LSP: Disable hover capability from Ruff",
 			})
 
-			-- TODO: Add this to servers table but exclude from mason install
 			require("lspconfig").dartls.setup({})
 			require("lspconfig").efm.setup(efmls_config)
 		end,
@@ -1315,16 +1303,121 @@ require("lazy").setup({
 		config = function()
 			require("gx-extended").setup({
 				extensions = {
-					-- TODO: incomplete match file path
-					-- {
-					-- patterns = { "*" },
-					-- name = "local files",
-					-- match_to_url = function(line_string)
-					-- 	local line = string.match(line_string, "(/[^/\0]+)+/?")
-					-- 	vim.notify(line)
-					-- 	return line or nil
-					-- end,
-					-- },
+					-- Open local file paths under cursor (e.g., in Markdown)
+					{
+						patterns = { "*" },
+						name = "local files",
+						match_to_url = function(line_string)
+							-- Try to resolve a local file path near the cursor and return a file:// URL.
+							local cursor = vim.api.nvim_win_get_cursor(0)
+							local row, col0 = cursor[1], cursor[2] -- row is 1-based, col is 0-based
+							local current_line = (vim.api.nvim_buf_get_lines(0, row - 1, row, false)[1]) or line_string or ""
+
+							-- Delimiters that typically bound a path in text/markdown
+							local function is_delim(ch)
+								if not ch or ch == "" then return true end
+								if ch:match("%s") then return true end
+								return string.find("[](){}<>\"'`,;|", ch, 1, true) ~= nil
+							end
+
+							-- Expand from cursor to find a token that looks like a path
+							local idx = col0 + 1 -- convert to 1-based for Lua strings
+							if idx < 1 then idx = 1 end
+							if idx > #current_line then idx = #current_line end
+							local l, r = idx, idx
+							while l > 1 and not is_delim(current_line:sub(l - 1, l - 1)) do
+								l = l - 1
+							end
+							while r <= #current_line and not is_delim(current_line:sub(r, r)) do
+								r = r + 1
+							end
+							local token = current_line:sub(l, r - 1)
+
+							-- Clean up common wrappers and trailing punctuation
+							token = token:gsub("^%s+", ""):gsub("%s+$", "")
+							token = token
+								:gsub("^%(", ""):gsub("^%[", ""):gsub("^%{", ""):gsub("^<", "")
+								:gsub('^"', ""):gsub("^'", ""):gsub("^`", "")
+								:gsub("%)$", ""):gsub("%]$", ""):gsub("%}$", ""):gsub(">$", "")
+								:gsub('"$', ""):gsub("'$", ""):gsub("`$", "")
+							token = token:gsub("[,.;:|]+$", "")
+
+							-- If cursor is on markdown link text, try to grab the (...) part surrounding it
+							if (not token:find("[/\\.]")) and current_line:find("%b()") then
+								local nearest
+								local search_from = 1
+								while true do
+									local s1, e1 = current_line:find("%b()", search_from)
+									if not s1 then break end
+									if s1 <= idx and idx <= e1 then
+										nearest = { s1, e1 }
+										break
+									end
+									search_from = e1 + 1
+								end
+								if nearest then
+									local inner = current_line:sub(nearest[1] + 1, nearest[2] - 1)
+									inner = inner:match("%s*<?([^>]+)>?%s*$") or inner
+									token = inner
+								end
+							end
+
+							-- Skip obvious URLs; gx-extended handles those already
+							if token:match("^%a[%w+.-]*://") then
+								return nil
+							end
+
+							-- Normalize potential path: extract :line(:col)? or #Lnum anchors
+							token = token:gsub("^file://", "")
+							token = token:gsub("^href=", ""):gsub("^src=", "")
+							token = token:gsub('^"(.*)"$', "%1"):gsub("^'(.*)'$", "%1")
+
+							local path = token
+							local anchor = nil
+							path, anchor = path:match("^([^#]+)#?(.*)$")
+
+							local lineno, colno = path:match(":(%d+):(%d+)$")
+							if lineno then
+								path = path:gsub(":%d+:%d+$", "")
+							else
+								lineno = path:match(":(%d+)$")
+								if lineno then path = path:gsub(":%d+$", "") end
+							end
+
+							-- Expand ~ and resolve relative paths against current file dir
+							if path:sub(1, 1) == "~" then
+								path = (vim.env.HOME or "~") .. path:sub(2)
+							end
+
+							local abs = nil
+							if vim.loop.fs_stat(path) then
+								abs = path
+							else
+								local base = vim.fn.expand("%:p:h")
+								local normalize = (vim.fs and vim.fs.normalize) or function(p)
+									return vim.fn.fnamemodify(p, ":p")
+								end
+								abs = normalize(base .. "/" .. path)
+								if not vim.loop.fs_stat(abs) then
+									local try = abs:gsub("%%20", " ")
+									if vim.loop.fs_stat(try) then abs = try end
+								end
+							end
+
+							if abs and vim.loop.fs_stat(abs) then
+								-- Return a file:// URL; gx-extended will open it.
+								if lineno and tonumber(lineno) then
+									return string.format("file://%s#L%s", abs, lineno)
+								elseif anchor and anchor:match("^L%d+$") then
+									return string.format("file://%s#%s", abs, anchor)
+								else
+									return "file://" .. abs
+								end
+							end
+
+							return nil
+						end,
+					},
 				},
 			})
 		end,
