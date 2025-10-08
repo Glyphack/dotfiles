@@ -1,0 +1,12 @@
+{
+  "workspace.library": [
+    "/Applications/Hammerspoon.app/Contents/Resources/extensions",
+    "/Applications/Hammerspoon.app/Contents/Resources/extensions/hs",
+    "$VIMRUNTIME",
+    "${HOME}/.config/nvim",
+    "${HOME}/.local/share/nvim/runtime",
+    "${HOME}/.local/share/nvim/site"
+  ],
+  "runtime.version": "Lua 5.4",
+  "diagnostics.globals": ["hs", "vim"]
+}

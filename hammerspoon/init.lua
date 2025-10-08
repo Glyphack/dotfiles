@@ -62,86 +62,89 @@ function SendClickableNotification(notification, link)
 	notificationObject:send()
 end
 
-local function useDefaultAudioDevice()
-	local jbl_speaker = hs.audiodevice.findOutputByName("JBL Flip 6")
-	if jbl_speaker then
-		jbl_speaker:setDefaultOutputDevice()
-		return
-	end
-	local external_headphone = hs.audiodevice.findOutputByName("External Headphones")
-	if external_headphone then
-		external_headphone:setDefaultOutputDevice()
-		return
-	end
-	local mbp_speaker = hs.audiodevice.findOutputByName("MacBook Pro Speakers")
-	if mbp_speaker then
-		mbp_speaker:setDefaultOutputDevice()
-		return
-	end
-	local mac_mini_speaker = hs.audiodevice.findOutputByName("Mac mini Speakers")
-	if mac_mini_speaker then
-		mac_mini_speaker:setDefaultOutputDevice()
-		return
-	end
-end
-
-local function selectInputDecide()
-	local current = hs.audiodevice.defaultInputDevice():name()
-	print("Current device: " .. current)
-	if current == "External Microphone" then
-		useDefaultAudioDevice()
-	end
-	local blue_yeti_mic = hs.audiodevice.findInputByName("Yeti Stereo Microphone")
-	if blue_yeti_mic ~= nil then
-		blue_yeti_mic:setDefaultInputDevice()
-	end
-end
-
-local function switchToJblFilip6AfterConnect()
-	local jbl_speaker = hs.audiodevice.findOutputByName("JBL Flip 6")
-	if jbl_speaker then
-		jbl_speaker:setDefaultOutputDevice()
-		return
-	end
-end
-
-local function audiodeviceCallback(event)
-	print("audiodeviceDeviceCallback: " .. event)
-	if event == "dIn " then
-		selectInputDecide()
-	end
-	if even == "dOut" then
-		switchToJblFilip6AfterConnect()
-	end
-end
-
-hs.audiodevice.watcher.setCallback(audiodeviceCallback)
-hs.audiodevice.watcher.start()
-
-selectInputDecide()
-
--- set the other screen than macbook as primary
-local function setPrimary()
-	local screens = hs.screen.allScreens()
-	for _, screen in pairs(screens) do
-		if screen:name() ~= MACBOOK_MONITOR then
-			print("Setting " .. screen:name() .. " as primary")
-			screen:setPrimary()
-			openApp("/Applications/flameshot.app")
-		end
-	end
-end
+-- TODO: Fix
+-- local function selectOutputDevice(name)
+-- 	-- local preferred = {
+-- 	-- 	"Farbod's JBL Flip 6",
+-- 	-- 	"External Headphones",
+-- 	-- 	"MacBook Pro Speakers",
+-- 	-- 	"Mac mini Speakers",
+-- 	-- }
+-- 	local function firstPresentOutput(names)
+-- 		for _, n in ipairs(names) do
+-- 			local d = hs.audiodevice.findOutputByName(n)
+-- 			if d then
+-- 				print("setting output device to" .. n)
+-- 				return d
+-- 			end
+-- 		end
+-- 		return nil
+-- 	end
+--
+-- 	local found = firstPresentOutput({ name })
+-- 	if found then
+-- 		local current = hs.audiodevice.defaultOutputDevice()
+-- 		if not current or current:uid() ~= found:uid() then
+-- 			found:setDefaultOutputDevice()
+-- 		end
+-- 	end
+-- end
+--
+-- local function selectInputDevice(name)
+-- 	local function firstPresentInput(names)
+-- 		for _, n in ipairs(names) do
+-- 			local d = hs.audiodevice.findInputByName(n)
+-- 			if d then
+-- 				print("setting input device to" .. n)
+-- 				return d
+-- 			end
+-- 		end
+-- 		return nil
+-- 	end
+--
+-- 	local found = firstPresentInput({ name })
+-- 	if found then
+-- 		local current = hs.audiodevice.defaultInputDevice()
+-- 		if not current or current:uid() ~= found:uid() then
+-- 			found:setDefaultInputDevice()
+-- 		end
+-- 	end
+-- end
+--
+-- local function audiodeviceCallback(event)
+-- 	print("audiodeviceDeviceCallback: " .. event)
+-- 	if event == "dIn " then
+-- 		selectInputDevice()
+-- 	end
+-- 	if event == "dOut" then
+-- 		selectOutputDevice()
+-- 	end
+-- end
+--
+-- hs.audiodevice.watcher.setCallback(audiodeviceCallback)
+-- hs.audiodevice.watcher.start()
+--
+-- -- selectInputDevice()
+-- -- selectOutputDevice()
 
 local function screenCallback(layout)
 	if layout == true then
 		print("Screen did not change")
 		return
 	end
-	setPrimary()
+	local screens = hs.screen.allScreens()
+	for _, screen in pairs(screens) do
+		if screen:name() ~= MACBOOK_MONITOR then
+			print("Setting " .. screen:name() .. " as primary")
+			screen:setPrimary()
+			openApp("/Applications/flameshot.app")
+			return
+		end
+	end
 end
 
 hs.screen.watcher.newWithActiveScreen(screenCallback):start()
-setPrimary()
+screenCallback(false)
 
 -- left
 hs.hotkey.bind(WINDOW_MANAGEMENT_KEY, "a", function()
