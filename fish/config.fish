@@ -77,3 +77,24 @@ source "$__fish_config_dir/aliases.fish"
 set -x tyty $HOME/Programming/ruff/target/debug/ty
 
 set -x scripts $HOME/Programming/dotfiles/scripts
+
+function fish_right_prompt
+    if test $CMD_DURATION
+        # Show duration of the last command
+        set duration (echo "$CMD_DURATION 1000" | awk '{printf "%.3fs", $1 / $2}')
+        # OS X notification when a command takes longer than notify_duration
+        set notify_duration 10000
+        set exclude_cmd "bash|less|man|more|ssh"
+        if begin
+                test $CMD_DURATION -gt $notify_duration
+                and echo $history[1] | grep -vqE "^($exclude_cmd).*"
+            end
+            # Only show the notification if iTerm is not focused
+            echo "
+                tell application \"System Events\"
+		    display notification \"Finished in $duration\" with title \"$history[1]\"
+                end tell
+                " | osascript
+        end
+    end
+end

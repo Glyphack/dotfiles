@@ -134,7 +134,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
 	vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end ---@diagnostic disable-next-line: undefined-field
@@ -244,6 +244,7 @@ require("lazy").setup({
 				end
 			end
 			vim.keymap.set("n", "<leader>hs", fugitive_toggle, { desc = "Toggle Git" })
+			vim.opt.diffopt:append({ "internal", "algorithm:histogram", "indent-heuristic", "linematch:60" })
 
 			local My_Fugitive = vim.api.nvim_create_augroup("My_Fugitive", {})
 			local autocmd = vim.api.nvim_create_autocmd
@@ -385,6 +386,31 @@ require("lazy").setup({
 
 					grep_previewer = require("telescope.previewers").vim_buffer_vimgrep.new,
 					qflist_previewer = require("telescope.previewers").vim_buffer_qflist.new,
+				},
+				pickers = {
+					find_files = {
+						find_command = {
+							"fd",
+							"--type",
+							"f",
+							"--no-ignore",
+							"--hidden",
+							"--exclude",
+							"target",
+							"--exclude",
+							"debug",
+							"--exclude",
+							"node_modules",
+							"--exclude",
+							".git",
+							"--exclude",
+							"*venv*",
+							"--exclude",
+							".cache",
+							"--exclude",
+							".databricks",
+						},
+					},
 				},
 				extensions = {
 					["ui-select"] = {
@@ -770,7 +796,7 @@ require("lazy").setup({
 						},
 					},
 				},
-				typos_lsp = {},
+				-- typos_lsp = {},
 				-- harper_ls = {
 				-- 	filetypes = { "markdown", "gitcommit" },
 				-- },
@@ -1084,6 +1110,8 @@ require("lazy").setup({
 	},
 	{ "rebelot/kanagawa.nvim" },
 	{ "lunarvim/templeos.nvim" },
+	{ "shaunsingh/solarized.nvim" },
+	{ "sainnhe/gruvbox-material" },
 	{
 		"folke/todo-comments.nvim",
 		event = "VimEnter",
@@ -1243,61 +1271,63 @@ require("lazy").setup({
 			})
 		end,
 	},
-	-- {
-	-- 	"nvim-treesitter/nvim-treesitter-context",
-	-- 	dependencies = "nvim-treesitter/nvim-treesitter-textobjects",
-	-- 	config = function()
-	-- 		require("treesitter-context").setup({
-	-- 			enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-	-- 			max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
-	-- 			min_window_height = 15, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
-	-- 			line_numbers = true,
-	-- 			multiline_threshold = 1, -- Maximum number of lines to collapse for a single context line
-	-- 			trim_scope = "inner", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
-	-- 			mode = "cursor", -- Line used to calculate context. Choices: 'cursor', 'topline'
-	-- 			-- Separator between context and content. Should be a single character string, like '-'.
-	-- 			-- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
-	-- 			separator = nil,
-	-- 			zindex = 20, -- The Z-index of the context window
-	-- 			on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
-	-- 			textobjects = {
-	-- 				select = {
-	-- 					enable = true,
-	-- 					lookahead = true,
-	-- 					keymaps = {
-	-- 						["af"] = "@function.outer",
-	-- 						["if"] = "@function.inner",
-	-- 						["ac"] = "@class.outer",
-	-- 						["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-	-- 						["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
-	-- 					},
-	-- 					selection_modes = {
-	-- 						["@parameter.outer"] = "v", -- charwise
-	-- 						["@function.outer"] = "V", -- linewise
-	-- 						["@class.outer"] = "<c-v>", -- blockwise
-	-- 					},
-	-- 					include_surrounding_whitespace = true,
-	-- 				},
-	-- 				move = {
-	-- 					enable = true,
-	-- 					set_jumps = true,
-	-- 					goto_next_start = {
-	-- 						["]m"] = "@function.outer",
-	-- 					},
-	-- 					goto_next_end = {
-	-- 						["]M"] = "@function.outer",
-	-- 					},
-	-- 					goto_previous_start = {
-	-- 						["[m"] = "@function.outer",
-	-- 					},
-	-- 					goto_previous_end = {
-	-- 						["[M"] = "@function.outer",
-	-- 					},
-	-- 				},
-	-- 			},
-	-- 		})
-	-- 	end,
-	-- },
+	{
+		"nvim-treesitter/nvim-treesitter-context",
+		dependencies = "nvim-treesitter/nvim-treesitter-textobjects",
+		config = function()
+			require("nvim-treesitter.configs").setup({
+				textobjects = {
+					select = {
+						enable = true,
+						-- lookahead = true,
+						keymaps = {
+							["af"] = "@function.outer",
+							["if"] = "@function.inner",
+							["ac"] = "@class.outer",
+							["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+							["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+						},
+						selection_modes = {
+							["@parameter.outer"] = "v", -- charwise
+							["@function.outer"] = "V", -- linewise
+							["@class.outer"] = "<c-v>", -- blockwise
+						},
+						-- include_surrounding_whitespace = true,
+					},
+					move = {
+						enable = true,
+						set_jumps = true,
+						goto_next_start = {
+							["]m"] = "@function.outer",
+						},
+						goto_next_end = {
+							["]M"] = "@function.outer",
+						},
+						goto_previous_start = {
+							["[m"] = "@function.outer",
+						},
+						goto_previous_end = {
+							["[M"] = "@function.outer",
+						},
+					},
+				},
+			})
+			require("treesitter-context").setup({
+				enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
+				max_lines = 3, -- How many lines the window should span. Values <= 0 mean no limit.
+				min_window_height = 15, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+				line_numbers = true,
+				multiline_threshold = 1, -- Maximum number of lines to collapse for a single context line
+				trim_scope = "inner", -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+				mode = "cursor", -- Line used to calculate context. Choices: 'cursor', 'topline'
+				-- Separator between context and content. Should be a single character string, like '-'.
+				-- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+				separator = nil,
+				zindex = 20, -- The Z-index of the context window
+				on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+			})
+		end,
+	},
 	{
 		"rmagatti/gx-extended.nvim",
 		config = function()
@@ -1311,19 +1341,29 @@ require("lazy").setup({
 							-- Try to resolve a local file path near the cursor and return a file:// URL.
 							local cursor = vim.api.nvim_win_get_cursor(0)
 							local row, col0 = cursor[1], cursor[2] -- row is 1-based, col is 0-based
-							local current_line = (vim.api.nvim_buf_get_lines(0, row - 1, row, false)[1]) or line_string or ""
+							local current_line = vim.api.nvim_buf_get_lines(0, row - 1, row, false)[1]
+								or line_string
+								or ""
 
 							-- Delimiters that typically bound a path in text/markdown
 							local function is_delim(ch)
-								if not ch or ch == "" then return true end
-								if ch:match("%s") then return true end
+								if not ch or ch == "" then
+									return true
+								end
+								if ch:match("%s") then
+									return true
+								end
 								return string.find("[](){}<>\"'`,;|", ch, 1, true) ~= nil
 							end
 
 							-- Expand from cursor to find a token that looks like a path
 							local idx = col0 + 1 -- convert to 1-based for Lua strings
-							if idx < 1 then idx = 1 end
-							if idx > #current_line then idx = #current_line end
+							if idx < 1 then
+								idx = 1
+							end
+							if idx > #current_line then
+								idx = #current_line
+							end
 							local l, r = idx, idx
 							while l > 1 and not is_delim(current_line:sub(l - 1, l - 1)) do
 								l = l - 1
@@ -1336,10 +1376,20 @@ require("lazy").setup({
 							-- Clean up common wrappers and trailing punctuation
 							token = token:gsub("^%s+", ""):gsub("%s+$", "")
 							token = token
-								:gsub("^%(", ""):gsub("^%[", ""):gsub("^%{", ""):gsub("^<", "")
-								:gsub('^"', ""):gsub("^'", ""):gsub("^`", "")
-								:gsub("%)$", ""):gsub("%]$", ""):gsub("%}$", ""):gsub(">$", "")
-								:gsub('"$', ""):gsub("'$", ""):gsub("`$", "")
+								:gsub("^%(", "")
+								:gsub("^%[", "")
+								:gsub("^%{", "")
+								:gsub("^<", "")
+								:gsub('^"', "")
+								:gsub("^'", "")
+								:gsub("^`", "")
+								:gsub("%)$", "")
+								:gsub("%]$", "")
+								:gsub("%}$", "")
+								:gsub(">$", "")
+								:gsub('"$', "")
+								:gsub("'$", "")
+								:gsub("`$", "")
 							token = token:gsub("[,.;:|]+$", "")
 
 							-- If cursor is on markdown link text, try to grab the (...) part surrounding it
@@ -1348,7 +1398,9 @@ require("lazy").setup({
 								local search_from = 1
 								while true do
 									local s1, e1 = current_line:find("%b()", search_from)
-									if not s1 then break end
+									if not s1 then
+										break
+									end
 									if s1 <= idx and idx <= e1 then
 										nearest = { s1, e1 }
 										break
@@ -1381,7 +1433,9 @@ require("lazy").setup({
 								path = path:gsub(":%d+:%d+$", "")
 							else
 								lineno = path:match(":(%d+)$")
-								if lineno then path = path:gsub(":%d+$", "") end
+								if lineno then
+									path = path:gsub(":%d+$", "")
+								end
 							end
 
 							-- Expand ~ and resolve relative paths against current file dir
@@ -1390,21 +1444,24 @@ require("lazy").setup({
 							end
 
 							local abs = nil
-							if vim.loop.fs_stat(path) then
+							if vim.uv.fs_stat(path) then
 								abs = path
 							else
 								local base = vim.fn.expand("%:p:h")
-								local normalize = (vim.fs and vim.fs.normalize) or function(p)
-									return vim.fn.fnamemodify(p, ":p")
-								end
+								local normalize = (vim.fs and vim.fs.normalize)
+									or function(p)
+										return vim.fn.fnamemodify(p, ":p")
+									end
 								abs = normalize(base .. "/" .. path)
-								if not vim.loop.fs_stat(abs) then
+								if not vim.uv.fs_stat(abs) then
 									local try = abs:gsub("%%20", " ")
-									if vim.loop.fs_stat(try) then abs = try end
+									if vim.uv.fs_stat(try) then
+										abs = try
+									end
 								end
 							end
 
-							if abs and vim.loop.fs_stat(abs) then
+							if abs and vim.uv.fs_stat(abs) then
 								-- Return a file:// URL; gx-extended will open it.
 								if lineno and tonumber(lineno) then
 									return string.format("file://%s#L%s", abs, lineno)
@@ -1712,6 +1769,7 @@ vim.api.nvim_create_user_command("GRunTest", function()
 	end
 end, {})
 
-vim.cmd("colorscheme kanagawa")
+vim.o.background = "dark"
+vim.cmd("colorscheme tokyonight-night")
 
 -- vim: ts=2 sts=2 sw=2 et
