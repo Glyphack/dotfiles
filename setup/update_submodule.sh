@@ -23,4 +23,3 @@ git add dotfiles-private
 
 # Commit the submodule update in the main repository
 git commit -m "update"
-
