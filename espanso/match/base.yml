@@ -1,6 +1,4 @@
 matches:
-  - trigger: ":espanso"
-    replace: "Hi there!"
   - trigger: ":date"
     replace: "{{mydate}}"
     vars:
@@ -8,6 +6,13 @@ matches:
         type: date
         params:
           format: "%Y-%m-%d"
+  - trigger: ":dtime"
+    replace: "{{mydate}}"
+    vars:
+      - name: mydate
+        type: date
+        params:
+          format: "%d/%m/%Y %H:%M"
   - trigger: ":shell"
     replace: "{{output}}"
     vars:
