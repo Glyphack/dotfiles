@@ -32,3 +32,4 @@ typos.toml
 CLAUDE.md
 
 .wrangler/
+.nvim-bookmarks
