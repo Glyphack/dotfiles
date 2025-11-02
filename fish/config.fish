@@ -39,16 +39,6 @@ fish_add_path "$HOME/.rd/bin" "/opt/homebrew/bin" "$HOME_BIN" "$scripts" "$PYENV
 
 starship init fish | source
 
-# Git
-alias prc="gh pr create --fill-first && prr"
-alias pro="gh pr view --web"
-alias forks="git fetch upstream && git reset --hard upstream/main"
-
-alias prr="bash $__fish_config_dir/functions/pr-review.sh $argv"
-alias myprs="bash $__fish_config_dir/functions/myprs.sh $argv"
-alias gcmp="bash $__fish_config_dir/functions/gcmp.sh $argv"
-alias vim="nvim"
-
 fish_hybrid_key_bindings
 
 
@@ -78,23 +68,15 @@ set -x tyty $HOME/Programming/ruff/target/debug/ty
 
 set -x scripts $HOME/Programming/dotfiles/scripts
 
-function fish_right_prompt
-    if test $CMD_DURATION
-        # Show duration of the last command
-        set duration (echo "$CMD_DURATION 1000" | awk '{printf "%.3fs", $1 / $2}')
-        # OS X notification when a command takes longer than notify_duration
-        set notify_duration 10000
-        set exclude_cmd "bash|less|man|more|ssh"
-        if begin
-                test $CMD_DURATION -gt $notify_duration
-                and echo $history[1] | grep -vqE "^($exclude_cmd).*"
-            end
-            # Only show the notification if iTerm is not focused
-            echo "
-                tell application \"System Events\"
-		    display notification \"Finished in $duration\" with title \"$history[1]\"
-                end tell
-                " | osascript
-        end
+function __command_notification --on-event fish_postexec
+    if not test $CMD_DURATION
+      return
     end
+    set duration (echo "$CMD_DURATION 1000" | awk '{printf "%.3fs", $1 / $2}')
+    set exclude_cmd "bash|less|man|more|ssh|vim"
+    if test $CMD_DURATION -lt 10000; or echo $argv[1] | grep -qE "^($exclude_cmd).*"
+      return
+    end
+      set cmd_title (string replace -a '"' '\\"' -- $argv[1])
+      fish -c "osascript -e 'display notification \"Finished in $duration\" with title \"$cmd_title\" sound name \"Glass\"'; sleep 10; osascript -e 'tell application \"System Events\" to tell process \"NotificationCenter\" to perform action \"AXCancel\" of last item of (windows whose subrole is \"AXNotificationCenterAlert\")' 2>/dev/null" &
 end

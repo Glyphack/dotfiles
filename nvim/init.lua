@@ -127,6 +127,9 @@ vim.keymap.set("n", "<leader>cl", function()
 	vim.fn.setreg("+", file .. ":" .. line)
 end)
 
+-- Copy entire file content to system clipboard
+vim.keymap.set("n", "<leader>fc", 'gg"+yG``', { desc = "Copy entire file to clipboard" })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -230,7 +233,7 @@ vim.g.rustaceanvim = {
 					command = "check",
 				},
 				checkOnSave = {
-					enable = false,
+					enable = true,
 				},
 			},
 		},
