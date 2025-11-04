@@ -4,8 +4,9 @@ submodule:
 	git submodule update --init dotfiles-private
 	git submodule update --remote dotfiles-private
 
-link-personal: submodule link
+link-personal: submodule 
 	cd ./dotfiles-private/ && $(MAKE) link
+	$(MAKE) link
 
 link:
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
