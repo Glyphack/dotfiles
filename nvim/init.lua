@@ -1,3 +1,5 @@
+vim.loader.enable()
+
 local function map(mode, l, r, opts)
 	opts = opts or {}
 	opts.buffer = bufnr
@@ -191,32 +193,31 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	desc = "LSP: Disable hover capability from Ruff",
 })
 
-servers = {
-	"lua_ls",
-	"clangd",
-	"gopls",
-	"pyright",
-	"ruff",
-	"ts_ls",
-	"yamlls",
-	"jsonls",
-	"terraformls",
-	"bashls",
-	"dockerls",
-	"tailwindcss",
-	"html",
-	"marksman",
-	"emmet_ls",
-	"ruby_lsp",
-	"sorbet",
-	"kotlin_language_server",
-	"vale_ls",
-	"lemminx",
-	"clojure_lsp",
-	"efm",
-	"dartls",
-}
-vim.lsp.enable(servers)
+-- Enable LSP servers individually (they will start only when needed based on filetype)
+-- Config for each server is automatically loaded from the lsp/ directory
+vim.lsp.enable("lua_ls")
+vim.lsp.enable("clangd")
+vim.lsp.enable("gopls")
+vim.lsp.enable("pyright")
+vim.lsp.enable("ruff")
+vim.lsp.enable("ts_ls")
+vim.lsp.enable("yamlls")
+vim.lsp.enable("jsonls")
+vim.lsp.enable("terraformls")
+vim.lsp.enable("bashls")
+vim.lsp.enable("dockerls")
+vim.lsp.enable("tailwindcss")
+vim.lsp.enable("html")
+vim.lsp.enable("marksman")
+vim.lsp.enable("emmet_ls")
+vim.lsp.enable("ruby_lsp")
+vim.lsp.enable("sorbet")
+vim.lsp.enable("kotlin_language_server")
+vim.lsp.enable("vale_ls")
+vim.lsp.enable("lemminx")
+vim.lsp.enable("clojure_lsp")
+vim.lsp.enable("efm")
+vim.lsp.enable("dartls")
 
 vim.g.rustaceanvim = {
 	tools = {},
@@ -262,7 +263,7 @@ require("lazy").setup({
 
 	{
 		"Bekaboo/dropbar.nvim",
-		event = { "BufWinEnter", "BufWritePost" },
+		event = "VeryLazy",
 		dependencies = {
 			"nvim-telescope/telescope-fzf-native.nvim",
 			build = "make",
@@ -497,22 +498,6 @@ require("lazy").setup({
 							"fd",
 							"--type",
 							"f",
-							"--no-ignore",
-							"--hidden",
-							"--exclude",
-							"target",
-							"--exclude",
-							"debug",
-							"--exclude",
-							"node_modules",
-							"--exclude",
-							".git",
-							"--exclude",
-							"*venv*",
-							"--exclude",
-							".cache",
-							"--exclude",
-							".databricks",
 						},
 					},
 				},
@@ -831,6 +816,9 @@ require("lazy").setup({
 				floats = "transparent",
 			},
 		},
+    config = function()
+		vim.cmd("colorscheme tokyonight-night")
+  end
 	},
 	{ "rebelot/kanagawa.nvim" },
 	{ "lunarvim/templeos.nvim" },
@@ -1331,51 +1319,6 @@ require("lazy").setup({
 		opts = {},
 	},
 	{
-		"olimorris/codecompanion.nvim",
-		opts = {},
-		config = function()
-			require("codecompanion").setup({
-				strategies = {
-					chat = {
-						adapter = "gemini",
-					},
-					inline = {
-						adapter = "openai",
-					},
-				},
-			})
-		end,
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-treesitter/nvim-treesitter",
-			-- {
-			-- 	"MeanderingProgrammer/render-markdown.nvim",
-			-- 	ft = { "codecompanion" },
-			-- },
-			{
-				"OXY2DEV/markview.nvim",
-				lazy = false,
-				opts = {
-					preview = {
-						filetypes = { "codecompanion" },
-						ignore_buftypes = {},
-					},
-				},
-				priority = 49,
-			},
-			{
-				"echasnovski/mini.diff",
-				config = function()
-					local diff = require("mini.diff")
-					diff.setup({
-						-- Disabled by default
-						source = diff.gen_source.none(),
-					})
-				end,
-			},
-		},
-	},
-	{
 		"IogaMaster/neocord",
 		event = "VeryLazy",
 		opts = {
@@ -1511,7 +1454,6 @@ vim.api.nvim_create_user_command("GRunTest", function()
 end, {})
 
 vim.o.background = "dark"
-vim.cmd("colorscheme tokyonight-night")
 
 require("bookmarks").setup()
 

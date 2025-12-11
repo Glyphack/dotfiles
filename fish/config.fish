@@ -73,7 +73,7 @@ function __command_notification --on-event fish_postexec
       return
     end
     set duration (echo "$CMD_DURATION 1000" | awk '{printf "%.3fs", $1 / $2}')
-    set exclude_cmd "bash|less|man|more|ssh|vim"
+    set exclude_cmd "bash|less|man|more|ssh|vim|f"
     if test $CMD_DURATION -lt 10000; or echo $argv[1] | grep -qE "^($exclude_cmd).*"
       return
     end

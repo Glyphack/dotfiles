@@ -62,70 +62,76 @@ function SendClickableNotification(notification, link)
 	notificationObject:send()
 end
 
--- TODO: Fix
--- local function selectOutputDevice(name)
--- 	-- local preferred = {
--- 	-- 	"Farbod's JBL Flip 6",
--- 	-- 	"External Headphones",
--- 	-- 	"MacBook Pro Speakers",
--- 	-- 	"Mac mini Speakers",
--- 	-- }
--- 	local function firstPresentOutput(names)
--- 		for _, n in ipairs(names) do
--- 			local d = hs.audiodevice.findOutputByName(n)
--- 			if d then
--- 				print("setting output device to" .. n)
--- 				return d
--- 			end
--- 		end
--- 		return nil
--- 	end
---
--- 	local found = firstPresentOutput({ name })
--- 	if found then
--- 		local current = hs.audiodevice.defaultOutputDevice()
--- 		if not current or current:uid() ~= found:uid() then
--- 			found:setDefaultOutputDevice()
--- 		end
--- 	end
--- end
---
--- local function selectInputDevice(name)
--- 	local function firstPresentInput(names)
--- 		for _, n in ipairs(names) do
--- 			local d = hs.audiodevice.findInputByName(n)
--- 			if d then
--- 				print("setting input device to" .. n)
--- 				return d
--- 			end
--- 		end
--- 		return nil
--- 	end
---
--- 	local found = firstPresentInput({ name })
--- 	if found then
--- 		local current = hs.audiodevice.defaultInputDevice()
--- 		if not current or current:uid() ~= found:uid() then
--- 			found:setDefaultInputDevice()
--- 		end
--- 	end
--- end
---
--- local function audiodeviceCallback(event)
--- 	print("audiodeviceDeviceCallback: " .. event)
--- 	if event == "dIn " then
--- 		selectInputDevice()
--- 	end
--- 	if event == "dOut" then
--- 		selectOutputDevice()
--- 	end
--- end
---
--- hs.audiodevice.watcher.setCallback(audiodeviceCallback)
--- hs.audiodevice.watcher.start()
---
--- -- selectInputDevice()
--- -- selectOutputDevice()
+local preferred_out = {
+	"Farbod's JBL Flip 6",
+	"External Headphones",
+	"MacBook Pro Speakers",
+	"Mac mini Speakers",
+}
+
+local preferred_in = {
+	"Yeti Stereo Microphone",
+	"Anker PowerConf C200",
+	"MacBook Pro Microphone",
+}
+
+local function firstPresentOutput(names)
+	for _, n in ipairs(names) do
+		local d = hs.audiodevice.findOutputByName(n)
+		if d then
+			print("setting output device to" .. n)
+			return d
+		end
+	end
+	return nil
+end
+
+local function selectOutputDevice(name)
+	local found = firstPresentOutput(preferred_out)
+	if found then
+		local current = hs.audiodevice.defaultOutputDevice()
+		if not current or current:uid() ~= found:uid() then
+			found:setDefaultOutputDevice()
+		end
+	end
+end
+
+local function firstPresentInput(names)
+	for _, n in ipairs(names) do
+		local d = hs.audiodevice.findInputByName(n)
+		if d then
+			print("setting input device to" .. n)
+			return d
+		end
+	end
+	return nil
+end
+
+local function selectInputDevice(name)
+	local found = firstPresentInput(preferred_in)
+	if found then
+		local current = hs.audiodevice.defaultInputDevice()
+		if not current or current:uid() ~= found:uid() then
+			found:setDefaultInputDevice()
+		end
+	end
+end
+
+local function audiodeviceCallback(event)
+	print("audiodeviceDeviceCallback: " .. event)
+	if event == "dev#" then
+		hs.timer.doAfter(2, function()
+			selectInputDevice()
+			selectOutputDevice()
+		end)
+	end
+end
+
+hs.audiodevice.watcher.setCallback(audiodeviceCallback)
+hs.audiodevice.watcher.start()
+
+selectInputDevice()
+selectOutputDevice()
 
 local function screenCallback(layout)
 	if layout == true then
