@@ -117,8 +117,6 @@ local function create_extmark_for_bookmark(bookmark, bufnr, line)
 	}
 end
 
-
-
 function M.add_bookmark(name)
 	if not name or name == "" then
 		vim.ui.input({ prompt = "Bookmark name: " }, function(input)
@@ -366,11 +364,9 @@ function M.setup_highlights()
 	vim.api.nvim_set_hl(0, "BookmarkLineNr", { fg = "#f7768e", bold = true })
 end
 
-function M.refresh_signs_for_buffer(bufnr)
-end
+function M.refresh_signs_for_buffer(bufnr) end
 
-function M.refresh_all_signs()
-end
+function M.refresh_all_signs() end
 
 function M.sync_extmarks_to_file(bufnr)
 	local git_root = get_git_root()
@@ -419,38 +415,41 @@ function M.sync_extmarks_to_file(bufnr)
 end
 
 function M.restore_extmarks_for_buffer(bufnr)
-	local git_root = get_git_root()
-	if not git_root then
-		return
-	end
+	vim.schedule(function()
+		local git_root = get_git_root()
+		if not git_root then
+			return
+		end
 
-	local file_path = vim.api.nvim_buf_get_name(bufnr)
-	local relative_file = get_relative_path(file_path, git_root)
+		local file_path = vim.api.nvim_buf_get_name(bufnr)
+		local relative_file = get_relative_path(file_path, git_root)
 
-	local bookmarks, err = read_bookmarks()
-	if err or not bookmarks then
-		return
-	end
+		local bookmarks, err = read_bookmarks()
+		if err or not bookmarks then
+			return
+		end
 
-	for _, bookmark in ipairs(bookmarks) do
-		if bookmark.file == relative_file then
-			local key = relative_file .. ":" .. bookmark.name
+		for _, bookmark in ipairs(bookmarks) do
+			if bookmark.file == relative_file then
+				local key = relative_file .. ":" .. bookmark.name
 
-			if not M.extmark_map[key] then
-				local ok, extmark_id = pcall(vim.api.nvim_buf_set_extmark, bufnr, M.extmark_ns, bookmark.line - 1, 0, {
-					sign_text = "🔖",
-					sign_hl_group = "BookmarkSign",
-				})
+				if not M.extmark_map[key] then
+					local ok, extmark_id =
+						pcall(vim.api.nvim_buf_set_extmark, bufnr, M.extmark_ns, bookmark.line - 1, 0, {
+							sign_text = "🔖",
+							sign_hl_group = "BookmarkSign",
+						})
 
-				if ok then
-					M.extmark_map[key] = {
-						bufnr = bufnr,
-						extmark_id = extmark_id,
-					}
+					if ok then
+						M.extmark_map[key] = {
+							bufnr = bufnr,
+							extmark_id = extmark_id,
+						}
+					end
 				end
 			end
 		end
-	end
+	end)
 end
 
 local current_bookmark_index = 1
@@ -578,7 +577,14 @@ function M.setup()
 	vim.api.nvim_create_autocmd("BufReadPost", {
 		group = vim.api.nvim_create_augroup("BookmarkRestore", { clear = true }),
 		callback = function(args)
-			M.restore_extmarks_for_buffer(args.buf)
+			-- Defer bookmark restoration to avoid blocking file open
+			vim.schedule(function()
+				vim.defer_fn(function()
+					if vim.api.nvim_buf_is_valid(args.buf) then
+						M.restore_extmarks_for_buffer(args.buf)
+					end
+				end, 100)
+			end)
 		end,
 	})
 
