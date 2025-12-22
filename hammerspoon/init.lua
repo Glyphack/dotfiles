@@ -3,6 +3,7 @@ MACBOOK_MONITOR = "Built-in Retina Display"
 LG_MONITOR = "LG HDR 4K"
 
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
+package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/hammerspoon/?.lua"
 
 SpoonInstall = hs.loadSpoon("SpoonInstall")
 
