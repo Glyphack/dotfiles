@@ -198,7 +198,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.lsp.enable("lua_ls")
 vim.lsp.enable("clangd")
 vim.lsp.enable("gopls")
-vim.lsp.enable("pyright")
+vim.lsp.enable("ty")
 vim.lsp.enable("ruff")
 vim.lsp.enable("ts_ls")
 vim.lsp.enable("yamlls")
@@ -218,6 +218,7 @@ vim.lsp.enable("lemminx")
 vim.lsp.enable("clojure_lsp")
 vim.lsp.enable("efm")
 vim.lsp.enable("dartls")
+vim.lsp.enable("sourcekit")
 
 vim.g.rustaceanvim = {
 	tools = {},
@@ -816,9 +817,9 @@ require("lazy").setup({
 				floats = "transparent",
 			},
 		},
-    config = function()
-		vim.cmd("colorscheme tokyonight-night")
-  end
+		config = function()
+			vim.cmd("colorscheme tokyonight-night")
+		end,
 	},
 	{ "rebelot/kanagawa.nvim" },
 	{ "lunarvim/templeos.nvim" },

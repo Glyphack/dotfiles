@@ -1,13 +1,10 @@
-local root_dir = vim.fs.dirname(vim.fs.find({
-	"Package.swift",
-	".git",
-}, { upward = true })[1])
-
 return {
 	name = "sourcekit-lsp",
-	filetypes = "swift",
 	cmd = { "sourcekit-lsp" },
-	root_markers = { ".git", "Package.swift" },
+	root_dir = vim.fs.dirname(vim.fs.find({
+		"Package.swift",
+		".git",
+	}, { upward = true })[1]),
 	init_options = {
 		settings = {
 			fixAll = true,
