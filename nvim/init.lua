@@ -198,7 +198,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.lsp.enable("lua_ls")
 vim.lsp.enable("clangd")
 vim.lsp.enable("gopls")
-vim.lsp.enable("ty")
+vim.lsp.enable("pyright")
 vim.lsp.enable("ruff")
 vim.lsp.enable("ts_ls")
 vim.lsp.enable("yamlls")
@@ -695,7 +695,7 @@ require("lazy").setup({
 					c = { "clang-format" },
 					html = { "djlint", "prettierd" },
 					htmldjango = { "djlint" },
-					clojure = { "cljfmt" },
+					clojure = { "zprint" },
 					["*"] = { "trim_newlines" },
 				},
 			})
@@ -914,6 +914,10 @@ require("lazy").setup({
 				end
 				vim.fn.setreg("+", vim.fn.expand("%:p"))
 			end, { noremap = true, silent = true, desc = "Copy full filepath to clipboard" })
+
+			vim.keymap.set("n", "<leader>of", function()
+				vim.fn.system("open .")
+			end, { noremap = true, silent = true, desc = "Open current directory in Finder" })
 
 			require("mini.extra").setup()
 			-- require("mini.visits").setup()
@@ -1366,6 +1370,190 @@ require("lazy").setup({
 	-- 	end,
 	-- 	lazy = false,
 	-- },
+	{
+		"Olical/conjure",
+		ft = { "clojure", "fennel", "scheme" },
+		config = function()
+			vim.g.maplocalleader = ","
+		end,
+	},
+	{
+		"julienvincent/nvim-paredit",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		ft = { "clojure", "fennel", "scheme" },
+		config = function()
+			local paredit = require("nvim-paredit")
+			require("nvim-paredit").setup({
+				use_default_keys = false,
+				keys = {
+					["<localleader>@"] = { paredit.unwrap.unwrap_form_under_cursor, "Splice sexp" },
+					[">)"] = { paredit.api.slurp_forwards, "Slurp forwards" },
+					[">("] = { paredit.api.barf_backwards, "Barf backwards" },
+
+					["<)"] = { paredit.api.barf_forwards, "Barf forwards" },
+					["<("] = { paredit.api.slurp_backwards, "Slurp backwards" },
+
+					[">e"] = { paredit.api.drag_element_forwards, "Drag element right" },
+					["<e"] = { paredit.api.drag_element_backwards, "Drag element left" },
+
+					[">p"] = { paredit.api.drag_pair_forwards, "Drag element pairs right" },
+					["<p"] = { paredit.api.drag_pair_backwards, "Drag element pairs left" },
+
+					[">f"] = { paredit.api.drag_form_forwards, "Drag form right" },
+					["<f"] = { paredit.api.drag_form_backwards, "Drag form left" },
+
+					["<localleader>o"] = { paredit.api.raise_form, "Raise form" },
+					["<localleader>O"] = { paredit.api.raise_element, "Raise element" },
+
+					["E"] = {
+						paredit.api.move_to_next_element_tail,
+						"Jump to next element tail",
+						-- by default all keybindings are dot repeatable
+						repeatable = false,
+						mode = { "n", "x", "o", "v" },
+					},
+					["W"] = {
+						paredit.api.move_to_next_element_head,
+						"Jump to next element head",
+						repeatable = false,
+						mode = { "n", "x", "o", "v" },
+					},
+
+					["B"] = {
+						paredit.api.move_to_prev_element_head,
+						"Jump to previous element head",
+						repeatable = false,
+						mode = { "n", "x", "o", "v" },
+					},
+					["gE"] = {
+						paredit.api.move_to_prev_element_tail,
+						"Jump to previous element tail",
+						repeatable = false,
+						mode = { "n", "x", "o", "v" },
+					},
+
+					["("] = {
+						paredit.api.move_to_parent_form_start,
+						"Jump to parent form's head",
+						repeatable = false,
+						mode = { "n", "x", "v" },
+					},
+					[")"] = {
+						paredit.api.move_to_parent_form_end,
+						"Jump to parent form's tail",
+						repeatable = false,
+						mode = { "n", "x", "v" },
+					},
+
+					["T"] = {
+						paredit.api.move_to_top_level_form_head,
+						"Jump to top level form's head",
+						repeatable = false,
+						mode = { "n", "x", "v" },
+					},
+
+					-- These are text object selection keybindings which can used with standard `d, y, c`, `v`
+					["af"] = {
+						paredit.api.select_around_form,
+						"Around form",
+						repeatable = false,
+						mode = { "o", "v" },
+					},
+					["if"] = {
+						paredit.api.select_in_form,
+						"In form",
+						repeatable = false,
+						mode = { "o", "v" },
+					},
+					["aF"] = {
+						paredit.api.select_around_top_level_form,
+						"Around top level form",
+						repeatable = false,
+						mode = { "o", "v" },
+					},
+					["iF"] = {
+						paredit.api.select_in_top_level_form,
+						"In top level form",
+						repeatable = false,
+						mode = { "o", "v" },
+					},
+					["ae"] = {
+						paredit.api.select_element,
+						"Around element",
+						repeatable = false,
+						mode = { "o", "v" },
+					},
+					["ie"] = {
+						paredit.api.select_element,
+						"Element",
+						repeatable = false,
+						mode = { "o", "v" },
+					},
+				},
+				indent = {
+					enabled = true,
+					indentor = require("nvim-paredit.indentation.native").indentor,
+				},
+			})
+
+			vim.api.nvim_create_user_command("ClojureStartRepl", function()
+				local project_root = vim.fn.getcwd()
+				local nrepl_cmd = "clj -M:nrepl -m nrepl.cmdline"
+
+				-- Start nREPL in new terminal buffer
+				vim.cmd("new | terminal " .. nrepl_cmd)
+				local term_win = vim.api.nvim_get_current_win()
+
+				-- Switch back to previous window
+				vim.cmd("wincmd p")
+
+				-- Ensure we're in a Clojure buffer for ConjureConnect
+				local current_buf = vim.api.nvim_get_current_buf()
+				local current_ft = vim.bo[current_buf].filetype
+				if current_ft ~= "clojure" then
+					vim.cmd("e src/clj/main.clj") -- Adjust path as needed
+					vim.notify("📝 Opened Clojure buffer for REPL connection", vim.log.levels.INFO)
+				end
+
+				vim.defer_fn(function()
+					local port_file = project_root .. "/.nrepl-port"
+					if vim.fn.filereadable(port_file) == 1 then
+						local port = vim.fn.readfile(port_file)[1]:gsub("%s+", "")
+						vim.cmd("ConjureConnect " .. port)
+						vim.notify("✅ Connected to nREPL on port " .. port, vim.log.levels.INFO)
+					else
+						vim.notify(".nrepl-port not found, waiting...", vim.log.levels.WARN)
+						vim.defer_fn(function()
+							if vim.fn.filereadable(port_file) == 1 then
+								local port = vim.fn.readfile(port_file)[1]:gsub("%s+", "")
+								vim.cmd("ConjureConnect " .. port)
+								vim.notify("✅ Connected to nREPL on port " .. port, vim.log.levels.INFO)
+							else
+								vim.notify(
+									".nrepl-port still not found. Connect manually with :ConjureConnect <port>",
+									vim.log.levels.ERROR
+								)
+							end
+						end, 2000)
+					end
+				end, 1500)
+			end, {
+				desc = "Start nREPL server and connect Conjure automatically",
+			})
+
+			vim.keymap.set(
+				"n",
+				"<localleader>rs",
+				"<cmd>ClojureStartRepl<CR>",
+				{ desc = "Start Clojure REPL + Connect", silent = true }
+			)
+		end,
+	},
+	{
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+		config = true,
+	},
 })
 
 -- For when editing text files with very long lines

@@ -4,6 +4,10 @@
 go = "1.24"
 node = "22"
 rust = { version = "1.88.0", components = "rust-src,llvm-tools,rustfmt,rust-analyzer" }
+clojure = "1.12.4"
+
+[tool_alias]
+clojure = "https://github.com/asdf-community/asdf-clojure.git"
 
 [settings]
 experimental = true

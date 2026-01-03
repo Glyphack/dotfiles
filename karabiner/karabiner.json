@@ -4,779 +4,21 @@
   },
   "profiles": [
     {
-      "name": "Default profile",
+      "name": "Generated Profile",
       "virtual_hid_keyboard": {
         "country_code": 0,
         "keyboard_type_v2": "ansi"
-      }
-    },
-    {
+      },
       "complex_modifications": {
         "parameters": {
           "basic.simultaneous_threshold_milliseconds": 150
         },
         "rules": [
           {
-            "description": "dmode for number pad",
+            "description": "a-mode generated rules",
             "manipulators": [
               {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "u"
-                },
-                "to": [
-                  {
-                    "key_code": "7"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "u"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "7"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "i"
-                },
-                "to": [
-                  {
-                    "key_code": "8"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "i"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "8"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "o"
-                },
-                "to": [
-                  {
-                    "key_code": "9"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "o"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "9"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "j"
-                },
-                "to": [
-                  {
-                    "key_code": "4"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "j"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "4"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "k"
-                },
-                "to": [
-                  {
-                    "key_code": "5"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "k"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "5"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "l"
-                },
-                "to": [
-                  {
-                    "key_code": "6"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "l"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "6"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "m"
-                },
-                "to": [
-                  {
-                    "key_code": "1"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "m"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "1"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "comma"
-                },
-                "to": [
-                  {
-                    "key_code": "2"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "comma"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "2"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "period"
-                },
-                "to": [
-                  {
-                    "key_code": "3"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "period"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "3"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "p"
-                },
-                "to": [
-                  {
-                    "key_code": "equal_sign",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "p"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "equal_sign",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "semicolon"
-                },
-                "to": [
-                  {
-                    "key_code": "hyphen"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "semicolon"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "hyphen"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "slash"
-                },
-                "to": [
-                  {
-                    "key_code": "return_or_enter"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "h"
-                },
-                "to": [
-                  {
-                    "key_code": "period"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "h"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "period"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "dmode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "n"
-                },
-                "to": [
-                  {
-                    "key_code": "0"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "d"
-                    },
-                    {
-                      "key_code": "n"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "dmode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "dmode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "0"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "amode for hjkl movement and nm enter and ui tab and ,. PageDn/Up",
-            "manipulators": [
-              {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "a-mode",
@@ -796,10 +38,10 @@
                   {
                     "key_code": "tab"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -820,6 +62,9 @@
                           "name": "a-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
                       }
                     ]
                   }
@@ -832,12 +77,15 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
+                  },
+                  {
                     "key_code": "tab"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "a-mode",
@@ -861,10 +109,10 @@
                       "left_control"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -885,6 +133,9 @@
                           "name": "a-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
                       }
                     ]
                   }
@@ -897,16 +148,19 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
+                  },
+                  {
                     "key_code": "tab",
                     "modifiers": [
                       "left_shift",
                       "left_control"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "a-mode",
@@ -929,10 +183,10 @@
                       "left_control"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -953,6 +207,9 @@
                           "name": "a-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
                       }
                     ]
                   }
@@ -965,15 +222,91 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
+                  },
+                  {
                     "key_code": "tab",
                     "modifiers": [
                       "left_control"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "a-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "p",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "tab",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "a"
+                    },
+                    {
+                      "key_code": "p"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "a-mode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "a-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "tab",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "a-mode",
@@ -993,10 +326,10 @@
                   {
                     "key_code": "left_arrow"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -1017,6 +350,9 @@
                           "name": "a-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
                       }
                     ]
                   }
@@ -1027,14 +363,17 @@
                       "name": "a-mode",
                       "value": 1
                     }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
                   },
                   {
                     "key_code": "left_arrow"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "a-mode",
@@ -1054,10 +393,10 @@
                   {
                     "key_code": "down_arrow"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -1078,6 +417,9 @@
                           "name": "a-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
                       }
                     ]
                   }
@@ -1088,14 +430,17 @@
                       "name": "a-mode",
                       "value": 1
                     }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
                   },
                   {
                     "key_code": "down_arrow"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "a-mode",
@@ -1115,10 +460,10 @@
                   {
                     "key_code": "up_arrow"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -1139,6 +484,9 @@
                           "name": "a-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
                       }
                     ]
                   }
@@ -1149,14 +497,17 @@
                       "name": "a-mode",
                       "value": 1
                     }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
                   },
                   {
                     "key_code": "up_arrow"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "a-mode",
@@ -1176,10 +527,10 @@
                   {
                     "key_code": "right_arrow"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -1200,6 +551,9 @@
                           "name": "a-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
                       }
                     ]
                   }
@@ -1210,14 +564,17 @@
                       "name": "a-mode",
                       "value": 1
                     }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
                   },
                   {
                     "key_code": "right_arrow"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "a-mode",
@@ -1235,15 +592,15 @@
                 },
                 "to": [
                   {
-                    "key_code": "tab",
+                    "key_code": "left_arrow",
                     "modifiers": [
-                      "left_shift"
+                      "left_option"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -1264,6 +621,9 @@
                           "name": "a-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
                       }
                     ]
                   }
@@ -1276,610 +636,21 @@
                     }
                   },
                   {
-                    "key_code": "tab",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "a-mode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "comma"
-                },
-                "to": [
-                  {
-                    "key_code": "left_arrow",
-                    "modifiers": [
-                      "option"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "a"
-                    },
-                    {
-                      "key_code": "comma"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "a-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "a-mode",
-                      "value": 1
-                    }
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
                   },
                   {
                     "key_code": "left_arrow",
                     "modifiers": [
-                      "option"
+                      "left_option"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "a-mode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "period"
-                },
-                "to": [
-                  {
-                    "key_code": "right_arrow",
-                    "modifiers": [
-                      "option"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "a"
-                    },
-                    {
-                      "key_code": "period"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "a-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "a-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "right_arrow",
-                    "modifiers": [
-                      "option"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "fmode",
-            "manipulators": [
-              {
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "u",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "open_bracket",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "f"
-                    },
-                    {
-                      "key_code": "u"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "f-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "open_bracket",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "i",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "close_bracket",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "f"
-                    },
-                    {
-                      "key_code": "i"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "f-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "close_bracket",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "j",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "9",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "f"
-                    },
-                    {
-                      "key_code": "j"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "f-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "9",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "k",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "0",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "f"
-                    },
-                    {
-                      "key_code": "k"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "f-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "0",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "l",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "comma",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "f"
-                    },
-                    {
-                      "key_code": "l"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "f-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "comma",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "semicolon",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "period",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "f"
-                    },
-                    {
-                      "key_code": "semicolon"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "f-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "period",
-                    "modifiers": [
-                      "left_shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "f-mode",
-                    "type": "variable_if",
-                    "value": 1
-                  }
-                ],
-                "from": {
-                  "key_code": "m",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "open_bracket"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "simultaneous": [
-                    {
-                      "key_code": "f"
-                    },
-                    {
-                      "key_code": "m"
-                    }
-                  ],
-                  "simultaneous_options": {
-                    "detect_key_down_uninterruptedly": true,
-                    "key_down_order": "strict",
-                    "key_up_order": "strict_inverse",
-                    "key_up_when": "any",
-                    "to_after_key_up": [
-                      {
-                        "set_variable": {
-                          "name": "f-mode",
-                          "value": 0
-                        }
-                      }
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "set_variable": {
-                      "name": "f-mode",
-                      "value": 1
-                    }
-                  },
-                  {
-                    "key_code": "open_bracket"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "conditions": [
-                  {
-                    "name": "f-mode",
                     "type": "variable_if",
                     "value": 1
                   }
@@ -1894,16 +665,19 @@
                 },
                 "to": [
                   {
-                    "key_code": "close_bracket"
+                    "key_code": "right_arrow",
+                    "modifiers": [
+                      "left_option"
+                    ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
-                      "key_code": "f"
+                      "key_code": "a"
                     },
                     {
                       "key_code": "comma"
@@ -1917,9 +691,12 @@
                     "to_after_key_up": [
                       {
                         "set_variable": {
-                          "name": "f-mode",
+                          "name": "a-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 0)'"
                       }
                     ]
                   }
@@ -1927,137 +704,28 @@
                 "to": [
                   {
                     "set_variable": {
-                      "name": "f-mode",
+                      "name": "a-mode",
                       "value": 1
                     }
                   },
                   {
-                    "key_code": "close_bracket"
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"a-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "right_arrow",
+                    "modifiers": [
+                      "left_option"
+                    ]
                   }
-                ],
-                "type": "basic"
+                ]
               }
             ]
           },
           {
-            "description": "Capslock to Hyper",
+            "description": "s-mode generated rules",
             "manipulators": [
               {
-                "description": "Click to Capslock, Hold to Hyper",
-                "from": {
-                  "key_code": "caps_lock",
-                  "modifiers": {
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "right_command",
-                    "modifiers": [
-                      "right_control",
-                      "right_option"
-                    ]
-                  }
-                ],
-                "to_if_alone": [
-                  {
-                    "key_code": "escape"
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "Remap section sign (§) from British Keyboard to US's backtick + plus minus (±) to tilde (~)",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "non_us_backslash"
-                },
-                "to": [
-                  {
-                    "key_code": "grave_accent_and_tilde"
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "key_code": "non_us_backslash",
-                  "modifiers": {
-                    "mandatory": [
-                      "option"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "grave_accent_and_tilde",
-                    "modifiers": [
-                      "option"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              },
-              {
-                "from": {
-                  "key_code": "non_us_backslash",
-                  "modifiers": {
-                    "mandatory": [
-                      "shift"
-                    ],
-                    "optional": [
-                      "caps_lock"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "grave_accent_and_tilde",
-                    "modifiers": [
-                      "shift"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "Change Command-Delete to Command-Backspace",
-            "manipulators": [
-              {
-                "from": {
-                  "key_code": "delete_forward",
-                  "modifiers": {
-                    "mandatory": [
-                      "command"
-                    ],
-                    "optional": [
-                      "any"
-                    ]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "delete_or_backspace",
-                    "modifiers": [
-                      "command"
-                    ]
-                  }
-                ],
-                "type": "basic"
-              }
-            ]
-          },
-          {
-            "description": "smode for symbols",
-            "manipulators": [
-              {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2075,13 +743,12 @@
                 },
                 "to": [
                   {
-                    "key_code": "grave_accent_and_tilde",
-                    "modifiers": []
+                    "key_code": "grave_accent_and_tilde"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2102,6 +769,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2114,13 +784,15 @@
                     }
                   },
                   {
-                    "key_code": "grave_accent_and_tilde",
-                    "modifiers": []
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "grave_accent_and_tilde"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2143,10 +815,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2167,6 +839,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2179,15 +854,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "2",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2210,10 +888,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2234,6 +912,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2246,15 +927,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "3",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2277,10 +961,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2301,6 +985,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2313,15 +1000,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "4",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2344,10 +1034,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2368,6 +1058,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2380,15 +1073,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "5",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2411,10 +1107,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2435,6 +1131,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2447,15 +1146,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "grave_accent_and_tilde",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2473,13 +1175,12 @@
                 },
                 "to": [
                   {
-                    "key_code": "hyphen",
-                    "modifiers": []
+                    "key_code": "hyphen"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2500,6 +1201,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2512,13 +1216,15 @@
                     }
                   },
                   {
-                    "key_code": "hyphen",
-                    "modifiers": []
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "hyphen"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2541,10 +1247,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2565,6 +1271,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2577,15 +1286,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "hyphen",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2603,13 +1315,12 @@
                 },
                 "to": [
                   {
-                    "key_code": "equal_sign",
-                    "modifiers": []
+                    "key_code": "equal_sign"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2630,6 +1341,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2642,13 +1356,15 @@
                     }
                   },
                   {
-                    "key_code": "equal_sign",
-                    "modifiers": []
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "equal_sign"
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2671,10 +1387,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2695,6 +1411,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2707,15 +1426,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "equal_sign",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2724,7 +1446,12 @@
                   }
                 ],
                 "from": {
-                  "key_code": "n"
+                  "key_code": "n",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
                 },
                 "to": [
                   {
@@ -2733,10 +1460,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2757,6 +1484,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2769,15 +1499,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "period",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2800,10 +1533,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2824,6 +1557,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2836,15 +1572,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "1",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2867,10 +1606,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2891,6 +1630,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2903,15 +1645,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "7",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -2934,10 +1679,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -2958,6 +1703,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -2970,15 +1718,18 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "8",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "conditions": [
                   {
                     "name": "s-mode",
@@ -3001,10 +1752,10 @@
                       "left_shift"
                     ]
                   }
-                ],
-                "type": "basic"
+                ]
               },
               {
+                "type": "basic",
                 "from": {
                   "simultaneous": [
                     {
@@ -3025,6 +1776,9 @@
                           "name": "s-mode",
                           "value": 0
                         }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 0)'"
                       }
                     ]
                   }
@@ -3037,106 +1791,1661 @@
                     }
                   },
                   {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"s-mode\", 1)'"
+                  },
+                  {
                     "key_code": "backslash",
                     "modifiers": [
                       "left_shift"
                     ]
                   }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "dmode generated rules",
+            "manipulators": [
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
                 ],
-                "type": "basic"
+                "from": {
+                  "key_code": "u",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "7"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "u"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "7"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "i",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "8"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "i"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "8"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "o",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "9"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "o"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "9"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "p",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "equal_sign",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "p"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "equal_sign",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "h",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "period"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "h"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "period"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "j",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "4"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "j"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "4"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "k",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "5"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "k"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "5"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "l",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "6"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "l"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "6"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "semicolon",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "hyphen"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "semicolon"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "hyphen"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "n",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "0"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "n"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "0"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "m",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "1"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "m"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "1"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "comma",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "2"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "comma"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "2"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "period",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "3"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "period"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "3"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "dmode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "slash",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "return_or_enter"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "d"
+                    },
+                    {
+                      "key_code": "slash"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "dmode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "dmode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"dmode\", 1)'"
+                  },
+                  {
+                    "key_code": "return_or_enter"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "f-mode generated rules",
+            "manipulators": [
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "u",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "open_bracket",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "f"
+                    },
+                    {
+                      "key_code": "u"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "f-mode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "open_bracket",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "i",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "close_bracket",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "f"
+                    },
+                    {
+                      "key_code": "i"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "f-mode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "close_bracket",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "j",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "9",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "f"
+                    },
+                    {
+                      "key_code": "j"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "f-mode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "9",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "k",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "0",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "f"
+                    },
+                    {
+                      "key_code": "k"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "f-mode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "0",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "l",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "comma",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "f"
+                    },
+                    {
+                      "key_code": "l"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "f-mode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "comma",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "semicolon",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "period",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "f"
+                    },
+                    {
+                      "key_code": "semicolon"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "f-mode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "period",
+                    "modifiers": [
+                      "left_shift"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "m",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "open_bracket"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "f"
+                    },
+                    {
+                      "key_code": "m"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "f-mode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "open_bracket"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "conditions": [
+                  {
+                    "name": "f-mode",
+                    "type": "variable_if",
+                    "value": 1
+                  }
+                ],
+                "from": {
+                  "key_code": "comma",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "close_bracket"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "simultaneous": [
+                    {
+                      "key_code": "f"
+                    },
+                    {
+                      "key_code": "comma"
+                    }
+                  ],
+                  "simultaneous_options": {
+                    "detect_key_down_uninterruptedly": true,
+                    "key_down_order": "strict",
+                    "key_up_order": "strict_inverse",
+                    "key_up_when": "any",
+                    "to_after_key_up": [
+                      {
+                        "set_variable": {
+                          "name": "f-mode",
+                          "value": 0
+                        }
+                      },
+                      {
+                        "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 0)'"
+                      }
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "set_variable": {
+                      "name": "f-mode",
+                      "value": 1
+                    }
+                  },
+                  {
+                    "shell_command": "/opt/homebrew/bin/hs -c 'UpdateKarabinerMode(\"f-mode\", 1)'"
+                  },
+                  {
+                    "key_code": "close_bracket"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "Capslock to Hyper",
+            "manipulators": [
+              {
+                "description": "Click to Capslock, Hold to Hyper",
+                "type": "basic",
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_command",
+                    "modifiers": [
+                      "right_control",
+                      "right_option"
+                    ]
+                  }
+                ],
+                "to_if_alone": [
+                  {
+                    "key_code": "escape"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "Remap section sign (\u00a7) to backtick",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "non_us_backslash"
+                },
+                "to": [
+                  {
+                    "key_code": "grave_accent_and_tilde"
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "non_us_backslash",
+                  "modifiers": {
+                    "mandatory": [
+                      "option"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "grave_accent_and_tilde",
+                    "modifiers": [
+                      "option"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "non_us_backslash",
+                  "modifiers": {
+                    "mandatory": [
+                      "shift"
+                    ],
+                    "optional": [
+                      "caps_lock"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "grave_accent_and_tilde",
+                    "modifiers": [
+                      "shift"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "Change Command-Delete to Command-Backspace",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "delete_forward",
+                  "modifiers": {
+                    "mandatory": [
+                      "command"
+                    ],
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "delete_or_backspace",
+                    "modifiers": [
+                      "command"
+                    ]
+                  }
+                ]
               }
             ]
           }
         ]
       },
-      "devices": [
-        {
-          "identifiers": {
-            "device_address": "f0-81-d4-b9-55-38",
-            "is_keyboard": true,
-            "is_pointing_device": true
-          },
-          "ignore": false
-        },
-        {
-          "identifiers": {
-            "is_keyboard": true,
-            "is_pointing_device": true,
-            "product_id": 12869,
-            "vendor_id": 6645
-          },
-          "ignore": false
-        },
-        {
-          "identifiers": {
-            "is_keyboard": true,
-            "product_id": 12869,
-            "vendor_id": 6645
-          },
-          "simple_modifications": [
-            {
-              "from": {
-                "key_code": "page_down"
-              },
-              "to": [
-                {
-                  "key_code": "left_option"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "identifiers": {
-            "device_address": "f0-81-d4-b9-f3-29",
-            "is_keyboard": true,
-            "is_pointing_device": true
-          },
-          "ignore": false
-        },
-        {
-          "identifiers": {
-            "device_address": "f0-81-d4-b9-f3-2b",
-            "is_keyboard": true,
-            "is_pointing_device": true
-          },
-          "ignore": false
-        }
-      ],
-      "fn_function_keys": [
-        {
-          "from": {
-            "key_code": "f3"
-          },
-          "to": [
-            {
-              "key_code": "f3"
-            }
-          ]
-        },
-        {
-          "from": {
-            "key_code": "f4"
-          },
-          "to": [
-            {
-              "key_code": "f4"
-            }
-          ]
-        },
-        {
-          "from": {
-            "key_code": "f5"
-          },
-          "to": [
-            {
-              "key_code": "f5"
-            }
-          ]
-        }
-      ],
-      "name": "New profile",
-      "selected": true,
       "simple_modifications": [
         {
           "from": {
@@ -3159,9 +3468,17 @@
           ]
         }
       ],
-      "virtual_hid_keyboard": {
-        "keyboard_type_v2": "ansi"
-      }
+      "devices": [
+        {
+          "identifiers": {
+            "device_address": "f0-81-d4-b9-f3-2b",
+            "is_keyboard": true,
+            "is_pointing_device": true
+          },
+          "ignore": false,
+          "treat_as_built_in_keyboard": true
+        }
+      ]
     }
   ]
 }
