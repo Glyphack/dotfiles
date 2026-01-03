@@ -482,7 +482,7 @@ function M.cycle_bookmarks(direction)
 	jump_to_bookmark(bookmark)
 	vim.notify(
 		string.format("Bookmark %d/%d: %s", current_bookmark_index, #bookmarks, bookmark.name),
-		vim.log.levels.INFO
+		vim.log.levels.DEBUG
 	)
 end
 

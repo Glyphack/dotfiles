@@ -1,6 +1,7 @@
 return {
 	name = "sourcekit-lsp",
 	cmd = { "sourcekit-lsp" },
+	filetypes = { "swift" },
 	root_dir = vim.fs.dirname(vim.fs.find({
 		"Package.swift",
 		".git",

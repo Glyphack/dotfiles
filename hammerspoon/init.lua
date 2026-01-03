@@ -1,13 +1,92 @@
+package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
+package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/hammerspoon/?.lua"
+SpoonInstall = hs.loadSpoon("SpoonInstall")
+require("hs.ipc")
+hs.ipc.cliInstall()
+print(hs.ipc.cliStatus())
+
+local hasCustom, custom = pcall(require, "custom")
+require("karabiner")
+
 HOME_MONITOR = "DELL U2723QE"
 MACBOOK_MONITOR = "Built-in Retina Display"
 LG_MONITOR = "LG HDR 4K"
 
-package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
-package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/hammerspoon/?.lua"
+WINDOWS_TO_PRIMARY = {
+	"Pokerface - The Best Poker Game",
+}
+WINDOWS_TO_BIG_SCREEN = {
+	"WezTerm",
+}
 
-SpoonInstall = hs.loadSpoon("SpoonInstall")
+local function findScreenByName(name)
+	for _, screen in ipairs(hs.screen.allScreens()) do
+		if screen:name() == name then
+			return screen
+		end
+	end
+	return nil
+end
 
-local hasCustom, custom = pcall(require, "custom")
+local function moveAppToScreen(app, screenName, matchedPattern)
+	local screen = findScreenByName(screenName)
+	if not screen then
+		print("[WindowPlacement] Screen not found: " .. screenName)
+		return
+	end
+	hs.timer.doAfter(0.5, function()
+		local wins = app:allWindows()
+		for _, win in ipairs(wins) do
+			print("[WindowPlacement] Moving " .. app:name() .. " (matched: " .. matchedPattern .. ") to " .. screenName)
+			win:moveToScreen(screen, true, true)
+		end
+	end)
+end
+
+local function handleAppLaunch(appName, eventType, app)
+	if eventType ~= hs.application.watcher.launched then
+		return
+	end
+
+	local screens = hs.screen.allScreens()
+	if #screens <= 1 then
+		print("[WindowPlacement] Skipping - only one screen")
+		return
+	end
+
+	print("[WindowPlacement] App launched: " .. appName)
+
+	local function matches(pattern)
+		if appName == pattern then
+			return true
+		end
+		local wins = app:allWindows()
+		for _, win in ipairs(wins) do
+			local title = win:title() or ""
+			if title:find(pattern, 1, true) then
+				return true
+			end
+		end
+		return false
+	end
+
+	for _, pattern in ipairs(WINDOWS_TO_PRIMARY) do
+		if matches(pattern) then
+			moveAppToScreen(app, MACBOOK_MONITOR, pattern)
+			return
+		end
+	end
+
+	for _, pattern in ipairs(WINDOWS_TO_BIG_SCREEN) do
+		if matches(pattern) then
+			moveAppToScreen(app, HOME_MONITOR, pattern)
+			return
+		end
+	end
+end
+
+local appWatcher = hs.application.watcher.new(handleAppLaunch)
+appWatcher:start()
 
 if hasCustom then
 	print("Loaded custom settings")
@@ -64,6 +143,7 @@ function SendClickableNotification(notification, link)
 end
 
 local preferred_out = {
+	"WH-1000XM5",
 	"Farbod's JBL Flip 6",
 	"External Headphones",
 	"MacBook Pro Speakers",
@@ -322,3 +402,30 @@ SpoonInstall:andUse("PopupTranslateSelection", {
 		translate_nl_en = { WINDOW_MANAGEMENT_KEY, "\\" },
 	},
 })
+
+function printWindowsTitle()
+	local windows = hs.window.allWindows()
+	for _, win in ipairs(windows) do
+		print(win:title())
+	end
+end
+function printScreenNames()
+	local screens = hs.screen.allScreens()
+	for i, screen in ipairs(screens) do
+		print(string.format("Screen %d: %s", i, screen:name()))
+	end
+end
+
+local function notificationCallback()
+	hs.urlevent.openURL("google.com")
+end
+
+notification = hs.notify.new(notificationCallback, {
+	alwaysPresent = true,
+	autoWithdraw = false,
+	title = "hello",
+	soundName = "Hero",
+})
+notification:send()
+
+hs.notify.show(title, subTitle)
