@@ -81,6 +81,6 @@ function __command_notification --on-event fish_postexec
       fish -c "osascript -e 'display notification \"Finished in $duration\" with title \"$cmd_title\" sound name \"Glass\"'; sleep 10; osascript -e 'tell application \"System Events\" to tell process \"NotificationCenter\" to perform action \"AXCancel\" of last item of (windows whose subrole is \"AXNotificationCenterAlert\")' 2>/dev/null" &
 end
 
-function copyfile --description "Copy file to clipboard (not content)"
+function cpf --description "Copy file to clipboard (not content)"
     osascript -e "set the clipboard to (POSIX file \"$PWD/$argv\")"
 end

@@ -33,11 +33,10 @@ local function checkPagerDuty(sinceXSecondsAgo, userId, token, onlyTriggered)
 		["content-type"] = "application/json",
 	}
 
-	print("Checking PagerDuty status")
 	local status, body, _ = hs.http.get(url, headers)
 
 	if status ~= 200 then
-		print("Error: " .. status)
+		-- print("Error: " .. status)
 		return
 	end
 

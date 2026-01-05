@@ -2,6 +2,10 @@
 -- KARABINER MODE INDICATOR (LIQUID GLASS EFFECT)
 -- =========================================================================
 
+-- 0. File-based IPC (more reliable than hs CLI which has known issues)
+-- Karabiner writes mode changes to this file, Hammerspoon watches it
+local modeFile = os.getenv("HOME") .. "/.hammerspoon/.karabiner_mode"
+
 -- 1. Configuration
 local colors = {
 	red = { hex = "#ff7a93" }, -- v-mode
@@ -143,3 +147,37 @@ function UpdateKarabinerMode(modeName, value)
 		end
 	end
 end
+
+-- 6. File-based watcher (alternative to hs CLI which has IPC port issues)
+-- This watches a file that Karabiner can write to via shell_command
+-- Format: "mode_name:0" or "mode_name:1"
+local function parseAndUpdateMode(content)
+	if not content or content == "" then
+		return
+	end
+	local modeName, value = content:match("^([^:]+):(%d)$")
+	if modeName and value then
+		UpdateKarabinerMode(modeName, tonumber(value))
+	end
+end
+
+local modeFileWatcher = nil
+local function startModeFileWatcher()
+	-- Create the mode file if it doesn't exist
+	local f = io.open(modeFile, "a")
+	if f then f:close() end
+
+	modeFileWatcher = hs.pathwatcher.new(modeFile, function(paths, flags)
+		local f = io.open(modeFile, "r")
+		if f then
+			local content = f:read("*l")
+			f:close()
+			if content then
+				parseAndUpdateMode(content:match("^%s*(.-)%s*$")) -- trim whitespace
+			end
+		end
+	end)
+	modeFileWatcher:start()
+end
+
+startModeFileWatcher()
