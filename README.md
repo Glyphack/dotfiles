@@ -6,7 +6,7 @@ My personal dotfiles to install and configure [software I use](./software.md).
 
 Install brew apps
 
-```
+```bash
 mkdir -p ~/Programming/ && cd ~/Programming
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 git clone https://github.com/Glyphack/dotfiles.git

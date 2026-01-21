@@ -198,8 +198,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 	end,
 })
 
--- vim.api.nvim_create_user_command("GJ", toggle_wrap_mode, {})
-
 vim.api.nvim_create_user_command("Link", function(opts)
 	local start_pos = vim.fn.getpos("'<")
 	local end_pos = vim.fn.getpos("'>")
@@ -218,51 +216,9 @@ vim.api.nvim_create_user_command("Link", function(opts)
 	vim.fn.setreg("z", new_text)
 	vim.cmd('normal! gv"zP')
 	vim.api.nvim_win_set_cursor(0, { start_pos[2], cursor_col })
-end, { range = true })
+end, { range = true, desc = "Convert selection to markdown link" })
 
 vim.keymap.set("v", "<leader>k", ":Link<CR>", { noremap = true, silent = true })
-
-vim.api.nvim_create_user_command("GotoTest", function()
-	local current_file = vim.fn.expand("%:p")
-	local file_type = vim.bo.filetype
-	local test_file
-
-	if file_type == "go" then
-		test_file = vim.fn.fnamemodify(current_file, ":r") .. "_test.go"
-	else
-		vim.api.nvim_err_writeln("Test file location not defined for filetype: " .. file_type)
-		return
-	end
-
-	if vim.fn.filereadable(test_file) == 1 then
-		vim.cmd("edit " .. test_file)
-	else
-		vim.api.nvim_err_writeln("Test file not found: " .. test_file)
-	end
-end, {})
-
--- Finds the test function name that you are currently inside in a go test file and run that using
--- go test ./... -run <function_name>
-vim.api.nvim_create_user_command("GRunTest", function()
-	local current_line = vim.fn.line(".")
-	local lines = vim.fn.getline(1, current_line)
-	local test_function
-
-	for i = #lines, 1, -1 do
-		local line = lines[i]
-		if line:match("^func%s+Test") then
-			test_function = line:match("^func%s+(Test%w+)")
-			break
-		end
-	end
-
-	if test_function then
-		local cmd = string.format('2TermExec cmd="go test ./... -run ^%s$"', test_function)
-		vim.cmd(cmd)
-	else
-		vim.api.nvim_err_writeln("No test function found above the current line.")
-	end
-end, {})
 
 -- vim: ts=2 sts=2 sw=2 et
 
@@ -279,7 +235,6 @@ vim.lsp.enable("bashls")
 vim.lsp.enable("dockerls")
 vim.lsp.enable("tailwindcss")
 vim.lsp.enable("html")
-vim.lsp.enable("marksman")
 vim.lsp.enable("emmet_ls")
 vim.lsp.enable("ruby_lsp")
 vim.lsp.enable("sorbet")
@@ -338,7 +293,7 @@ vim.api.nvim_create_user_command("GJ", function()
 		vim.keymap.set("v", "j", "j", { noremap = true, silent = true })
 		print("Wrap mode disabled")
 	end
-end, {})
+end, { desc = "Toggle j/k movement for wrapped lines" })
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
@@ -533,6 +488,65 @@ require("lazy").setup({
 			end, { desc = "[/] Fuzzily search in current buffer" })
 
 			vim.keymap.set("n", "Q", "<cmd>Telescope cmdline<cr>", { desc = "Cmdline" })
+
+			local function user_commands_picker()
+				local pickers = require("telescope.pickers")
+				local finders = require("telescope.finders")
+				local conf = require("telescope.config").values
+				local entry_display = require("telescope.pickers.entry_display")
+
+				local commands = vim.api.nvim_get_commands({})
+				local entries = {}
+				for name, cmd in pairs(commands) do
+					table.insert(entries, {
+						name = name,
+						desc = cmd.definition or cmd.desc or "",
+					})
+				end
+				table.sort(entries, function(a, b)
+					return a.name < b.name
+				end)
+
+				local displayer = entry_display.create({
+					separator = " │ ",
+					items = {
+						{ width = 25 },
+						{ remaining = true },
+					},
+				})
+
+				pickers
+					.new({}, {
+						prompt_title = "User Commands",
+						finder = finders.new_table({
+							results = entries,
+							entry_maker = function(entry)
+								return {
+									value = entry,
+									display = function(e)
+										return displayer({
+											{ e.value.name, "TelescopeResultsIdentifier" },
+											{ e.value.desc, "TelescopeResultsComment" },
+										})
+									end,
+									ordinal = entry.name .. " " .. entry.desc,
+								}
+							end,
+						}),
+						sorter = conf.generic_sorter({}),
+						attach_mappings = function(prompt_bufnr)
+							actions.select_default:replace(function()
+								local selection = action_state.get_selected_entry()
+								actions.close(prompt_bufnr)
+								vim.cmd(":" .. selection.value.name)
+							end)
+							return true
+						end,
+					})
+					:find()
+			end
+
+			vim.keymap.set("n", "<leader>sc", user_commands_picker, { desc = "[S]earch [C]ommands" })
 		end,
 	},
 
@@ -624,7 +638,15 @@ require("lazy").setup({
 						name = "lazydev",
 						group_index = 0,
 					},
-					{ name = "nvim_lsp", keyword_length = 1 },
+					{
+						name = "nvim_lsp",
+						keyword_length = 1,
+						option = {
+							markdown_oxide = {
+								keyword_pattern = [[\(\k\| \|\/\|#\)\+]],
+							},
+						},
+					},
 					{ name = "luasnip", keyword_length = 2 },
 					{ name = "path" },
 					{ name = "buffer", keyword_length = 3 },
@@ -744,11 +766,11 @@ require("lazy").setup({
 					local bufnr = vim.api.nvim_get_current_buf()
 					local opts = { buffer = bufnr, remap = false }
 					vim.keymap.set("n", "<leader>p", function()
-						vim.cmd.Git("push")
+						vim.cmd("Git! push")
 					end, opts)
 					vim.keymap.set("n", "<leader>fp", function()
 						vim.cmd("Git! forgot")
-						vim.cmd("Git push --force-with-lease")
+						vim.cmd("Git! push --force-with-lease")
 						vim.api.nvim_command("normal! <CR>")
 					end, opts)
 					vim.keymap.set("n", "<leader>P", function()

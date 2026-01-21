@@ -40,7 +40,7 @@ vim.api.nvim_create_user_command("GoRunTest", function()
 	local cmd = ":1TermExec cmd=" .. '"' .. "go test ./... -run " .. function_name .. '"' .. "<CR>"
 	vim.notify(cmd)
 	vim.cmd(cmd)
-end, {})
+end, { desc = "Run current Go test function" })
 
 vim.api.nvim_create_user_command("GotoTest", function()
 	local current_file = vim.fn.expand("%:p")
@@ -59,7 +59,7 @@ vim.api.nvim_create_user_command("GotoTest", function()
 	else
 		vim.api.nvim_err_writeln("Test file not found: " .. test_file)
 	end
-end, {})
+end, { desc = "Jump to corresponding test file" })
 
 vim.api.nvim_create_user_command("GRunTest", function()
 	local current_line = vim.fn.line(".")
@@ -80,4 +80,4 @@ vim.api.nvim_create_user_command("GRunTest", function()
 	else
 		vim.api.nvim_err_writeln("No test function found above the current line.")
 	end
-end, {})
+end, { desc = "Run Go test at cursor (regex match)" })

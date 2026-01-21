@@ -608,15 +608,15 @@ function M.setup()
 
 	vim.api.nvim_create_user_command("BookmarkAdd", function(opts)
 		M.add_bookmark(opts.args)
-	end, { nargs = "?" })
+	end, { nargs = "?", desc = "Add bookmark at current location" })
 
 	vim.api.nvim_create_user_command("Bookmarks", function()
 		M.show_bookmarks_picker()
-	end, {})
+	end, { desc = "Open bookmarks picker" })
 
 	vim.api.nvim_create_user_command("BookmarkDelete", function()
 		M.show_delete_picker()
-	end, {})
+	end, { desc = "Delete a bookmark" })
 
 	local map_bookmark = function(keys, func, desc)
 		vim.keymap.set("n", "<Leader>" .. keys, func, { desc = desc })
