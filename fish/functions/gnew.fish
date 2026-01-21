@@ -1,4 +1,4 @@
-function gnew
+function gnew --description "Create new branch from latest main/master"
     git fetch origin
     if git branch -r | grep -q "origin/main"
         set base_branch main

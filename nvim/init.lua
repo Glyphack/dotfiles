@@ -108,7 +108,7 @@ vim.keymap.set("v", "<leader>r", function()
 end, { noremap = true, silent = true })
 
 vim.keymap.set("n", "<leader>cl", function()
-	local file = vim.fn.expand("%")
+	local file = vim.fn.expand("%:.")
 	local line = vim.fn.line(".")
 	vim.fn.setreg("+", file .. ":" .. line)
 end, { desc = "Copy file and line number to clipboard" })
@@ -215,7 +215,7 @@ vim.api.nvim_create_user_command("Link", function(opts)
 		cursor_col = start_pos[3] + #selected_text + 2
 	end
 
-	vim.fn.setreg('z', new_text)
+	vim.fn.setreg("z", new_text)
 	vim.cmd('normal! gv"zP')
 	vim.api.nvim_win_set_cursor(0, { start_pos[2], cursor_col })
 end, { range = true })
@@ -583,8 +583,6 @@ require("lazy").setup({
 			local cmp = require("cmp")
 			local luasnip = require("luasnip")
 			luasnip.config.setup({})
-			vim.api.nvim_set_hl(0, "CmpItemKindCody", { fg = "Red" })
-
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
@@ -628,15 +626,13 @@ require("lazy").setup({
 					},
 					{ name = "nvim_lsp", keyword_length = 1 },
 					{ name = "luasnip", keyword_length = 2 },
-					{ name = "copilot", group_index = 2 },
 					{ name = "path" },
 					{ name = "buffer", keyword_length = 3 },
 					{ name = "nvim_lsp_signature_help" },
-					{ name = "fish" },
 					{ name = "nvim_lua" },
 					{ name = "git" },
 					{ name = "nvim_lsp_signature_help" },
-					{ name = "rg" },
+					{ name = "rg", keyword_length = 3 },
 				},
 			})
 		end,
@@ -738,8 +734,7 @@ require("lazy").setup({
 			vim.opt.diffopt:append({ "internal", "algorithm:histogram", "indent-heuristic", "linematch:60" })
 
 			local My_Fugitive = vim.api.nvim_create_augroup("My_Fugitive", {})
-			local autocmd = vim.api.nvim_create_autocmd
-			autocmd("BufWinEnter", {
+			vim.api.nvim_create_autocmd("BufWinEnter", {
 				group = My_Fugitive,
 				pattern = "*",
 				callback = function()
@@ -905,34 +900,41 @@ require("lazy").setup({
 		event = { "BufReadPost", "BufNewFile" },
 		build = ":TSUpdate",
 		config = function()
-			require("nvim-treesitter").install({
-				"c",
-				"cpp",
-				"go",
-				"lua",
-				"python",
-				"rust",
-				"typescript",
-				"javascript",
-				"tsx",
-				"css",
-				"html",
-				"htmldjango",
-				"ruby",
-				"vim",
-				"sql",
-				"kotlin",
-				"java",
-				"markdown",
-				"markdown_inline",
-				"proto",
-				"bash",
-				"haskell",
-				"ocaml",
-				"hcl",
-				"terraform",
-				"dart",
-			})
+			-- require("nvim-treesitter").install({
+			-- 	"c",
+			-- 	"cpp",
+			-- 	"go",
+			-- 	"lua",
+			-- 	"python",
+			-- 	"rust",
+			-- 	"typescript",
+			-- 	"javascript",
+			-- 	"tsx",
+			-- 	"css",
+			-- 	"html",
+			-- 	"htmldjango",
+			-- 	"ruby",
+			-- 	"vim",
+			-- 	"sql",
+			-- 	"kotlin",
+			-- 	"java",
+			-- 	"markdown",
+			-- 	"markdown_inline",
+			-- 	"proto",
+			-- 	"bash",
+			-- 	"haskell",
+			-- 	"ocaml",
+			-- 	"hcl",
+			-- 	"terraform",
+			-- 	"dart",
+			-- })
+
+			-- General folding behavior
+			vim.o.foldenable = true
+			vim.o.foldlevel = 99
+			vim.o.foldlevelstart = 99
+			vim.wo.foldmethod = "expr"
+			vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 		end,
 	},
 	{
@@ -1207,12 +1209,12 @@ require("lazy").setup({
 
 			vim.keymap.set("n", "<leader>cp", function()
 				if vim.bo.ft == "minifiles" then
-					local path = MiniFiles.get_fs_entry()["path"]
+					local path = vim.fn.fnamemodify(MiniFiles.get_fs_entry()["path"], ":.")
 					vim.fn.setreg("+", path)
 					return
 				end
-				vim.fn.setreg("+", vim.fn.expand("%"))
-			end, { noremap = true, silent = true, desc = "Copy filepath to clipboard" })
+				vim.fn.setreg("+", vim.fn.expand("%:."))
+			end, { noremap = true, silent = true, desc = "Copy relative filepath to clipboard" })
 
 			vim.keymap.set("n", "<leader>cP", function()
 				if vim.bo.ft == "minifiles" then

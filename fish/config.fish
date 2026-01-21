@@ -84,3 +84,17 @@ end
 function cpf --description "Copy file to clipboard (not content)"
     osascript -e "set the clipboard to (POSIX file \"$PWD/$argv\")"
 end
+
+function pf --description "Paste file from clipboard to current directory"
+    osascript -e 'on run args' \
+              -e 'tell application "Finder"' \
+              -e 'set clipboardItems to (the clipboard as «class furl»)' \
+              -e 'set destinationFolder to POSIX file (item 1 of args) as alias' \
+              -e 'duplicate clipboardItems to destinationFolder' \
+              -e 'end tell' \
+              -e 'end run' \
+              "$PWD"
+end
+
+# Amp CLI
+export PATH="/Users/shayeganhooshyari/.amp/bin:$PATH"

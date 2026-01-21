@@ -1,6 +1,4 @@
-# Usage: envsource <path/to/env>
-
-function envsource
+function envsource --description "Load environment variables from .env file"
     for line in (cat $argv | grep -v '^#')
         set line (string replace 'export ' '' $line)
         set item (string split -m 1 '=' $line)
