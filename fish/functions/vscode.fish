@@ -1,4 +1,4 @@
-function vscode
+function vscode --description "Open Visual Studio Code (cross-platform)"
 	switch (uname)
 		case Linux
 			code $argv

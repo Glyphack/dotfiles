@@ -538,7 +538,7 @@ local function initNoiseScrolling()
 	log.i("Noise scrolling initialized")
 end
 
-initNoiseScrolling()
+-- initNoiseScrolling()
 
 hotkey.bind({ "ctrl" }, "`", nil, function()
 	hs.reload()

@@ -1,4 +1,4 @@
-function bass
+function bass --description "Execute bash code and import environment variables into fish"
   set -l bash_args $argv
   set -l bass_debug
   if test "$bash_args[1]_" = '-d_'

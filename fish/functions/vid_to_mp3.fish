@@ -1,4 +1,4 @@
-function vid_to_mp3
+function vid_to_mp3 --description "Convert video file or YouTube URL to MP3 audio"
     set input_file $argv
     
     # Check if input starts with https

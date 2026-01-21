@@ -1,4 +1,4 @@
-function gsync
+function gsync --description "Sync main branch from upstream to origin"
     if git remote get-url upstream >/dev/null 2>&1
         git fetch upstream
         git fetch origin

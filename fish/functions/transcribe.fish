@@ -1,4 +1,4 @@
-function transcribe
+function transcribe --description "Transcribe video/audio file to SRT subtitle file using whisper"
     set video_file $argv[1]
     set model_file "ggml-large-v3-q5_0.bin"
 

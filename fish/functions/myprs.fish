@@ -1,4 +1,4 @@
-function myprs
+function myprs --description "List and checkout your pull requests with interactive selection"
     gh pr list --author "@me"
 
     set pr_id (gh pr list --author "@me" --json number -q ".[] | .number" | gum choose --height 15)

@@ -1,4 +1,4 @@
-function prr
+function prr --description "Copy formatted pull request title and link to clipboard"
     # Ensure gh CLI is installed
     if not command -v gh >/dev/null
         echo "GitHub CLI (gh) could not be found. Please install it from https://cli.github.com/"

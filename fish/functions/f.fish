@@ -1,4 +1,4 @@
-function f
+function f --description "Open file manager and cd to selected directory"
     set -l tmp_file (mktemp)
     file-manager.sh $tmp_file
     set -l dest_dir (cat $tmp_file)
