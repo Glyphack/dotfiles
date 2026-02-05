@@ -1,18 +1,11 @@
--- =========================================================================
--- KARABINER MODE INDICATOR (LIQUID GLASS EFFECT)
--- =========================================================================
+-- Karabiner Mode Indicator HUD
 
--- 0. File-based IPC (more reliable than hs CLI which has known issues)
--- Karabiner writes mode changes to this file, Hammerspoon watches it
-local modeFile = os.getenv("HOME") .. "/.hammerspoon/.karabiner_mode"
-
--- 1. Configuration
 local colors = {
-	red = { hex = "#ff7a93" }, -- v-mode
-	cyan = { hex = "#7dcfff" }, -- a-mode
-	orange = { hex = "#ff9e64" }, -- f-mode
-	purple = { hex = "#bb9af7" }, -- dmode
-	green = { hex = "#9ece6a" }, -- s-mode
+	red = { hex = "#ff7a93" },
+	cyan = { hex = "#7dcfff" },
+	orange = { hex = "#ff9e64" },
+	purple = { hex = "#bb9af7" },
+	green = { hex = "#9ece6a" },
 }
 
 local modeConfig = {
@@ -23,26 +16,18 @@ local modeConfig = {
 	["s-mode"] = { text = "SYMBOLS", icon = "⚡", color = colors.green },
 }
 
--- 2. Dimensions
 local hudWidth = 220
 local hudHeight = 50
 local cornerRadius = hudHeight / 2
 
--- 3. Create Canvas
 local modeHUD = hs.canvas.new({ x = 0, y = 0, w = hudWidth, h = hudHeight })
 
--- Position: Top Right
 local function repositionHUD()
 	local screen = hs.screen.primaryScreen()
-	-- frame() excludes the menu bar and dock, so it's safe to use
 	local frame = screen:frame()
-
-	local marginX = 20 -- Distance from right edge
-	local marginY = 20 -- Distance from top (below menu bar)
-
 	modeHUD:frame({
-		x = frame.x + frame.w - hudWidth - marginX,
-		y = frame.y + marginY,
+		x = frame.x + frame.w - hudWidth - 20,
+		y = frame.y + 20,
 		w = hudWidth,
 		h = hudHeight,
 	})
@@ -51,9 +36,7 @@ end
 repositionHUD()
 hs.screen.watcher.new(repositionHUD):start()
 
--- 4. Define Canvas Elements (Liquid Glass Layers)
 modeHUD:appendElements({
-	-- [1] Drop Shadow
 	{
 		type = "rectangle",
 		action = "fill",
@@ -65,14 +48,12 @@ modeHUD:appendElements({
 			offset = { h = 5, w = 0 },
 		},
 	},
-	-- [2] Glass Base
 	{
 		type = "rectangle",
 		action = "fill",
 		roundedRectRadii = { xRadius = cornerRadius, yRadius = cornerRadius },
 		fillColor = { hex = "#000000", alpha = 0.6 },
 	},
-	-- [3] Liquid Core
 	{
 		type = "rectangle",
 		action = "fill",
@@ -84,7 +65,6 @@ modeHUD:appendElements({
 			{ hex = "#000000", alpha = 0.0 },
 		},
 	},
-	-- [4] Specular Highlight
 	{
 		type = "rectangle",
 		action = "fill",
@@ -97,7 +77,6 @@ modeHUD:appendElements({
 		},
 		frame = { x = 0, y = 0, w = hudWidth, h = hudHeight / 1.5 },
 	},
-	-- [5] Rim Light
 	{
 		type = "rectangle",
 		action = "stroke",
@@ -105,7 +84,6 @@ modeHUD:appendElements({
 		strokeColor = { white = 1, alpha = 0.15 },
 		strokeWidth = 1,
 	},
-	-- [6] Text Label
 	{
 		type = "text",
 		text = "",
@@ -122,7 +100,6 @@ modeHUD:appendElements({
 	},
 })
 
--- 5. Trigger Function
 function UpdateKarabinerMode(modeName, value)
 	local config = modeConfig[modeName]
 
@@ -135,9 +112,7 @@ function UpdateKarabinerMode(modeName, value)
 		}
 
 		modeHUD[6].shadow.color = { red = mainColor.red, green = mainColor.green, blue = mainColor.blue, alpha = 0.8 }
-
-		local displayString = string.format("%s %s", config.icon, config.text)
-		modeHUD[6].text = displayString
+		modeHUD[6].text = string.format("%s %s", config.icon, config.text)
 
 		modeHUD:show(0.3)
 	elseif value == 0 then
@@ -148,36 +123,10 @@ function UpdateKarabinerMode(modeName, value)
 	end
 end
 
--- 6. File-based watcher (alternative to hs CLI which has IPC port issues)
--- This watches a file that Karabiner can write to via shell_command
--- Format: "mode_name:0" or "mode_name:1"
-local function parseAndUpdateMode(content)
-	if not content or content == "" then
-		return
-	end
-	local modeName, value = content:match("^([^:]+):(%d)$")
+hs.urlevent.bind("karabinermode", function(eventName, params)
+	local modeName = params.name
+	local value = tonumber(params.value)
 	if modeName and value then
-		UpdateKarabinerMode(modeName, tonumber(value))
+		UpdateKarabinerMode(modeName, value)
 	end
-end
-
-local modeFileWatcher = nil
-local function startModeFileWatcher()
-	-- Create the mode file if it doesn't exist
-	local f = io.open(modeFile, "a")
-	if f then f:close() end
-
-	modeFileWatcher = hs.pathwatcher.new(modeFile, function(paths, flags)
-		local f = io.open(modeFile, "r")
-		if f then
-			local content = f:read("*l")
-			f:close()
-			if content then
-				parseAndUpdateMode(content:match("^%s*(.-)%s*$")) -- trim whitespace
-			end
-		end
-	end)
-	modeFileWatcher:start()
-end
-
-startModeFileWatcher()
+end)

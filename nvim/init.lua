@@ -137,7 +137,7 @@ vim.diagnostic.config({
 
 local large_file_config = {
 	max_filesize = 1024 * 1024,
-	max_lines = 10000,
+	max_lines = 20000,
 }
 
 vim.api.nvim_create_autocmd("BufReadPre", {
@@ -225,7 +225,34 @@ vim.keymap.set("v", "<leader>k", ":Link<CR>", { noremap = true, silent = true })
 vim.lsp.enable("lua_ls")
 vim.lsp.enable("clangd")
 vim.lsp.enable("gopls")
-vim.lsp.enable("pyright")
+vim.g.python_lsp = "pyright" -- default: "pyright" or "ty"
+vim.lsp.enable(vim.g.python_lsp)
+
+vim.api.nvim_create_user_command("PythonLspSwitch", function()
+	local current = vim.g.python_lsp
+	local new_lsp = current == "pyright" and "ty" or "pyright"
+
+	-- Stop current Python LSP clients
+	for _, client in ipairs(vim.lsp.get_clients({ name = current })) do
+		client:stop()
+	end
+
+	-- Enable and start new LSP
+	vim.g.python_lsp = new_lsp
+	vim.lsp.enable(new_lsp)
+
+	-- Attach to all Python buffers
+	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+		if vim.bo[buf].filetype == "python" and vim.api.nvim_buf_is_loaded(buf) then
+			vim.lsp.buf_attach_client(buf, vim.lsp.start({
+				name = new_lsp,
+				cmd = new_lsp == "pyright" and { "pyright-langserver", "--stdio" } or { "ty", "server" },
+			}))
+		end
+	end
+
+	vim.notify("Switched Python LSP to: " .. new_lsp)
+end, { desc = "Switch Python LSP between pyright and ty" })
 vim.lsp.enable("ruff")
 vim.lsp.enable("ts_ls")
 vim.lsp.enable("yamlls")
@@ -277,7 +304,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 local wrap_mode = false
-vim.api.nvim_create_user_command("GJ", function()
+vim.api.nvim_create_user_command("ToggleWrap", function()
 	wrap_mode = not wrap_mode
 
 	if wrap_mode then
@@ -295,12 +322,19 @@ vim.api.nvim_create_user_command("GJ", function()
 	end
 end, { desc = "Toggle j/k movement for wrapped lines" })
 
+vim.api.nvim_create_user_command("SentenceBreaks", function()
+	vim.cmd([[%s/\. /.\r/g]])
+end, {})
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.uv.fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
 	vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
+
+require("agent").setup()
+require("bookmarks").setup()
 
 require("lazy").setup({
 	{
@@ -328,8 +362,6 @@ require("lazy").setup({
 		},
 
 		config = function()
-			require("bookmarks").setup()
-
 			local actions = require("telescope.actions")
 			local action_layout = require("telescope.actions.layout")
 			local action_state = require("telescope.actions.state")
@@ -400,6 +432,7 @@ require("lazy").setup({
 							"fd",
 							"--type",
 							"f",
+							"--hidden",
 						},
 					},
 				},
@@ -547,6 +580,140 @@ require("lazy").setup({
 			end
 
 			vim.keymap.set("n", "<leader>sc", user_commands_picker, { desc = "[S]earch [C]ommands" })
+
+			-- File PRs picker: shows all PRs that touched the current file
+			local file_prs_cache = {}
+
+			local function fetch_file_prs(file)
+				local commits_result = vim.fn.systemlist(
+					"git log --pretty=format:'%H' --follow -n 50 -- " .. vim.fn.shellescape(file)
+				)
+
+				if vim.v.shell_error ~= 0 or #commits_result == 0 then
+					return nil
+				end
+
+				local seen_prs = {}
+				local prs = {}
+
+				for _, sha in ipairs(commits_result) do
+					local pr_json = vim.fn.system(
+						"gh pr list --search '"
+							.. sha
+							.. "' --state all --json number,title,body,author,url --limit 1"
+					)
+					if vim.v.shell_error == 0 then
+						local ok, pr_list = pcall(vim.json.decode, pr_json)
+						if ok and pr_list and #pr_list > 0 then
+							local pr = pr_list[1]
+							if not seen_prs[pr.number] then
+								seen_prs[pr.number] = true
+								table.insert(prs, pr)
+							end
+						end
+					end
+					if #prs >= 20 then
+						break
+					end
+				end
+
+				return prs
+			end
+
+			local function file_prs_picker()
+				local pickers = require("telescope.pickers")
+				local finders = require("telescope.finders")
+				local conf = require("telescope.config").values
+				local previewers = require("telescope.previewers")
+				local entry_display = require("telescope.pickers.entry_display")
+
+				local file = vim.fn.expand("%:p")
+				local relative_file = vim.fn.fnamemodify(file, ":.")
+
+				if file == "" then
+					vim.notify("No file open", vim.log.levels.WARN)
+					return
+				end
+
+				local prs = file_prs_cache[file]
+				if prs then
+					vim.notify("Using cached PRs for " .. relative_file, vim.log.levels.INFO)
+				else
+					vim.notify("Fetching PRs for " .. relative_file .. "...", vim.log.levels.INFO)
+					prs = fetch_file_prs(file)
+					if prs and #prs > 0 then
+						file_prs_cache[file] = prs
+					end
+				end
+
+				if not prs or #prs == 0 then
+					vim.notify("No PRs found for this file", vim.log.levels.WARN)
+					return
+				end
+
+				local displayer = entry_display.create({
+					separator = " ",
+					items = {
+						{ width = 7 },
+						{ width = 15 },
+						{ remaining = true },
+					},
+				})
+
+				pickers
+					.new({}, {
+						prompt_title = "PRs for " .. relative_file,
+						finder = finders.new_table({
+							results = prs,
+							entry_maker = function(pr)
+								return {
+									value = pr,
+									display = function(e)
+										return displayer({
+											{ "#" .. e.value.number, "TelescopeResultsNumber" },
+											{ "@" .. (e.value.author.login or "unknown"), "TelescopeResultsComment" },
+											{ e.value.title, "TelescopeResultsIdentifier" },
+										})
+									end,
+									ordinal = pr.number .. " " .. pr.title .. " " .. (pr.author.login or ""),
+								}
+							end,
+						}),
+						sorter = conf.generic_sorter({}),
+						previewer = previewers.new_buffer_previewer({
+							title = "PR Details",
+							define_preview = function(self, entry)
+								local pr = entry.value
+								local lines = {
+									"# " .. pr.title,
+									"",
+									"**PR:** #" .. pr.number,
+									"**Author:** @" .. (pr.author.login or "unknown"),
+									"**URL:** " .. pr.url,
+									"",
+									"---",
+									"",
+								}
+								for line in (pr.body or "No description"):gmatch("[^\r\n]+") do
+									table.insert(lines, line)
+								end
+								vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, lines)
+								vim.bo[self.state.bufnr].filetype = "markdown"
+							end,
+						}),
+						attach_mappings = function()
+							actions.select_default:replace(function()
+								local selection = action_state.get_selected_entry()
+								vim.fn.system("gh pr view --web " .. selection.value.number)
+							end)
+							return true
+						end,
+					})
+					:find()
+			end
+
+			vim.api.nvim_create_user_command("FilePRs", file_prs_picker, { desc = "Show PRs that touched this file" })
+			vim.keymap.set("n", "<leader>sP", file_prs_picker, { desc = "[S]earch file [P]Rs" })
 		end,
 	},
 
@@ -766,7 +933,17 @@ require("lazy").setup({
 					local bufnr = vim.api.nvim_get_current_buf()
 					local opts = { buffer = bufnr, remap = false }
 					vim.keymap.set("n", "<leader>p", function()
-						vim.cmd("Git! push")
+						vim.fn.jobstart("git push", {
+							on_exit = function(_, code)
+								vim.schedule(function()
+									if code == 0 then
+										vim.notify("Git push successful", vim.log.levels.INFO)
+									else
+										vim.notify("Git push failed (exit code: " .. code .. ")", vim.log.levels.ERROR)
+									end
+								end)
+							end,
+						})
 					end, opts)
 					vim.keymap.set("n", "<leader>fp", function()
 						vim.cmd("Git! forgot")
@@ -1293,5 +1470,11 @@ require("lazy").setup({
 		config = function()
 			require("rayso").setup({})
 		end,
+	},
+	{
+		"sourcegraph/amp.nvim",
+		branch = "main",
+		lazy = false,
+		opts = { auto_start = true, log_level = "info" },
 	},
 })

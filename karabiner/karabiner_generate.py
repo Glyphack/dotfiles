@@ -2,7 +2,8 @@ import json
 
 OUTPUT_FILE = "./karabiner/karabiner.json"
 
-HS_BIN = "/opt/homebrew/bin/hs"
+# File-based IPC - fast and reliable
+MODE_FILE = "$HOME/.hammerspoon/.karabiner_mode"
 
 SHIFT = ["left_shift"]
 CTRL = ["left_control"]
@@ -166,14 +167,14 @@ def make_manipulator(trigger_key, source_key, dest_key, dest_mods, var_name):
                 "to_after_key_up": [
                     {"set_variable": {"name": var_name, "value": 0}},
                     {
-                        "shell_command": f"{HS_BIN} -c 'UpdateKarabinerMode(\"{var_name}\", 0)'"
+                        "shell_command": f"open -g '{HS_URL_SCHEME}?name={var_name}&value=0'"
                     },
                 ],
             },
         },
         "to": [
             {"set_variable": {"name": var_name, "value": 1}},
-            {"shell_command": f"{HS_BIN} -c 'UpdateKarabinerMode(\"{var_name}\", 1)'"},
+            {"shell_command": f"open -g '{HS_URL_SCHEME}?name={var_name}&value=1'"},
             {
                 "key_code": dest_key,
             },

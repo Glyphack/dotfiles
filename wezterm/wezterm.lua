@@ -1,11 +1,17 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
-local function is_pane_zoomed(pane)
-	local pane_info = pane:get_foreground_process_info()
-	-- Access pane information to check zoom state
-	return pane:get_dimensions().is_zoomed
-end
+wezterm.on("format-tab-title", function(tab)
+	local pane = tab.active_pane
+	local cwd = pane.current_working_dir
+	local process = pane.foreground_process_name or ""
+	local process_name = process:match("([^/]+)$") or "shell"
+	if cwd then
+		local folder = cwd.file_path:match("([^/]+)/?$") or cwd.file_path
+		return string.format(" %s | %s ", folder, process_name)
+	end
+	return string.format(" %s ", process_name)
+end)
 
 wezterm.on("update-right-status", function(window)
 	local bat = ""
@@ -53,7 +59,10 @@ local config = {
 		},
 		{ key = "[", mods = "LEADER", action = act.ScrollToPrompt(-1) },
 		{ key = "]", mods = "LEADER", action = act.ScrollToPrompt(1) },
-		{ key = "u", mods = "CMD", action = act.CopyMode("ClearPattern") },
+		-- Pane shortcuts: Editor (0), Terminal (1), Agent (2)
+		{ key = "u", mods = "CMD", action = act.ActivatePaneByIndex(0) }, -- Editor
+		{ key = "i", mods = "CMD", action = act.ActivatePaneByIndex(1) }, -- Terminal
+		{ key = "o", mods = "CMD", action = act.ActivatePaneByIndex(2) }, -- Agent
 
 		-- multiplexing
 
@@ -78,6 +87,23 @@ local config = {
 		{ key = "]", mods = "CMD", action = act.ActivateTabRelative(1) },
 		{ key = "[", mods = "CMD", action = act.ActivateTabRelative(-1) },
 		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
+
+		-- 3-pane layout: Editor (vim) | Terminal / Agent
+		{
+			key = "L",
+			mods = "CMD|SHIFT",
+			action = wezterm.action_callback(function(window, pane)
+				local tab = pane:tab()
+				if #tab:panes() >= 3 then
+					return
+				end
+				local right = pane:split({ direction = "Right", size = 0.4 })
+				local agent = right:split({ direction = "Bottom", size = 0.5 })
+				pane:send_text("vim\n")
+				agent:send_text("amp --ide\n")
+				pane:activate()
+			end),
+		},
 	},
 	color_scheme = "catppuccin-mocha",
 }
@@ -108,6 +134,12 @@ config.background = {
 }
 
 config.switch_to_last_active_tab_when_closing_tab = true
+
+-- Dim inactive panes to highlight the active one
+config.inactive_pane_hsb = {
+	saturation = 0.7,
+	brightness = 0.5,
+}
 config.scrollback_lines = 100000
 
 for i, binding in ipairs(config.key_tables.copy_mode) do

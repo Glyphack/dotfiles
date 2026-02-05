@@ -5,8 +5,14 @@
     "$VIMRUNTIME",
     "${HOME}/.config/nvim",
     "${HOME}/.local/share/nvim/runtime",
-    "${HOME}/.local/share/nvim/site"
+    "${HOME}/.local/share/nvim/site",
+    "${HOME}.local/share/nvim/lazy/neodev.nvim/types/nightly",
+    "${HOME}/Programming/dotfiles/nvim/lua",
+    "${3rd}/luv/library"
   ],
   "runtime.version": "Lua 5.4",
-  "diagnostics.globals": ["hs", "vim"]
+  "diagnostics.globals": [
+    "hs",
+    "vim"
+  ]
 }

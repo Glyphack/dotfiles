@@ -1,6 +1,7 @@
 *.DS_Store*
 .vscode
 .idea
+.claude
 
 metals.sbt
 *metals*
@@ -33,3 +34,5 @@ CLAUDE.md
 
 .wrangler/
 .nvim-bookmarks
+
+.vibe/
