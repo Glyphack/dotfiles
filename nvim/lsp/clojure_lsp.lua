@@ -1,6 +1,6 @@
 return {
 	cmd = { "clojure-lsp" },
-	filetypes = { "clojure", "edn" },
+	filetypes = { "clojure" },
 	root_markers = { "project.clj", "deps.edn", "build.boot", "shadow-cljs.edn", ".git" },
 	capabilities = (function()
 		-- local capabilities = vim.lsp.protocol.make_client_capabilities()

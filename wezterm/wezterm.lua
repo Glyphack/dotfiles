@@ -60,9 +60,36 @@ local config = {
 		{ key = "[", mods = "LEADER", action = act.ScrollToPrompt(-1) },
 		{ key = "]", mods = "LEADER", action = act.ScrollToPrompt(1) },
 		-- Pane shortcuts: Editor (0), Terminal (1), Agent (2)
-		{ key = "u", mods = "CMD", action = act.ActivatePaneByIndex(0) }, -- Editor
-		{ key = "i", mods = "CMD", action = act.ActivatePaneByIndex(1) }, -- Terminal
-		{ key = "o", mods = "CMD", action = act.ActivatePaneByIndex(2) }, -- Agent
+		{
+			key = "u",
+			mods = "CMD",
+			action = wezterm.action_callback(function(window, pane)
+				local tab = pane:tab()
+				local was_zoomed = tab:set_zoomed(false)
+				window:perform_action(act.ActivatePaneByIndex(0), pane)
+				tab:set_zoomed(was_zoomed)
+			end),
+		},
+		{
+			key = "i",
+			mods = "CMD",
+			action = wezterm.action_callback(function(window, pane)
+				local tab = pane:tab()
+				local was_zoomed = tab:set_zoomed(false)
+				window:perform_action(act.ActivatePaneByIndex(1), pane)
+				tab:set_zoomed(was_zoomed)
+			end),
+		},
+		{
+			key = "o",
+			mods = "CMD",
+			action = wezterm.action_callback(function(window, pane)
+				local tab = pane:tab()
+				local was_zoomed = tab:set_zoomed(false)
+				window:perform_action(act.ActivatePaneByIndex(2), pane)
+				tab:set_zoomed(was_zoomed)
+			end),
+		},
 
 		-- multiplexing
 

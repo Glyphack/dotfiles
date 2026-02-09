@@ -1,5 +1,5 @@
 return {
 	cmd = { 'lemminx' },
-	filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg' },
+	filetypes = { 'xml', 'xsd', 'xslt', 'svg' },
 	root_markers = { '.git' },
 }
