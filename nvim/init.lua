@@ -244,34 +244,18 @@ vim.api.nvim_create_user_command("PythonLspSwitch", function()
 	-- Attach to all Python buffers
 	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 		if vim.bo[buf].filetype == "python" and vim.api.nvim_buf_is_loaded(buf) then
-			vim.lsp.buf_attach_client(buf, vim.lsp.start({
-				name = new_lsp,
-				cmd = new_lsp == "pyright" and { "pyright-langserver", "--stdio" } or { "ty", "server" },
-			}))
+			vim.lsp.buf_attach_client(
+				buf,
+				vim.lsp.start({
+					name = new_lsp,
+					cmd = new_lsp == "pyright" and { "pyright-langserver", "--stdio" } or { "ty", "server" },
+				})
+			)
 		end
 	end
 
 	vim.notify("Switched Python LSP to: " .. new_lsp)
 end, { desc = "Switch Python LSP between pyright and ty" })
-vim.lsp.enable("ruff")
-vim.lsp.enable("ts_ls")
-vim.lsp.enable("yamlls")
-vim.lsp.enable("jsonls")
-vim.lsp.enable("terraformls")
-vim.lsp.enable("bashls")
-vim.lsp.enable("dockerls")
-vim.lsp.enable("tailwindcss")
-vim.lsp.enable("html")
-vim.lsp.enable("emmet_ls")
-vim.lsp.enable("ruby_lsp")
-vim.lsp.enable("sorbet")
-vim.lsp.enable("kotlin_language_server")
-vim.lsp.enable("vale_ls")
-vim.lsp.enable("lemminx")
-vim.lsp.enable("clojure_lsp")
-vim.lsp.enable("efm")
-vim.lsp.enable("dartls")
-vim.lsp.enable("sourcekit")
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
@@ -337,6 +321,30 @@ require("agent").setup()
 require("bookmarks").setup()
 
 require("lazy").setup({
+	{
+		"neovim/nvim-lspconfig",
+		config = function()
+			vim.lsp.enable("ruff")
+			vim.lsp.enable("typescript")
+			vim.lsp.enable("yamlls")
+			vim.lsp.enable("jsonls")
+			vim.lsp.enable("terraformls")
+			vim.lsp.enable("bashls")
+			vim.lsp.enable("dockerls")
+			vim.lsp.enable("tailwindcss")
+			vim.lsp.enable("html")
+			vim.lsp.enable("emmet_ls")
+			vim.lsp.enable("ruby_lsp")
+			vim.lsp.enable("sorbet")
+			vim.lsp.enable("kotlin_language_server")
+			vim.lsp.enable("vale_ls")
+			vim.lsp.enable("lemminx")
+			vim.lsp.enable("clojure_lsp")
+			vim.lsp.enable("efm")
+			vim.lsp.enable("dartls")
+			vim.lsp.enable("sourcekit")
+		end,
+	},
 	{
 		"nvim-telescope/telescope.nvim",
 		dependencies = {
@@ -585,9 +593,8 @@ require("lazy").setup({
 			local file_prs_cache = {}
 
 			local function fetch_file_prs(file)
-				local commits_result = vim.fn.systemlist(
-					"git log --pretty=format:'%H' --follow -n 50 -- " .. vim.fn.shellescape(file)
-				)
+				local commits_result =
+					vim.fn.systemlist("git log --pretty=format:'%H' --follow -n 50 -- " .. vim.fn.shellescape(file))
 
 				if vim.v.shell_error ~= 0 or #commits_result == 0 then
 					return nil
@@ -598,9 +605,7 @@ require("lazy").setup({
 
 				for _, sha in ipairs(commits_result) do
 					local pr_json = vim.fn.system(
-						"gh pr list --search '"
-							.. sha
-							.. "' --state all --json number,title,body,author,url --limit 1"
+						"gh pr list --search '" .. sha .. "' --state all --json number,title,body,author,url --limit 1"
 					)
 					if vim.v.shell_error == 0 then
 						local ok, pr_list = pcall(vim.json.decode, pr_json)
@@ -871,8 +876,8 @@ require("lazy").setup({
 					markdown = { "markdownlint" },
 					json = { "jq" },
 					c = { "clang-format" },
-					html = { "djlint", "prettierd" },
-					htmldjango = { "djlint" },
+					html = { "prettierd" },
+					htmldjango = { "prettierd" },
 					clojure = { "zprint" },
 					["*"] = { "trim_newlines" },
 				},

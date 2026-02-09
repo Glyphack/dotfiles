@@ -5,6 +5,7 @@
 [core]
 	excludesfile = ~/.gitignore_global
 	hooksPath = ~/.config/git/hooks
+	pager = delta
 
 [alias]
 	pull = pull -q
@@ -41,7 +42,7 @@
 	useForceIfIncludes = true
 
 [merge]
-	conflictstyle = zdiff3
+	conflictStyle = zdiff3
 
 ; [url "git@github.com:"]
 ; 	insteadOf = https://github.com/
@@ -68,3 +69,7 @@
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true

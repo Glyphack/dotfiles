@@ -9,13 +9,17 @@
 ---   <leader>a (visual mode) - Create prompt with selected lines as context
 ---
 --- Setup: require("agent").setup()
---- Setup with Amp: require("agent").setup({ use_amp = true })
+--- Setup with Amp: require("agent").setup({ backend = "amp" })
 
 local M = {}
 
+local Backend = {
+	AMP = "amp",
+	OPENCODE = "opencode",
+}
+
 local config = {
-	use_amp = false,
-	use_opencode = false,
+	backend = Backend.AMP,
 	opencode_url = "http://127.0.0.1:4096",
 }
 
@@ -126,9 +130,9 @@ User request:
 				)
 			end
 
-			if config.use_opencode then
+			if config.backend == Backend.OPENCODE then
 				send_to_opencode(full_prompt)
-			elseif config.use_amp then
+			elseif config.backend == Backend.AMP then
 				local ok, amp_message = pcall(require, "amp.message")
 				if ok then
 					amp_message.send_message(full_prompt)
