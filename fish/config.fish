@@ -18,6 +18,7 @@ set -gx VIRTUALFISH_ACTIVATION_FILE .venv
 set -gx HOME_BIN $HOME/bin
 set -gx scripts $HOME/Programming/dotfiles/scripts
 set -gx tyty $HOME/Programming/ruff/target/debug/ty
+set -gx CLAUDE_CONFIG_DIR $HOME/.claude/
 
 if test -d "$HOME/flutter"
     set -gx FLUTTER_PATH $HOME/flutter/bin
@@ -55,9 +56,6 @@ if status is-interactive
     fzf --fish | source
     starship init fish | source
 
-    # Key Bindings
-    bind \ex "cd (fd -t d . $HOME -d 5 --hidden | fzf)"
-    bind \ez "cd $HOME; commandline -f repaint"
     bind -M insert \cf accept-autosuggestion
     
     if type -q fish_hybrid_key_bindings
@@ -74,3 +72,5 @@ if status is-interactive
         source ~/Programming/dotfiles/dotfiles-private/personal.fish
     end
 end
+
+bind -M insert \cf accept-autosuggestion

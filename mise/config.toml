@@ -6,6 +6,7 @@ node = "22"
 rust = { version = "1.88.0", components = "rust-src,llvm-tools,rustfmt,rust-analyzer" }
 clojure = "1.12.4"
 prek = "latest"
+"github:lynaghk/vibe" = "latest"
 
 [tool_alias]
 clojure = "https://github.com/asdf-community/asdf-clojure.git"

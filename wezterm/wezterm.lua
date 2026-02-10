@@ -19,9 +19,17 @@ wezterm.on("update-right-status", function(window)
 		bat = "🔋" .. string.format("%.0f%%", b.state_of_charge * 100)
 	end
 
+	local workspace = window:active_workspace()
+
 	window:set_right_status(wezterm.format({
-		{ Text = bat .. "   " },
+		{ Text = bat .. " | " .. workspace .. "   " },
 	}))
+end)
+
+wezterm.on("user-var-changed", function(window, pane, name, value)
+	if name == "switch_workspace" then
+		window:perform_action(act.SwitchToWorkspace({ name = value }), pane)
+	end
 end)
 
 local config = {
@@ -32,10 +40,11 @@ local config = {
 	font = wezterm.font("Hack Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" }),
 	font_size = 20,
 	keys = {
-		{ key = "c", mods = "LEADER", action = act.ActivateCopyMode },
+		{ key = "c", mods = "LEADER", action = act.ActivateCopyMode, description = "Activate copy mode" },
 		{
 			key = "K",
 			mods = "CTRL|SHIFT",
+			description = "Clear scrollback and viewport",
 			action = act.Multiple({
 				act.ClearScrollback("ScrollbackAndViewport"),
 				act.SendKey({ key = "L", mods = "CTRL" }),
@@ -44,6 +53,7 @@ local config = {
 		{
 			key = "p",
 			mods = "CMD",
+			description = "Quick select and open URL",
 			action = wezterm.action({
 				QuickSelectArgs = {
 					patterns = {
@@ -57,12 +67,12 @@ local config = {
 				},
 			}),
 		},
-		{ key = "[", mods = "LEADER", action = act.ScrollToPrompt(-1) },
-		{ key = "]", mods = "LEADER", action = act.ScrollToPrompt(1) },
-		-- Pane shortcuts: Editor (0), Terminal (1), Agent (2)
+		{ key = "[", mods = "LEADER", action = act.ScrollToPrompt(-1), description = "Scroll to previous prompt" },
+		{ key = "]", mods = "LEADER", action = act.ScrollToPrompt(1), description = "Scroll to next prompt" },
 		{
 			key = "u",
 			mods = "CMD",
+			description = "Focus editor pane (index 0)",
 			action = wezterm.action_callback(function(window, pane)
 				local tab = pane:tab()
 				local was_zoomed = tab:set_zoomed(false)
@@ -73,6 +83,7 @@ local config = {
 		{
 			key = "i",
 			mods = "CMD",
+			description = "Focus terminal pane (index 1)",
 			action = wezterm.action_callback(function(window, pane)
 				local tab = pane:tab()
 				local was_zoomed = tab:set_zoomed(false)
@@ -83,6 +94,7 @@ local config = {
 		{
 			key = "o",
 			mods = "CMD",
+			description = "Focus agent pane (index 2)",
 			action = wezterm.action_callback(function(window, pane)
 				local tab = pane:tab()
 				local was_zoomed = tab:set_zoomed(false)
@@ -91,15 +103,12 @@ local config = {
 			end),
 		},
 
-		-- multiplexing
-
-		{ key = "x", mods = "CMD", action = act.CloseCurrentPane({ confirm = true }) },
-		--  split
-		{ key = "s", mods = "CMD", action = act.SplitHorizontal },
-		--  move
+		{ key = "x", mods = "CMD", action = act.CloseCurrentPane({ confirm = true }), description = "Close current pane" },
+		{ key = "s", mods = "CMD", action = act.SplitHorizontal, description = "Split pane horizontally" },
 		{
 			key = "e",
 			mods = "CMD",
+			description = "Cycle to next pane",
 			action = wezterm.action_callback(function(window, pane)
 				local tab = pane:tab()
 				local is_zoomed = tab:set_zoomed(false)
@@ -107,18 +116,24 @@ local config = {
 				tab:set_zoomed(is_zoomed)
 			end),
 		},
-		{ key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") },
-		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") },
-		{ key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") },
-		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") },
-		{ key = "]", mods = "CMD", action = act.ActivateTabRelative(1) },
-		{ key = "[", mods = "CMD", action = act.ActivateTabRelative(-1) },
-		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
+		{ key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left"), description = "Move to left pane" },
+		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right"), description = "Move to right pane" },
+		{ key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down"), description = "Move to pane below" },
+		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up"), description = "Move to pane above" },
+		{ key = "]", mods = "CMD", action = act.ActivateTabRelative(1), description = "Next tab" },
+		{ key = "[", mods = "CMD", action = act.ActivateTabRelative(-1), description = "Previous tab" },
+		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState, description = "Toggle pane zoom" },
+		{
+			key = "Backspace",
+			mods = "CMD",
+			description = "Send 'wo' to terminal",
+			action = act.SendString("wo\n"),
+		},
 
-		-- 3-pane layout: Editor (vim) | Terminal / Agent
 		{
 			key = "L",
 			mods = "CMD|SHIFT",
+			description = "Create 3-pane layout: Editor | Terminal / Agent",
 			action = wezterm.action_callback(function(window, pane)
 				local tab = pane:tab()
 				if #tab:panes() >= 3 then
@@ -130,6 +145,26 @@ local config = {
 				agent:send_text("amp --ide\n")
 				pane:activate()
 			end),
+		},
+
+		{
+			key = "Enter",
+			mods = "CMD",
+			description = "Show workspace launcher",
+			action = act.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }),
+		},
+		{
+			key = "r",
+			mods = "LEADER",
+			description = "Rename current workspace",
+			action = act.PromptInputLine({
+				description = "Enter new workspace name:",
+				action = wezterm.action_callback(function(window, pane, line)
+					if line then
+						wezterm.mux.rename_workspace(wezterm.mux.get_active_workspace(), line)
+					end
+				end),
+			}),
 		},
 	},
 	color_scheme = "catppuccin-mocha",
