@@ -319,6 +319,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("agent").setup()
 require("bookmarks").setup()
+require("make").setup()
 
 require("lazy").setup({
 	{
