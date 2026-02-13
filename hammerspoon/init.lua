@@ -36,8 +36,10 @@ end
 
 local previousWindow = nil
 local function launchOrFocusOrRotate(app)
+	log.d("launchOrFocusOrRotate called with app: " .. tostring(app))
 	local focusedWindow = hs.window.focusedWindow()
 	if focusedWindow == nil then
+		log.d("No focused window, launching: " .. tostring(app))
 		application.launchOrFocus(app)
 		timer.doAfter(0.1, function()
 			local win = hs.window.focusedWindow()
@@ -55,9 +57,19 @@ local function launchOrFocusOrRotate(app)
 	local appNameOnDisk = string.gsub(focusedWindowPath, "/Applications/", "")
 	local appNameOnDisk = string.gsub(appNameOnDisk, ".app", "")
 	local appNameOnDisk = string.gsub(appNameOnDisk, "/System/Library/CoreServices/", "")
-	if focusedWindow and appNameOnDisk == app then
+	local appMatches = appNameOnDisk:find(app, 1, true) ~= nil
+	log.d(
+		"launchOrFocusOrRotate search: appNameOnDisk="
+			.. tostring(appNameOnDisk)
+			.. " app="
+			.. tostring(app)
+			.. " matches="
+			.. tostring(appMatches)
+	)
+	if focusedWindow and appMatches then
 		local currentApp = application.get(focusedWindowAppName)
 		local appWindows = currentApp:allWindows()
+		log.d("launchOrFocusOrRotate appWindows count: " .. tostring(#appWindows))
 		if #appWindows == 1 then
 			-- Instead of hiding, focus the previous window if it exists
 			if previousWindow and previousWindow:isVisible() then

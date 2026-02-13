@@ -7,6 +7,15 @@ rust = { version = "1.88.0", components = "rust-src,llvm-tools,rustfmt,rust-anal
 clojure = "1.12.4"
 prek = "latest"
 "github:lynaghk/vibe" = "latest"
+"cargo:cargo-benchcmp" = "0.4.5"
+"cargo:cargo-insta" = "1.42.2"
+"cargo:cargo-lldb-test" = "0.1.0"
+"cargo:cargo-nextest" = "0.9.93"
+"cargo:flamegraph" = "0.6.8"
+"cargo:inferno" = "0.12.2"
+"cargo:samply" = "0.13.1"
+"cargo:toml2json" = "1.3.1"
+"cargo:trunk" = "0.21.14"
 
 [tool_alias]
 clojure = "https://github.com/asdf-community/asdf-clojure.git"

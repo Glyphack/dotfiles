@@ -126,8 +126,13 @@ local config = {
 		{
 			key = "Backspace",
 			mods = "CMD",
-			description = "Send 'wo' to terminal",
-			action = act.SendString("wo\n"),
+			description = "Send 'wo' to terminal (fish only)",
+			action = wezterm.action_callback(function(window, pane)
+				local process = pane:get_foreground_process_name() or ""
+				if process:match("fish$") then
+					pane:send_text("wo\n")
+				end
+			end),
 		},
 
 		{

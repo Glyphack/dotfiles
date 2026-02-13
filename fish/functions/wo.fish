@@ -1,10 +1,12 @@
 function wo --description "WezTerm workspace manager"
-    argparse 'l/list' 'n/new' 'c/clean' -- $argv
+    argparse 'l/list' 'n/new' 'c/clean' 'd/delete' -- $argv
 
     if set -q _flag_list
         __w_list
     else if set -q _flag_clean
         __w_clean
+    else if set -q _flag_delete
+        __w_delete_current
     else
         __w_new
     end
@@ -16,6 +18,12 @@ function __w_new --description "Fuzzy find a project and open it in a new WezTer
         return 1
     end
     set -l workspace_name (basename $project)
+    set -l current_ws (__w_current_workspace)
+    if test "$current_ws" = default
+        wezterm cli rename-workspace --workspace default $workspace_name
+        cd $project
+        return 0
+    end
     set -l existing (wezterm cli list --format json | python3 -c "
 import sys, json
 seen = set()
@@ -36,22 +44,20 @@ for w in sorted(seen):
 end
 
 function __w_clean --description "Remove all WezTerm workspaces except the current one"
-    set -l current_pane $WEZTERM_PANE
-    set -l pane_ids (wezterm cli list --format json | python3 -c "
+    set -l current_ws (__w_current_workspace)
+    set -l all_ws (wezterm cli list --format json | python3 -c "
 import sys, json
-panes = json.load(sys.stdin)
-current_pane = int('$current_pane' or '0')
-current_ws = ''
-for p in panes:
-    if p['pane_id'] == current_pane:
-        current_ws = p['workspace']
-        break
-for p in panes:
-    if p['workspace'] != current_ws:
-        print(p['pane_id'])
+seen = set()
+for p in json.load(sys.stdin):
+    w = p['workspace']
+    if w not in seen:
+        seen.add(w)
+        print(w)
 ")
-    for pid in $pane_ids
-        wezterm cli kill-pane --pane-id $pid
+    for ws in $all_ws
+        if test "$ws" != "$current_ws"
+            __w_kill_workspace $ws
+        end
     end
 end
 
@@ -94,15 +100,7 @@ for p in panes:
                 __w_switch $choice
 
             case delete
-                set -l pane_ids (wezterm cli list --format json | python3 -c "
-import sys, json
-for p in json.load(sys.stdin):
-    if p['workspace'] == '$choice':
-        print(p['pane_id'])
-")
-                for pid in $pane_ids
-                    wezterm cli kill-pane --pane-id $pid
-                end
+                __w_kill_workspace $choice
 
             case rename
                 set -l new_name (gum input --header "Rename '$choice' to:" --placeholder "new name")
@@ -115,6 +113,39 @@ for p in json.load(sys.stdin):
         end
 
         return 0
+    end
+end
+
+function __w_current_workspace --description "Get the name of the current WezTerm workspace"
+    set -l current_pane $WEZTERM_PANE
+    wezterm cli list --format json | python3 -c "
+import sys, json
+current_pane = int('$current_pane' or '0')
+for p in json.load(sys.stdin):
+    if p['pane_id'] == current_pane:
+        print(p['workspace'])
+        break
+"
+end
+
+function __w_delete_current --description "Delete the current WezTerm workspace"
+    set -l current_ws (__w_current_workspace)
+    if test -z "$current_ws"
+        echo "Could not determine current workspace."
+        return 1
+    end
+    __w_kill_workspace $current_ws
+end
+
+function __w_kill_workspace --description "Kill all panes in a given workspace"
+    set -l pane_ids (wezterm cli list --format json | python3 -c "
+import sys, json
+for p in json.load(sys.stdin):
+    if p['workspace'] == '$argv[1]':
+        print(p['pane_id'])
+")
+    for pid in $pane_ids
+        wezterm cli kill-pane --pane-id $pid
     end
 end
 
