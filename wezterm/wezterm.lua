@@ -234,14 +234,15 @@ config.keys = {
 							inner_window:perform_action(
 								wezterm.action_callback(function(win, pane)
 									local active_workspace = win:active_workspace()
-									local mux = wezterm.mux
+									local stdout = run_child_process("wezterm cli list --format json")
+									local json = wezterm.json_parse(stdout)
 
-									for _, mux_win in ipairs(mux.all_windows()) do
-										if mux_win:get_workspace() ~= active_workspace then
-											for _, tab in ipairs(mux_win:tabs()) do
-												tab:close()
-											end
+									for _, p in ipairs(json) do
+										if p.workspace == active_workspace then
+											goto continue
 										end
+										run_child_process("wezterm cli kill-pane --pane-id=" .. p.pane_id)
+										::continue::
 									end
 								end),
 								inner_pane
