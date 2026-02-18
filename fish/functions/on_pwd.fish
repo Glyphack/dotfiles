@@ -1,4 +1,4 @@
-function some_setup --on-variable PWD --description "Auto-activate virtualenvs and poetry environments"
+function on_pwd --on-variable PWD --description "Auto-activate virtualenvs and poetry environments"
     # Skip if we are in a non-interactive shell (though this function is called from interactive config)
     status is-interactive; or return
 

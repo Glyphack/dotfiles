@@ -62,7 +62,7 @@ if status is-interactive
         fish_hybrid_key_bindings
     end
 
-    some_setup
+    on_pwd
 
     if test -f "$__fish_config_dir/aliases.fish"
         source "$__fish_config_dir/aliases.fish"
