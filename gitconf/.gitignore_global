@@ -31,8 +31,11 @@ cspell.json
 typos.toml
 .aider*
 CLAUDE.md
+AGENTS.md
 
 .wrangler/
 .nvim-bookmarks
 
 .vibe/
+.opencode/
+.playwright-cli/

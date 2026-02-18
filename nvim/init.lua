@@ -1404,13 +1404,32 @@ require("lazy").setup({
 					go_in = "l",
 				},
 			})
-			local minifiles_toggle = function()
-				if not MiniFiles.close() then
-					pcall(MiniFiles.open, vim.api.nvim_buf_get_name(0))
-					MiniFiles.reveal_cwd()
-				end
-			end
-			vim.keymap.set("n", "<leader>t", minifiles_toggle, { noremap = true, silent = true, desc = "Tree" })
+                        local minifiles_toggle = function()
+                                if not MiniFiles.close() then
+                                        pcall(MiniFiles.open, vim.api.nvim_buf_get_name(0))
+                                        MiniFiles.reveal_cwd()
+                                end
+                        end
+                        local minifiles_open_buffer_or_cwd = function()
+                                if MiniFiles.close() then
+                                        return
+                                end
+
+                                local bufname = vim.api.nvim_buf_get_name(0)
+                                local target = vim.loop.cwd()
+                                if bufname ~= "" and vim.loop.fs_stat(bufname) then
+                                        target = bufname
+                                end
+
+                                pcall(MiniFiles.open, target)
+                                MiniFiles.reveal_cwd()
+                        end
+                        vim.keymap.set("n", "<leader>t", minifiles_toggle, { noremap = true, silent = true, desc = "Tree" })
+                        vim.keymap.set("n", "<leader>p", minifiles_open_buffer_or_cwd, {
+                                noremap = true,
+                                silent = true,
+                                desc = "Tree (buffer or cwd)",
+                        })
 
 			vim.keymap.set("n", "<leader>cp", function()
 				if vim.bo.ft == "minifiles" then
