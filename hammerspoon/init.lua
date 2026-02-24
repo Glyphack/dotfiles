@@ -579,3 +579,32 @@ SpoonInstall:andUse("PopupTranslateSelection", {
 -- 		log.i(string.format("Screen %d: %s", i, screen:name()))
 -- 	end
 -- end
+
+-- Enable Hue alarms when connected to home Wi-Fi with Bluetooth on
+local HOME_WIFI = "tardis"
+local HUEC_PATH = os.getenv("HOME") .. "/.local/bin/huec"
+
+local function enableHueAlarms()
+	if hs.wifi.currentNetwork() ~= HOME_WIFI then
+		return
+	end
+
+	local _, btOn = hs.execute("/usr/sbin/system_profiler SPBluetoothDataType 2>/dev/null | grep -q 'State: On'")
+	if not btOn then
+		return
+	end
+
+	hs.task
+		.new(HUEC_PATH, function(exitCode, _, stderr)
+			if exitCode == 0 then
+				hs.notify.new({ title = "Hue Alarms", informativeText = "Alarms enabled successfully" }):send()
+			else
+				log.w("huec alarms enable --all failed (exit " .. tostring(exitCode) .. "): " .. tostring(stderr))
+			end
+		end, { "alarms", "enable", "--all" })
+		:start()
+end
+
+local wifiWatcher = hs.wifi.watcher.new(enableHueAlarms)
+wifiWatcher:start()
+enableHueAlarms()
