@@ -1,5 +1,10 @@
 vim.loader.enable()
 
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldlevelstart = 0 -- Fold all bodies; signatures are never part of a fold
+vim.opt.foldenable = true
+
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
@@ -1104,42 +1109,39 @@ require("lazy").setup({
 		"nvim-treesitter/nvim-treesitter",
 		event = { "BufReadPost", "BufNewFile" },
 		build = ":TSUpdate",
+		branch = "main",
 		config = function()
-			-- require("nvim-treesitter").install({
-			-- 	"c",
-			-- 	"cpp",
-			-- 	"go",
-			-- 	"lua",
-			-- 	"python",
-			-- 	"rust",
-			-- 	"typescript",
-			-- 	"javascript",
-			-- 	"tsx",
-			-- 	"css",
-			-- 	"html",
-			-- 	"htmldjango",
-			-- 	"ruby",
-			-- 	"vim",
-			-- 	"sql",
-			-- 	"kotlin",
-			-- 	"java",
-			-- 	"markdown",
-			-- 	"markdown_inline",
-			-- 	"proto",
-			-- 	"bash",
-			-- 	"haskell",
-			-- 	"ocaml",
-			-- 	"hcl",
-			-- 	"terraform",
-			-- 	"dart",
-			-- })
+			require("nvim-treesitter")
+				.install({
+					"c",
+					"cpp",
+					"go",
+					"lua",
+					"python",
+					"rust",
+					"typescript",
+					"javascript",
+					"tsx",
+					"css",
+					"html",
+					"htmldjango",
+					"ruby",
+					"vim",
+					"sql",
+					"kotlin",
+					"java",
+					"markdown",
+					"markdown_inline",
+					"proto",
+					"bash",
+					"haskell",
+					"ocaml",
+					"hcl",
+					"terraform",
+					"dart",
+				})
+				:wait(300000)
 
-			-- General folding behavior
-			vim.o.foldenable = true
-			vim.o.foldlevel = 99
-			vim.o.foldlevelstart = 99
-			vim.wo.foldmethod = "expr"
-			vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 		end,
 	},
 	{
@@ -1404,32 +1406,32 @@ require("lazy").setup({
 					go_in = "l",
 				},
 			})
-                        local minifiles_toggle = function()
-                                if not MiniFiles.close() then
-                                        pcall(MiniFiles.open, vim.api.nvim_buf_get_name(0))
-                                        MiniFiles.reveal_cwd()
-                                end
-                        end
-                        local minifiles_open_buffer_or_cwd = function()
-                                if MiniFiles.close() then
-                                        return
-                                end
+			local minifiles_toggle = function()
+				if not MiniFiles.close() then
+					pcall(MiniFiles.open, vim.api.nvim_buf_get_name(0))
+					MiniFiles.reveal_cwd()
+				end
+			end
+			local minifiles_open_buffer_or_cwd = function()
+				if MiniFiles.close() then
+					return
+				end
 
-                                local bufname = vim.api.nvim_buf_get_name(0)
-                                local target = vim.loop.cwd()
-                                if bufname ~= "" and vim.loop.fs_stat(bufname) then
-                                        target = bufname
-                                end
+				local bufname = vim.api.nvim_buf_get_name(0)
+				local target = vim.loop.cwd()
+				if bufname ~= "" and vim.loop.fs_stat(bufname) then
+					target = bufname
+				end
 
-                                pcall(MiniFiles.open, target)
-                                MiniFiles.reveal_cwd()
-                        end
-                        vim.keymap.set("n", "<leader>t", minifiles_toggle, { noremap = true, silent = true, desc = "Tree" })
-                        vim.keymap.set("n", "<leader>p", minifiles_open_buffer_or_cwd, {
-                                noremap = true,
-                                silent = true,
-                                desc = "Tree (buffer or cwd)",
-                        })
+				pcall(MiniFiles.open, target)
+				MiniFiles.reveal_cwd()
+			end
+			vim.keymap.set("n", "<leader>t", minifiles_toggle, { noremap = true, silent = true, desc = "Tree" })
+			vim.keymap.set("n", "<leader>p", minifiles_open_buffer_or_cwd, {
+				noremap = true,
+				silent = true,
+				desc = "Tree (buffer or cwd)",
+			})
 
 			vim.keymap.set("n", "<leader>cp", function()
 				if vim.bo.ft == "minifiles" then
