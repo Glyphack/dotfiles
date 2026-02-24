@@ -15,6 +15,7 @@ function ,g --description "Git workflow helper commands"
         echo "  pro         Open PR in browser"
         echo "  prr         Copy formatted PR review request to clipboard"
         echo "  sync        Sync local base branch from upstream and push to origin"
+        echo "  update      Update local base branch without checking it out"
         return 1
     end
 
@@ -168,6 +169,10 @@ $pr_link"
             else
                 echo "No upstream remote configured"
             end
+
+        case update
+            set base_branch (,g base)
+            git fetch origin +$base_branch:$base_branch
 
         case '*'
             echo "Unknown command: $subcmd"

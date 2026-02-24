@@ -36,19 +36,6 @@ wezterm.on("update-right-status", function(window)
 	}))
 end)
 
-local function get_workspace_choices()
-	local choices = {}
-	for _, name in ipairs(wezterm.mux.get_workspace_names()) do
-		table.insert(choices, { id = name, label = "🖥 " .. name })
-	end
-	-- Add a special entry to create a new workspace
-	table.insert(choices, { id = "__new__", label = "Create workspace" })
-	-- Add a special entry to rename current workspace
-	table.insert(choices, { id = "__rename__", label = "Rename current workspace" })
-	table.insert(choices, { id = "__clear__", label = "Clear workspaces" })
-	return choices
-end
-
 local run_child_process = function(cmd)
 	local process_args = { os.getenv("SHELL"), "-c", cmd }
 	local success, stdout, stderr = wezterm.run_child_process(process_args)
@@ -57,6 +44,103 @@ local run_child_process = function(cmd)
 		wezterm.log_error("Child process '" .. cmd .. "' failed with stderr: '" .. stderr .. "'")
 	end
 	return stdout
+end
+
+local function get_workspace_choices()
+	local choices = {}
+	for _, name in ipairs(wezterm.mux.get_workspace_names()) do
+		table.insert(choices, { id = name, label = "🖥 " .. name })
+	end
+	table.insert(choices, { id = "__new__", label = "Create workspace" })
+	table.insert(choices, { id = "__switch_current__", label = "Switch current workspace" })
+	table.insert(choices, { id = "__rename__", label = "Rename current workspace" })
+	table.insert(choices, { id = "__delete__", label = "Delete workspace" })
+	table.insert(choices, { id = "__clear__", label = "Clear workspaces" })
+	return choices
+end
+
+local function kill_workspace_panes(workspace_name)
+	local stdout = run_child_process("wezterm cli list --format json")
+	local json = wezterm.json_parse(stdout)
+	for _, p in ipairs(json) do
+		if p.workspace == workspace_name then
+			run_child_process("wezterm cli kill-pane --pane-id=" .. p.pane_id)
+		end
+	end
+end
+
+local function pick_directory_and_switch(win, pane, callback)
+	local cmd = run_child_process("echo $FZF_ALT_C_COMMAND")
+	local stdout = run_child_process(cmd)
+
+	local choices = {}
+	for dir in stdout:gmatch("[^\n]+") do
+		table.insert(choices, { label = dir })
+	end
+
+	win:perform_action(
+		act.InputSelector({
+			title = "Select project directory",
+			fuzzy = true,
+			fuzzy_description = "Search: ",
+			choices = choices,
+			action = wezterm.action_callback(function(inner_win, inner_pane, id, cwd)
+				if not cwd or cwd == "" then
+					return
+				end
+				callback(inner_win, inner_pane, cwd)
+			end),
+		}),
+		pane
+	)
+end
+
+local function directory_name(pane)
+	local cwd = pane:get_current_working_directory()
+	if cwd then
+		return cwd.file_path:match("([^/]+)/?$") or cwd.file_path
+	end
+	return nil
+end
+
+local function switch_to_workspace_for_directory(win, pane, opts)
+	local old_workspace = opts and opts.old_workspace
+	pick_directory_and_switch(win, pane, function(inner_win, inner_pane, cwd)
+		local name = run_child_process("basename " .. cwd)
+		inner_win:perform_action(act.SwitchToWorkspace({ name = name, spawn = { cwd = cwd } }), inner_pane)
+		if old_workspace and old_workspace ~= "" then
+			kill_workspace_panes(old_workspace)
+		end
+	end)
+end
+
+local function pick_workspace_to_delete(win, pane)
+	local active_workspace = win:active_workspace()
+	local choices = {}
+	for _, name in ipairs(wezterm.mux.get_workspace_names()) do
+		if name ~= active_workspace then
+			table.insert(choices, { id = name, label = "🗑 " .. name })
+		end
+	end
+
+	if #choices == 0 then
+		return
+	end
+
+	win:perform_action(
+		act.InputSelector({
+			title = "Delete Workspace",
+			choices = choices,
+			fuzzy = true,
+			fuzzy_description = "Delete: ",
+			action = wezterm.action_callback(function(_, _, id)
+				if id and id ~= "" then
+					kill_workspace_panes(id)
+				end
+			end),
+		}),
+		pane
+	)
 end
 
 config.keys = {
@@ -179,7 +263,7 @@ config.keys = {
 					title = "Workspace Switcher",
 					choices = get_workspace_choices(),
 					fuzzy = true,
-					fuzzy_description = "Switch / Create / Rename: ",
+					fuzzy_description = "Workspaces:",
 					action = wezterm.action_callback(function(inner_window, inner_pane, id, label)
 						if not id then
 							return
@@ -187,33 +271,18 @@ config.keys = {
 
 						if id == "__new__" then
 							inner_window:perform_action(
-								wezterm.action_callback(function(win, pane)
-									local cmd = run_child_process("echo $FZF_ALT_C_COMMAND")
-									local stdout = run_child_process(cmd)
-
-									local choices = {}
-									for dir in stdout:gmatch("[^\n]+") do
-										table.insert(choices, { label = dir })
-									end
-
-									win:perform_action(
-										act.InputSelector({
-											title = "Select project directory",
-											fuzzy = true,
-											fuzzy_description = "Search: ",
-											choices = choices,
-											action = wezterm.action_callback(function(inner_win, inner_pane, id, cwd)
-												if not cwd or cwd == "" then
-													return
-												end
-												local name = run_child_process("basename " .. cwd)
-												inner_win:perform_action(
-													act.SwitchToWorkspace({ name = name, spawn = { cwd = cwd } }),
-													inner_pane
-												)
-											end),
-										}),
-										pane
+								wezterm.action_callback(function(win, p)
+									switch_to_workspace_for_directory(win, p)
+								end),
+								inner_pane
+							)
+						elseif id == "__switch_current__" then
+							inner_window:perform_action(
+								wezterm.action_callback(function(win, p)
+									switch_to_workspace_for_directory(
+										win,
+										p,
+										{ old_workspace = win:active_workspace() }
 									)
 								end),
 								inner_pane
@@ -223,26 +292,31 @@ config.keys = {
 								act.PromptInputLine({
 									description = "New name for workspace '" .. inner_window:active_workspace() .. "':",
 									action = wezterm.action_callback(function(win, p, line)
-										if line and line ~= "" then
-											wezterm.mux.rename_workspace(win:active_workspace(), line)
+										if line then
+											local new_name = line ~= "" and line or directory_name(p)
+											if new_name then
+												wezterm.mux.rename_workspace(win:active_workspace(), new_name)
+											end
 										end
 									end),
 								}),
+								inner_pane
+							)
+						elseif id == "__delete__" then
+							inner_window:perform_action(
+								wezterm.action_callback(function(win, p)
+									pick_workspace_to_delete(win, p)
+								end),
 								inner_pane
 							)
 						elseif id == "__clear__" then
 							inner_window:perform_action(
 								wezterm.action_callback(function(win, pane)
 									local active_workspace = win:active_workspace()
-									local stdout = run_child_process("wezterm cli list --format json")
-									local json = wezterm.json_parse(stdout)
-
-									for _, p in ipairs(json) do
-										if p.workspace == active_workspace then
-											goto continue
+									for _, name in ipairs(wezterm.mux.get_workspace_names()) do
+										if name ~= active_workspace then
+											kill_workspace_panes(name)
 										end
-										run_child_process("wezterm cli kill-pane --pane-id=" .. p.pane_id)
-										::continue::
 									end
 								end),
 								inner_pane
