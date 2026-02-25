@@ -7,15 +7,15 @@ function ,g --description "Git workflow helper commands"
         echo "  clean       Delete local branches merged into base"
         echo "  cmp         Show commits ahead of upstream base branch"
         echo "  coauthored  Generate Co-authored-by trailer for a GitHub user"
-        echo "  merge       Fetch and merge origin base branch into current branch"
+        echo "  merge       Sync base and merge it into current branch"
         echo "  mybranches  List and checkout branches authored by you"
         echo "  myprs       List and checkout your open PRs"
-        echo "  new         Create a new branch from the latest base branch"
+        echo "  new         Sync base and create a new branch from it"
         echo "  prc         Push and create a PR, then copy review link"
         echo "  pro         Open PR in browser"
         echo "  prr         Copy formatted PR review request to clipboard"
-        echo "  sync        Sync local base branch from upstream and push to origin"
-        echo "  update      Update local base branch without checking it out"
+        echo "  rebase      Sync base and rebase current branch onto it"
+        echo "  sync        Update local base branch (from upstream if available, else origin)"
         return 1
     end
 
@@ -31,9 +31,8 @@ function ,g --description "Git workflow helper commands"
             end
 
         case clean
+            ,g sync
             set base_branch (,g base)
-            git fetch origin
-            git checkout $base_branch
 
             for branch in (git branch --merged $base_branch | string trim | string replace -r '^\* ' '' | string match -v "$base_branch")
                 echo "Deleting merged branch: $branch"
@@ -58,26 +57,23 @@ function ,g --description "Git workflow helper commands"
             printf "Co-authored-by: %s %d+%s@users.noreply.github.com\n" $name $id $account
 
         case merge
+            ,g sync
             set base_branch (,g base)
-            git fetch origin $base_branch
-            and git merge origin/$base_branch
+            git merge $base_branch
 
         case mybranches
             set user_email (git config user.email)
-
+            set my_branches
             git branch --format="%(refname:short)" | while read branch
                 set author (git log -1 --format="%ae" "$branch" 2>/dev/null)
                 if test "$author" = "$user_email"
-                    echo "$branch"
+                    set -a my_branches "$branch"
                 end
             end
 
-            set branch (git branch --format="%(refname:short)" | while read branch
-                set author (git log -1 --format="%ae" "$branch" 2>/dev/null)
-                if test "$author" = "$user_email"
-                    echo "$branch"
-                end
-            end | gum choose --height 15)
+            printf '%s\n' $my_branches
+
+            set branch (printf '%s\n' $my_branches | gum choose --height 15)
 
             if test -n "$branch"
                 git checkout "$branch"
@@ -86,24 +82,24 @@ function ,g --description "Git workflow helper commands"
             end
 
         case myprs
-            gh pr list --author "@me"
+            set pr_data (gh pr list --author "@me" --json number,title -q '.[] | "\(.number)\t\(.title)"')
 
-            set pr_id (gh pr list --author "@me" --json number -q ".[] | .number" | gum choose --height 15)
+            printf '%s\n' $pr_data
 
-            if test -n "$pr_id"
+            set selection (printf '%s\n' $pr_data | gum choose --height 15)
+
+            if test -n "$selection"
+                set pr_id (string split \t "$selection")[1]
                 gh pr checkout "$pr_id"
             else
                 echo "No PR selected."
             end
 
         case new
-            git fetch origin
-            set base_branch (,g base)
-            git fetch origin $base_branch:$base_branch
-
+            ,g sync
             if test (count $argv) -gt 0
-                git checkout $base_branch
-                and git checkout -b $argv[1]
+                set base_branch (,g base)
+                git checkout -b $argv[1] $base_branch
             end
 
         case prc
@@ -159,20 +155,21 @@ $pr_link"
             echo "Formatted text has been copied to clipboard:"
             echo -e $text
 
+        case rebase
+            ,g sync
+            set base_branch (,g base)
+            git rebase $base_branch
+
         case sync
+            set base_branch (,g base)
             if git remote get-url upstream >/dev/null 2>&1
-                set base_branch (,g base)
-                git fetch origin
                 git fetch upstream
-                git pull upstream $base_branch
+                git fetch origin
+                git branch -f $base_branch upstream/$base_branch
                 git push origin $base_branch --force
             else
-                echo "No upstream remote configured"
+                git fetch origin +$base_branch:$base_branch
             end
-
-        case update
-            set base_branch (,g base)
-            git fetch origin +$base_branch:$base_branch
 
         case '*'
             echo "Unknown command: $subcmd"

@@ -1,4 +1,2 @@
-[
-  (class_body)
-  (constructor_declaration)
-] @fold
+(class_body) @fold
+(constructor_declaration body: (constructor_body) @fold)

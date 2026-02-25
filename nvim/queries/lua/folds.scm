@@ -1,4 +1,4 @@
 [
-  (function_definition)
-  (function_declaration)
-] @fold
+  (function_definition body: (block) @fold)
+  (function_declaration body: (block) @fold)
+]
