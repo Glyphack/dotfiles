@@ -3,9 +3,7 @@
 # Required parameters:
 # @raycast.schemaVersion 1
 # @raycast.title Clipboard URL -> Markdown
-# @raycast.mode fullOutput
-
-# Optional parameters:
+# @raycast.mode silent
 # @raycast.icon 🔗
 # @raycast.packageName Markdown Tools
 
@@ -13,32 +11,63 @@
 # @raycast.author your_name
 # @raycast.authorURL https://raycast.com/your_name
 
-# Get URL from clipboard
-URL="$(pbpaste)"
+# Get content from clipboard
+CONTENT="$(pbpaste)"
 
-if [ -z "$URL" ]; then
-  echo "No URL found in clipboard."
+if [ -z "$CONTENT" ]; then
+  echo "No content found in clipboard."
   exit 1
 fi
 
-# Get the page title (improved: remove GitHub issue/repo suffix and trim)
-TITLE="$(
-  curl -L -s "$URL" \
-    | grep -i -m 1 "<title" \
-    | sed -E 's/.*<title[^>]*>//I;s/<\/title>.*//I' \
-    | sed -E 's/ ·.*$//' \
-    | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
-)"
+# Check if already a markdown link using grep (fixes regex syntax error)
+if echo "$CONTENT" | grep -qE '^\[[^]]+\]\([^)]+\)$'; then
+  # Already a link, wrap in new outer link
+  echo "Already a markdown link. Wrapping in new one."
+  
+  # Extract URL from inner link using sed
+  URL=$(echo "$CONTENT" | sed -E 's/.*\(([^)]+)\)$/\1/')
+  
+  # Get page title
+  TITLE="$(
+    curl -L -s "$URL" \
+      | grep -i -m 1 "<title" \
+      | sed -E 's/.*<title[^>]*>//I;s/<\/title>.*//I' \
+      | sed -E 's/ ·.*$//' \
+      | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+  )"
 
-# Fallback if no title found
-if [ -z "$TITLE" ]; then
-  TITLE="$URL"
+  # Fallback if no title
+  if [ -z "$TITLE" ]; then
+    TITLE="$URL"
+  fi
+
+  NEW_LINK="[$TITLE]($URL)"
+else
+  # Treat as plain URL
+  URL="$CONTENT"
+  
+  # Get title
+  TITLE="$(
+    curl -L -s "$URL" \
+      | grep -i -m 1 "<title" \
+      | sed -E 's/.*<title[^>]*>//I;s/<\/title>.*//I' \
+      | sed -E 's/ ·.*$//' \
+      | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+  )"
+
+  if [ -z "$TITLE" ]; then
+    TITLE="$URL"
+  fi
+
+  NEW_LINK="[$TITLE]($URL)"
 fi
 
-MARKDOWN_LINK="[$TITLE]($URL)"
+# Copy to clipboard
+echo "$NEW_LINK" | pbcopy
 
-# Print for Raycast output
-echo "$MARKDOWN_LINK"
-
-# Copy markdown link to clipboard
-echo "$MARKDOWN_LINK" | pbcopy
+# Paste at cursor
+osascript <<EOF
+tell application "System Events"
+    keystroke "v" using command down
+end tell
+EOF

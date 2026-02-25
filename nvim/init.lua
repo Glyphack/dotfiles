@@ -1,9 +1,25 @@
 vim.loader.enable()
 
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-vim.opt.foldlevelstart = 0 -- Fold all bodies; signatures are never part of a fold
-vim.opt.foldenable = true
+vim.opt.foldlevelstart = 0
+
+local fold_langs = {}
+for name, kind in vim.fs.dir(vim.fn.stdpath("config") .. "/queries") do
+	if kind == "directory" and vim.uv.fs_stat(vim.fn.stdpath("config") .. "/queries/" .. name .. "/folds.scm") then
+		fold_langs[name] = true
+	end
+end
+
+vim.api.nvim_create_autocmd("FileType", {
+	group = vim.api.nvim_create_augroup("treesitter-folds", { clear = true }),
+	callback = function(args)
+		local lang = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype) or vim.bo[args.buf].filetype
+		if fold_langs[lang] then
+			vim.opt_local.foldmethod = "expr"
+			vim.opt_local.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+			vim.opt_local.foldenable = true
+		end
+	end,
+})
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
