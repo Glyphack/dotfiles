@@ -1,6 +1,2 @@
-(arrow_function body: (statement_block) @fold)
-(function_expression body: (statement_block) @fold)
-(function_declaration body: (statement_block) @fold)
-(method_definition body: (statement_block) @fold)
-(generator_function body: (statement_block) @fold)
-(generator_function_declaration body: (statement_block) @fold)
+((method_definition body: (statement_block) @fold)
+  (#offset! @fold 0 0 -1 0))
