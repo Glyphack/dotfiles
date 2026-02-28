@@ -51,11 +51,11 @@ local function get_workspace_choices()
 	for _, name in ipairs(wezterm.mux.get_workspace_names()) do
 		table.insert(choices, { id = name, label = "🖥 " .. name })
 	end
-	table.insert(choices, { id = "__new__", label = "Create workspace" })
-	table.insert(choices, { id = "__switch_current__", label = "Switch current workspace" })
-	table.insert(choices, { id = "__rename__", label = "Rename current workspace" })
-	table.insert(choices, { id = "__delete__", label = "Delete workspace" })
-	table.insert(choices, { id = "__clear__", label = "Clear workspaces" })
+	table.insert(choices, { id = "__new__", label = "➕ Create new" })
+	table.insert(choices, { id = "__delete__", label = "🗑 Delete current" })
+	table.insert(choices, { id = "__replace__", label = "🔄 Replace" })
+	table.insert(choices, { id = "__rename__", label = "✏️ Rename current" })
+	table.insert(choices, { id = "__prune__", label = "🧹 Prune" })
 	return choices
 end
 
@@ -112,35 +112,6 @@ local function switch_to_workspace_for_directory(win, pane, opts)
 			kill_workspace_panes(old_workspace)
 		end
 	end)
-end
-
-local function pick_workspace_to_delete(win, pane)
-	local active_workspace = win:active_workspace()
-	local choices = {}
-	for _, name in ipairs(wezterm.mux.get_workspace_names()) do
-		if name ~= active_workspace then
-			table.insert(choices, { id = name, label = "🗑 " .. name })
-		end
-	end
-
-	if #choices == 0 then
-		return
-	end
-
-	win:perform_action(
-		act.InputSelector({
-			title = "Delete Workspace",
-			choices = choices,
-			fuzzy = true,
-			fuzzy_description = "Delete: ",
-			action = wezterm.action_callback(function(_, _, id)
-				if id and id ~= "" then
-					kill_workspace_panes(id)
-				end
-			end),
-		}),
-		pane
-	)
 end
 
 config.keys = {
@@ -276,7 +247,48 @@ config.keys = {
 								end),
 								inner_pane
 							)
-						elseif id == "__switch_current__" then
+						elseif id == "__delete__" then
+							inner_window:perform_action(
+								wezterm.action_callback(function(win, p)
+									local current = win:active_workspace()
+									local workspaces = wezterm.mux.get_workspace_names()
+									local others = {}
+									for _, name in ipairs(workspaces) do
+										if name ~= current then
+											table.insert(others, name)
+										end
+									end
+									if #others == 0 then
+										return
+									end
+									if #others == 1 then
+										win:perform_action(act.SwitchToWorkspace({ name = others[1] }), p)
+										kill_workspace_panes(current)
+									else
+										local choices = {}
+										for _, name in ipairs(others) do
+											table.insert(choices, { id = name, label = "🖥 " .. name })
+										end
+										win:perform_action(
+											act.InputSelector({
+												title = "Switch to which workspace?",
+												choices = choices,
+												fuzzy = true,
+												fuzzy_description = "Switch to: ",
+												action = wezterm.action_callback(function(w, pp, target_id)
+													if target_id and target_id ~= "" then
+														w:perform_action(act.SwitchToWorkspace({ name = target_id }), pp)
+														kill_workspace_panes(current)
+													end
+												end),
+											}),
+											p
+										)
+									end
+								end),
+								inner_pane
+							)
+						elseif id == "__replace__" then
 							inner_window:perform_action(
 								wezterm.action_callback(function(win, p)
 									switch_to_workspace_for_directory(
@@ -302,16 +314,9 @@ config.keys = {
 								}),
 								inner_pane
 							)
-						elseif id == "__delete__" then
+						elseif id == "__prune__" then
 							inner_window:perform_action(
 								wezterm.action_callback(function(win, p)
-									pick_workspace_to_delete(win, p)
-								end),
-								inner_pane
-							)
-						elseif id == "__clear__" then
-							inner_window:perform_action(
-								wezterm.action_callback(function(win, pane)
 									local active_workspace = win:active_workspace()
 									for _, name in ipairs(wezterm.mux.get_workspace_names()) do
 										if name ~= active_workspace then

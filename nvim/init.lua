@@ -71,7 +71,7 @@ vim.opt.inccommand = "split"
 vim.opt.cursorline = false
 
 -- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 999
 
 -- spell checker
 vim.opt.spell = true
@@ -1157,7 +1157,6 @@ require("lazy").setup({
 					"dart",
 				})
 				:wait(300000)
-
 		end,
 	},
 	{
@@ -1519,5 +1518,13 @@ require("lazy").setup({
 		branch = "main",
 		lazy = false,
 		opts = { auto_start = true, log_level = "info" },
+	},
+	{
+		"stevearc/aerial.nvim",
+		event = "LspAttach",
+		opts = {},
+		keys = {
+			{ "<leader>ds", "<cmd>AerialToggle!<CR>", desc = "Toggle Aerial" },
+		},
 	},
 })

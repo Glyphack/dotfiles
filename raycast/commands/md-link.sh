@@ -2,7 +2,7 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Clipboard URL -> Markdown
+# @raycast.title Paste markdown link
 # @raycast.mode silent
 # @raycast.icon 🔗
 # @raycast.packageName Markdown Tools
@@ -29,9 +29,11 @@ if echo "$CONTENT" | grep -qE '^\[[^]]+\]\([^)]+\)$'; then
   
   # Get page title
   TITLE="$(
-    curl -L -s "$URL" \
-      | grep -i -m 1 "<title" \
-      | sed -E 's/.*<title[^>]*>//I;s/<\/title>.*//I' \
+    curl -L -s -A 'Mozilla/5.0' --max-time 2 "$URL" \
+      | tr -d '\n' \
+      | grep -ioE '<title[^>]*>[^<]+</title>' \
+      | head -1 \
+      | sed -E 's/<title[^>]*>//I;s/<\/title>//I' \
       | sed -E 's/ ·.*$//' \
       | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
   )"
@@ -48,9 +50,11 @@ else
   
   # Get title
   TITLE="$(
-    curl -L -s "$URL" \
-      | grep -i -m 1 "<title" \
-      | sed -E 's/.*<title[^>]*>//I;s/<\/title>.*//I' \
+    curl -L -s -A 'Mozilla/5.0' --max-time 2 "$URL" \
+      | tr -d '\n' \
+      | grep -ioE '<title[^>]*>[^<]+</title>' \
+      | head -1 \
+      | sed -E 's/<title[^>]*>//I;s/<\/title>//I' \
       | sed -E 's/ ·.*$//' \
       | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
   )"
