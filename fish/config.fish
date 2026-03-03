@@ -52,6 +52,11 @@ fish_add_path -g "$HOME/.rd/bin" \
     "/sbin" \
     "$HOME/.amp/bin"
 
+
+if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish
+    source ~/Programming/dotfiles/dotfiles-private/personal.fish
+end
+
 if status is-interactive
     fzf --fish | source
     starship init fish | source
@@ -67,10 +72,6 @@ if status is-interactive
     if test -f "$__fish_config_dir/aliases.fish"
         source "$__fish_config_dir/aliases.fish"
     end
+    bind -M insert \cf accept-autosuggestion
 
-    if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish
-        source ~/Programming/dotfiles/dotfiles-private/personal.fish
-    end
 end
-
-bind -M insert \cf accept-autosuggestion

@@ -2,7 +2,7 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Logger
+# @raycast.title Log
 # @raycast.mode silent
 # @raycast.icon 📝
 # @raycast.packageName Obsidian Tools
@@ -15,16 +15,35 @@
 
 import subprocess
 import sys
+import os
 from datetime import date, datetime
 from pathlib import Path
 
-VAULT = subprocess.check_output(["fish", "-c", "echo $vault"], text=True).strip()
-VAULT_WEEKLY = Path(VAULT) / "Weekly"
+FISH_SHELL = "/opt/homebrew/bin/fish"
+
+
+def get_vault_path():
+    result = subprocess.run(
+        [FISH_SHELL, "-lc", "echo $vault"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        print(f"Fish exited with {result.returncode}: {result.stderr.strip()}")
+        sys.exit(1)
+    if not result.stdout.strip():
+        print("$vault is empty or not set in fish")
+        sys.exit(1)
+    return Path(result.stdout.strip())
+
+
+VAULT = get_vault_path()
+VAULT_WEEKLY = VAULT / "Weekly"
 
 
 def build_log_entry(msg, place):
     timestamp = datetime.now().strftime("%H:%M")
-    entry = f'log: {timestamp} "{msg}"'
+    entry = f'{timestamp} "{msg}"'
     if place:
         entry += f" place: {place}"
     return entry

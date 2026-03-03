@@ -5,3 +5,4 @@ secret*
 
 !asdf/.tool-versions
 .aider*
+*__pycache__*
