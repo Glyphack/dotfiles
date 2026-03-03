@@ -11,7 +11,7 @@ local popclick = require("hs.noises")
 local hotkey = require("hs.hotkey")
 local application = require("hs.application")
 local grid = require("hs.grid")
-local log = hs.logger.new("hammerspoon", "warning")
+local log = hs.logger.new("hammerspoon", "info")
 
 local hasCustom, custom = pcall(require, "custom")
 local _, _ = pcall(require, "secrets")
@@ -567,44 +567,111 @@ SpoonInstall:andUse("PopupTranslateSelection", {
 	},
 })
 
--- function printWindowsTitle()
--- 	local windows = hs.window.allWindows()
--- 	for _, win in ipairs(windows) do
--- 		log.i(win:title())
--- 	end
--- end
--- function printScreenNames()
--- 	local screens = hs.screen.allScreens()
--- 	for i, screen in ipairs(screens) do
--- 		log.i(string.format("Screen %d: %s", i, screen:name()))
--- 	end
--- end
+local function printWindowsTitle()
+	local windows = hs.window.allWindows()
+	for _, win in ipairs(windows) do
+		log.i(win:title())
+	end
+end
+local function printScreenNames()
+	local screens = hs.screen.allScreens()
+	for i, screen in ipairs(screens) do
+		log.i(string.format("Screen %d: %s", i, screen:name()))
+	end
+end
 
--- Enable Hue alarms when connected to home Wi-Fi with Bluetooth on
+-- Hue Automation
 local HOME_WIFI = "tardis"
-local HUEC_PATH = os.getenv("HOME") .. "/.local/bin/huec"
+local HUE_LIGHTS_ON_START_HOUR = 18
+local HUE_LIGHTS_ON_END_HOUR = 23
+local FISH_SHELL = "/opt/homebrew/bin/fish"
 
-local function enableHueAlarms()
+local function fishRunCommand(command)
+	local task, taskErr = hs.task.new(FISH_SHELL, function(exitCode, stdout, stderr)
+		if exitCode == 0 then
+			if stdout ~= nil and stdout ~= "" then
+				log.i(command .. " output: " .. stdout)
+			end
+			return
+		end
+
+		log.w(command .. " failed (exit " .. tostring(exitCode) .. "): " .. tostring(stderr))
+	end, { "-lc", command })
+
+	if not task then
+		log.w("Failed to create task for " .. command .. ": " .. tostring(taskErr))
+		return
+	end
+
+	if not task:start() then
+		log.w("Failed to start task for " .. command)
+	end
+end
+
+local function bluetoothOn()
+	local _, btOn = hs.execute("/usr/sbin/system_profiler SPBluetoothDataType 2>/dev/null | grep -q 'State: On'")
+	if not btOn then
+		return false
+	end
+	return true
+end
+
+function HueEnableAlarms()
 	if hs.wifi.currentNetwork() ~= HOME_WIFI then
 		return
 	end
 
-	local _, btOn = hs.execute("/usr/sbin/system_profiler SPBluetoothDataType 2>/dev/null | grep -q 'State: On'")
-	if not btOn then
+	if bluetoothOn() == false then
 		return
 	end
 
-	hs.task
-		.new(HUEC_PATH, function(exitCode, _, stderr)
-			if exitCode == 0 then
-				hs.notify.new({ title = "Hue Alarms", informativeText = "Alarms enabled successfully" }):send()
-			else
-				log.w("huec alarms enable --all failed (exit " .. tostring(exitCode) .. "): " .. tostring(stderr))
-			end
-		end, { "alarms", "enable", "--all" })
-		:start()
+	fishRunCommand("hue_auto_alarm.py")
 end
 
-local wifiWatcher = hs.wifi.watcher.new(enableHueAlarms)
+function WifiChanged()
+	if hs.wifi.currentNetwork() ~= HOME_WIFI then
+		local speaker = hs.audiodevice.defaultOutputDevice()
+		if speaker then
+			speaker:setMuted(true)
+		else
+			log.w("No default output device found to mute")
+		end
+		return
+	end
+
+	HueEnableAlarms()
+end
+
+local wifiWatcher = hs.wifi.watcher.new(WifiChanged)
 wifiWatcher:start()
-enableHueAlarms()
+WifiChanged()
+
+function HueTurnOn()
+	local currentHour = os.date("*t").hour
+	local shouldTurnOn = currentHour >= HUE_LIGHTS_ON_START_HOUR or currentHour < HUE_LIGHTS_ON_END_HOUR
+	if shouldTurnOn == false then
+		return
+	end
+
+	if bluetoothOn() == false then
+		return
+	end
+
+	fishRunCommand("huec power on")
+end
+
+function ToggleLights(eventType)
+	if eventType == hs.caffeinate.watcher.screensDidUnlock or eventType == hs.caffeinate.watcher.systemDidWake then
+		HueEnableAlarms()
+		HueTurnOn()
+	elseif
+		eventType == hs.caffeinate.watcher.screensDidLock
+		or eventType == hs.caffeinate.watcher.systemWillSleep
+		or eventType == hs.caffeinate.watcher.systemWillPowerOff
+		or eventType == hs.caffeinate.watcher.screensDidSleep
+	then
+	end
+end
+
+local lightsWatcher = hs.caffeinate.watcher.new(ToggleLights)
+lightsWatcher:start()
