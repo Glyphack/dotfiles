@@ -1,21 +1,40 @@
+function __g_stash_run_unstash --description "Stash, run command, then pop"
+    set needs_stash false
+    if not git diff --quiet; or not git diff --cached --quiet
+        set needs_stash true
+        git stash push -m "auto-stash before switching branches"
+    end
+    $argv
+    if test "$needs_stash" = true
+        git stash pop
+    end
+end
+
 function ,g --description "Git workflow helper commands"
     if test (count $argv) -eq 0
         echo "Usage: ,g <command> [args]"
         echo ""
         echo "Commands:"
         echo "  base        Print the base branch (main or master)"
-        echo "  clean       Delete local branches merged into base"
-        echo "  cmp         Show commits ahead of upstream base branch"
-        echo "  coauthored  Generate Co-authored-by trailer for a GitHub user"
-        echo "  merge       Sync base and merge it into current branch"
+        echo "  bco         Switch to the base branch"
+        echo "  new         Create a new branch (from base, or current branch with 2nd arg)"
         echo "  mybranches  List and checkout branches authored by you"
-        echo "  myprs       List and checkout your open PRs"
-        echo "  new         Sync base and create a new branch from it"
+        echo "  clean       Delete local branches merged into base"
+        echo "  brprune     Delete all local branches except the base branch"
+        echo "  sync        Update local base branch (from upstream if available, else origin)"
+        echo "  merge       Sync base and merge it into current branch"
+        echo "  rebase      Sync base and rebase current branch onto it"
+        echo "  squash      Squash all commits ahead of base into one"
+        echo "  done        Stash changes, switch to base branch, and sync"
         echo "  prc         Push and create a PR, then copy review link"
         echo "  pro         Open PR in browser"
         echo "  prr         Copy formatted PR review request to clipboard"
-        echo "  rebase      Sync base and rebase current branch onto it"
-        echo "  sync        Update local base branch (from upstream if available, else origin)"
+        echo "  myprs       List and checkout your open PRs"
+        echo "  coauthored  Generate Co-authored-by trailer for a GitHub user"
+        echo "  stash       Stash changes with a named message"
+        echo "  unstash     Pick a stash to pop via interactive chooser"
+        echo "  wk          Switch to a git worktree via interactive chooser"
+        echo "  cmp         Show commits ahead of upstream base branch"
         return 1
     end
 
@@ -28,6 +47,23 @@ function ,g --description "Git workflow helper commands"
                 echo main
             else
                 echo master
+            end
+
+        case bco
+            set base_branch (,g base)
+            __g_stash_run_unstash git checkout $base_branch
+
+        case brprune
+            set base_branch (,g base)
+            set current_branch (git rev-parse --abbrev-ref HEAD)
+
+            if test "$current_branch" != "$base_branch"
+                __g_stash_run_unstash git checkout $base_branch
+            end
+
+            for branch in (git branch --format="%(refname:short)" | string match -v "$base_branch")
+                echo "Deleting branch: $branch"
+                git branch -D $branch
             end
 
         case clean
@@ -76,7 +112,7 @@ function ,g --description "Git workflow helper commands"
             set branch (printf '%s\n' $my_branches | gum choose --height 15)
 
             if test -n "$branch"
-                git checkout "$branch"
+                __g_stash_run_unstash git checkout "$branch"
             else
                 echo "No branch selected."
             end
@@ -90,16 +126,23 @@ function ,g --description "Git workflow helper commands"
 
             if test -n "$selection"
                 set pr_id (string split \t "$selection")[1]
-                gh pr checkout "$pr_id"
+                __g_stash_run_unstash gh pr checkout "$pr_id"
             else
                 echo "No PR selected."
             end
 
         case new
-            ,g sync
-            if test (count $argv) -gt 0
+            if test (count $argv) -eq 0
+                echo "Usage: ,g new <branch> [from-current]"
+                return 1
+            end
+            set branch_name "shaygan-$argv[1]"
+            if test (count $argv) -ge 2
+                git checkout -b $branch_name
+            else
+                ,g sync
                 set base_branch (,g base)
-                git checkout -b $argv[1] $base_branch
+                git checkout -b $branch_name $base_branch
             end
 
         case prc
@@ -155,20 +198,125 @@ $pr_link"
             echo "Formatted text has been copied to clipboard:"
             echo -e $text
 
+        case done
+            set current_branch (git rev-parse --abbrev-ref HEAD)
+            set base_branch (,g base)
+
+            if test "$current_branch" = "$base_branch"
+                echo "Already on $base_branch, nothing to do."
+                return 1
+            end
+
+            # Stash any uncommitted changes
+            if not git diff --quiet; or not git diff --cached --quiet
+                set stash_name "$current_branch/"(date +%Y-%m-%d-%H%M%S)
+                ,g stash $stash_name
+            end
+
+            ,g sync
+            git checkout $base_branch
+
         case rebase
             ,g sync
             set base_branch (,g base)
             git rebase $base_branch
 
+        case squash
+            set base_branch (,g base)
+            set commit_count (git rev-list --count $base_branch..HEAD)
+
+            if test "$commit_count" -eq 0
+                echo "No commits ahead of $base_branch to squash."
+                return 1
+            end
+
+            echo "Squashing $commit_count commit(s) ahead of $base_branch..."
+            git reset --soft $base_branch
+            git commit
+
+        case stash
+            if test (count $argv) -eq 0
+                echo "Usage: ,g stash <message>"
+                return 1
+            end
+            set stash_msg (string join " " $argv)
+            git stash push -m "$stash_msg"
+            echo "📦 Stashed as: $stash_msg"
+
         case sync
             set base_branch (,g base)
-            if git remote get-url upstream >/dev/null 2>&1
+            set current_branch (git rev-parse --abbrev-ref HEAD)
+
+            if test "$current_branch" = "$base_branch"
+                git pull
+            else if git remote get-url upstream >/dev/null 2>&1
                 git fetch upstream
                 git fetch origin
                 git branch -f $base_branch upstream/$base_branch
                 git push origin $base_branch --force
             else
                 git fetch origin +$base_branch:$base_branch
+            end
+
+        case unstash
+            set stash_list (git stash list)
+            if test -z "$stash_list"
+                echo "No stashes found."
+                return 1
+            end
+
+            set selection (printf '%s\n' $stash_list | gum choose --height 15)
+
+            if test -n "$selection"
+                set stash_ref (string split ":" "$selection")[1]
+                git stash pop "$stash_ref"
+            else
+                echo "No stash selected."
+            end
+
+        case wk
+            set wt_entries
+            set wt_paths
+            set current_path ""
+            set current_branch ""
+            git worktree list --porcelain | while read -l line
+                if string match -q "worktree *" "$line"
+                    set current_path (string replace "worktree " "" "$line")
+                else if string match -q "branch *" "$line"
+                    set current_branch (string replace "branch refs/heads/" "" "$line")
+                else if string match -q "HEAD *" "$line"
+                    # detached HEAD, will be overwritten if branch line follows
+                else if test -z "$line"; and test -n "$current_path"
+                    if test -z "$current_branch"
+                        set current_branch "(detached)"
+                    end
+                    set -a wt_entries "$current_path\t[$current_branch]"
+                    set -a wt_paths "$current_path"
+                    set current_path ""
+                    set current_branch ""
+                end
+            end
+            # handle last entry if no trailing blank line
+            if test -n "$current_path"
+                if test -z "$current_branch"
+                    set current_branch "(detached)"
+                end
+                set -a wt_entries "$current_path\t[$current_branch]"
+                set -a wt_paths "$current_path"
+            end
+
+            if test (count $wt_entries) -eq 0
+                echo "No worktrees found."
+                return 1
+            end
+
+            set selection (printf '%s\n' $wt_entries | gum choose --height 15)
+
+            if test -n "$selection"
+                set selected_path (string split \t "$selection")[1]
+                cd "$selected_path"
+            else
+                echo "No worktree selected."
             end
 
         case '*'

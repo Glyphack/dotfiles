@@ -1,6 +1,6 @@
 vim.loader.enable()
 
-vim.opt.foldlevelstart = 0
+vim.opt.foldlevelstart = 99
 
 local fold_langs = {}
 for name, kind in vim.fs.dir(vim.fn.stdpath("config") .. "/queries") do
@@ -49,7 +49,6 @@ vim.opt.smartcase = true
 
 vim.opt.signcolumn = "auto"
 
-vim.o.background = "dark"
 vim.opt.termguicolors = true
 
 -- Decrease update time
@@ -68,7 +67,7 @@ vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.inccommand = "split"
 
 -- Show which line your cursor is on
-vim.opt.cursorline = false
+vim.opt.cursorline = true
 
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 999
@@ -158,7 +157,7 @@ vim.diagnostic.config({
 
 local large_file_config = {
 	max_filesize = 1024 * 1024,
-	max_lines = 20000,
+	max_lines = 30000,
 }
 
 vim.api.nvim_create_autocmd("BufReadPre", {
@@ -344,6 +343,25 @@ require("make").setup()
 
 require("lazy").setup({
 	{
+		"dmtrKovalenko/fff.nvim",
+		build = "cargo build --release",
+		keys = {
+			{ "<leader>sf", "<cmd>FFFFind<cr>", desc = "[S]earch [F]iles (fff)" },
+			{
+				"<leader>sg",
+				function()
+					require("fff").live_grep()
+				end,
+				desc = "[S]earch by [G]rep (fff)",
+			},
+		},
+		opts = {
+			layout = {
+				width = 0.95,
+			},
+		},
+	},
+	{
 		"neovim/nvim-lspconfig",
 		config = function()
 			vim.lsp.enable("ruff")
@@ -480,6 +498,7 @@ require("lazy").setup({
 			require("telescope").load_extension("git_file_history")
 			require("telescope").load_extension("neoclip")
 			require("telescope").load_extension("cmdline")
+			require("telescope").load_extension("aerial")
 
 			local function find_files()
 				builtin.find_files({
@@ -512,15 +531,15 @@ require("lazy").setup({
 
 			vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 			vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-			vim.keymap.set("n", "<leader>sf", find_files, { desc = "[S]earch [F]iles" })
+			-- vim.keymap.set("n", "<leader>sf", find_files, { desc = "[S]earch [F]iles" })
 			vim.keymap.set("n", "<leader>ss", git_changed_files, { desc = "[E]dited [F]iles" })
 			vim.keymap.set("n", "<leader>sp", neoclip, { desc = "Search clipboard history" })
-			vim.keymap.set(
-				"n",
-				"<leader>sg",
-				require("telescope").extensions.live_grep_args.live_grep_args,
-				{ desc = "[S]earch by [G]rep" }
-			)
+			-- vim.keymap.set(
+			-- 	"n",
+			-- 	"<leader>sg",
+			-- 	require("telescope").extensions.live_grep_args.live_grep_args,
+			-- 	{ desc = "[S]earch by [G]rep" }
+			-- )
 			vim.keymap.set(
 				"n",
 				"<leader>sw",
@@ -540,6 +559,8 @@ require("lazy").setup({
 				{ desc = "Search highlighted word" }
 			)
 			vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
+			vim.keymap.set("n", "<leader>ds", "<cmd>Telescope aerial<cr>", { desc = "Goto Symbol (Aerial)" })
+
 			vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]esume" })
 			vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 			vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
@@ -959,27 +980,68 @@ require("lazy").setup({
 					end
 					local bufnr = vim.api.nvim_get_current_buf()
 					local opts = { buffer = bufnr, remap = false }
+					local run_command = function(cmd)
+						return function()
+							vim.fn.jobstart({ "fish", "-c", cmd }, {
+								on_exit = function(_, code)
+									vim.schedule(function()
+										if code == 0 then
+											vim.notify(cmd .. " successful", vim.log.levels.INFO)
+										else
+											vim.notify(
+												cmd .. " failed (exit code: " .. code .. ")",
+												vim.log.levels.ERROR
+											)
+										end
+									end)
+								end,
+							})
+						end
+					end
+
+					vim.keymap.set("n", "<leader>fp", function()
+						vim.fn.jobstart({ "git", "forgot" }, {
+							on_exit = function(_, code)
+								if code ~= 0 then
+									vim.schedule(function()
+										vim.notify("git forgot failed", vim.log.levels.ERROR)
+									end)
+									return
+								end
+								vim.fn.jobstart({ "git", "push", "--force-with-lease" }, {
+									on_exit = function(_, push_code)
+										vim.schedule(function()
+											if push_code == 0 then
+												vim.notify("Force push successful", vim.log.levels.INFO)
+												vim.cmd("doautocmd User FugitiveChanged")
+											else
+												vim.notify(
+													"Force push failed (exit code: " .. push_code .. ")",
+													vim.log.levels.ERROR
+												)
+											end
+										end)
+									end,
+								})
+							end,
+						})
+					end, opts)
 					vim.keymap.set("n", "<leader>p", function()
-						vim.fn.jobstart("git push", {
+						vim.fn.jobstart({ "git", "push" }, {
 							on_exit = function(_, code)
 								vim.schedule(function()
 									if code == 0 then
-										vim.notify("Git push successful", vim.log.levels.INFO)
+										vim.notify("Push successful", vim.log.levels.INFO)
+										vim.cmd("doautocmd User FugitiveChanged")
 									else
-										vim.notify("Git push failed (exit code: " .. code .. ")", vim.log.levels.ERROR)
+										vim.notify("Push failed (exit code: " .. code .. ")", vim.log.levels.ERROR)
 									end
 								end)
 							end,
 						})
 					end, opts)
-					vim.keymap.set("n", "<leader>fp", function()
-						vim.cmd("Git! forgot")
-						vim.cmd("Git! push --force-with-lease")
-						vim.api.nvim_command("normal! <CR>")
-					end, opts)
-					vim.keymap.set("n", "<leader>P", function()
-						vim.cmd.Git({ "pul" })
-					end, opts)
+					vim.keymap.set("n", "<leader>P", run_command(",g prc"), opts)
+					vim.keymap.set("n", "<leader>s", run_command(",g sync"), opts)
 
 					vim.keymap.set("n", "<leader>b", ":Git co -b ", opts)
 				end,
@@ -1106,15 +1168,23 @@ require("lazy").setup({
 				floats = "transparent",
 			},
 		},
+		config = function() end,
+	},
+	{
+		"zenbones-theme/zenbones.nvim",
+		dependencies = "rktjmp/lush.nvim",
+		lazy = false,
+		priority = 1000,
 		config = function()
-			vim.o.background = "dark"
-			vim.cmd("colorscheme tokyonight-night")
+			vim.g.darken_cursor_line = 1
 		end,
 	},
-	{ "rebelot/kanagawa.nvim", lazy = true },
-	{ "lunarvim/templeos.nvim", lazy = true },
-	{ "shaunsingh/solarized.nvim", lazy = true },
-	{ "sainnhe/gruvbox-material", lazy = true },
+	{ "rebelot/kanagawa.nvim", lazy = false, priority = 1000 },
+	{ "lunarvim/templeos.nvim", lazy = false, priority = 1000 },
+	{ "kepano/flexoki-neovim", name = "flexoki", lazy = false, priority = 1000 },
+
+	{ "shaunsingh/solarized.nvim", lazy = false, priority = 1000 },
+	{ "morhetz/gruvbox", lazy = false, priority = 1000 },
 	{
 		"folke/todo-comments.nvim",
 		event = { "BufReadPost", "BufNewFile" },
@@ -1522,9 +1592,39 @@ require("lazy").setup({
 	{
 		"stevearc/aerial.nvim",
 		event = "LspAttach",
-		opts = {},
-		keys = {
-			{ "<leader>ds", "<cmd>AerialToggle!<CR>", desc = "Toggle Aerial" },
+		opts = {
+			disable_max_lines = large_file_config.max_lines,
+			disable_max_size = large_file_config.max_filesize,
 		},
 	},
 })
+
+vim.o.background = "light"
+vim.cmd.colorscheme("kanagawa")
+vim.api.nvim_set_hl(0, "Cursor", { fg = "NONE", bg = "#000000" })
+vim.opt.guicursor = "n-v-c:block-Cursor,i-ci-ve:ver25-Cursor,r-cr:hor20-Cursor"
+
+-- Restarter
+local session_file = vim.fn.stdpath("data") .. "/restart_session.vim"
+
+local function restart_and_restore()
+	-- Save current session
+	vim.cmd("mksession! " .. vim.fn.fnameescape(session_file))
+	-- Restart the server
+	vim.cmd("restart")
+end
+
+-- Restore session if it was created by our restart command
+local function maybe_restore()
+	if vim.fn.filereadable(session_file) == 1 then
+		vim.cmd("source " .. vim.fn.fnameescape(session_file))
+		vim.fn.delete(session_file)
+	end
+end
+
+vim.api.nvim_create_user_command("RestartNvim", restart_and_restore, {
+	desc = "Save session, restart Neovim, and restore session",
+})
+
+-- Restore on startup
+maybe_restore()

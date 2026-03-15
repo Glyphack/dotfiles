@@ -6,3 +6,5 @@ secret*
 !asdf/.tool-versions
 .aider*
 *__pycache__*
+
+*scratch/**
