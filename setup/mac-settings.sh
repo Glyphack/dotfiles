@@ -319,7 +319,8 @@ bot "Dock & Dashboard"
 
 defaults delete com.apple.dock persistent-apps
 defaults delete com.apple.dock persistent-others
-defaults write com.apple.dock persistent-apps -array; defaults write com.apple.dock persistent-others -array; killall Dock
+defaults write com.apple.dock persistent-apps -array
+defaults write com.apple.dock persistent-others -array
 
 
 running "Enable highlight hover effect for the grid view of a stack (Dock)"
@@ -364,6 +365,9 @@ defaults write com.apple.dock showhidden -bool true;ok
 running "Make Dock more transparent"
 defaults write com.apple.dock hide-mirror -bool true;ok
 
+defaults write com.apple.dock show-recents -bool false; 
+
 # defaults write com.apple.dock ResetLaunchPad -bool TRUE
 running "Reset Launchpad, but keep the desktop wallpaper intact"
 find "${HOME}/Library/Application Support/Dock" -name "*-*.db" -maxdepth 1 -delete;ok
+killall Dock

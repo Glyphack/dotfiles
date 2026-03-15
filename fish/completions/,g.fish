@@ -1,0 +1,23 @@
+set -l subcmds base bco brprune clean cmp coauthored done merge mybranches myprs new prc pro prr rebase squash stash sync unstash wk
+
+complete -c ,g -f
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a base -d "Print the base branch (main or master)"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a bco -d "Switch to the base branch"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a new -d "Sync base and create a new branch from it"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a mybranches -d "List and checkout branches authored by you"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a clean -d "Delete local branches merged into base"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a brprune -d "Delete all local branches except the base branch"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a sync -d "Update local base branch"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a merge -d "Sync base and merge it into current branch"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a rebase -d "Sync base and rebase current branch onto it"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a squash -d "Squash all commits ahead of base into one"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a done -d "Stash changes, switch to base branch, and sync"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a prc -d "Push and create a PR, then copy review link"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a pro -d "Open PR in browser"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a prr -d "Copy formatted PR review request to clipboard"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a myprs -d "List and checkout your open PRs"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a coauthored -d "Generate Co-authored-by trailer for a GitHub user"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a stash -d "Stash changes with a named message"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a unstash -d "Pick a stash to pop via interactive chooser"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a wk -d "Switch to a git worktree via interactive chooser"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a cmp -d "Show commits ahead of upstream base branch"

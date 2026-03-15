@@ -43,7 +43,7 @@ VAULT_WEEKLY = VAULT / "Weekly"
 
 def build_log_entry(msg, place):
     timestamp = datetime.now().strftime("%H:%M")
-    entry = f'{timestamp} "{msg}"'
+    entry = f"{timestamp} > {msg}"
     if place:
         entry += f" place: {place}"
     return entry
@@ -94,10 +94,7 @@ def create_today_section(lines, today_header, log_entry):
     return lines + [""] + new_section
 
 
-def main():
-    msg = sys.argv[1]
-    place = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None
-
+def log_msg(msg, place):
     today = date.today()
     iso = today.isocalendar()
     filepath = VAULT_WEEKLY / f"{iso.year}-W{iso.week:02d}.md"
@@ -113,4 +110,11 @@ def main():
     filepath.write_text("\n".join(lines) + "\n")
 
 
-main()
+def main():
+    msg = sys.argv[1]
+    place = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None
+    log_msg(msg, place)
+
+
+if __name__ == "__main__":
+    main()

@@ -223,12 +223,29 @@ config.keys = {
 	{ key = "]", mods = "CMD", action = act.ActivateTabRelative(1), description = "Next tab" },
 	{ key = "[", mods = "CMD", action = act.ActivateTabRelative(-1), description = "Previous tab" },
 	{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState, description = "Toggle pane zoom" },
+	{
+		key = "d",
+		mods = "LEADER",
+		description = "Detach tab to new window",
+		action = wezterm.action_callback(function(_, pane)
+			pane:move_to_new_window()
+		end),
+	},
 
 	-- workspace
 	{
 		key = "Enter",
 		mods = "CMD",
 		action = wezterm.action_callback(function(window, pane)
+			local current = window:active_workspace()
+			if current ~= "default" then
+				for _, name in ipairs(wezterm.mux.get_workspace_names()) do
+					if name == "default" then
+						kill_workspace_panes("default")
+						break
+					end
+				end
+			end
 			window:perform_action(
 				act.InputSelector({
 					title = "Workspace Switcher",
@@ -277,7 +294,10 @@ config.keys = {
 												fuzzy_description = "Switch to: ",
 												action = wezterm.action_callback(function(w, pp, target_id)
 													if target_id and target_id ~= "" then
-														w:perform_action(act.SwitchToWorkspace({ name = target_id }), pp)
+														w:perform_action(
+															act.SwitchToWorkspace({ name = target_id }),
+															pp
+														)
 														kill_workspace_panes(current)
 													end
 												end),

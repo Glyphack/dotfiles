@@ -2,23 +2,21 @@
 
 import os
 
-source_files = ["CLAUDE.md", "AGENTS.md", "GEMINI.md"]
-rules_file = ".rules"
+files = ["CLAUDE.md", "AGENTS.md"]
 
-found_file = None
-for fname in source_files:
-    if os.path.isfile(fname):
-        found_file = fname
+source = None
+for fname in files:
+    if os.path.isfile(fname) and not os.path.islink(fname):
+        source = fname
         break
 
-if found_file and not os.path.exists(rules_file):
-    with (
-        open(found_file, "r", encoding="utf-8") as src,
-        open(rules_file, "w", encoding="utf-8") as dst,
-    ):
-        dst.write(src.read())
+if source is None:
+    open("AGENTS.md", "w").close()
+    source = "AGENTS.md"
 
-for fname in source_files:
+for fname in files:
+    if fname == source:
+        continue
     if os.path.islink(fname) or os.path.isfile(fname):
         os.remove(fname)
-    os.symlink(rules_file, fname)
+    os.symlink(source, fname)

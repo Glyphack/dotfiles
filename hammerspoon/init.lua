@@ -502,6 +502,34 @@ overrideOtherMouseDown:start()
 overrideOtherMouseUp:start()
 dragOtherToScroll:start()
 
+-- Hue Automation
+local HOME_WIFI = "tardis"
+local HUE_LIGHTS_ON_START_HOUR = 18
+local HUE_LIGHTS_ON_END_HOUR = 23
+local FISH_SHELL = "/opt/homebrew/bin/fish"
+
+local function fishRunCommand(command)
+	local task, taskErr = hs.task.new(FISH_SHELL, function(exitCode, stdout, stderr)
+		if exitCode == 0 then
+			if stdout ~= nil and stdout ~= "" then
+				log.i(command .. " output: " .. stdout)
+			end
+			return
+		end
+
+		log.w(command .. " failed (exit " .. tostring(exitCode) .. "): " .. tostring(stderr))
+	end, { "-lc", command })
+
+	if not task then
+		log.w("Failed to create task for " .. command .. ": " .. tostring(taskErr))
+		return
+	end
+
+	if not task:start() then
+		log.w("Failed to start task for " .. command)
+	end
+end
+
 -- NOISE-BASED SCROLLING
 local Scroller = {}
 Scroller.__index = Scroller
@@ -530,12 +558,19 @@ local scrollState = {
 	active = false,
 	scrollDown = Scroller.new(0.02, -10),
 	mode = false,
+	lightOn = false,
 }
 
 local function handleNoiseEvent(evNum)
 	if evNum == 3 then
-		scrollState.mode = not scrollState.mode
-		alert.show(scrollState.mode and "Scroll Mode ON" or "Scroll Mode OFF")
+		if scrollState.lightOn then
+			fishRunCommand("huec power off")
+			alert.show("Lights OFF")
+		else
+			fishRunCommand("huec power on")
+			alert.show("Lights ON")
+		end
+		scrollState.lightOn = not scrollState.lightOn
 	elseif evNum == 1 and scrollState.mode then
 		scrollState.scrollDown:start()
 	elseif evNum == 2 then
@@ -580,34 +615,6 @@ local function printScreenNames()
 	end
 end
 
--- Hue Automation
-local HOME_WIFI = "tardis"
-local HUE_LIGHTS_ON_START_HOUR = 18
-local HUE_LIGHTS_ON_END_HOUR = 23
-local FISH_SHELL = "/opt/homebrew/bin/fish"
-
-local function fishRunCommand(command)
-	local task, taskErr = hs.task.new(FISH_SHELL, function(exitCode, stdout, stderr)
-		if exitCode == 0 then
-			if stdout ~= nil and stdout ~= "" then
-				log.i(command .. " output: " .. stdout)
-			end
-			return
-		end
-
-		log.w(command .. " failed (exit " .. tostring(exitCode) .. "): " .. tostring(stderr))
-	end, { "-lc", command })
-
-	if not task then
-		log.w("Failed to create task for " .. command .. ": " .. tostring(taskErr))
-		return
-	end
-
-	if not task:start() then
-		log.w("Failed to start task for " .. command)
-	end
-end
-
 local function bluetoothOn()
 	local _, btOn = hs.execute("/usr/sbin/system_profiler SPBluetoothDataType 2>/dev/null | grep -q 'State: On'")
 	if not btOn then
@@ -648,7 +655,7 @@ WifiChanged()
 
 function HueTurnOn()
 	local currentHour = os.date("*t").hour
-	local shouldTurnOn = currentHour >= HUE_LIGHTS_ON_START_HOUR or currentHour < HUE_LIGHTS_ON_END_HOUR
+	local shouldTurnOn = currentHour >= HUE_LIGHTS_ON_START_HOUR and currentHour < HUE_LIGHTS_ON_END_HOUR
 	if shouldTurnOn == false then
 		return
 	end
@@ -661,9 +668,10 @@ function HueTurnOn()
 end
 
 function ToggleLights(eventType)
+	log.i("event: " .. eventType)
 	if eventType == hs.caffeinate.watcher.screensDidUnlock or eventType == hs.caffeinate.watcher.systemDidWake then
-		HueEnableAlarms()
 		HueTurnOn()
+		HueEnableAlarms()
 	elseif
 		eventType == hs.caffeinate.watcher.screensDidLock
 		or eventType == hs.caffeinate.watcher.systemWillSleep
