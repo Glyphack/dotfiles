@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   tmux \
   curl \
   ca-certificates \
+  openjdk-17-jdk \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ARG GIT_DELTA_VERSION=0.18.2
@@ -49,6 +50,8 @@ ENV PATH="/home/node/.local/bin:/home/node/.cargo/bin:$PATH"
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN curl -fsSL https://claude.ai/install.sh | bash
+
+RUN cargo install cargo-nextest --locked
 
 RUN mkdir -p /home/node/git_hooks && \
   printf '#!/bin/bash\necho "git push is disabled in this VM"\nexit 1\n' > /home/node/git_hooks/pre-push && \

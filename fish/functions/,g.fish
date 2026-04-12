@@ -15,26 +15,27 @@ function ,g --description "Git workflow helper commands"
         echo "Usage: ,g <command> [args]"
         echo ""
         echo "Commands:"
-        echo "  base        Print the base branch (main or master)"
-        echo "  bco         Switch to the base branch"
-        echo "  new         Create a new branch (from base, or current branch with 2nd arg)"
-        echo "  mybranches  List and checkout branches authored by you (-d to delete)"
-        echo "  clean       Delete local branches merged into base"
-        echo "  brprune     Delete all local branches except the base branch"
-        echo "  sync        Update local base branch (from upstream if available, else origin)"
-        echo "  merge       Sync base and merge it into current branch"
-        echo "  rebase      Sync base and rebase current branch onto it"
-        echo "  squash      Squash all commits ahead of base into one"
-        echo "  done        Stash changes, switch to base branch, and sync"
-        echo "  prc         Push and create a PR, then copy review link"
+        echo "  base        Print base branch"
+        echo "  bco         Checkout base branch"
+        echo "  new         New branch from base (or current with 2nd arg)"
+        echo "  mybranches  List/checkout your branches"
+        echo "  clean       Delete branches merged into base"
+        echo "  brprune     Delete all branches except base"
+        echo "  sync        Fetch and update base branch"
+        echo "  merge       Merge base into current branch"
+        echo "  rebase      Rebase current branch onto base"
+        echo "  squash      Squash commits ahead of base"
+        echo "  done        Switch to base and sync"
+        echo "  prc         Push and create PR"
         echo "  pro         Open PR in browser"
-        echo "  prr         Copy formatted PR review request to clipboard"
-        echo "  myprs       List and checkout your open PRs"
-        echo "  coauthored  Generate Co-authored-by trailer for a GitHub user"
-        echo "  stash       Stash changes with a named message"
-        echo "  unstash     Pick a stash to pop via interactive chooser"
-        echo "  wk          Switch to a git worktree via interactive chooser"
-        echo "  cmp         Show commits ahead of upstream base branch"
+        echo "  prr         Copy PR review link"
+        echo "  myprs       List/checkout your PRs"
+        echo "  coauthored  Co-authored-by for a GitHub user"
+        echo "  stash       Stash with a name"
+        echo "  unstash     Pop a stash"
+        echo "  wk          Switch worktree"
+        echo "  cmp         Commits ahead of upstream"
+        echo "  fixup       Fixup a commit"
         return 1
     end
 
@@ -91,6 +92,43 @@ function ,g --description "Git workflow helper commands"
             set id (echo $data | jq .id)
             set name (echo $data | jq --raw-output '.name // .login')
             printf "Co-authored-by: %s %d+%s@users.noreply.github.com\n" $name $id $account
+
+        case fixup
+            if test (count $argv) -ge 1
+                set target $argv[1]
+            else
+                set base_branch (,g base)
+                set commits (git log --oneline $base_branch..HEAD)
+
+                if test -z "$commits"
+                    echo "No commits ahead of $base_branch." >&2
+                    return 1
+                end
+
+                set selection (printf '%s\n' $commits | gum choose --height 15 --header "Select commit to fixup:")
+
+                if test -z "$selection"
+                    echo "No commit selected."
+                    return 1
+                end
+
+                set target (string split " " "$selection")[1]
+            end
+
+            if not git rev-parse --verify "$target" >/dev/null 2>&1
+                echo "Error: commit '$target' not found" >&2
+                return 1
+            end
+
+            git add -u
+
+            if git diff --cached --quiet
+                echo "Nothing staged — no changes to fixup" >&2
+                return 1
+            end
+
+            git commit --fixup "$target"
+            GIT_SEQUENCE_EDITOR=: git rebase --autosquash "$target~1"
 
         case merge
             ,g sync

@@ -1,4 +1,4 @@
-set -l subcmds base bco brprune clean cmp coauthored done merge mybranches myprs new prc pro prr rebase squash stash sync unstash wk
+set -l subcmds base bco brprune clean cmp coauthored done fixup merge mybranches myprs new prc pro prr rebase squash stash sync unstash wk
 
 complete -c ,g -f
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a base -d "Print the base branch (main or master)"
@@ -22,3 +22,5 @@ complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a stash -d "Stash 
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a unstash -d "Pick a stash to pop via interactive chooser"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a wk -d "Switch to a git worktree via interactive chooser"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a cmp -d "Show commits ahead of upstream base branch"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a fixup -d "Stage changes and fixup a given commit, then autosquash"
+complete -c ,g -n "__fish_seen_subcommand_from fixup" -a "(git log --oneline -20 | string replace -r '^(\S+) ' '\$1\t')" -d "Commit to fixup"
