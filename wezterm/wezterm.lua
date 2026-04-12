@@ -2,39 +2,30 @@ local wezterm = require("wezterm")
 local act = wezterm.action
 
 local config = wezterm.config_builder()
-
-config.leader = { key = "a", mods = "CMD", timeout_milliseconds = 1000 }
+--
+config.leader = { key = "a", mods = "CMD", timeout_milliseconds = 500 }
 config.key_tables = {
 	copy_mode = wezterm.gui.default_key_tables().copy_mode,
 }
-config.font = wezterm.font("Hack Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" })
-config.font_size = 18
-config.color_scheme = "catppuccin-mocha"
+-- config.font = wezterm.font("Hack Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" })
+config.font_size = 16
 
-wezterm.on("format-tab-title", function(tab)
-	local pane = tab.active_pane
-	local cwd = pane.current_working_dir
-	local process = pane.foreground_process_name or ""
-	local process_name = process:match("([^/]+)$") or "shell"
-	if cwd then
-		local folder = cwd.file_path:match("([^/]+)/?$") or cwd.file_path
-		return string.format(" %s | %s ", folder, process_name)
+local function scheme_for_appearance(appearance)
+	if appearance:find("Dark") then
+		return "flexoki-dark"
+	else
+		return "flexoki-light"
 	end
-	return string.format(" %s ", process_name)
-end)
+end
 
-wezterm.on("update-right-status", function(window)
-	local bat = ""
-	for _, b in ipairs(wezterm.battery_info()) do
-		bat = "🔋" .. string.format("%.0f%%", b.state_of_charge * 100)
+local function get_appearance()
+	if wezterm.gui then
+		return wezterm.gui.get_appearance()
 	end
+	return "Dark"
+end
 
-	local workspace = window:active_workspace()
-
-	window:set_right_status(wezterm.format({
-		{ Text = bat .. " | " .. workspace .. "   " },
-	}))
-end)
+config.color_scheme = scheme_for_appearance(get_appearance())
 
 local run_child_process = function(cmd)
 	local process_args = { os.getenv("SHELL"), "-c", cmd }
@@ -103,10 +94,18 @@ local function directory_name(pane)
 	return nil
 end
 
+local function workspace_name_for_directory(cwd)
+	local project, worktree = cwd:match("wk/([^/]+)/([^/]+)/?$")
+	if project and worktree then
+		return project .. "/" .. worktree
+	end
+	return cwd:match("([^/]+)/?$") or cwd
+end
+
 local function switch_to_workspace_for_directory(win, pane, opts)
 	local old_workspace = opts and opts.old_workspace
 	pick_directory_and_switch(win, pane, function(inner_win, inner_pane, cwd)
-		local name = run_child_process("basename " .. cwd)
+		local name = workspace_name_for_directory(cwd)
 		inner_win:perform_action(act.SwitchToWorkspace({ name = name, spawn = { cwd = cwd } }), inner_pane)
 		if old_workspace and old_workspace ~= "" then
 			kill_workspace_panes(old_workspace)
@@ -325,9 +324,11 @@ config.keys = {
 									description = "New name for workspace '" .. inner_window:active_workspace() .. "':",
 									action = wezterm.action_callback(function(win, p, line)
 										if line then
-											local new_name = line ~= "" and line or directory_name(p)
+											local current_name = win:active_workspace()
+											local new_name = line ~= "" and line
+												or (current_name == "default" and directory_name(p) or nil)
 											if new_name then
-												wezterm.mux.rename_workspace(win:active_workspace(), new_name)
+												wezterm.mux.rename_workspace(current_name, new_name)
 											end
 										end
 									end),
@@ -362,15 +363,15 @@ config.min_scroll_bar_height = "2cell"
 config.colors = {
 	scrollbar_thumb = "gray",
 }
-config.background = {
-	{
-		source = {
-			File = wezterm.home_dir .. "/Programming/dotfiles/wezterm/backgrounds/planet.jpg",
-		},
-		repeat_x = "Mirror",
-		hsb = { brightness = 0.05 },
-	},
-}
+-- config.background = {
+-- 	{
+-- 		source = {
+-- 			File = wezterm.home_dir .. "/Programming/dotfiles/wezterm/backgrounds/planet.jpg",
+-- 		},
+-- 		repeat_x = "Mirror",
+-- 		hsb = { brightness = 0.05 },
+-- 	},
+-- }
 
 config.switch_to_last_active_tab_when_closing_tab = true
 
@@ -378,8 +379,13 @@ config.inactive_pane_hsb = {
 	saturation = 0.7,
 	brightness = 0.5,
 }
-config.scrollback_lines = 100000
+config.scrollback_lines = 10000
 
-local modal = wezterm.plugin.require("https://github.com/MLFlexer/modal.wezterm")
+config.window_padding = {
+	left = 0,
+	right = 0,
+	top = 0,
+	bottom = 10,
+}
 
 return config

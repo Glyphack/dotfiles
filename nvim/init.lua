@@ -76,6 +76,7 @@ vim.opt.scrolloff = 999
 vim.opt.spell = true
 
 vim.opt.swapfile = false
+vim.opt.cmdheight = 0
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
@@ -245,7 +246,7 @@ vim.keymap.set("v", "<leader>k", ":Link<CR>", { noremap = true, silent = true })
 vim.lsp.enable("lua_ls")
 vim.lsp.enable("clangd")
 vim.lsp.enable("gopls")
-vim.g.python_lsp = "pyright" -- default: "pyright" or "ty"
+vim.g.python_lsp = "ty"
 vim.lsp.enable(vim.g.python_lsp)
 
 vim.api.nvim_create_user_command("PythonLspSwitch", function()
@@ -277,6 +278,14 @@ vim.api.nvim_create_user_command("PythonLspSwitch", function()
 	vim.notify("Switched Python LSP to: " .. new_lsp)
 end, { desc = "Switch Python LSP between pyright and ty" })
 
+vim.api.nvim_create_user_command("LspLog", function()
+	vim.cmd("edit " .. vim.lsp.get_log_path())
+end, { desc = "Open LSP log file" })
+
+vim.api.nvim_create_user_command("Lsp", function()
+	vim.cmd("checkhealth vim.lsp")
+end, { desc = "Show LSP health check" })
+
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
 	callback = function(event)
@@ -290,12 +299,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
 		map("<leader>ps", vim.lsp.buf.signature_help, "Peek signature")
 		map("K", vim.lsp.buf.hover, "Hover Documentation")
-
-		-- 	local telescope = require("telescope.builtin")
-		-- 	map("gi", telescope.lsp_implementations, "[G]oto [I]mplementation")
-		-- 	map("gt", telescope.lsp_type_definitions, "Goto type definition")
-		-- 	map("<leader>ds", telescope.lsp_document_symbols, "[D]ocument [S]ymbols")
-		-- 	map("<leader>ws", telescope.lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+		map("gt", vim.lsp.buf.type_definition, "Goto type definition")
+		local telescope = require("telescope.builtin")
+		map("<leader>ws", telescope.lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+		map("gi", telescope.lsp_implementations, "[G]oto [I]mplementation")
 
 		local client = vim.lsp.get_client_by_id(event.data.client_id)
 		if client == nil then
@@ -303,6 +310,33 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 		if client.name == "ruff" then
 			client.server_capabilities.hoverProvider = false
+		end
+		if client.name == "ty" then
+			vim.lsp.commands["ty.runTest"] = function(command)
+				local args = command.arguments
+				local cwd = args[1]
+				local program = args[2]
+				local cmd_args = args[3]
+				local cmd_str = program .. " " .. table.concat(cmd_args, " ")
+				vim.cmd("split | terminal cd " .. vim.fn.shellescape(cwd) .. " && " .. cmd_str)
+			end
+
+			vim.api.nvim_create_user_command("TyDebug", function()
+				local client = vim.lsp.get_clients({ name = "ty" })[1]
+				client:request("workspace/executeCommand", {
+					command = "ty.printDebugInformation",
+				}, function(err, result)
+					vim.schedule(function()
+						local buf = vim.api.nvim_create_buf(false, true)
+						vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.split(result, "\n"))
+						vim.cmd("split")
+						vim.api.nvim_win_set_buf(0, buf)
+					end)
+				end)
+			end, {})
+		end
+		if client:supports_method("textDocument/codeLens") then
+			vim.lsp.codelens.enable(true, { bufnr = event.buf })
 		end
 	end,
 })
@@ -350,9 +384,30 @@ require("lazy").setup({
 			{
 				"<leader>sg",
 				function()
-					require("fff").live_grep()
+					require("fff").live_grep({
+						grep = {
+							modes = { "fuzzy", "plain" },
+						},
+					})
 				end,
-				desc = "[S]earch by [G]rep (fff)",
+				desc = "Live fffuzy grep",
+			},
+			{
+				"<leader>s;",
+				function()
+					require("fff").live_grep({ query = vim.fn.expand("<cword>") })
+				end,
+				desc = "Search current word (fff)",
+			},
+			{
+				"<leader>s;",
+				function()
+					vim.cmd('noau normal! "vy')
+					local text = vim.fn.getreg("v")
+					require("fff").live_grep({ query = text })
+				end,
+				mode = "v",
+				desc = "Search visual selection (fff)",
 			},
 		},
 		opts = {
@@ -508,6 +563,16 @@ require("lazy").setup({
 				})
 			end
 
+			local function find_all_files()
+				builtin.find_files({
+					sorting_strategy = "descending",
+					scroll_strategy = "cycle",
+					layout_config = {},
+					find_command = { "fd", "--type", "f", "--hidden", "--no-ignore-vcs" },
+					prompt_title = "Find All Files (incl. gitignored)",
+				})
+			end
+
 			local function neoclip()
 				require("telescope").extensions.neoclip.default({
 					initial_mode = "normal",
@@ -532,6 +597,7 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 			vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
 			-- vim.keymap.set("n", "<leader>sf", find_files, { desc = "[S]earch [F]iles" })
+			vim.keymap.set("n", "<leader>sF", find_all_files, { desc = "[S]earch All [F]iles (incl. gitignored)" })
 			vim.keymap.set("n", "<leader>ss", git_changed_files, { desc = "[E]dited [F]iles" })
 			vim.keymap.set("n", "<leader>sp", neoclip, { desc = "Search clipboard history" })
 			-- vim.keymap.set(
@@ -540,24 +606,24 @@ require("lazy").setup({
 			-- 	require("telescope").extensions.live_grep_args.live_grep_args,
 			-- 	{ desc = "[S]earch by [G]rep" }
 			-- )
-			vim.keymap.set(
-				"n",
-				"<leader>sw",
-				live_grep_args_shortcuts.grep_word_under_cursor,
-				{ desc = "[S]earch current [W]ord" }
-			)
+			-- vim.keymap.set(
+			-- 	"n",
+			-- 	"<leader>sw",
+			-- 	live_grep_args_shortcuts.grep_word_under_cursor,
+			-- 	{ desc = "[S]earch current [W]ord" }
+			-- )
 			vim.keymap.set("n", "<leader>s/", function()
 				builtin.live_grep({
 					grep_open_files = true,
 					prompt_title = "Live Grep in Open Files",
 				})
 			end, { desc = "[S]earch [/] in Open Files" })
-			vim.keymap.set(
-				"v",
-				"<leader>s;",
-				live_grep_args_shortcuts.grep_visual_selection,
-				{ desc = "Search highlighted word" }
-			)
+			-- vim.keymap.set(
+			-- 	"v",
+			-- 	"<leader>s;",
+			-- 	live_grep_args_shortcuts.grep_visual_selection,
+			-- 	{ desc = "Search highlighted word" }
+			-- )
 			vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
 			vim.keymap.set("n", "<leader>ds", "<cmd>Telescope aerial<cr>", { desc = "Goto Symbol (Aerial)" })
 
@@ -968,6 +1034,25 @@ require("lazy").setup({
 				end
 			end
 			vim.keymap.set("n", "<leader>hs", fugitive_toggle, { desc = "Toggle Git" })
+			vim.keymap.set("n", "<leader>hd", function()
+				local base =
+					vim.fn.system("git branch -r | grep -q origin/main && echo main || echo master"):gsub("%s+", "")
+				local diff = vim.fn.systemlist("git diff --unified=0 " .. base .. "...HEAD")
+				local qf = {}
+				local file = nil
+				for _, line in ipairs(diff) do
+					local f = line:match("^%+%+%+ b/(.*)")
+					if f then
+						file = f
+					end
+					local lnum = line:match("^@@ .* %+(%d+)")
+					if file and lnum then
+						table.insert(qf, { filename = file, lnum = tonumber(lnum), text = line })
+					end
+				end
+				vim.fn.setqflist(qf)
+				vim.cmd("copen")
+			end, { desc = "Branch changes vs base" })
 			vim.opt.diffopt:append({ "internal", "algorithm:histogram", "indent-heuristic", "linematch:60" })
 
 			local My_Fugitive = vim.api.nvim_create_augroup("My_Fugitive", {})
@@ -1597,24 +1682,40 @@ require("lazy").setup({
 			disable_max_size = large_file_config.max_filesize,
 		},
 	},
+	{
+		"andweeb/presence.nvim",
+		event = "VeryLazy",
+	},
 })
 
-vim.o.background = "light"
-vim.cmd.colorscheme("kanagawa")
-vim.api.nvim_set_hl(0, "Cursor", { fg = "NONE", bg = "#000000" })
-vim.opt.guicursor = "n-v-c:block-Cursor,i-ci-ve:ver25-Cursor,r-cr:hor20-Cursor"
+local function theme()
+	local handle =
+		io.popen("osascript -e 'tell application \"System Events\" to tell appearance preferences to return dark mode'")
+	if not handle then
+		return
+	end
+	local result = handle:read("*a")
+	handle:close()
+
+	vim.cmd.colorscheme("flexoki")
+	if result:match("true") then
+		vim.o.background = "dark"
+	else
+		vim.o.background = "light"
+	end
+end
+
+theme()
 
 -- Restarter
 local session_file = vim.fn.stdpath("data") .. "/restart_session.vim"
 
 local function restart_and_restore()
-	-- Save current session
+	vim.cmd("wall")
 	vim.cmd("mksession! " .. vim.fn.fnameescape(session_file))
-	-- Restart the server
 	vim.cmd("restart")
 end
 
--- Restore session if it was created by our restart command
 local function maybe_restore()
 	if vim.fn.filereadable(session_file) == 1 then
 		vim.cmd("source " .. vim.fn.fnameescape(session_file))
@@ -1626,5 +1727,4 @@ vim.api.nvim_create_user_command("RestartNvim", restart_and_restore, {
 	desc = "Save session, restart Neovim, and restore session",
 })
 
--- Restore on startup
 maybe_restore()

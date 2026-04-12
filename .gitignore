@@ -8,3 +8,4 @@ secret*
 *__pycache__*
 
 *scratch/**
+.wk/**

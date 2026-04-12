@@ -41,8 +41,13 @@ VAULT = get_vault_path()
 VAULT_WEEKLY = VAULT / "Weekly"
 
 
-def build_log_entry(msg, place):
-    timestamp = datetime.now().strftime("%H:%M")
+def build_log_entry(msg, place, start_time=None, end_time=None):
+    if start_time and end_time:
+        timestamp = f"{start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}"
+    elif start_time:
+        timestamp = start_time.strftime("%H:%M")
+    else:
+        timestamp = datetime.now().strftime("%H:%M")
     entry = f"{timestamp} > {msg}"
     if place:
         entry += f" place: {place}"
@@ -94,7 +99,7 @@ def create_today_section(lines, today_header, log_entry):
     return lines + [""] + new_section
 
 
-def log_msg(msg, place):
+def log_msg(msg, place, start_time=None, end_time=None):
     today = date.today()
     iso = today.isocalendar()
     filepath = VAULT_WEEKLY / f"{iso.year}-W{iso.week:02d}.md"
@@ -103,7 +108,7 @@ def log_msg(msg, place):
         print(f"Weekly file not found: {filepath.name}")
         sys.exit(1)
 
-    log_entry = build_log_entry(msg, place)
+    log_entry = build_log_entry(msg, place, start_time, end_time)
     lines = filepath.read_text().splitlines()
     lines = insert_log(lines, f"# {today.isoformat()}", log_entry)
 

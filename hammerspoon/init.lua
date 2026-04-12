@@ -9,9 +9,12 @@ local timer = require("hs.timer")
 local eventtap = require("hs.eventtap")
 local popclick = require("hs.noises")
 local hotkey = require("hs.hotkey")
+require("hs.task")
 local application = require("hs.application")
 local grid = require("hs.grid")
 local log = hs.logger.new("hammerspoon", "info")
+
+HYPER = { "cmd", "ctrl", "alt" }
 
 local hasCustom, custom = pcall(require, "custom")
 local _, _ = pcall(require, "secrets")
@@ -35,7 +38,7 @@ local function moveMouseToWindowCenter(win)
 end
 
 local previousWindow = nil
-local function launchOrFocusOrRotate(app)
+function launchOrFocusOrRotate(app)
 	log.d("launchOrFocusOrRotate called with app: " .. tostring(app))
 	local focusedWindow = hs.window.focusedWindow()
 	if focusedWindow == nil then
@@ -210,38 +213,147 @@ local function moveWindow(position)
 end
 
 -- WINDOW
-local HYPER = { "cmd", "ctrl", "alt" }
 
 HOME_MONITOR = "DELL U2723QE"
 MACBOOK_MONITOR = "Built-in Retina Display"
 LG_MONITOR = "LG HDR 4K"
 
 WINDOWS_TO_PRIMARY = {
-	"Pokerface - The Best Poker Game",
+	"",
 }
 WINDOWS_TO_BIG_SCREEN = {
-	"WezTerm",
+	"",
 }
 
--- Some of the shortcuts are still on Raycast, need to move them here
--- 1. Daily Schedule
-WINDOWS_SHORTCUTS = {
-	{ "U", "qutebrowser" },
-	{ "J", "Brave Browser" },
-	{ "K", "WezTerm" },
-	{ "O", "Obsidian" },
-	{ "P", "OBS" },
-	{ "Y", "Discord" },
+local braveWezTermLayout = {
+	["Brave Browser"] = { 1, goleft },
+	["WezTerm"] = { 1, goright },
 }
-if hasCustom then
-	WINDOWS_SHORTCUTS = fnutils.concat(WINDOWS_SHORTCUTS, custom.WINDOWS_SHORTCUTS)
+
+-- { name, mods, key, desc, fn }
+-- fn = nil means binding is managed by a Spoon (use GetShortcut to look up)
+SHORTCUTS = {
+	-- App Launching
+	{
+		"app_qutebrowser",
+		HYPER,
+		"u",
+		"qutebrowser",
+		function()
+			launchOrFocusOrRotate("qutebrowser")
+		end,
+	},
+	{
+		"app_brave",
+		HYPER,
+		"j",
+		"Brave Browser",
+		function()
+			launchOrFocusOrRotate("Brave Browser")
+		end,
+	},
+	{
+		"app_wezterm",
+		HYPER,
+		"k",
+		"WezTerm",
+		function()
+			launchOrFocusOrRotate("WezTerm")
+		end,
+	},
+	{
+		"app_obsidian",
+		HYPER,
+		"o",
+		"Obsidian",
+		function()
+			launchOrFocusOrRotate("Obsidian")
+		end,
+	},
+	{
+		"app_obs",
+		HYPER,
+		"p",
+		"OBS",
+		function()
+			launchOrFocusOrRotate("OBS")
+		end,
+	},
+	{
+		"app_discord",
+		HYPER,
+		"y",
+		"Discord",
+		function()
+			launchOrFocusOrRotate("Discord")
+		end,
+	},
+	-- Window Management
+	{ "snap_left", HYPER, "a", "snap left", moveWindow(goleft) },
+	{ "snap_right", HYPER, "d", "snap right", moveWindow(goright) },
+	{ "snap_top", HYPER, "w", "snap top", moveWindow(goup) },
+	{ "snap_bottom", HYPER, "s", "snap bottom", moveWindow(godown) },
+	{
+		"center",
+		HYPER,
+		"c",
+		"center window",
+		function()
+			local w = hs.window.focusedWindow()
+			if w then
+				w:centerOnScreen()
+			end
+		end,
+	},
+	{ "fullscreen", HYPER, "i", "full screen", moveWindow(gobig) },
+	{ "grid", HYPER, "g", "show grid", grid.show },
+	{ "layout_split", HYPER, "6", "Brave+WezTerm split", applyLayout(braveWezTermLayout) },
+	-- Screen (Spoon-managed)
+	{ "screen_left", HYPER, "[", "move to left screen", nil },
+	{ "screen_right", HYPER, "]", "move to right screen", nil },
+	-- Audio (Spoon-managed)
+	{ "toggle_mute", HYPER, "t", "toggle mic mute", nil },
+	-- Translation (Spoon-managed)
+	{ "translate", HYPER, "\\", "translate selection", nil },
+	-- Misc
+	{
+		"reload",
+		{ "ctrl" },
+		"`",
+		"reload config",
+		function()
+			hs.reload()
+		end,
+	},
+}
+
+function GetShortcut(name)
+	for _, s in ipairs(SHORTCUTS) do
+		if s[1] == name then
+			return { s[2], s[3] }
+		end
+	end
+	error("Shortcut not found: " .. name)
 end
 
-for _, shortcut in ipairs(WINDOWS_SHORTCUTS) do
-	hotkey.bind(HYPER, shortcut[1], function()
-		launchOrFocusOrRotate(shortcut[2])
-	end)
+if hasCustom and custom.SHORTCUTS then
+	SHORTCUTS = fnutils.concat(SHORTCUTS, custom.SHORTCUTS)
 end
+
+for _, s in ipairs(SHORTCUTS) do
+	if s[5] then
+		hotkey.bind(s[2], s[3], s[5])
+	end
+end
+
+function ShowShortcuts()
+	print("=== Shortcuts (HYPER = Cmd+Ctrl+Alt) ===")
+	for _, s in ipairs(SHORTCUTS) do
+		local mods = table.concat(s[2], "+")
+		print(string.format("  %-20s  %s", mods .. "+" .. s[3], s[4]))
+	end
+end
+ShowShortcuts()
 
 SavedWin = nil
 function SaveFocus()
@@ -254,43 +366,13 @@ function FocusSaved()
 	end
 end
 
--- Layout positions
-
--- left
-hotkey.bind(HYPER, "a", moveWindow(goleft))
--- right
-hotkey.bind(HYPER, "d", moveWindow(goright))
--- up
-hotkey.bind(HYPER, "w", moveWindow(goup))
--- down
-hotkey.bind(HYPER, "s", moveWindow(godown))
--- center
-hotkey.bind(HYPER, "c", function()
-	local win = hs.window.focusedWindow()
-	if win then
-		win:centerOnScreen()
-	end
-end)
--- full screen
-hotkey.bind(HYPER, "i", moveWindow(gobig))
-hotkey.bind(HYPER, "g", grid.show)
-
--- Layout configuration for Brave + WezTerm split screen
-local braveWezTermLayout = {
-	["Brave Browser"] = { 1, goleft },
-	["WezTerm"] = { 1, goright },
-}
-
--- Bind layout to Hyper+5
-hotkey.bind(HYPER, "6", applyLayout(braveWezTermLayout))
-
 SpoonInstall:andUse("WindowScreenLeftAndRight", {
 	config = {
 		animationDuration = 0,
 	},
 	hotkeys = {
-		screen_left = { HYPER, "[" },
-		screen_right = { HYPER, "]" },
+		screen_left = GetShortcut("screen_left"),
+		screen_right = GetShortcut("screen_right"),
 	},
 })
 
@@ -340,11 +422,9 @@ local appWatcher = application.watcher.new(handleAppLaunch)
 appWatcher:start()
 
 -- SOUND
-TOGGLE_MUTE_SHORTCUT = { HYPER, "t" }
-
 local GlobalMute = hs.loadSpoon("GlobalMute")
 GlobalMute:bindHotkeys({
-	toggle = TOGGLE_MUTE_SHORTCUT,
+	toggle = GetShortcut("toggle_mute"),
 })
 GlobalMute:configure({})
 GlobalMute:unmute()
@@ -401,32 +481,6 @@ local function screenCallback(layout)
 		if screen:name() ~= MACBOOK_MONITOR then
 			log.i("Setting " .. screen:name() .. " as primary")
 			screen:setPrimary()
-
-			-- Runs too slow
-			-- local macbookScreen = findScreenByName(MACBOOK_MONITOR)
-			-- local externalScreen = screen
-			--
-			-- if not macbookScreen or not externalScreen then
-			-- 	log.w("Could not find both screens for window placement")
-			-- 	return
-			-- end
-			--
-			-- local allApps = application.runningApplications()
-			-- for _, app in ipairs(allApps) do
-			-- 	local appName = app:name()
-			-- 	local windows = app:allWindows()
-			--
-			-- 	for _, win in ipairs(windows) do
-			-- 		if appName == "WezTerm" then
-			-- 			log.d("Moving WezTerm to external screen")
-			-- 			win:moveToScreen(externalScreen, true, true)
-			-- 			applyPlace(win, { 1, gobig })
-			-- 		else
-			-- 			log.d("Moving " .. appName .. " to MacBook screen")
-			-- 			win:moveToScreen(macbookScreen, true, true)
-			-- 		end
-			-- 	end
-			-- end
 
 			timer.doAfter(2, function()
 				openApp("/Applications/flameshot.app")
@@ -530,67 +584,6 @@ local function fishRunCommand(command)
 	end
 end
 
--- NOISE-BASED SCROLLING
-local Scroller = {}
-Scroller.__index = Scroller
-
-function Scroller.new(delay, tick)
-	return setmetatable({ delay = delay, tick = tick, timer = nil }, Scroller)
-end
-
-function Scroller:start()
-	if self.timer == nil then
-		self.timer = timer.doEvery(self.delay, function()
-			eventtap.scrollWheel({ 0, self.tick }, {}, "pixel")
-		end)
-	end
-end
-
-function Scroller:stop()
-	if self.timer then
-		self.timer:stop()
-		self.timer = nil
-	end
-end
-
-local scrollState = {
-	listener = nil,
-	active = false,
-	scrollDown = Scroller.new(0.02, -10),
-	mode = false,
-	lightOn = false,
-}
-
-local function handleNoiseEvent(evNum)
-	if evNum == 3 then
-		if scrollState.lightOn then
-			fishRunCommand("huec power off")
-			alert.show("Lights OFF")
-		else
-			fishRunCommand("huec power on")
-			alert.show("Lights ON")
-		end
-		scrollState.lightOn = not scrollState.lightOn
-	elseif evNum == 1 and scrollState.mode then
-		scrollState.scrollDown:start()
-	elseif evNum == 2 then
-		scrollState.scrollDown:stop()
-	end
-end
-
-local function initNoiseScrolling()
-	scrollState.listener = popclick.new(handleNoiseEvent)
-	scrollState.listener:start()
-	scrollState.active = true
-	log.i("Noise scrolling initialized")
-end
-
--- initNoiseScrolling()
-
-hotkey.bind({ "ctrl" }, "`", nil, function()
-	hs.reload()
-end)
-
 local wm = hs.webview.windowMasks
 SpoonInstall:andUse("PopupTranslateSelection", {
 	disable = false,
@@ -598,7 +591,7 @@ SpoonInstall:andUse("PopupTranslateSelection", {
 		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,
 	},
 	hotkeys = {
-		translate_nl_en = { HYPER, "\\" },
+		translate_nl_en = GetShortcut("translate"),
 	},
 })
 
@@ -656,6 +649,7 @@ WifiChanged()
 function HueTurnOn()
 	local currentHour = os.date("*t").hour
 	local shouldTurnOn = currentHour >= HUE_LIGHTS_ON_START_HOUR and currentHour < HUE_LIGHTS_ON_END_HOUR
+	log.i(shouldTurnOn)
 	if shouldTurnOn == false then
 		return
 	end

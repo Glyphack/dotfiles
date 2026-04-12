@@ -21,8 +21,17 @@ function ,pf --description "Paste file or clipboard content"
                   -e "  end try" \
                   -e "end try"
     else
-        # Check if clipboard contains an image
-        if osascript -e 'the clipboard as «class PNGf»' &>/dev/null
+        # Check for Finder file first (files also have PNGf as their icon thumbnail)
+        if osascript -e 'the clipboard as «class furl»' &>/dev/null
+            osascript -e 'on run args' \
+                      -e 'tell application "Finder"' \
+                      -e 'set clipboardItems to (the clipboard as «class furl»)' \
+                      -e 'set destinationFolder to POSIX file (item 1 of args) as alias' \
+                      -e 'duplicate clipboardItems to destinationFolder' \
+                      -e 'end tell' \
+                      -e 'end run' \
+                      "$PWD"
+        else if osascript -e 'the clipboard as «class PNGf»' &>/dev/null
             set -l random_name (LC_ALL=C tr -dc 'a-z0-9' < /dev/urandom | head -c 8)
             set -l output_file "$random_name.png"
             osascript -e "set png_data to the clipboard as «class PNGf»" \
@@ -38,15 +47,8 @@ function ,pf --description "Paste file or clipboard content"
                       -e "end try"
             and echo "Pasted image as $output_file"
         else
-            # Paste file from clipboard (Finder) to current directory
-            osascript -e 'on run args' \
-                      -e 'tell application "Finder"' \
-                      -e 'set clipboardItems to (the clipboard as «class furl»)' \
-                      -e 'set destinationFolder to POSIX file (item 1 of args) as alias' \
-                      -e 'duplicate clipboardItems to destinationFolder' \
-                      -e 'end tell' \
-                      -e 'end run' \
-                      "$PWD"
+            echo ",pf: nothing useful on clipboard (no file or image found)" >&2
+            return 1
         end
     end
 end

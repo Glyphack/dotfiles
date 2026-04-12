@@ -5,3 +5,6 @@ FISH_ALIASES="$HOME/.config/fish/aliases.fish"
 if [ -f $FISH_ALIASES ]; then
   source $FISH_ALIASES
 fi
+
+# Added by Obsidian
+export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
