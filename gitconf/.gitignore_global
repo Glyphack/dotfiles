@@ -37,3 +37,7 @@ typos.toml
 .vibe/
 .opencode/
 .playwright-cli/
+
+
+.wk/**
+scratch/

@@ -1,0 +1,62 @@
+FROM node:20
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  less \
+  git \
+  procps \
+  sudo \
+  fzf \
+  zsh \
+  man-db \
+  unzip \
+  gnupg2 \
+  gh \
+  jq \
+  nano \
+  vim \
+  tmux \
+  curl \
+  ca-certificates \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ARG GIT_DELTA_VERSION=0.18.2
+RUN ARCH=$(dpkg --print-architecture) && \
+  wget "https://github.com/dandavison/delta/releases/download/${GIT_DELTA_VERSION}/git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
+  dpkg -i "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb" && \
+  rm "git-delta_${GIT_DELTA_VERSION}_${ARCH}.deb"
+
+RUN curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+ENV SHELL=/bin/zsh
+ENV EDITOR=nano
+ENV VISUAL=nano
+
+ARG ZSH_IN_DOCKER_VERSION=1.2.0
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
+  -p git \
+  -p fzf \
+  -a "source /usr/share/doc/fzf/examples/key-bindings.zsh" \
+  -a "source /usr/share/doc/fzf/examples/completion.zsh" \
+  -x
+
+RUN mkdir -p /home/node/.claude /home/node/.config/gh /workspace && \
+  chown -R node:node /workspace /home/node/.claude /home/node/.config
+
+USER node
+
+ENV PATH="/home/node/.local/bin:/home/node/.cargo/bin:$PATH"
+
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN curl -fsSL https://claude.ai/install.sh | bash
+
+RUN mkdir -p /home/node/git_hooks && \
+  printf '#!/bin/bash\necho "git push is disabled in this VM"\nexit 1\n' > /home/node/git_hooks/pre-push && \
+  chmod +x /home/node/git_hooks/pre-push && \
+  git config --global core.hooksPath /home/node/git_hooks && \
+  git config --global init.templateDir '' && \
+  git config --global safe.directory /workspace && \
+  echo 'alias claude="claude --dangerously-skip-permissions"' >> /home/node/.bashrc
+
+WORKDIR /workspace
+CMD ["/bin/bash"]

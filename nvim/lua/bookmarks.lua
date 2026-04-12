@@ -538,6 +538,21 @@ function M.delete_current_line_bookmark()
 	vim.notify("Bookmark '" .. deleted_name .. "' deleted", vim.log.levels.INFO)
 end
 
+function M.clear_bookmarks()
+	for key, data in pairs(M.extmark_map) do
+		pcall(vim.api.nvim_buf_del_extmark, data.bufnr, M.extmark_ns, data.extmark_id)
+	end
+	M.extmark_map = {}
+
+	local success, err = write_bookmarks({})
+	if not success then
+		vim.notify(err, vim.log.levels.ERROR)
+		return
+	end
+
+	vim.notify("All bookmarks cleared", vim.log.levels.INFO)
+end
+
 function M.migrate_old_bookmarks()
 	local bookmarks, err = read_bookmarks()
 	if err or not bookmarks then
@@ -606,17 +621,21 @@ function M.setup()
 		end,
 	})
 
-	vim.api.nvim_create_user_command("BookmarkAdd", function(opts)
+	vim.api.nvim_create_user_command("BookmarksAdd", function(opts)
 		M.add_bookmark(opts.args)
 	end, { nargs = "?", desc = "Add bookmark at current location" })
 
-	vim.api.nvim_create_user_command("Bookmarks", function()
+	vim.api.nvim_create_user_command("BookmarksList", function()
 		M.show_bookmarks_picker()
 	end, { desc = "Open bookmarks picker" })
 
-	vim.api.nvim_create_user_command("BookmarkDelete", function()
+	vim.api.nvim_create_user_command("BookmarksDelete", function()
 		M.show_delete_picker()
 	end, { desc = "Delete a bookmark" })
+
+	vim.api.nvim_create_user_command("BookmarksClear", function()
+		M.clear_bookmarks()
+	end, { desc = "Clear all bookmarks" })
 
 	local map_bookmark = function(keys, func, desc)
 		vim.keymap.set("n", "<Leader>" .. keys, func, { desc = desc })

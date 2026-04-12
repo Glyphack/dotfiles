@@ -18,7 +18,7 @@ function ,g --description "Git workflow helper commands"
         echo "  base        Print the base branch (main or master)"
         echo "  bco         Switch to the base branch"
         echo "  new         Create a new branch (from base, or current branch with 2nd arg)"
-        echo "  mybranches  List and checkout branches authored by you"
+        echo "  mybranches  List and checkout branches authored by you (-d to delete)"
         echo "  clean       Delete local branches merged into base"
         echo "  brprune     Delete all local branches except the base branch"
         echo "  sync        Update local base branch (from upstream if available, else origin)"
@@ -109,12 +109,25 @@ function ,g --description "Git workflow helper commands"
 
             printf '%s\n' $my_branches
 
-            set branch (printf '%s\n' $my_branches | gum choose --height 15)
-
-            if test -n "$branch"
-                __g_stash_run_unstash git checkout "$branch"
+            if test (count $argv) -ge 1; and test "$argv[1]" = -d
+                set branch (printf '%s\n' $my_branches | gum choose --height 15 --header "Select branch to delete:")
+                if test -n "$branch"
+                    git branch -D "$branch"
+                else
+                    echo "No branch selected."
+                end
             else
-                echo "No branch selected."
+                set branch (printf '%s\n' $my_branches | gum choose --height 15)
+                if test -n "$branch"
+                    set action (printf 'checkout\ndelete' | gum choose --header "Action for '$branch':")
+                    if test "$action" = checkout
+                        __g_stash_run_unstash git checkout "$branch"
+                    else if test "$action" = delete
+                        git branch -d "$branch"
+                    end
+                else
+                    echo "No branch selected."
+                end
             end
 
         case myprs
@@ -207,14 +220,18 @@ $pr_link"
                 return 1
             end
 
-            # Stash any uncommitted changes
+            set needs_stash false
             if not git diff --quiet; or not git diff --cached --quiet
-                set stash_name "$current_branch/"(date +%Y-%m-%d-%H%M%S)
-                ,g stash $stash_name
+                set needs_stash true
+                git stash push -m "done: $current_branch"
             end
 
             ,g sync
             git checkout $base_branch
+
+            if test "$needs_stash" = true
+                git stash pop
+            end
 
         case rebase
             ,g sync
@@ -290,7 +307,7 @@ $pr_link"
                     if test -z "$current_branch"
                         set current_branch "(detached)"
                     end
-                    set -a wt_entries "$current_path\t[$current_branch]"
+                    set -a wt_entries "$current_path"\t"[$current_branch]"
                     set -a wt_paths "$current_path"
                     set current_path ""
                     set current_branch ""
@@ -301,7 +318,7 @@ $pr_link"
                 if test -z "$current_branch"
                     set current_branch "(detached)"
                 end
-                set -a wt_entries "$current_path\t[$current_branch]"
+                set -a wt_entries "$current_path"\t"[$current_branch]"
                 set -a wt_paths "$current_path"
             end
 

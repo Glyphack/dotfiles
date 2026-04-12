@@ -5,6 +5,7 @@ complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a base -d "Print t
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a bco -d "Switch to the base branch"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a new -d "Sync base and create a new branch from it"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a mybranches -d "List and checkout branches authored by you"
+complete -c ,g -n "__fish_seen_subcommand_from mybranches" -a -d -d "Delete selected branch (force)"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a clean -d "Delete local branches merged into base"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a brprune -d "Delete all local branches except the base branch"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a sync -d "Update local base branch"
