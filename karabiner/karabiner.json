@@ -62,9 +62,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -75,9 +72,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "tab"
@@ -133,9 +127,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -146,9 +137,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "tab",
@@ -207,9 +195,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -220,9 +205,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "tab",
@@ -280,9 +262,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -293,9 +272,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "tab",
@@ -350,9 +326,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -363,9 +336,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "left_arrow"
@@ -417,9 +387,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -430,9 +397,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "down_arrow"
@@ -484,9 +448,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -497,9 +458,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "up_arrow"
@@ -551,9 +509,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -564,9 +519,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "right_arrow"
@@ -621,9 +573,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -634,9 +583,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "left_arrow",
@@ -694,9 +640,6 @@
                           "name": "a-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=0'"
                       }
                     ]
                   }
@@ -707,9 +650,6 @@
                       "name": "a-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=a-mode&value=1'"
                   },
                   {
                     "key_code": "right_arrow",
@@ -769,9 +709,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -782,9 +719,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "grave_accent_and_tilde"
@@ -839,9 +773,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -852,9 +783,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "2",
@@ -912,9 +840,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -925,9 +850,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "3",
@@ -985,9 +907,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -998,9 +917,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "4",
@@ -1058,9 +974,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1071,9 +984,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "5",
@@ -1131,9 +1041,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1144,9 +1051,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "grave_accent_and_tilde",
@@ -1201,9 +1105,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1214,9 +1115,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "hyphen"
@@ -1271,9 +1169,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1284,9 +1179,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "hyphen",
@@ -1341,9 +1233,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1354,9 +1243,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "equal_sign"
@@ -1411,9 +1297,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1424,9 +1307,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "equal_sign",
@@ -1484,9 +1364,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1497,9 +1374,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "period",
@@ -1557,9 +1431,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1570,9 +1441,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "1",
@@ -1630,9 +1498,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1643,9 +1508,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "7",
@@ -1703,9 +1565,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1716,9 +1575,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "8",
@@ -1776,9 +1632,6 @@
                           "name": "s-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=0'"
                       }
                     ]
                   }
@@ -1789,9 +1642,6 @@
                       "name": "s-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=s-mode&value=1'"
                   },
                   {
                     "key_code": "backslash",
@@ -1851,9 +1701,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -1864,9 +1711,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "7"
@@ -1918,9 +1762,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -1931,9 +1772,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "8"
@@ -1985,9 +1823,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -1998,9 +1833,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "9"
@@ -2055,9 +1887,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2068,9 +1897,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "equal_sign",
@@ -2125,9 +1951,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2138,9 +1961,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "period"
@@ -2192,9 +2012,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2205,9 +2022,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "4"
@@ -2259,9 +2073,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2272,9 +2083,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "5"
@@ -2326,9 +2134,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2339,9 +2144,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "6"
@@ -2393,9 +2195,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2406,9 +2205,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "hyphen"
@@ -2460,9 +2256,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2473,9 +2266,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "0"
@@ -2527,9 +2317,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2540,9 +2327,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "1"
@@ -2594,9 +2378,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2607,9 +2388,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "2"
@@ -2661,9 +2439,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2674,9 +2449,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "3"
@@ -2728,9 +2500,6 @@
                           "name": "dmode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=0'"
                       }
                     ]
                   }
@@ -2741,9 +2510,6 @@
                       "name": "dmode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=dmode&value=1'"
                   },
                   {
                     "key_code": "return_or_enter"
@@ -2803,9 +2569,6 @@
                           "name": "f-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=0'"
                       }
                     ]
                   }
@@ -2816,9 +2579,6 @@
                       "name": "f-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=1'"
                   },
                   {
                     "key_code": "open_bracket",
@@ -2876,9 +2636,6 @@
                           "name": "f-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=0'"
                       }
                     ]
                   }
@@ -2889,9 +2646,6 @@
                       "name": "f-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=1'"
                   },
                   {
                     "key_code": "close_bracket",
@@ -2949,9 +2703,6 @@
                           "name": "f-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=0'"
                       }
                     ]
                   }
@@ -2962,9 +2713,6 @@
                       "name": "f-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=1'"
                   },
                   {
                     "key_code": "9",
@@ -3022,9 +2770,6 @@
                           "name": "f-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=0'"
                       }
                     ]
                   }
@@ -3035,9 +2780,6 @@
                       "name": "f-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=1'"
                   },
                   {
                     "key_code": "0",
@@ -3095,9 +2837,6 @@
                           "name": "f-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=0'"
                       }
                     ]
                   }
@@ -3108,9 +2847,6 @@
                       "name": "f-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=1'"
                   },
                   {
                     "key_code": "comma",
@@ -3168,9 +2904,6 @@
                           "name": "f-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=0'"
                       }
                     ]
                   }
@@ -3181,9 +2914,6 @@
                       "name": "f-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=1'"
                   },
                   {
                     "key_code": "period",
@@ -3238,9 +2968,6 @@
                           "name": "f-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=0'"
                       }
                     ]
                   }
@@ -3251,9 +2978,6 @@
                       "name": "f-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=1'"
                   },
                   {
                     "key_code": "open_bracket"
@@ -3305,9 +3029,6 @@
                           "name": "f-mode",
                           "value": 0
                         }
-                      },
-                      {
-                        "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=0'"
                       }
                     ]
                   }
@@ -3318,9 +3039,6 @@
                       "name": "f-mode",
                       "value": 1
                     }
-                  },
-                  {
-                    "shell_command": "open -g 'hammerspoon://karabinerMode?name=f-mode&value=1'"
                   },
                   {
                     "key_code": "close_bracket"
@@ -3479,6 +3197,13 @@
           "treat_as_built_in_keyboard": true
         }
       ]
+    },
+    {
+      "name": "Empty Profile",
+      "virtual_hid_keyboard": {
+        "country_code": 0,
+        "keyboard_type_v2": "ansi"
+      }
     }
   ]
 }

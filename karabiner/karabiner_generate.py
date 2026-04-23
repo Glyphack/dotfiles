@@ -166,15 +166,16 @@ def make_manipulator(trigger_key, source_key, dest_key, dest_mods, var_name):
                 "key_up_when": "any",
                 "to_after_key_up": [
                     {"set_variable": {"name": var_name, "value": 0}},
-                    {
-                        "shell_command": f"open -g '{HS_URL_SCHEME}?name={var_name}&value=0'"
-                    },
+                    # shell command does not work right now. {
+                    #     "shell_command": f"open -g '{HS_URL_SCHEME}?name={var_name}&value=0'"
+                    # },
                 ],
             },
         },
         "to": [
             {"set_variable": {"name": var_name, "value": 1}},
-            {"shell_command": f"open -g '{HS_URL_SCHEME}?name={var_name}&value=1'"},
+            # shell command does not work right now.
+            # {"shell_command": f"open -g '{HS_URL_SCHEME}?name={var_name}&value=1'"},
             {
                 "key_code": dest_key,
             },
@@ -245,9 +246,14 @@ def main():
         ],
     }
 
+    empty_profile = {
+        "name": "Empty Profile",
+        "virtual_hid_keyboard": {"country_code": 0, "keyboard_type_v2": "ansi"},
+    }
+
     final_json = {
         "global": {"show_in_menu_bar": False},
-        "profiles": [generated_profile],
+        "profiles": [generated_profile, empty_profile],
     }
 
     with open(OUTPUT_FILE, "w") as f:

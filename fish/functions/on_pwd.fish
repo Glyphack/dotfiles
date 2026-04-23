@@ -2,6 +2,9 @@ function on_pwd --on-variable PWD --description "Auto-activate virtualenvs and p
     # Skip if we are in a non-interactive shell (though this function is called from interactive config)
     status is-interactive; or return
 
+    # Set WezTerm tab title to current directory name
+    printf "\e]1;%s\a" (basename $PWD)
+
     # 1. Check for standard .venv directory (Fastest)
     if test -d "$PWD/.venv"
         if test "$VIRTUAL_ENV" != "$PWD/.venv"

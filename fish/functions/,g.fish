@@ -62,7 +62,7 @@ function ,g --description "Git workflow helper commands"
                 __g_stash_run_unstash git checkout $base_branch
             end
 
-            for branch in (git branch --format="%(refname:short)" | string match -v "$base_branch")
+            for branch in (git branch --format="%(refname:short)" | string match -v "$base_branch" | string match -v "$current_branch")
                 echo "Deleting branch: $branch"
                 git branch -D $branch
             end
@@ -150,6 +150,20 @@ function ,g --description "Git workflow helper commands"
             if test (count $argv) -ge 1; and test "$argv[1]" = -d
                 set branch (printf '%s\n' $my_branches | gum choose --height 15 --header "Select branch to delete:")
                 if test -n "$branch"
+                    # Remove associated worktree if one exists
+                    set wt_path ""
+                    set _path ""
+                    git worktree list --porcelain | while read -l line
+                        if string match -q "worktree *" "$line"
+                            set _path (string replace "worktree " "" "$line")
+                        else if test "$line" = "branch refs/heads/$branch"
+                            set wt_path $_path
+                        end
+                    end
+                    if test -n "$wt_path"
+                        echo "Removing worktree: $wt_path"
+                        git worktree remove "$wt_path" --force
+                    end
                     git branch -D "$branch"
                 else
                     echo "No branch selected."
