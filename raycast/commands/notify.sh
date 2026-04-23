@@ -18,6 +18,6 @@ if [ -z "$DELAY" ] || [ -z "$MESSAGE" ]; then
   exit 1
 fi
 
-"$(dirname "$0")/ntfy.sh" "$DELAY" "$MESSAGE"
+fish -c "ntfy '$DELAY' '$MESSAGE'"
 
 echo "Notification scheduled in $DELAY"

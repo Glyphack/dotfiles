@@ -312,14 +312,18 @@ vim.api.nvim_create_autocmd("LspAttach", {
 			client.server_capabilities.hoverProvider = false
 		end
 		if client.name == "ty" then
-			vim.lsp.commands["ty.runTest"] = function(command)
-				local args = command.arguments
-				local cwd = args[1]
-				local program = args[2]
-				local cmd_args = args[3]
-				local cmd_str = program .. " " .. table.concat(cmd_args, " ")
-				vim.cmd("split | terminal cd " .. vim.fn.shellescape(cwd) .. " && " .. cmd_str)
-			end
+			-- vim.lsp.commands["ty.runTest"] = function(command)
+			-- 	local run_test = command.arguments and command.arguments[1]
+			-- 	if run_test == nil then
+			-- 		vim.notify("Failed to run test: server sent incomplete arguments", vim.log.levels.ERROR)
+			-- 		return
+			-- 	end
+			-- 	local cwd = run_test.cwd
+			-- 	local program = run_test.program
+			-- 	local cmd_args = run_test.arguments
+			-- 	local cmd_str = program .. " " .. table.concat(cmd_args, " ")
+			-- 	vim.cmd("split | terminal cd " .. vim.fn.shellescape(cwd) .. " && " .. cmd_str)
+			-- end
 
 			vim.api.nvim_create_user_command("TyDebug", function()
 				local client = vim.lsp.get_clients({ name = "ty" })[1]
@@ -376,46 +380,46 @@ require("bookmarks").setup()
 require("make").setup()
 
 require("lazy").setup({
-	{
-		"dmtrKovalenko/fff.nvim",
-		build = "cargo build --release",
-		keys = {
-			{ "<leader>sf", "<cmd>FFFFind<cr>", desc = "[S]earch [F]iles (fff)" },
-			{
-				"<leader>sg",
-				function()
-					require("fff").live_grep({
-						grep = {
-							modes = { "fuzzy", "plain" },
-						},
-					})
-				end,
-				desc = "Live fffuzy grep",
-			},
-			{
-				"<leader>s;",
-				function()
-					require("fff").live_grep({ query = vim.fn.expand("<cword>") })
-				end,
-				desc = "Search current word (fff)",
-			},
-			{
-				"<leader>s;",
-				function()
-					vim.cmd('noau normal! "vy')
-					local text = vim.fn.getreg("v")
-					require("fff").live_grep({ query = text })
-				end,
-				mode = "v",
-				desc = "Search visual selection (fff)",
-			},
-		},
-		opts = {
-			layout = {
-				width = 0.95,
-			},
-		},
-	},
+	-- {
+	-- 	"dmtrKovalenko/fff.nvim",
+	-- 	build = "cargo build --release",
+	-- 	keys = {
+	-- 		{ "<leader>sf", "<cmd>FFFFind<cr>", desc = "[S]earch [F]iles (fff)" },
+	-- 		{
+	-- 			"<leader>sg",
+	-- 			function()
+	-- 				require("fff").live_grep({
+	-- 					grep = {
+	-- 						modes = { "fuzzy", "plain" },
+	-- 					},
+	-- 				})
+	-- 			end,
+	-- 			desc = "Live fffuzy grep",
+	-- 		},
+	-- 		{
+	-- 			"<leader>s;",
+	-- 			function()
+	-- 				require("fff").live_grep({ query = vim.fn.expand("<cword>") })
+	-- 			end,
+	-- 			desc = "Search current word (fff)",
+	-- 		},
+	-- 		{
+	-- 			"<leader>s;",
+	-- 			function()
+	-- 				vim.cmd('noau normal! "vy')
+	-- 				local text = vim.fn.getreg("v")
+	-- 				require("fff").live_grep({ query = text })
+	-- 			end,
+	-- 			mode = "v",
+	-- 			desc = "Search visual selection (fff)",
+	-- 		},
+	-- 	},
+	-- 	opts = {
+	-- 		layout = {
+	-- 			width = 0.95,
+	-- 		},
+	-- 	},
+	-- },
 	{
 		"neovim/nvim-lspconfig",
 		config = function()
@@ -596,34 +600,34 @@ require("lazy").setup({
 
 			vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 			vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-			-- vim.keymap.set("n", "<leader>sf", find_files, { desc = "[S]earch [F]iles" })
+			vim.keymap.set("n", "<leader>sf", find_files, { desc = "[S]earch [F]iles" })
 			vim.keymap.set("n", "<leader>sF", find_all_files, { desc = "[S]earch All [F]iles (incl. gitignored)" })
 			vim.keymap.set("n", "<leader>ss", git_changed_files, { desc = "[E]dited [F]iles" })
 			vim.keymap.set("n", "<leader>sp", neoclip, { desc = "Search clipboard history" })
-			-- vim.keymap.set(
-			-- 	"n",
-			-- 	"<leader>sg",
-			-- 	require("telescope").extensions.live_grep_args.live_grep_args,
-			-- 	{ desc = "[S]earch by [G]rep" }
-			-- )
-			-- vim.keymap.set(
-			-- 	"n",
-			-- 	"<leader>sw",
-			-- 	live_grep_args_shortcuts.grep_word_under_cursor,
-			-- 	{ desc = "[S]earch current [W]ord" }
-			-- )
+			vim.keymap.set(
+				"n",
+				"<leader>sg",
+				require("telescope").extensions.live_grep_args.live_grep_args,
+				{ desc = "[S]earch by [G]rep" }
+			)
+			vim.keymap.set(
+				"n",
+				"<leader>sw",
+				live_grep_args_shortcuts.grep_word_under_cursor,
+				{ desc = "[S]earch current [W]ord" }
+			)
 			vim.keymap.set("n", "<leader>s/", function()
 				builtin.live_grep({
 					grep_open_files = true,
 					prompt_title = "Live Grep in Open Files",
 				})
 			end, { desc = "[S]earch [/] in Open Files" })
-			-- vim.keymap.set(
-			-- 	"v",
-			-- 	"<leader>s;",
-			-- 	live_grep_args_shortcuts.grep_visual_selection,
-			-- 	{ desc = "Search highlighted word" }
-			-- )
+			vim.keymap.set(
+				"v",
+				"<leader>s;",
+				live_grep_args_shortcuts.grep_visual_selection,
+				{ desc = "Search highlighted word" }
+			)
 			vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
 			vim.keymap.set("n", "<leader>ds", "<cmd>Telescope aerial<cr>", { desc = "Goto Symbol (Aerial)" })
 
@@ -1125,10 +1129,6 @@ require("lazy").setup({
 							end,
 						})
 					end, opts)
-					vim.keymap.set("n", "<leader>P", run_command(",g prc"), opts)
-					vim.keymap.set("n", "<leader>s", run_command(",g sync"), opts)
-
-					vim.keymap.set("n", "<leader>b", ":Git co -b ", opts)
 				end,
 			})
 		end,
@@ -1231,7 +1231,7 @@ require("lazy").setup({
 								command = "check",
 							},
 							checkOnSave = {
-								enable = true,
+								enable = not vim.fn.fnamemodify(vim.fn.getcwd(), ":t"):find("ruff"),
 							},
 						},
 					},
@@ -1578,7 +1578,12 @@ require("lazy").setup({
 			})
 			local minifiles_toggle = function()
 				if not MiniFiles.close() then
-					pcall(MiniFiles.open, vim.api.nvim_buf_get_name(0))
+					local bufname = vim.api.nvim_buf_get_name(0)
+					local target = vim.loop.cwd()
+					if bufname ~= "" and vim.loop.fs_stat(bufname) then
+						target = bufname
+					end
+					pcall(MiniFiles.open, target)
 					MiniFiles.reveal_cwd()
 				end
 			end
@@ -1707,24 +1712,11 @@ end
 
 theme()
 
--- Restarter
-local session_file = vim.fn.stdpath("data") .. "/restart_session.vim"
-
-local function restart_and_restore()
+vim.api.nvim_create_user_command("RestartNvim", function()
 	vim.cmd("wall")
-	vim.cmd("mksession! " .. vim.fn.fnameescape(session_file))
-	vim.cmd("restart")
-end
-
-local function maybe_restore()
-	if vim.fn.filereadable(session_file) == 1 then
-		vim.cmd("source " .. vim.fn.fnameescape(session_file))
-		vim.fn.delete(session_file)
-	end
-end
-
-vim.api.nvim_create_user_command("RestartNvim", restart_and_restore, {
+	local session = vim.fn.stdpath("state") .. "/restart_session.vim"
+	vim.cmd("mksession! " .. vim.fn.fnameescape(session))
+	vim.cmd("restart source " .. vim.fn.fnameescape(session))
+end, {
 	desc = "Save session, restart Neovim, and restore session",
 })
-
-maybe_restore()
