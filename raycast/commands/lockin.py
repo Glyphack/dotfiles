@@ -46,12 +46,15 @@ CATEGORY_GOALS = {
 }
 
 DEFAULT_DURATION_MIN = 30
-NTFY_SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ntfy.sh")
+FISH_SHELL = "/opt/homebrew/bin/fish"
 
 category = sys.argv[1] if len(sys.argv) > 1 else "work"
-duration_min = (
-    int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2] else DEFAULT_DURATION_MIN
-)
+try:
+    duration_min = (
+        int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2] else DEFAULT_DURATION_MIN
+    )
+except ValueError:
+    duration_min = DEFAULT_DURATION_MIN
 message = sys.argv[3] if len(sys.argv) > 3 and sys.argv[3] else None
 duration_sec = duration_min * 60
 
@@ -63,7 +66,9 @@ label = f"#focus-session {goal}: {message}" if message else f"#focus-session {go
 log_msg(label, None, start_time=start, end_time=end)
 
 if category in ("afk", "rest"):
-    subprocess.run([NTFY_SCRIPT, f"{duration_min}min", f"{goal} time is up"])
+    subprocess.run(
+        [FISH_SHELL, "-lc", f"ntfy {duration_min}min '{goal} time is up'"]
+    )
 
 blocks = CATEGORY_BLOCKS.get(category, [])
 params = {

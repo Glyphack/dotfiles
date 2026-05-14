@@ -54,7 +54,7 @@ container system start
 # If container is already running, exec into it
 if container ls --format json | grep -q "\"$CONTAINER_NAME\""; then
     echo "Attaching to running container $CONTAINER_NAME..."
-    exec container exec -it -w /workspace "$CONTAINER_NAME" bash -c "claude --dangerously-skip-permissions; exec bash"
+    exec container exec -it -w /workspace "$CONTAINER_NAME" bash -c "claude; exec bash"
 
 fi
 
@@ -62,11 +62,11 @@ container rm "$CONTAINER_NAME" 2>/dev/null || true
 
 VOL_ARGS=(
     -v "$PWD:/workspace"
-    -v "$DOTFILES/agent/:$DOTFILES/agent/"
-    -v "$HOME/.config/gh/:/home/node/.config/gh/"
-    -v "$HOME/.claude/:/home/node/.claude/"
-    -v "$HOME/.databrickscfg:/home/node/.databrickscfg"
-    -v "$HOME/.databricks/:/home/node/.databricks/"
+    -v "$DOTFILES/dotfiles-private/agent/:$DOTFILES/dotfiles-private/agent/"
+    -v "$HOME/.config/gh/:/root/.config/gh/"
+    -v "$HOME/.claude/:/root/.claude/"
+    -v "$HOME/.databrickscfg:/root/.databrickscfg"
+    -v "$HOME/.databricks/:/root/.databricks/"
 )
 
 if [ "$WITH_GIT_PUSH" = true ]; then
@@ -96,7 +96,7 @@ INIT_SCRIPT=""
 if [ "$WITH_GIT_PUSH" = true ]; then
     INIT_SCRIPT="claude --dangerously-skip-permissions; exec bash"
 else
-    INIT_SCRIPT="mkdir -p /home/node/git_hooks && printf '#!/bin/bash\necho \"git push is disabled in this VM\"\nexit 1\n' > /home/node/git_hooks/pre-push && chmod +x /home/node/git_hooks/pre-push && git config --global core.hooksPath /home/node/git_hooks; claude --dangerously-skip-permissions; exec bash"
+    INIT_SCRIPT="mkdir -p /home/node/git_hooks && printf '#!/bin/bash\necho \"git push is disabled in this VM\"\nexit 1\n' > /home/node/git_hooks/pre-push && chmod +x /home/node/git_hooks/pre-push && git config --global core.hooksPath /home/node/git_hooks; claude; exec bash"
 fi
 
 RUN_CMD=(
@@ -105,7 +105,7 @@ RUN_CMD=(
     -it
     --name "$CONTAINER_NAME"
     -e "GH_TOKEN=$GH_TOKEN"
-    -e "CLAUDE_CONFIG_DIR=/home/node/.claude/"
+    -e "CLAUDE_CONFIG_DIR=/root/.claude/"
     -w /workspace
     --memory "$MEMORY"
     --cpus "$CPUS"

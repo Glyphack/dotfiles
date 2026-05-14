@@ -40,23 +40,20 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -a "source /usr/share/doc/fzf/examples/completion.zsh" \
   -x
 
-RUN mkdir -p /home/node/.claude /home/node/.config/gh /workspace && \
-  chown -R node:node /workspace /home/node/.claude /home/node/.config
+RUN mkdir -p /root/.claude /root/.config/gh /workspace
 
-USER node
-
-ENV PATH="/home/node/.local/bin:/home/node/.cargo/bin:$PATH"
+ENV PATH="/root/.local/bin:/root/.cargo/bin:$PATH"
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN curl -fsSL https://claude.ai/install.sh | bash
 RUN curl -fsSL batrachian.ai/install | sh
 
-RUN cargo install cargo-nextest --locked
+# RUN cargo install cargo-nextest --locked
 
 RUN git config --global init.templateDir '' && \
-  git config --global safe.directory /workspace && \
-  echo 'alias claude="claude --dangerously-skip-permissions"' >> /home/node/.bashrc
+  git config --global safe.directory /workspace
+  # echo 'alias claude="claude --dangerously-skip-permissions"' >> /root/.bashrc
 
 WORKDIR /workspace
 CMD ["/bin/bash"]

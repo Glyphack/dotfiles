@@ -44,4 +44,3 @@ done
 flush_dns
 
 echo "All specified sites have been blocked."
-
