@@ -8,6 +8,7 @@
 # @raycast.packageName Obsidian Tools
 # @raycast.argument1 { "type": "text", "placeholder": "message" }
 # @raycast.argument2 { "type": "text", "placeholder": "place", "optional": true }
+# @raycast.argument3 { "type": "text", "placeholder": "from", "optional": true }
 
 # Documentation:
 # @raycast.author shayegan
@@ -15,7 +16,6 @@
 
 import subprocess
 import sys
-import os
 from datetime import date, datetime
 from pathlib import Path
 
@@ -41,13 +41,10 @@ VAULT = get_vault_path()
 VAULT_WEEKLY = VAULT / "Weekly"
 
 
-def build_log_entry(msg, place, start_time=None, end_time=None):
-    if start_time and end_time:
-        timestamp = f"{start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}"
-    elif start_time:
-        timestamp = start_time.strftime("%H:%M")
-    else:
-        timestamp = datetime.now().strftime("%H:%M")
+def build_log_entry(msg, place, start_time, end_time=None):
+    timestamp = start_time.strftime("%H:%M")
+    if end_time:
+        timestamp = f"{timestamp}-{end_time.strftime('%H:%M')}"
     entry = f"{timestamp} > {msg}"
     if place:
         entry += f" place: {place}"
@@ -99,7 +96,7 @@ def create_today_section(lines, today_header, log_entry):
     return lines + [""] + new_section
 
 
-def log_msg(msg, place, start_time=None, end_time=None):
+def log_msg(msg, place, start_time, end_time=None):
     today = date.today()
     iso = today.isocalendar()
     filepath = VAULT_WEEKLY / f"{iso.year}-W{iso.week:02d}.md"
@@ -115,10 +112,21 @@ def log_msg(msg, place, start_time=None, end_time=None):
     filepath.write_text("\n".join(lines) + "\n")
 
 
+def get_arg_optional(i):
+    return sys.argv[i] if len(sys.argv) > i and sys.argv[i] else None
+
+
 def main():
     msg = sys.argv[1]
-    place = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] else None
-    log_msg(msg, place)
+    place = get_arg_optional(2)
+    start_time = get_arg_optional(3)
+    if start_time:
+        parsed_time = datetime.strptime(start_time, "%H:%M").time()
+        start_time = datetime.combine(date.today(), parsed_time)
+    else:
+        start_time = datetime.now()
+
+    log_msg(msg, place, start_time)
 
 
 if __name__ == "__main__":

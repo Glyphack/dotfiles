@@ -3,12 +3,13 @@ set -gx VISUAL nvim
 set -gx EDITOR nvim
 set -gx PROGRAMMING_DIR ~/Programming
 set -gx DOTFILES_DIR ~/Programming/dotfiles
+set -gx WORKTREES_DIR $PROGRAMMING_DIR/wk
 set -gx FZF_DEFAULT_COMMAND "fd --hidden"
 set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
 set -gx FZF_ALT_C_COMMAND "\
 fd -t d . $PROGRAMMING_DIR -d 1 -E work -E wk; \
 fd -t d . $PROGRAMMING_DIR/work -d 1 2>/dev/null; \
-fd -t d . $PROGRAMMING_DIR/wk -d 1 2>/dev/null; \
+fd -t d . $WORKTREES_DIR -d 1 2>/dev/null; \
 echo $HOME/Downloads
 "
 set -gx NPM_PRE $HOME/.npm-global/bin
@@ -24,6 +25,10 @@ set -gx HOME_BIN $HOME/bin
 set -gx scripts $HOME/Programming/dotfiles/scripts
 set -gx tyty $HOME/Programming/ruff/target/debug/ty
 set -gx CLAUDE_CONFIG_DIR $HOME/.claude/
+set -gx JAVA_HOME "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+set -gx ANDROID_HOME "$HOME/Library/Android/sdk"
+set -gx NDK_HOME "$ANDROID_HOME/ndk/30.0.14904198"
+
 
 if test -d "$HOME/flutter"
     set -gx FLUTTER_PATH $HOME/flutter/bin
@@ -56,7 +61,9 @@ fish_add_path -g "$HOME/.rd/bin" \
     "/usr/sbin" \
     "/sbin" \
     "$HOME/.amp/bin" \
-    "/Applications/Obsidian.app/Contents/MacOS"
+    "/Applications/Obsidian.app/Contents/MacOS" \
+    "$ANDROID_HOME/emulator" \
+    "$ANDROID_HOME/platform-tools"
 
 
 if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish

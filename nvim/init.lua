@@ -1233,6 +1233,9 @@ require("lazy").setup({
 							checkOnSave = {
 								enable = not vim.fn.fnamemodify(vim.fn.getcwd(), ":t"):find("ruff"),
 							},
+							runnables = {
+								extraTestBinaryArgs = { "--nocapture" },
+							},
 						},
 					},
 				},

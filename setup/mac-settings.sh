@@ -365,7 +365,7 @@ defaults write com.apple.dock showhidden -bool true;ok
 running "Make Dock more transparent"
 defaults write com.apple.dock hide-mirror -bool true;ok
 
-defaults write com.apple.dock show-recents -bool false; 
+defaults write com.apple.dock show-recents -bool false;ok
 
 # defaults write com.apple.dock ResetLaunchPad -bool TRUE
 running "Reset Launchpad, but keep the desktop wallpaper intact"
