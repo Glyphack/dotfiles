@@ -308,34 +308,29 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
             "project. The container has Claude, language toolchains, and "
             "host config mounted in."
         ),
-        epilog=(
-            "Examples:\n"
-            "  vm2                 # run a small container for $PWD\n"
-            "  vm2 l               # run a large container (more memory/cpus)\n"
-            "  vm2 --with-git-push # mount host SSH and gitconfig\n"
-            "  vm2 build           # build the vm2 image\n"
-            "  vm2 prune           # remove all vm2 containers and volumes\n"
-        ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument(
-        "command",
-        nargs="?",
-        default="s",
-        choices=["s", "l", "build", "prune"],
-        help=(
-            "'s' (default) or 'l' for size; 'build' to rebuild the image; "
-            "'prune' to remove all vm2 containers and volumes"
-        ),
+
+    subparsers = parser.add_subparsers(dest="command")
+
+    subparsers.add_parser(
+        "s",
+        help="Run a small container for the current project (default).",
     )
-    parser.add_argument(
-        "--with-git-push",
-        action="store_true",
-        help=(
-            "Mount host ~/.gitconfig and ~/.ssh into the container so git push "
-            "works. Without this, a pre-push hook blocks pushes from inside."
-        ),
+    subparsers.add_parser(
+        "l",
+        help="Run a large container for the current project.",
     )
+    subparsers.add_parser(
+        "build",
+        help="Rebuild the vm2 image.",
+    )
+    subparsers.add_parser(
+        "prune",
+        help="Remove all vm2 containers and volumes.",
+    )
+    parser.set_defaults(command="s")
+
     return parser.parse_args(argv)
 
 
