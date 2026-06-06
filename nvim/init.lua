@@ -248,6 +248,7 @@ vim.lsp.enable("clangd")
 vim.lsp.enable("gopls")
 vim.g.python_lsp = "ty"
 vim.lsp.enable(vim.g.python_lsp)
+-- vim.lsp.enable("harper_ls")
 
 vim.api.nvim_create_user_command("PythonLspSwitch", function()
 	local current = vim.g.python_lsp
@@ -1689,7 +1690,12 @@ require("lazy").setup({
 				callback = function(args)
 					local buf = args.data.buf_id
 					vim.keymap.set("n", "gy", minifiles_copy_file, { buffer = buf, desc = "Copy file to clipboard" })
-					vim.keymap.set("n", "gp", minifiles_paste_file, { buffer = buf, desc = "Paste file from clipboard" })
+					vim.keymap.set(
+						"n",
+						"gp",
+						minifiles_paste_file,
+						{ buffer = buf, desc = "Paste file from clipboard" }
+					)
 				end,
 			})
 
