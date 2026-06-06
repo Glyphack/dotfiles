@@ -8,14 +8,13 @@
 	pager = delta
 
 [alias]
-	pull = pull -q
-	co = checkout -b
+	cb = checkout -b
 	s = switch
+	cm = commit
+	forgot = commit --amend -C HEAD
+	pushf = push --force-with-lease
 	last-remove = reset --hard 'HEAD@{1}'
 	last-revert = reset --soft 'HEAD@{1}'
-	forgot = commit --amend -C HEAD
-	cm = commit
-	pushf = push --force-with-lease
 
 [pull]
 	rebase = true
