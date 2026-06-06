@@ -122,11 +122,14 @@ def main():
     start_time = get_arg_optional(3)
     if start_time:
         parsed_time = datetime.strptime(start_time, "%H:%M").time()
+        print(parsed_time)
         start_time = datetime.combine(date.today(), parsed_time)
+        end_time = datetime.now()
     else:
         start_time = datetime.now()
+        end_time = None
 
-    log_msg(msg, place, start_time)
+    log_msg(msg, place, start_time, end_time)
 
 
 if __name__ == "__main__":

@@ -1,14 +1,8 @@
-.PHONY: link link-personal
+.PHONY: link
 
-submodule:
-	git submodule update --init dotfiles-private
-	git submodule update --remote dotfiles-private
+-include local.mk
 
-link-personal: submodule 
-	cd ./dotfiles-private/ && $(MAKE) link
-	$(MAKE) link
-
-link:
+link::
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
 	mkdir -p ${HOME}/.config/starship && stow --adopt --target=${HOME}/.config starship
 	stow --target=${HOME} gitconf

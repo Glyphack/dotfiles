@@ -42,11 +42,12 @@ local function get_workspace_choices()
 	for _, name in ipairs(wezterm.mux.get_workspace_names()) do
 		table.insert(choices, { id = name, label = "🖥 " .. name })
 	end
-	table.insert(choices, { id = "__new__", label = "➕ Create new" })
-	table.insert(choices, { id = "__delete__", label = "🗑 Delete current" })
-	table.insert(choices, { id = "__replace__", label = "🔄 Replace" })
-	table.insert(choices, { id = "__rename__", label = "✏️ Rename current" })
-	table.insert(choices, { id = "__prune__", label = "🧹 Prune" })
+	table.insert(choices, { id = "__new__", label = "Create new" })
+	table.insert(choices, { id = "__path__", label = "Custom Path" })
+	table.insert(choices, { id = "__delete__", label = "Delete current" })
+	table.insert(choices, { id = "__replace__", label = "Replace" })
+	table.insert(choices, { id = "__rename__", label = "Rename current" })
+	table.insert(choices, { id = "__prune__", label = "Prune" })
 	return choices
 end
 
@@ -261,6 +262,23 @@ config.keys = {
 								wezterm.action_callback(function(win, p)
 									switch_to_workspace_for_directory(win, p)
 								end),
+								inner_pane
+							)
+						elseif id == "__path__" then
+							inner_window:perform_action(
+								act.PromptInputLine({
+									description = "Enter full path for new workspace:",
+									action = wezterm.action_callback(function(win, p, line)
+										if not line or line == "" then
+											return
+										end
+										local name = workspace_name_for_directory(line)
+										win:perform_action(
+											act.SwitchToWorkspace({ name = name, spawn = { cwd = line } }),
+											p
+										)
+									end),
+								}),
 								inner_pane
 							)
 						elseif id == "__delete__" then

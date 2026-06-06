@@ -82,6 +82,17 @@ function __g_restore_prompt --description 'Prompt to restore stash'
     git stash pop (string split ' ' -m 1 -- $sel)[1]
 end
 
+function __g_stash_worktree --description 'stash dirty+untracked in another worktree before removal (no prompt)'
+    set -l wt_path $argv[1]
+    test -d $wt_path; or return 0
+    set -l st (git -C $wt_path status --porcelain)
+    test (count $st) -eq 0; and return 0
+    set -l branch (git -C $wt_path rev-parse --abbrev-ref HEAD 2>/dev/null)
+    set -l name ",g/auto/$branch>removed@"(__g_ts)
+    git -C $wt_path stash push -u -m $name; or return 1
+    echo "$name (restore: ,g unstash)"
+end
+
 function __g_is_merged --description 'check if branch is merged into another (handles squash-merge)'
     git merge-base --is-ancestor $argv[1] $argv[2] 2>/dev/null; and return 0
     set -l merge_base (git merge-base $argv[2] $argv[1] 2>/dev/null); or return 1
@@ -107,10 +118,11 @@ end
 
 function __g_usage --description 'print the top-level ,g command help'
     echo "Usage: ,g <command> [args]"
-    echo "  base | bco | new <name> [-w] | co [-adw] [<q>] | done [-d]"
-    echo "  sync | merge | rebase | squash | cmp"
-    echo "  pr create|open|review [<link>]|list"
-    echo "  stash <msg> | unstash | status | clean [--all|--prune] | coauthored <user>"
+    for fn in (functions --all | string match -r '^__g_cmd_.*')
+        set -l name (string replace '__g_cmd_' '' $fn)
+	set -l desc (functions -D -v $fn)[5]
+        printf "  %-10s %s\n" $name $desc
+    end
 end
 
 function __g_cmd_base --description 'print the detected base branch'
@@ -191,20 +203,45 @@ function __g_cmd_co --description 'checkout (-a all, -d delete, -w into worktree
     test -n "$query"; and set branches (string match -- "*$query*" $branches)
     test (count $branches) -gt 0; or begin; __g_err "no matches"; return 1; end
 
-    set -l items
+    set -l pr_data
+    command -v gh >/dev/null
+    and set pr_data (gh pr list --state all --json number,state,headRefName -L 300 -q '.[] | "\(.headRefName)\t#\(.number) \(.state)"' 2>/dev/null)
+
+    set -l wts; set -l prs
+    set -l max_branch_w 0; set -l max_wt_w 0
     for branch in $branches
-        contains $branch $worktree_branches; and set -a items $branch\t(__g_wt_for $branch); or set -a items $branch\t' '
+        set -l bw (string length -- $branch)
+        test $bw -gt $max_branch_w; and set max_branch_w $bw
+        set -l wt ""
+        contains $branch $worktree_branches; and set wt (__g_wt_for $branch)
+        set -a wts "$wt"
+        set -l ww (string length -- "$wt")
+        test $ww -gt $max_wt_w; and set max_wt_w $ww
+        set -l pr ""
+        for p in $pr_data
+            set -l prefix $branch\t
+            string match -q -- "$prefix*" $p; and set pr (string replace -- $prefix '' $p); and break
+        end
+        set -a prs "$pr"
+    end
+
+    set -l items
+    for i in (seq (count $branches))
+        set -a items (printf '%-*s  %-*s  %s' $max_branch_w $branches[$i] $max_wt_w "$wts[$i]" "$prs[$i]")
     end
     set -l sel (printf '%s\n' $items | gum choose --height 20 --header "branch:")
     test -z "$sel"; and echo "No selection"; and return 1
-    set -l branch (string split \t -- $sel)[1]
+    set -l branch (string split -n ' ' -- $sel)[1]
 
     if test $del = true
         test $branch = (__g_base); and __g_err "refusing to delete base"; and return 1
         set -l existing_path (__g_wt_for $branch)
         set -l msg "Delete '$branch'"; test -n "$existing_path"; and set msg "$msg and worktree '$existing_path'"
         gum confirm --default=false "$msg?"; or begin; echo Cancelled; return 1; end
-        test -n "$existing_path"; and git worktree remove $existing_path --force
+        if test -n "$existing_path"
+            __g_stash_worktree $existing_path; or return 1
+            git worktree remove $existing_path --force
+        end
         git branch -D $branch
         return
     end
@@ -296,13 +333,17 @@ function __g_cmd_done --description 'delete a finished branch and its worktree (
     if not __g_in_main
         set -l main_worktree (__g_main_wt)
         test -d $main_worktree; or begin; __g_err "main worktree missing: $main_worktree"; return 1; end
+        __g_stash_worktree $here; or return 1
         cd $main_worktree
         git worktree remove $here --force; and git branch -D $cur; or return 1
     else
         __g_auto_stash $cur $base; or return 1
         git checkout $base; or return 1
         set -l other (__g_wt_for $cur)
-        test -n "$other"; and test "$other" != "$here"; and git worktree remove $other --force
+        if test -n "$other"; and test "$other" != "$here"
+            __g_stash_worktree $other; or return 1
+            git worktree remove $other --force
+        end
         git branch -D $cur; or return 1
     end
     echo "removed '$cur'"
@@ -322,14 +363,14 @@ end
 function __g_pr_create --description 'push branch, open a PR via gh, and copy a review message'
     command -v gh >/dev/null; or begin; __g_err "gh required"; return 1; end
     set -l remote (__g_remote); or begin; __g_err "no remote"; return 1; end
-    git push -u $remote (__g_cur); and gh pr create --fill-first; and __g_pr_review
+    git push -u $remote (__g_cur); and gh pr create --fill-first; and __g_pr_share
 end
 
 function __g_pr_open --description 'open the PR for the current branch in the browser'
     gh pr view --web $argv
 end
 
-function __g_pr_review --description 'copy a "please review" message with the PR title and link to clipboard'
+function __g_pr_share --description 'copy PR link and title to clipboard to share'
     command -v gh >/dev/null; or begin; __g_err "gh required"; return 1; end
     set -l link $argv[1]
     test -n "$link"; or set link (gh pr view --json url --jq .url 2>/dev/null)
@@ -352,9 +393,9 @@ function __g_pr_list --description 'pick one of your open PRs and check it out l
     gh pr checkout $pr_number
 end
 
-function __g_cmd_pr --description 'dispatch a pr subcommand (create/open/review/list)'
+function __g_cmd_pr --description 'PR commands'
     set -l sub $argv[1]
-    __g_need_arg "$sub" ',g pr <create|open|review [link]|list>'; or return 1
+    __g_need_arg "$sub" ',g pr <create|open|share [link]|list>'; or return 1
     set -e argv[1]
     set -l fn __g_pr_$sub
     functions -q $fn; or begin; __g_err "unknown pr: $sub"; return 1; end
@@ -411,21 +452,35 @@ function __g_cmd_clean --description 'delete merged shaygan- branches (--all/--p
         or begin; echo Cancelled; return 1; end
         test $cur != $base; and begin; __g_auto_stash $cur $base; and git checkout $base; or return 1; end
         for branch in (git branch --format='%(refname:short)' | string match -v $base)
-            set -l worktree_path (__g_wt_for $branch); test -n "$worktree_path"; and git worktree remove $worktree_path --force 2>/dev/null
+            set -l worktree_path (__g_wt_for $branch)
+            if test -n "$worktree_path"
+                __g_stash_worktree $worktree_path; or return 1
+                git worktree remove $worktree_path --force 2>/dev/null
+            end
             git branch -D $branch
         end
         return
     end
     __g_fetch_base
     set -l ref (__g_remote_branch)
+    set -l pr_merged
+    command -v gh >/dev/null
+    and set pr_merged (gh pr list --state merged --json headRefName -L 300 -q '.[].headRefName' 2>/dev/null)
+    set -l deleted 0
     for branch in (git branch --format='%(refname:short)')
         string match -q "$__g_branch_prefix*" $branch; or continue
         test $branch = $cur; and continue
-        __g_is_merged $branch $ref; or continue
-        set -l worktree_path (__g_wt_for $branch); test -n "$worktree_path"; and git worktree remove $worktree_path --force 2>/dev/null
+        __g_is_merged $branch $ref; or contains -- $branch $pr_merged; or continue
+        set -l worktree_path (__g_wt_for $branch)
+        if test -n "$worktree_path"
+            __g_stash_worktree $worktree_path; or return 1
+            git worktree remove $worktree_path --force 2>/dev/null
+        end
         echo "Deleting: $branch"
         git branch -D $branch
+        set deleted (math $deleted + 1)
     end
+    test $deleted -eq 0; and echo "Nothing to clean"
 end
 
 function __g_cmd_coauthored --description 'print a Co-authored-by line for a GitHub username'

@@ -15,3 +15,11 @@ sh setup.sh
 gh auth login
 git remote set-url origin git@github.com/glyphack/dotfiles
 ```
+
+## Secrets
+
+Store secrets in keychain
+
+```
+security add-generic-password -a "myaccount" -s "myservice" -w "mysecret"
+```
