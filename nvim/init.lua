@@ -1633,6 +1633,66 @@ require("lazy").setup({
 				vim.fn.system("open .")
 			end, { noremap = true, silent = true, desc = "Open current directory in Finder" })
 
+			local function fish_quote(s)
+				return "'" .. s:gsub("'", "'\\''") .. "'"
+			end
+
+			local function minifiles_focused_dir()
+				if MiniFiles.get_explorer_state then
+					local state = MiniFiles.get_explorer_state()
+					if state and state.branch and state.depth_focus then
+						return state.branch[state.depth_focus]
+					end
+				end
+				local entry = MiniFiles.get_fs_entry()
+				if entry then
+					return vim.fn.fnamemodify(entry.path, ":h")
+				end
+				return nil
+			end
+
+			local function minifiles_copy_file()
+				local entry = MiniFiles.get_fs_entry()
+				if not entry then
+					vim.notify("mini.files: no entry under cursor", vim.log.levels.WARN)
+					return
+				end
+				local parent = vim.fn.fnamemodify(entry.path, ":h")
+				local name = vim.fn.fnamemodify(entry.path, ":t")
+				local code = "cd " .. fish_quote(parent) .. "; and ,cp " .. fish_quote(name)
+				local out = vim.fn.system({ "fish", "-c", code })
+				if vim.v.shell_error ~= 0 then
+					vim.notify("mini.files: copy failed\n" .. out, vim.log.levels.ERROR)
+					return
+				end
+				vim.notify("Copied " .. name .. " to clipboard")
+			end
+
+			local function minifiles_paste_file()
+				local dir = minifiles_focused_dir()
+				if not dir then
+					vim.notify("mini.files: no target directory", vim.log.levels.WARN)
+					return
+				end
+				local code = "cd " .. fish_quote(dir) .. "; and ,pf"
+				local out = vim.fn.system({ "fish", "-c", code })
+				if vim.v.shell_error ~= 0 then
+					vim.notify("mini.files: paste failed\n" .. out, vim.log.levels.ERROR)
+					return
+				end
+				MiniFiles.synchronize()
+				vim.notify("Pasted into " .. vim.fn.fnamemodify(dir, ":t"))
+			end
+
+			vim.api.nvim_create_autocmd("User", {
+				pattern = "MiniFilesBufferCreate",
+				callback = function(args)
+					local buf = args.data.buf_id
+					vim.keymap.set("n", "gy", minifiles_copy_file, { buffer = buf, desc = "Copy file to clipboard" })
+					vim.keymap.set("n", "gp", minifiles_paste_file, { buffer = buf, desc = "Paste file from clipboard" })
+				end,
+			})
+
 			require("mini.extra").setup()
 			require("mini.splitjoin").setup()
 			require("mini.bracketed").setup()

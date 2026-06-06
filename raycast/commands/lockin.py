@@ -7,7 +7,7 @@
 
 # Optional parameters:
 # @raycast.icon 🎯
-# @raycast.argument1 {"type": "dropdown", "title": "Category", "placeholder": "Pick a category", "data": [{"title": "Work", "value": "work"}, {"title": "Writing", "value": "writing"}, {"title": "Programming", "value": "programming"}, {"title": "AFK", "value": "afk"}, {"title": "Rest", "value": "rest"}, {"title": "Reading", "value": "reading"}]}
+# @raycast.argument1 {"type": "dropdown", "title": "Category", "placeholder": "Pick a category", "optional": true, "data": [{"title": "Writing", "value": "writing"}, {"title": "Programming", "value": "programming"}, {"title": "Work", "value": "work"}, {"title": "Reading", "value": "reading"}, {"title": "AFK", "value": "afk"}, {"title": "Break", "value": "break"}]}
 # @raycast.argument2 {"type": "text", "title": "Duration (minutes)", "placeholder": "Default: 30", "optional": true}
 # @raycast.argument3 {"type": "text", "title": "Message", "placeholder": "e.g. fixing auth bug", "optional": true}
 
@@ -21,28 +21,18 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from log import log_msg
 
-# ─────────────────────────────────────────────
-# CATEGORY → BLOCKED APPS MAPPING
-# These must match Focus Categories you created
-# in Raycast using "Create Focus Category".
-#
-# work        → blocks: (add your category names here, e.g. social,gaming)
-# writing     → blocks: (add your category names here)
-# programming → blocks: (add your category names here)
-# ─────────────────────────────────────────────
-
 CATEGORY_BLOCKS = {
     "writing": ["writing-coding"],
     "programming": ["writing-coding"],
 }
 
 CATEGORY_GOALS = {
+    "programming": "Programming",
     "reading": "Reading",
     "work": "Work",
     "writing": "Writing",
-    "programming": "Programming",
     "afk": "AFK",
-    "rest": "Rest",
+    "break": "Break",
 }
 
 DEFAULT_DURATION_MIN = 30
@@ -66,9 +56,7 @@ label = f"#focus-session {goal}: {message}" if message else f"#focus-session {go
 log_msg(label, None, start_time=start, end_time=end)
 
 if category in ("afk", "rest"):
-    subprocess.run(
-        [FISH_SHELL, "-lc", f"ntfy {duration_min}min '{goal} time is up'"]
-    )
+    subprocess.run([FISH_SHELL, "-lc", f"ntfy {duration_min}min '{goal} time is up'"])
 
 blocks = CATEGORY_BLOCKS.get(category, [])
 params = {

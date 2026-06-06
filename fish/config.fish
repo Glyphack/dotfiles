@@ -60,14 +60,13 @@ fish_add_path -g "$HOME/.rd/bin" \
     "/bin" \
     "/usr/sbin" \
     "/sbin" \
-    "$HOME/.amp/bin" \
     "/Applications/Obsidian.app/Contents/MacOS" \
     "$ANDROID_HOME/emulator" \
     "$ANDROID_HOME/platform-tools"
 
 
-if test -f ~/Programming/dotfiles/dotfiles-private/personal.fish
-    source ~/Programming/dotfiles/dotfiles-private/personal.fish
+if test -f ~/Programming/dotfiles/local.fish
+    source ~/Programming/dotfiles/local.fish
 end
 
 if status is-interactive

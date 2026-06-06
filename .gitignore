@@ -2,6 +2,8 @@
 *custom*
 pv_*
 secret*
+local.mk
+local.fish
 
 !asdf/.tool-versions
 .aider*

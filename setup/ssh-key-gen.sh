@@ -3,7 +3,7 @@
 set -e
 
 # Prompt for email
-read -p "Enter your email: " email
+read -p "Enter email: " email
 
 # Generate SSH key
 ssh-keygen -t ed25519 -f ~/.ssh/id_${email}_ed25519
