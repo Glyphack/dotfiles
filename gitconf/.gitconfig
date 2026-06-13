@@ -47,8 +47,8 @@
 [fetch]
 	prune = true
 
-[includeIf "gitdir:~/Programming/work/"]
-	path = ~/Programming/work/gitconf/.gitconfig
+[includeIf "gitdir:~/Work/"]
+	path = ~/Work/gitconf/.gitconfig
 
 [filter "lfs"]
 	clean = git-lfs clean -- %f

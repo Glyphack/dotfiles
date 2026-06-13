@@ -176,6 +176,15 @@ def load_plugins() -> PluginsOutput:
     return result
 
 
+def is_git_repo() -> bool:
+    result = subprocess.run(
+        ["git", "rev-parse", "--git-common-dir"],
+        capture_output=True,
+        text=True,
+    )
+    return result.returncode == 0
+
+
 def volume_args(*, pwd: Path) -> list[str]:
     project_id = pwd.name
     args: list[str] = []
@@ -192,10 +201,11 @@ def volume_args(*, pwd: Path) -> list[str]:
     if (pwd / "go.mod").is_file():
         append_mount(args, f"vm2-{project_id}-gobin", f"{pwd}/bin")
 
-    git_dir = exec(["git", "rev-parse", "--git-common-dir"]).stdout.strip()
-    if git_dir == ".git":
-        git_dir = pwd / git_dir
-    append_mount(args, git_dir, pwd / ".git")
+    if is_git_repo():
+        git_dir = exec(["git", "rev-parse", "--git-common-dir"]).stdout.strip()
+        if git_dir == ".git":
+            git_dir = pwd / git_dir
+        append_mount(args, git_dir, pwd / ".git")
 
     return args
 

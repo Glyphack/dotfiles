@@ -39,7 +39,7 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 RUN curl -fsSL https://claude.ai/install.sh | bash
 RUN curl -fsSL batrachian.ai/install | sh
-curl -fsSL https://opencode.ai/install | bash
+RUN curl -fsSL https://opencode.ai/install | bash
 RUN curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
 # RUN cargo install cargo-nextest --locked
