@@ -7,8 +7,8 @@ set -gx WORKTREES_DIR $PROGRAMMING_DIR/wk
 set -gx FZF_DEFAULT_COMMAND "fd --hidden"
 set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
 set -gx FZF_ALT_C_COMMAND "\
-fd -t d . $PROGRAMMING_DIR -d 1 -E work -E wk; \
-fd -t d . $PROGRAMMING_DIR/work -d 1 2>/dev/null; \
+fd -t d . $PROGRAMMING_DIR -d 1 -E wk; \
+fd -t d . $HOME/Work -d 1 2>/dev/null; \
 fd -t d . $WORKTREES_DIR -d 1 2>/dev/null; \
 echo $HOME/Downloads
 "
