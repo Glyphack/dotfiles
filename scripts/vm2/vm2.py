@@ -138,6 +138,18 @@ class PluginsOutput:
     setup_commands: list[str]
 
 
+@dataclass
+class ProjectVolumes:
+    """Volume mounts for a project and the dirs whose ownership needs fixing.
+
+    Named volumes are created owned by root, so the `node` user cannot write to
+    them until they are chowned. cache_dirs holds those mount points.
+    """
+
+    args: list[str]
+    cache_dirs: list[Path]
+
+
 def split_setup_commands(value: str) -> list[str]:
     """Split a SETUP value on `;`, honoring `\\;` as a literal semicolon."""
     commands = []
@@ -185,29 +197,33 @@ def is_git_repo() -> bool:
     return result.returncode == 0
 
 
-def volume_args(*, pwd: Path) -> list[str]:
+def project_volumes(*, pwd: Path) -> ProjectVolumes:
     project_id = pwd.name
-    args: list[str] = []
+    result = ProjectVolumes(args=[], cache_dirs=[])
 
-    append_mount(args, pwd, pwd)
-    append_mount(args, f"{HOME}/.claude", f"{VM_HOME}/.claude")
-    append_mount(args, f"{HOME}/.config/gh", f"{VM_HOME}/.config/gh", ro=True)
-    append_mount(args, f"{HOME}/.databrickscfg", "/tmp/databrickscfg", ro=True)
+    append_mount(result.args, pwd, pwd)
+    append_mount(result.args, f"{HOME}/.claude", f"{VM_HOME}/.claude")
+    append_mount(result.args, f"{HOME}/.config/gh", f"{VM_HOME}/.config/gh", ro=True)
+    append_mount(result.args, f"{HOME}/.databrickscfg", "/tmp/databrickscfg", ro=True)
 
-    if (pwd / "package.json").is_file():
-        append_mount(args, f"vm2-{project_id}-node_modules", f"{pwd}/node_modules")
-    if (pwd / "Cargo.toml").is_file():
-        append_mount(args, f"vm2-{project_id}-target", f"{pwd}/target")
-    if (pwd / "go.mod").is_file():
-        append_mount(args, f"vm2-{project_id}-gobin", f"{pwd}/bin")
+    cache_volumes = {
+        "package.json": ("node_modules", pwd / "node_modules"),
+        "Cargo.toml": ("target", pwd / "target"),
+        "go.mod": ("gobin", pwd / "bin"),
+    }
+    for marker, (suffix, target) in cache_volumes.items():
+        if not (pwd / marker).is_file():
+            continue
+        append_mount(result.args, f"vm2-{project_id}-{suffix}", str(target))
+        result.cache_dirs.append(target)
 
     if is_git_repo():
         git_dir = exec(["git", "rev-parse", "--git-common-dir"]).stdout.strip()
         if git_dir == ".git":
             git_dir = pwd / git_dir
-        append_mount(args, git_dir, pwd / ".git")
+        append_mount(result.args, git_dir, pwd / ".git")
 
-    return args
+    return result
 
 
 def cmd_build() -> None:
@@ -268,6 +284,7 @@ def cmd_run(*, size: str) -> None:
         )
 
     plugins = load_plugins()
+    volumes = project_volumes(pwd=pwd)
 
     setup_commands = []
 
@@ -276,6 +293,8 @@ def cmd_run(*, size: str) -> None:
             f"git config --global --add safe.directory {shlex.quote(str(pwd))}",
         ]
     )
+    for cache_dir in volumes.cache_dirs:
+        setup_commands.append([f"sudo chown node:node {shlex.quote(str(cache_dir))}"])
     setup_commands.extend([command] for command in plugins.setup_commands)
     setup_commands.append(["claude --dangerously-skip-permissions"])
     setup_commands.append(["exec zsh"])
@@ -298,7 +317,7 @@ def cmd_run(*, size: str) -> None:
         profile["cpus"],
         *plugins.env_args,
         *plugins.volume_args,
-        *volume_args(pwd=pwd),
+        *volumes.args,
         IMAGE_TAG,
         "zsh",
         "-c",

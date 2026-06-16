@@ -26,7 +26,11 @@ cspell.json
 # asdf
 *.tool-versions
 
-*mise*
+# mise: commit mise.toml + mise.lock, ignore only local overrides
+mise.local.toml
+mise.*.local.toml
+.mise.local.toml
+.mise.*.local.toml
 
 typos.toml
 .aider*

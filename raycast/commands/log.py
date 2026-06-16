@@ -11,7 +11,7 @@
 # @raycast.argument3 { "type": "text", "placeholder": "from", "optional": true }
 
 # Documentation:
-# @raycast.author shayegan
+# @raycast.author glyphack
 # @raycast.description Log a timestamped message to today's section in the weekly Obsidian note
 
 import subprocess
