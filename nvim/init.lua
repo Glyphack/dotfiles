@@ -92,7 +92,6 @@ vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 vim.keymap.set("n", "<M-j>", ":cn<CR>", { desc = "Move focus to the next quickfix item" })
 vim.keymap.set("n", "<M-k>", ":cp<CR>", { desc = "Move focus to the previous quickfix item" })
 
--- useless motion can be used for something else
 vim.api.nvim_set_keymap("v", "<CR>", "<nop>", { noremap = true })
 vim.api.nvim_set_keymap("n", "<BS>", "<nop>", { noremap = true })
 vim.api.nvim_set_keymap("v", "<BS>", "<nop>", { noremap = true })
@@ -433,10 +432,6 @@ require("lazy").setup({
 			vim.lsp.enable("dockerls")
 			vim.lsp.enable("tailwindcss")
 			vim.lsp.enable("html")
-			vim.lsp.enable("emmet_ls")
-			vim.lsp.enable("ruby_lsp")
-			vim.lsp.enable("sorbet")
-			vim.lsp.enable("kotlin_language_server")
 			vim.lsp.enable("vale_ls")
 			vim.lsp.enable("lemminx")
 			vim.lsp.enable("clojure_lsp")

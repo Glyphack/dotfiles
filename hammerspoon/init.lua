@@ -677,3 +677,28 @@ end
 
 local lightsWatcher = hs.caffeinate.watcher.new(ToggleLights)
 lightsWatcher:start()
+
+hs.hotkey.bind({ "cmd", "alt" }, "T", function()
+	local brave = hs.application.find("Brave Browser")
+	if not brave then
+		hs.application.launchOrFocus("Brave Browser")
+		return
+	end
+	brave:activate()
+
+	local menus = brave:getMenuItems()
+	if not menus then
+		return
+	end
+
+	for _, top in ipairs(menus) do
+		if top.AXTitle == "Tab" and top.AXChildren then
+			for _, item in ipairs(top.AXChildren[1]) do
+				if item.AXTitle and item.AXTitle:find("Microsoft Teams", 1, true) then
+					brave:selectMenuItem({ "Tab", item.AXTitle })
+					return
+				end
+			end
+		end
+	end
+end)

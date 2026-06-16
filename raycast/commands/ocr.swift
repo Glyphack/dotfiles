@@ -8,7 +8,7 @@
 // @raycast.packageName Image Tools
 
 // Documentation:
-// @raycast.author shayegan
+// @raycast.author glyphack
 // @raycast.description OCR the image in the clipboard and copy the text
 
 import AppKit

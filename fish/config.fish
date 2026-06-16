@@ -24,7 +24,6 @@ set -gx VIRTUALFISH_ACTIVATION_FILE .venv
 set -gx HOME_BIN $HOME/bin
 set -gx scripts $HOME/Programming/dotfiles/scripts
 set -gx tyty $HOME/Programming/ruff/target/debug/ty
-set -gx CLAUDE_CONFIG_DIR $HOME/.claude/
 set -gx JAVA_HOME "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 set -gx ANDROID_HOME "$HOME/Library/Android/sdk"
 set -gx NDK_HOME "$ANDROID_HOME/ndk/30.0.14904198"
