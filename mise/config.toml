@@ -40,6 +40,9 @@ clojure = "1.12.4"
 
 node = "24"
 "npm:pnpm" = "latest"
+"npm:typescript-language-server" = "latest"
+"npm:typescript" = "latest"
+"github:sharkdp/fd" = "latest"
 
 [tool_alias]
 clojure = "https://github.com/asdf-community/asdf-clojure.git"

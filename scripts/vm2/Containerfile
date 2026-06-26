@@ -35,7 +35,7 @@ RUN mkdir -p /home/node/.claude /home/node/.config/gh /workspace && \
 USER node
 WORKDIR /home/node
 
-ENV PATH="/home/node/.local/bin:/home/node/.cargo/bin:$PATH"
+ENV PATH="/home/node/.local/bin:/home/node/.local/share/mise/shims:/home/node/.cargo/bin:$PATH"
 
 RUN curl https://mise.run | sh
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -50,7 +50,9 @@ RUN git config --global init.templateDir '' && \
   git config --global safe.directory /workspace
 
 RUN echo 'alias claude="claude --dangerously-skip-permissions"' >> /home/node/.bashrc && \
-  echo 'alias claude="claude --dangerously-skip-permissions"' >> /home/node/.zshrc
+  echo 'alias claude="claude --dangerously-skip-permissions"' >> /home/node/.zshrc && \
+  echo 'eval "$(mise activate bash)"' >> /home/node/.bashrc && \
+  echo 'eval "$(mise activate zsh)"' >> /home/node/.zshrc
 
 WORKDIR /workspace
 CMD ["/bin/zsh"]
