@@ -42,9 +42,9 @@ VAULT_WEEKLY = VAULT / "Weekly"
 
 
 def build_log_entry(msg, place, start_time, end_time=None):
-    timestamp = start_time.strftime("%H:%M")
+    timestamp = start_time.strftime("%I:%M %p")
     if end_time:
-        timestamp = f"{timestamp}-{end_time.strftime('%H:%M')}"
+        timestamp = f"{timestamp}-{end_time.strftime('%I:%M %p')}"
     entry = f"{timestamp} > {msg}"
     if place:
         entry += f" place: {place}"

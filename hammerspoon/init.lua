@@ -678,7 +678,7 @@ end
 local lightsWatcher = hs.caffeinate.watcher.new(ToggleLights)
 lightsWatcher:start()
 
-hs.hotkey.bind({ "cmd", "alt" }, "T", function()
+hs.hotkey.bind(HYPER, "1", function()
 	local brave = hs.application.find("Brave Browser")
 	if not brave then
 		hs.application.launchOrFocus("Brave Browser")

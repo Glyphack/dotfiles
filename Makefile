@@ -4,7 +4,6 @@
 
 link::
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
-	mkdir -p ${HOME}/.config/starship && stow --adopt --target=${HOME}/.config starship
 	stow --target=${HOME} gitconf
 	stow --target=${HOME} asdf
 	stow --target=${HOME} ripgrep
