@@ -1,7 +1,6 @@
 function fish_prompt
     set -l last_status $status
 
-    # Directory: last component only, ~ for home
     set_color --bold cyan
     if test "$PWD" = "$HOME"
         echo -n '~'
@@ -10,7 +9,6 @@ function fish_prompt
     end
     set_color normal
 
-    # Git branch, or short commit hash when detached
     set -l branch (command git symbolic-ref --short HEAD 2>/dev/null)
     if test -n "$branch"
         set_color --bold magenta
@@ -25,7 +23,6 @@ function fish_prompt
         end
     end
 
-    # Git state: rebase, merge, cherry-pick, etc.
     set -l state (__prompt_git_state)
     if test -n "$state"
         set_color --bold yellow
@@ -33,14 +30,12 @@ function fish_prompt
         set_color normal
     end
 
-    # Command duration when it ran longer than 2s
     if test "$CMD_DURATION" -gt 2000
         set_color --bold yellow
         echo -n " took "(__prompt_duration $CMD_DURATION)
         set_color normal
     end
 
-    # Prompt character: green on success, red on failure
     if test $last_status -eq 0
         set_color --bold green
     else
