@@ -1,0 +1,10 @@
+[General]
+autoCloseIdleDaemon=true
+checkForUpdates=false
+contrastOpacity=188
+disabledTrayIcon=true
+showStartupLaunchMessage=false
+startupLaunch=true
+
+[Shortcuts]
+TAKE_SCREENSHOT=Meta+Ctrl+Alt+5
