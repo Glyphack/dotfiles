@@ -5,7 +5,7 @@ function ,v --description "Video/media workflow helper commands"
         echo "Commands:"
         echo "  dl <url> [--trim start-end]   Download video via yt-dlp (--trim to cut)"
         echo "  mp3 <file|url>                Convert video/URL to MP3"
-        echo "  compress <file>               Compress video with H.265"
+        echo "  compress <h264|h265> <file> [crf]   Compress video (default crf 28)"
         echo "  tovid <file>                  Convert MP3 to video with blue background"
         echo "  transcribe <file>             Transcribe to SRT via whisper"
         return 1
@@ -86,12 +86,31 @@ function ,v --description "Video/media workflow helper commands"
             echo $output_file
 
         case compress
-            if test (count $argv) -eq 0
-                echo "Usage: ,v compress <file>"
+            if test (count $argv) -lt 2
+                echo "Usage: ,v compress <h264|h265> <file> [crf]"
                 return 1
             end
 
-            ffmpeg -i $argv[1] -vcodec libx265 -crf 28 -preset medium -acodec aac -b 128k $argv[1].mp4
+            set codec $argv[1]
+            set input_file $argv[2]
+            set crf 28
+            if test (count $argv) -ge 3
+                set crf $argv[3]
+            end
+
+            set output_file (path change-extension '' $input_file)-small.mp4
+
+            switch $codec
+                case h264
+                    ffmpeg -i $input_file -c:v libx264 -tag:v avc1 -movflags faststart \
+                        -crf $crf -preset slow -c:a aac -b:a 128k $output_file
+                case h265
+                    ffmpeg -i $input_file -c:v libx265 -tag:v hvc1 -movflags faststart \
+                        -crf $crf -preset medium -c:a aac -b:a 128k $output_file
+                case '*'
+                    echo "Unknown codec: $codec (use h264 or h265)"
+                    return 1
+            end
 
         case tovid
             if test (count $argv) -eq 0

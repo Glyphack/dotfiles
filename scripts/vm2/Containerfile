@@ -36,6 +36,7 @@ USER node
 WORKDIR /home/node
 
 ENV PATH="/home/node/.local/bin:/home/node/.local/share/mise/shims:/home/node/.cargo/bin:$PATH"
+ENV MISE_TRUSTED_CONFIG_PATHS=/
 
 RUN curl https://mise.run | sh
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
