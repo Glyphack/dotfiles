@@ -13,7 +13,7 @@ COL_MAGENTA=$ESC_SEQ"35;01m"
 COL_CYAN=$ESC_SEQ"36;01m"
 
 function ok() {
-    echo -e "$COL_GREEN[ok]$COL_RESET "$1
+    echo -e "$COL_GREEN[ok]$COL_RESET "
 }
 
 function bot() {
@@ -88,14 +88,16 @@ running "Trackpad: enable tap to click for this user and for the login screen"
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
 defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 defaults write -g com.apple.mouse.scaling 4
-defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1;ok
+defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+ok
 
 running "Trackpad: map bottom right corner to right-click"
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadCornerSecondaryClick -int 2
 defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightClick -bool true
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClickBehavior -int 1
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
-defaults write -g com.apple.trackpad.scaling 10;ok
+defaults write -g com.apple.trackpad.scaling 10
+ok
 
 running "Mouse: set cursor to giant size (max is 4.0)"
 defaults write com.apple.universalaccess mouseDriverCursorSize -float 4.0;ok
