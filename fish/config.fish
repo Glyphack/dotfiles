@@ -10,10 +10,7 @@ set -gx FZF_ALT_C_COMMAND "\
 fd -t d . $PROGRAMMING_DIR -d 1 -E wk; \
 fd -t d . $HOME/Work -d 1 2>/dev/null; \
 fd -t d . $WORKTREES_DIR -d 1 2>/dev/null; \
-echo $HOME/Downloads\n
-echo $HOME/Documents\n
-echo $HOME/Movies\n
-echo $HOME/Work
+echo $HOME/Downloads\n$HOME/Documents\n$HOME/Movies\n$HOME/Work\n$HOME/Programming
 "
 set -gx NPM_PRE $HOME/.npm-global/bin
 set -gx RIPGREP_CONFIG_PATH $HOME/.ripgreprc
@@ -83,8 +80,6 @@ if status is-interactive
     if type -q fish_hybrid_key_bindings
         fish_hybrid_key_bindings
     end
-
-    on_pwd
 
     if test -f "$__fish_config_dir/aliases.fish"
         source "$__fish_config_dir/aliases.fish"
