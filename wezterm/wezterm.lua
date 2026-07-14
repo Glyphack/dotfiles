@@ -7,14 +7,14 @@ config.leader = { key = "a", mods = "CMD", timeout_milliseconds = 500 }
 config.key_tables = {
 	copy_mode = wezterm.gui.default_key_tables().copy_mode,
 }
--- config.font = wezterm.font("Hack Nerd Font", { weight = "Regular", stretch = "Normal", style = "Normal" })
+config.font = wezterm.font("Hack Nerd Font Mono", { weight = "Regular", stretch = "Normal", style = "Normal" })
 config.font_size = 16
 
 local function scheme_for_appearance(appearance)
 	if appearance:find("Dark") then
 		return "flexoki-dark"
 	else
-		return "flexoki-light"
+		return "flexoki-dark"
 	end
 end
 
@@ -381,15 +381,15 @@ config.min_scroll_bar_height = "2cell"
 config.colors = {
 	scrollbar_thumb = "gray",
 }
--- config.background = {
--- 	{
--- 		source = {
--- 			File = wezterm.home_dir .. "/Programming/dotfiles/wezterm/backgrounds/planet.jpg",
--- 		},
--- 		repeat_x = "Mirror",
--- 		hsb = { brightness = 0.05 },
--- 	},
--- }
+config.background = {
+	{
+		source = {
+			File = wezterm.home_dir .. "/Programming/dotfiles/wallpapers/e9drzv651to21.jpg",
+		},
+		repeat_x = "Mirror",
+		hsb = { brightness = 0.05 },
+	},
+}
 
 config.switch_to_last_active_tab_when_closing_tab = true
 
