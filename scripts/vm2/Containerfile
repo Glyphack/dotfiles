@@ -20,6 +20,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   openjdk-17-jdk \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+ARG NVIM_VERSION=0.12.4
+RUN arch="$(dpkg --print-architecture)" && \
+  case "$arch" in \
+    arm64) nvim_arch=arm64 ;; \
+    amd64) nvim_arch=x86_64 ;; \
+    *) echo "unsupported arch: $arch" >&2; exit 1 ;; \
+  esac && \
+  curl -fsSL "https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux-${nvim_arch}.tar.gz" -o /tmp/nvim.tar.gz && \
+  tar -C /opt -xzf /tmp/nvim.tar.gz && \
+  mv "/opt/nvim-linux-${nvim_arch}" /opt/nvim && \
+  ln -s /opt/nvim/bin/nvim /usr/local/bin/nvim && \
+  rm /tmp/nvim.tar.gz
+
 ARG GIT_DELTA_VERSION=0.18.2
 ENV SHELL=/bin/zsh
 ENV EDITOR=vim

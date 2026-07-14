@@ -208,6 +208,14 @@ url = "https://dl.google.com/go/go1.26.4.windows-amd64.zip"
 version = "0.22.0"
 backend = "go:golang.org/x/tools/gopls"
 
+[[tools."go:oss.terrastruct.com/d2"]]
+version = "0.7.1"
+backend = "go:oss.terrastruct.com/d2"
+
+[[tools."go:rsc.io/2fa"]]
+version = "1.2.0"
+backend = "go:rsc.io/2fa"
+
 [[tools.golangci-lint]]
 version = "v2.11.3"
 backend = "aqua:golangci/golangci-lint"

@@ -38,6 +38,10 @@
 [merge]
 	conflictStyle = zdiff3
 
+[diff]
+	colorMoved = default
+	colorMovedWS = allow-indentation-change
+
 [init]
 	defaultBranch = master
 [push]

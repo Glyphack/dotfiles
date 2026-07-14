@@ -44,6 +44,8 @@ node = "24"
 "npm:pnpm" = "latest"
 "npm:typescript-language-server" = "latest"
 "npm:typescript" = "latest"
+"go:oss.terrastruct.com/d2" = "latest"
+"go:rsc.io/2fa" = "latest"
 
 [tool_alias]
 clojure = "https://github.com/asdf-community/asdf-clojure.git"

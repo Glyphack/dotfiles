@@ -137,9 +137,9 @@ function __g_cmd_bco --description 'checkout the base branch'
     git checkout $base
 end
 
-function __g_cmd_new --description 'create a new branch'
+function __g_cmd_new --description 'create a new branch in a worktree (-b for in-place)'
     __g_inprocess_abort; or return 1
-    __g_need_arg "$argv[1]" ',g new <name> [-w]'; or return 1
+    __g_need_arg "$argv[1]" ',g new <name> [-b]'; or return 1
     set -l branch (__g_prefix $argv[1])
     git show-ref --verify --quiet refs/heads/$branch
     and begin; __g_err "branch '$branch' already exists locally"; return 1; end
@@ -148,7 +148,7 @@ function __g_cmd_new --description 'create a new branch'
     and begin; __g_err "branch '$branch' already exists on $remote"; return 1; end
     __g_fetch_base
     set -l base_ref (__g_remote_branch)
-    if not contains -- -w $argv
+    if contains -- -b $argv
         __g_auto_stash (__g_cur) $branch; or return 1
         git checkout -b $branch $base_ref
         return

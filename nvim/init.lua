@@ -1314,6 +1314,27 @@ require("lazy").setup({
 		end,
 	},
 	{
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		branch = "main",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		event = { "BufReadPost", "BufNewFile" },
+		config = function()
+			require("nvim-treesitter-textobjects").setup({
+				select = { lookahead = true },
+			})
+
+			local select = require("nvim-treesitter-textobjects.select")
+			local shared = require("nvim-treesitter-textobjects.shared")
+			vim.keymap.set({ "x", "o" }, "ac", function()
+				select.select_textobject("@comment.outer", "textobjects")
+			end, { desc = "a comment" })
+			vim.keymap.set({ "x", "o" }, "ic", function()
+				local has_inner = shared.textobject_at_point("@comment.inner", "textobjects", nil, nil, { lookahead = true })
+				select.select_textobject(has_inner and "@comment.inner" or "@comment.outer", "textobjects")
+			end, { desc = "inner comment" })
+		end,
+	},
+	{
 		"nvim-treesitter/nvim-treesitter-context",
 		event = { "BufReadPost", "BufNewFile" },
 		config = function()
