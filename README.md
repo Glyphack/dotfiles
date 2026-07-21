@@ -1,10 +1,9 @@
 ## Dotfiles
 
-My personal dotfiles to install and configure [software I use](./software.md).
+My personal dotfiles to install and configure software I use.
+Anything I use is configured here.
 
 ## Installation
-
-Install brew apps
 
 ```bash
 mkdir -p ~/Programming/ && cd ~/Programming
@@ -18,7 +17,7 @@ git remote set-url origin git@github.com/glyphack/dotfiles
 
 ## Secrets
 
-Store secrets in keychain
+I store secrets in apple key chain.
 
 ```
 security add-generic-password -a "myaccount" -s "myservice" -w "mysecret"

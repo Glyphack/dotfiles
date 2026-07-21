@@ -1,0 +1,15 @@
+.dots-track-time-preview {
+	margin: var(--size-4-2) 0 var(--size-4-4);
+	padding: var(--size-4-2) var(--size-4-3);
+	border-radius: var(--radius-s);
+	background-color: var(--background-secondary);
+	color: var(--text-muted);
+	font-size: var(--font-ui-small);
+}
+
+.dots-track-time-preview-line {
+	font-family: var(--font-monospace);
+	color: var(--text-normal);
+	white-space: pre-wrap;
+	word-break: break-word;
+}

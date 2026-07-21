@@ -2,13 +2,13 @@
 
 # Required parameters:
 # @raycast.schemaVersion 1
-# @raycast.title Paste markdown link
+# @raycast.title Paste Link in Markdown
 # @raycast.mode silent
 # @raycast.icon 🔗
 # @raycast.packageName Markdown Tools
 
 # Documentation:
-# @raycast.author your_name
+# @raycast.author glyphack
 # @raycast.authorURL https://raycast.com/your_name
 
 # Get content from clipboard

@@ -1,4 +1,4 @@
-package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programniling/dotfiles/private/Spoons/?.spoon/init.lua"
+package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/hammerspoon/?.lua"
 SpoonInstall = hs.loadSpoon("SpoonInstall")
 local fnutils = require("hs.fnutils")
@@ -38,90 +38,129 @@ local function moveMouseToWindowCenter(win)
 end
 
 local previousWindow = nil
-function launchOrFocusOrRotate(app)
-	log.d("launchOrFocusOrRotate called with app: " .. tostring(app))
-	local focusedWindow = hs.window.focusedWindow()
-	if focusedWindow == nil then
-		log.d("No focused window, launching: " .. tostring(app))
-		application.launchOrFocus(app)
-		timer.doAfter(0.1, function()
-			local win = hs.window.focusedWindow()
-			if win then
-				moveMouseToWindowCenter(win)
+
+local function centerMouseOnFocusedWindow()
+	timer.doAfter(0.1, function()
+		local win = hs.window.focusedWindow()
+		if win then
+			moveMouseToWindowCenter(win)
+		end
+	end)
+end
+
+local function windowBelongsToApp(win, appName)
+	-- See https://www.hammerspoon.org/docs/hs.window.html#application
+	local path = win:application():path()
+	local nameOnDisk = string.gsub(path, "/Applications/", "")
+	nameOnDisk = string.gsub(nameOnDisk, ".app", "")
+	nameOnDisk = string.gsub(nameOnDisk, "/System/Library/CoreServices/", "")
+	return nameOnDisk:find(appName, 1, true) ~= nil
+end
+
+local function selectTabByTitle(app, pattern)
+	local menus = app:getMenuItems()
+	if not menus then
+		return false
+	end
+	for _, top in ipairs(menus) do
+		if top.AXTitle == "Tab" and top.AXChildren then
+			for _, item in ipairs(top.AXChildren[1]) do
+				if item.AXTitle and item.AXTitle:find(pattern, 1, true) then
+					app:selectMenuItem({ "Tab", item.AXTitle })
+					return true
+				end
 			end
-		end)
+		end
+	end
+	return false
+end
+
+local function selectTabOrOpenURL(app, target)
+	if selectTabByTitle(app, target.tab) then
+		return
+	end
+	if target.url then
+		hs.urlevent.openURLWithBundle(target.url, app:bundleID())
+	end
+end
+
+local function focusPreviousOrHide(app)
+	if previousWindow and previousWindow:isVisible() then
+		previousWindow:focus()
+		moveMouseToWindowCenter(previousWindow)
+		return
+	end
+	app:hide()
+end
+
+local function rotateWindows(app, appName)
+	local appWindows = app:allWindows()
+	if #appWindows <= 1 then
+		focusPreviousOrHide(app)
 		return
 	end
 
-	-- See https://www.hammerspoon.org/docs/hs.window.html#application
-	local focusedWindowApp = focusedWindow:application()
-	local focusedWindowAppName = focusedWindowApp:name()
-	local focusedWindowPath = focusedWindowApp:path()
-	local appNameOnDisk = string.gsub(focusedWindowPath, "/Applications/", "")
-	local appNameOnDisk = string.gsub(appNameOnDisk, ".app", "")
-	local appNameOnDisk = string.gsub(appNameOnDisk, "/System/Library/CoreServices/", "")
-	local appMatches = appNameOnDisk:find(app, 1, true) ~= nil
-	log.d(
-		"launchOrFocusOrRotate search: appNameOnDisk="
-			.. tostring(appNameOnDisk)
-			.. " app="
-			.. tostring(app)
-			.. " matches="
-			.. tostring(appMatches)
-	)
-	if focusedWindow and appMatches then
-		local currentApp = application.get(focusedWindowAppName)
-		local appWindows = currentApp:allWindows()
-		log.d("launchOrFocusOrRotate appWindows count: " .. tostring(#appWindows))
-		if #appWindows == 1 then
-			-- Instead of hiding, focus the previous window if it exists
-			if previousWindow and previousWindow:isVisible() then
-				previousWindow:focus()
-				moveMouseToWindowCenter(previousWindow)
-			else
-				currentApp:hide()
-			end
-			return
-		end
-
-		if #appWindows > 0 then
-			-- Store current window as previous before switching
-			previousWindow = focusedWindow
-
-			-- It seems that this list order changes after one window get focused,
-			-- Let's directly bring the last one to focus every time
-			-- https://www.hammerspoon.org/docs/hs.window.html#focus
-			local targetWin
-			if app == "Finder" then
-				-- If the app is Finder the window count returned is one more than the actual count, so I subtract
-				targetWin = appWindows[#appWindows - 1]
-				targetWin:focus()
-			else
-				targetWin = appWindows[#appWindows]
-				targetWin:focus()
-			end
-			moveMouseToWindowCenter(targetWin)
-		else
-			application.launchOrFocus(app)
-			timer.doAfter(0.1, function()
-				local win = hs.window.focusedWindow()
-				if win then
-					moveMouseToWindowCenter(win)
-				end
-			end)
-		end
-	else
-		-- Store current window as previous before switching to different app
-		previousWindow = focusedWindow
-
-		application.launchOrFocus(app)
-		timer.doAfter(0.1, function()
-			local win = hs.window.focusedWindow()
-			if win then
-				moveMouseToWindowCenter(win)
-			end
-		end)
+	previousWindow = hs.window.focusedWindow()
+	-- The window list order changes after one window gets focused,
+	-- so directly bring the last one to focus every time
+	-- https://www.hammerspoon.org/docs/hs.window.html#focus
+	local targetWin = appWindows[#appWindows]
+	if appName == "Finder" then
+		-- Finder reports one more window than actually exists, so subtract one
+		targetWin = appWindows[#appWindows - 1]
 	end
+	targetWin:focus()
+	moveMouseToWindowCenter(targetWin)
+end
+
+local function openTarget(target)
+	application.launchOrFocus(target.app)
+	if target.tab then
+		local function trySelectTab()
+			local app = application.get(target.app)
+			if app == nil then
+				return false
+			end
+			selectTabOrOpenURL(app, target)
+			return true
+		end
+		if not trySelectTab() then
+			timer.doAfter(1, trySelectTab)
+		end
+	end
+	centerMouseOnFocusedWindow()
+end
+
+-- target is an app name string or a table { app = "...", tab = "...", url = "..." }.
+-- When tab is set, focuses the app tab whose title matches; if no tab matches
+-- and url is set, opens the url in the app instead.
+-- Pressing the shortcut again while the target is focused goes back to the
+-- previous window (or hides the app); multi-window apps rotate their windows.
+function launchOrFocusOrRotate(target)
+	if type(target) == "string" then
+		target = { app = target }
+	end
+	log.d("launchOrFocusOrRotate: " .. target.app .. (target.tab and (" tab=" .. target.tab) or ""))
+
+	local focusedWindow = hs.window.focusedWindow()
+	if not focusedWindow or not windowBelongsToApp(focusedWindow, target.app) then
+		previousWindow = focusedWindow
+		openTarget(target)
+		return
+	end
+
+	local app = focusedWindow:application()
+	if not target.tab then
+		rotateWindows(app, target.app)
+		return
+	end
+
+	local title = focusedWindow:title() or ""
+	if title:find(target.tab, 1, true) then
+		focusPreviousOrHide(app)
+		return
+	end
+	selectTabOrOpenURL(app, target)
 end
 
 function SendClickableNotification(notification, link)
@@ -286,6 +325,19 @@ SHORTCUTS = {
 		"Discord",
 		function()
 			launchOrFocusOrRotate("Discord")
+		end,
+	},
+	{
+		"app_teams",
+		HYPER,
+		"1",
+		"Teams tab in Chrome",
+		function()
+			launchOrFocusOrRotate({
+				app = "Google Chrome",
+				tab = "Microsoft Teams",
+				url = "https://teams.microsoft.com",
+			})
 		end,
 	},
 	-- Window Management
@@ -677,28 +729,3 @@ end
 
 local lightsWatcher = hs.caffeinate.watcher.new(ToggleLights)
 lightsWatcher:start()
-
-hs.hotkey.bind(HYPER, "1", function()
-	local brave = hs.application.find("Brave Browser")
-	if not brave then
-		hs.application.launchOrFocus("Brave Browser")
-		return
-	end
-	brave:activate()
-
-	local menus = brave:getMenuItems()
-	if not menus then
-		return
-	end
-
-	for _, top in ipairs(menus) do
-		if top.AXTitle == "Tab" and top.AXChildren then
-			for _, item in ipairs(top.AXChildren[1]) do
-				if item.AXTitle and item.AXTitle:find("Microsoft Teams", 1, true) then
-					brave:selectMenuItem({ "Tab", item.AXTitle })
-					return
-				end
-			end
-		end
-	end
-end)

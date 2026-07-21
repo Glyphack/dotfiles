@@ -14,15 +14,18 @@
 # @raycast.author glyphack
 # @raycast.description Log a timestamped message to today's section in the weekly Obsidian note
 
+from __future__ import annotations
+
 import subprocess
 import sys
-from datetime import date, datetime
+from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import quote, urlencode
 
 FISH_SHELL = "/opt/homebrew/bin/fish"
 
 
-def get_vault_path():
+def get_vault_name():
     result = subprocess.run(
         [FISH_SHELL, "-lc", "echo $vault"],
         capture_output=True,
@@ -34,82 +37,32 @@ def get_vault_path():
     if not result.stdout.strip():
         print("$vault is empty or not set in fish")
         sys.exit(1)
-    return Path(result.stdout.strip())
+    return Path(result.stdout.strip()).name
 
 
-VAULT = get_vault_path()
-VAULT_WEEKLY = VAULT / "Weekly"
+@dataclass
+class LogRequest:
+    message: str
+    place: str | None = None
+    start: str | None = None
+    end: str | None = None
 
+    def params(self):
+        params = {"vault": get_vault_name(), "message": self.message}
+        if self.place:
+            params["place"] = self.place
+        if self.start:
+            params["from"] = self.start
+        if self.end:
+            params["to"] = self.end
+        return params
 
-def build_log_entry(msg, place, start_time, end_time=None):
-    timestamp = start_time.strftime("%I:%M %p")
-    if end_time:
-        timestamp = f"{timestamp}-{end_time.strftime('%I:%M %p')}"
-    entry = f"{timestamp} > {msg}"
-    if place:
-        entry += f" place: {place}"
-    return entry
-
-
-def find_section(lines, header):
-    for i, line in enumerate(lines):
-        if line.strip() == header:
-            return i
-    return None
-
-
-def find_next_header(lines, after):
-    for i, line in enumerate(lines[after + 1 :], start=after + 1):
-        if line.startswith("# "):
-            return i
-    return None
-
-
-def find_first_date_header(lines):
-    for i, line in enumerate(lines):
-        stripped = line.strip()
-        if stripped.startswith("# 20") and len(stripped) == 12:
-            return i
-    return None
-
-
-def insert_log(lines, today_header, log_entry):
-    today_idx = find_section(lines, today_header)
-
-    if today_idx is None:
-        return create_today_section(lines, today_header, log_entry)
-
-    insert_at = find_next_header(lines, today_idx) or len(lines)
-    while insert_at > today_idx + 1 and not lines[insert_at - 1].strip():
-        insert_at -= 1
-    lines.insert(insert_at, log_entry)
-    return lines
-
-
-def create_today_section(lines, today_header, log_entry):
-    first_date_idx = find_first_date_header(lines)
-    new_section = [today_header, "", log_entry, ""]
-
-    if first_date_idx is not None:
-        return lines[:first_date_idx] + new_section + lines[first_date_idx:]
-
-    return lines + [""] + new_section
-
-
-def log_msg(msg, place, start_time, end_time=None):
-    today = date.today()
-    iso = today.isocalendar()
-    filepath = VAULT_WEEKLY / f"{iso.year}-W{iso.week:02d}.md"
-
-    if not filepath.exists():
-        print(f"Weekly file not found: {filepath.name}")
-        sys.exit(1)
-
-    log_entry = build_log_entry(msg, place, start_time, end_time)
-    lines = filepath.read_text().splitlines()
-    lines = insert_log(lines, f"# {today.isoformat()}", log_entry)
-
-    filepath.write_text("\n".join(lines) + "\n")
+    def send(self):
+        url = f"obsidian://dots-log?{urlencode(self.params(), quote_via=quote)}"
+        result = subprocess.run(["open", "-g", url], capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"Failed to open Obsidian: {result.stderr.strip()}")
+            sys.exit(1)
 
 
 def get_arg_optional(i):
@@ -117,19 +70,13 @@ def get_arg_optional(i):
 
 
 def main():
-    msg = sys.argv[1]
-    place = get_arg_optional(2)
-    start_time = get_arg_optional(3)
-    if start_time:
-        parsed_time = datetime.strptime(start_time, "%H:%M").time()
-        print(parsed_time)
-        start_time = datetime.combine(date.today(), parsed_time)
-        end_time = datetime.now()
-    else:
-        start_time = datetime.now()
-        end_time = None
-
-    log_msg(msg, place, start_time, end_time)
+    request = LogRequest(
+        message=sys.argv[1],
+        place=get_arg_optional(2),
+        start=get_arg_optional(3),
+    )
+    request.send()
+    print("Logged")
 
 
 if __name__ == "__main__":
