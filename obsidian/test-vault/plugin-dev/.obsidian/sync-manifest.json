@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "entries": {
+    "Publish/Second Note.md": {
+      "dest": "second-note",
+      "bundleDir": "s/second-note",
+      "files": [
+        "index.md"
+      ]
+    }
+  }
+}

@@ -59,6 +59,17 @@ function __g_prefix --description 'ensure a branch name carries the shaygan- pre
     string match -q "$__g_branch_prefix*" -- $argv[1]; and echo $argv[1]; or echo "$__g_branch_prefix$argv[1]"
 end
 
+function __g_branch_mine --description 'branch carries the prefix or has my commits ahead of base'
+    set -l branch $argv[1]
+    string match -q "$__g_branch_prefix*" -- $branch; and return 0
+    set -l email (git config user.email)
+    test -n "$email"; or return 1
+    set -l base (__g_base)
+    test -n "$base"; or return 1
+    set -l mine (git log "$base..$branch" --author=$email --format=%H -1 2>/dev/null)
+    test -n "$mine"
+end
+
 function __g_auto_stash --description 'stash dirty and untracked changes'
     __g_dirty; or __g_untracked; or return 0
     set -l flag -u
@@ -191,12 +202,11 @@ function __g_cmd_co --description 'checkout (-a all, -d delete, -w into worktree
         end
     end
 
-    set -l email (git config user.email)
     set -l worktree_branches (git worktree list --porcelain | string match -r '^branch refs/heads/(.*)' --groups-only)
     set -l branches
     for branch in (git branch --format='%(refname:short)')
         test $all = true
-        or test (git log -1 --format='%ae' $branch 2>/dev/null) = $email
+        or __g_branch_mine $branch
         or contains $branch $worktree_branches
         and set -a branches $branch
     end

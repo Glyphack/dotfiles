@@ -18,3 +18,4 @@ link::
 	mkdir -p ${HOME}/.hammerspoon && stow --adopt --target=${HOME}/.hammerspoon hammerspoon
 	mkdir -p ${HOME}/.qutebrowser/ && stow --adopt --target=${HOME}/.qutebrowser/ qutebrowser
 	mkdir -p ${HOME}/Library/Application\ Support/harper-ls/ && stow --adopt --target=${HOME}/Library/Application\ Support/harper-ls harper-ls
+	cd obsidian && VAULT="$$(/opt/homebrew/bin/fish -lc 'echo $$vault')" npm run install-vault

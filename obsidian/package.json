@@ -1,0 +1,33 @@
+{
+    "name": "dots",
+    "version": "1.0.0",
+    "description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+    "main": "main.js",
+    "type": "module",
+    "scripts": {
+        "setup": "cd ./test-vault/plugin-dev/.obsidian/plugins/ && curl -L -o hot-reload.zip https://github.com/pjeby/hot-reload/archive/refs/heads/master.zip && unzip hot-reload.zip && rm hot-reload.zip",
+        "dev": "node esbuild.config.mjs",
+        "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
+        "install-vault": "npm run build && mkdir -p \"$VAULT/.obsidian/plugins/dots\" && cp main.js manifest.json styles.css \"$VAULT/.obsidian/plugins/dots/\"",
+        "version": "node version-bump.mjs && git add manifest.json versions.json",
+        "lint": "eslint .",
+        "test": "node --import tsx --test src/*.test.ts"
+    },
+    "keywords": [],
+    "license": "0-BSD",
+    "devDependencies": {
+        "@codemirror/state": "^6.5.0",
+        "@codemirror/view": "^6.38.6",
+        "@eslint/js": "^9.39.4",
+        "@types/node": "^22.15.17",
+        "esbuild": "^0.28.1",
+        "eslint": "^9.39.4",
+        "eslint-plugin-obsidianmd": "^0.3.0",
+        "globals": "^17.6.0",
+        "jiti": "^2.6.1",
+        "obsidian": "latest",
+        "tsx": "^4.19.0",
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.59.1"
+    }
+}

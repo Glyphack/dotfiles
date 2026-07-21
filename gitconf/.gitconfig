@@ -50,11 +50,14 @@
 [fetch]
 	prune = true
 
-[includeIf "gitdir:~/Work/"]
-	path = ~/Work/gitconf/.gitconfig
-
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+
+[includeIf "gitdir:~/Work/"]
+	path = ~/Work/gitconfig.work
+
+[include]
+	path = ~/.gitconfig.local

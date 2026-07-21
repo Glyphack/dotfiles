@@ -1,0 +1,10 @@
+{
+    "id": "dots",
+    "name": "Dots",
+    "version": "1.0.0",
+    "minAppVersion": "1.4.0",
+    "description": "Improving overall obsidian experience.",
+    "author": "@glyphack",
+    "authorUrl": "https://glyphack.com",
+    "isDesktopOnly": false
+}
