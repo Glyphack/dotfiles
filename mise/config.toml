@@ -47,9 +47,6 @@ node = "24"
 "go:oss.terrastruct.com/d2" = "latest"
 "go:rsc.io/2fa" = "latest"
 
-[tool_alias]
-clojure = "https://github.com/asdf-community/asdf-clojure.git"
-
 [settings]
 experimental = true
 lockfile = true
