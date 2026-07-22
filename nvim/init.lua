@@ -972,7 +972,7 @@ require("lazy").setup({
 				formatters_by_ft = {
 					lua = { "stylua" },
 					go = { "goimports" },
-					python = { "ruff_format" },
+					python = { "ruff_format", "ruff_fix", "ruff_organize_imports" },
 					javascript = { "prettierd" },
 					typescript = { "prettierd" },
 					kotlin = { "ktlint" },
@@ -1329,7 +1329,8 @@ require("lazy").setup({
 				select.select_textobject("@comment.outer", "textobjects")
 			end, { desc = "a comment" })
 			vim.keymap.set({ "x", "o" }, "ic", function()
-				local has_inner = shared.textobject_at_point("@comment.inner", "textobjects", nil, nil, { lookahead = true })
+				local has_inner =
+					shared.textobject_at_point("@comment.inner", "textobjects", nil, nil, { lookahead = true })
 				select.select_textobject(has_inner and "@comment.inner" or "@comment.outer", "textobjects")
 			end, { desc = "inner comment" })
 		end,
