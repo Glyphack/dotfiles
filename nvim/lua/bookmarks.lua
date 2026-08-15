@@ -6,17 +6,7 @@ M.extmark_ns = nil
 M.extmark_map = {}
 
 local function get_git_root()
-	local handle = io.popen("git rev-parse --show-toplevel 2>/dev/null")
-	if not handle then
-		return nil
-	end
-	local result = handle:read("*a")
-	handle:close()
-
-	if result and result ~= "" then
-		return vim.trim(result)
-	end
-	return nil
+	return vim.fs.root(vim.uv.cwd(), ".git")
 end
 
 local function get_bookmark_file_path()
@@ -553,41 +543,11 @@ function M.clear_bookmarks()
 	vim.notify("All bookmarks cleared", vim.log.levels.INFO)
 end
 
-function M.migrate_old_bookmarks()
-	local bookmarks, err = read_bookmarks()
-	if err or not bookmarks then
-		return
-	end
-
-	local updated = false
-	for i, bookmark in ipairs(bookmarks) do
-		if not bookmark.col then
-			bookmarks[i].col = 0
-			updated = true
-		end
-
-		if bookmark.anchor then
-			bookmarks[i].anchor = nil
-			updated = true
-		end
-
-		if bookmark.timestamp then
-			bookmarks[i].timestamp = nil
-			updated = true
-		end
-	end
-
-	if updated then
-		write_bookmarks(bookmarks)
-	end
-end
-
 function M.setup()
 	M.extmark_ns = vim.api.nvim_create_namespace("BookmarkExtmarks")
 	M.extmark_map = {}
 
 	M.setup_highlights()
-	M.migrate_old_bookmarks()
 
 	vim.api.nvim_create_autocmd("BufReadPost", {
 		group = vim.api.nvim_create_augroup("BookmarkRestore", { clear = true }),

@@ -5,6 +5,8 @@
 [core]
 	excludesfile = ~/.gitignore_global
 	hooksPath = ~/.config/git/hooks
+	fsmonitor = true
+	untrackedCache = true
 
 [alias]
 	cb = checkout -b
@@ -58,6 +60,7 @@
 
 [includeIf "gitdir:~/Work/"]
 	path = ~/Work/gitconfig.work
-
-[include]
-	path = ~/.gitconfig.local
+[includeIf "gitdir:~/Work"]
+	path = ~/Work/gitconfig.work
+[lfs]
+	sshtransfer = never

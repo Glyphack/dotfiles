@@ -83,6 +83,17 @@ MODES = {
     },
 }
 
+FUNCTION_KEY_MEDIA = {
+    "f1": "display_brightness_decrement",
+    "f2": "display_brightness_increment",
+    "f7": "rewind",
+    "f8": "play_or_pause",
+    "f9": "fastforward",
+    "f10": "mute",
+    "f11": "volume_decrement",
+    "f12": "volume_increment",
+}
+
 STATIC_RULES = [
     {
         "description": "Capslock to Hyper",
@@ -187,6 +198,55 @@ def make_manipulator(trigger_key, source_key, dest_key, dest_mods, var_name):
     return [held_manipulator, simultaneous_manipulator]
 
 
+def generate_devices():
+    return [
+        {
+            "identifiers": {
+                "device_address": "f0-81-d4-b9-f3-2b",
+                "is_keyboard": True,
+                "is_pointing_device": True,
+            },
+            "ignore": False,
+            "treat_as_built_in_keyboard": True,
+        },
+        {
+            # Logitech MX Ergo over Bluetooth
+            "identifiers": {
+                "is_pointing_device": True,
+                "vendor_id": 1133,
+                "product_id": 45085,
+            },
+            "ignore": False,
+        },
+        {
+            # Logitech MX Ergo over the USB receiver
+            "identifiers": {
+                "is_pointing_device": True,
+                "vendor_id": 1133,
+                "product_id": 50475,
+            },
+            "ignore": False,
+        },
+    ]
+
+
+def generate_simple_modifications():
+    entries = [
+        {
+            "from": {"key_code": "right_command"},
+            "to": [{"key_code": "right_control"}],
+        },
+        {"from": {"key_code": "right_option"}, "to": [{"key_code": "left_option"}]},
+    ]
+
+    for source_key, dest_key in FUNCTION_KEY_MEDIA.items():
+        entries.append(
+            {"from": {"key_code": source_key}, "to": [{"consumer_key_code": dest_key}]}
+        )
+
+    return entries
+
+
 def generate_complex_modifications():
     rules = []
 
@@ -211,6 +271,27 @@ def generate_complex_modifications():
             {"description": f"{var_name} generated rules", "manipulators": manipulators}
         )
 
+    rules.append(
+        {
+            "description": "Mouse side buttons to copy and paste",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "pointing_button": "button4",
+                    },
+                    "to": [{"key_code": "c", "modifiers": ["left_command"]}],
+                },
+                {
+                    "type": "basic",
+                    "from": {
+                        "pointing_button": "button5",
+                    },
+                    "to": [{"key_code": "v", "modifiers": ["left_command"]}],
+                },
+            ],
+        },
+    )
     rules.extend(STATIC_RULES)
 
     return {
@@ -226,24 +307,8 @@ def main():
         "name": "Generated Profile",
         "virtual_hid_keyboard": {"country_code": 0, "keyboard_type_v2": "ansi"},
         **generate_complex_modifications(),
-        "simple_modifications": [
-            {
-                "from": {"key_code": "right_command"},
-                "to": [{"key_code": "right_control"}],
-            },
-            {"from": {"key_code": "right_option"}, "to": [{"key_code": "left_option"}]},
-        ],
-        "devices": [
-            {
-                "identifiers": {
-                    "device_address": "f0-81-d4-b9-f3-2b",
-                    "is_keyboard": True,
-                    "is_pointing_device": True,
-                },
-                "ignore": False,
-                "treat_as_built_in_keyboard": True,
-            }
-        ],
+        "simple_modifications": generate_simple_modifications(),
+        "devices": generate_devices(),
     }
 
     empty_profile = {

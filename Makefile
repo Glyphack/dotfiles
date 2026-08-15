@@ -5,7 +5,6 @@
 link::
 	mkdir -p ${HOME}/.config/fish && stow --adopt --target=${HOME}/.config/fish fish
 	stow --target=${HOME} gitconf
-	stow --target=${HOME} asdf
 	stow --target=${HOME} ripgrep
 	stow --target=${HOME} zsh
 	mkdir -p ${HOME}/.config/nvim && stow --adopt --target=${HOME}/.config/nvim nvim

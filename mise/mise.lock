@@ -44,10 +44,6 @@ backend = "cargo:toml2json"
 version = "0.21.14"
 backend = "cargo:trunk"
 
-[[tools.clojure]]
-version = "1.12.4.1635"
-backend = "https://github.com/asdf-community/asdf-clojure.git"
-
 [[tools."github:apple/container"]]
 version = "1.0.0"
 backend = "github:apple/container"

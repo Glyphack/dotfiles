@@ -5,7 +5,6 @@ secret*
 local.mk
 local.fish
 
-!asdf/.tool-versions
 .aider*
 *__pycache__*
 

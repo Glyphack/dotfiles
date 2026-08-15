@@ -2,6 +2,7 @@ import { App, Modal, Notice, Setting } from 'obsidian';
 import { LogInput } from './log';
 
 const TIME_PATTERN = /^\d{1,2}:\d{2}$/;
+const MAX_MESSAGE_HEIGHT_PX = 320;
 
 export class LogModal extends Modal {
 	private message = '';
@@ -17,19 +18,29 @@ export class LogModal extends Modal {
 
 	onOpen(): void {
 		this.setTitle('Log');
+		this.modalEl.addClass('dots-log-modal');
 		const { contentEl } = this;
 
-		new Setting(contentEl).setName('Message').addText((text) => {
-			text.setPlaceholder('What happened?');
-			text.onChange((value) => (this.message = value));
-			text.inputEl.addEventListener('keydown', (event) => {
-				if (event.key === 'Enter') {
+		new Setting(contentEl)
+			.setName('Message')
+			.setDesc('Enter to save, Shift+Enter for a line break')
+			.setClass('dots-log-message')
+			.addTextArea((text) => {
+				text.setPlaceholder('What happened?');
+				text.onChange((value) => {
+					this.message = value;
+					this.grow(text.inputEl);
+				});
+				text.inputEl.rows = 4;
+				text.inputEl.addEventListener('keydown', (event) => {
+					if (event.key !== 'Enter' || event.shiftKey) {
+						return;
+					}
 					event.preventDefault();
 					this.submit();
-				}
+				});
+				text.inputEl.focus();
 			});
-			text.inputEl.focus();
-		});
 
 		new Setting(contentEl).setName('Place').addText((text) => {
 			text.setPlaceholder('Optional');
@@ -53,8 +64,13 @@ export class LogModal extends Modal {
 		this.contentEl.empty();
 	}
 
+	private grow(input: HTMLTextAreaElement): void {
+		input.style.height = 'auto';
+		input.style.height = `${Math.min(input.scrollHeight, MAX_MESSAGE_HEIGHT_PX)}px`;
+	}
+
 	private submit(): void {
-		const message = this.message.trim();
+		const message = flatten(this.message);
 		const from = this.from.trim();
 		if (!message) {
 			new Notice('Message is required.');
@@ -68,4 +84,8 @@ export class LogModal extends Modal {
 		this.close();
 		this.onSubmit({ message, place: this.place.trim(), from, to: '' });
 	}
+}
+
+function flatten(message: string): string {
+	return message.replace(/\s*\n\s*/g, ' ').trim();
 }

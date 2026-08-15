@@ -48,7 +48,11 @@ class LogRequest:
     end: str | None = None
 
     def params(self):
-        params = {"vault": get_vault_name(), "message": self.message}
+        params = {
+            "vault": get_vault_name(),
+            "message": self.message,
+            "background": "1",
+        }
         if self.place:
             params["place"] = self.place
         if self.start:

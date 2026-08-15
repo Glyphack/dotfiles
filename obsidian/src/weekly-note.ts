@@ -31,6 +31,15 @@ export class WeeklyNote {
 		return file;
 	}
 
+	async content(): Promise<string | null> {
+		const path = normalizePath(`${WEEKLY_FOLDER}/${weeklyStamp(new Date())}.md`);
+		const file = this.app.vault.getAbstractFileByPath(path);
+		if (!(file instanceof TFile)) {
+			return null;
+		}
+		return this.app.vault.read(file);
+	}
+
 	async append(entry: LogEntry): Promise<TFile> {
 		const file = await this.ensure();
 		const header = dayHeader(new Date());

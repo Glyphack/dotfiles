@@ -12,15 +12,16 @@ The configuration is:
 """
 
 from __future__ import annotations
-import shutil
 
 import argparse
+import json
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 HOME = Path.home()
@@ -29,13 +30,17 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 VM_HOME = Path("/home/node")
 IMAGE_TAG = "vm2"
 
+# Updating first matters: the launcher resolves the version at exec time, so
+# starting the baked binary pins the whole session to whatever the image shipped.
+CLAUDE_LAUNCH = "claude update; claude --dangerously-skip-permissions"
+
 SIZES: dict[str, dict[str, str]] = {
-    "small": {"memory": "2g", "cpus": "2"},
+    "small": {"memory": "4g", "cpus": "4"},
     "large": {"memory": "6g", "cpus": "4"},
 }
 
 
-def exec(cmd, cwd=None, quite=True) -> subprocess.CompletedProcess[str]:
+def exec(cmd, cwd=None, quite=True, check=True) -> subprocess.CompletedProcess[str]:
     if not quite:
         print(f"$ {shlex.join(cmd)}")
 
@@ -47,6 +52,9 @@ def exec(cmd, cwd=None, quite=True) -> subprocess.CompletedProcess[str]:
         capture_output=True,
         text=True,
     )
+
+    if result.returncode != 0 and not check:
+        return result
 
     if result.returncode != 0:
         print("Error: ", end="")
@@ -82,12 +90,34 @@ def ensure_container_installed() -> None:
     sys.exit(1)
 
 
-def container_ls_names() -> list[str]:
-    return [
-        n
-        for n in exec(["container", "ls", "-q", "-a"]).stdout.splitlines()
-        if n.strip()
-    ]
+def container_ls_names(*, include_stopped: bool = True) -> list[str]:
+    cmd = ["container", "ls", "-q"] + (["-a"] if include_stopped else [])
+    return [n for n in exec(cmd).stdout.splitlines() if n.strip()]
+
+
+def is_vm2_resource(name: str, project: str | None) -> bool:
+    """True if the container or volume belongs to vm2, and to project if given."""
+    if not name.startswith(f"{IMAGE_TAG}-"):
+        return False
+    if project is None:
+        return True
+    container_names = {f"{IMAGE_TAG}-{size}-{project}" for size in SIZES}
+    return name in container_names or name.startswith(f"{IMAGE_TAG}-{project}-")
+
+
+def host_claude_version() -> str | None:
+    """Read the version the host last updated to, so the image can match it."""
+    result_file = HOME / ".claude" / ".last-update-result.json"
+    if not result_file.is_file():
+        return None
+    try:
+        payload = json.loads(result_file.read_text())
+    except (json.JSONDecodeError, OSError):
+        return None
+    version = payload.get("version_to")
+    if not isinstance(version, str) or not re.fullmatch(r"[0-9]+(\.[0-9]+)+", version):
+        return None
+    return version
 
 
 def volume_ls_names() -> list[str]:
@@ -131,11 +161,16 @@ def plugin_path() -> Path:
 
 @dataclass
 class PluginsOutput:
-    """The container-run contributions parsed from a plugin's directives."""
+    """Container-run contributions: volume mounts, env vars, and setup commands."""
 
-    volume_args: list[str]
-    env_args: list[str]
-    setup_commands: list[str]
+    volume_args: list[str] = field(default_factory=list)
+    env_args: list[str] = field(default_factory=list)
+    setup_commands: list[str] = field(default_factory=list)
+
+    def extend(self, other: PluginsOutput) -> None:
+        self.volume_args.extend(other.volume_args)
+        self.env_args.extend(other.env_args)
+        self.setup_commands.extend(other.setup_commands)
 
 
 @dataclass
@@ -161,13 +196,13 @@ def split_setup_commands(value: str) -> list[str]:
 
 
 def load_plugins() -> PluginsOutput:
+    result = PluginsOutput()
+
     path = plugin_path()
     if not path.is_file():
-        raise FileNotFoundError(f"vm2 plugin not found: {path}")
+        return result
 
     plugin_output = exec([sys.executable, str(path)], quite=True)
-
-    result = PluginsOutput(volume_args=[], env_args=[], setup_commands=[])
 
     for lineno, raw in enumerate(plugin_output.stdout.splitlines(), start=1):
         line = raw.strip()
@@ -203,7 +238,6 @@ def project_volumes(*, pwd: Path) -> ProjectVolumes:
 
     append_mount(result.args, pwd, pwd)
     append_mount(result.args, f"{HOME}/.claude", f"{VM_HOME}/.claude")
-    append_mount(result.args, f"{HOME}/.config/gh", f"{VM_HOME}/.config/gh", ro=True)
     append_mount(result.args, f"{HOME}/.databrickscfg", "/tmp/databrickscfg", ro=True)
 
     cache_volumes = {
@@ -226,6 +260,29 @@ def project_volumes(*, pwd: Path) -> ProjectVolumes:
     return result
 
 
+def github_auth() -> PluginsOutput:
+    """Read the host gh token and prepare the container to use it for git and gh."""
+    auth = PluginsOutput()
+
+    if not shutil.which("gh"):
+        print("Warning: gh not found on host, container gets no GitHub auth.")
+        return auth
+
+    result = subprocess.run(["gh", "auth", "token"], capture_output=True, text=True)
+    token = result.stdout.strip()
+    if result.returncode != 0 or not token:
+        print("Warning: 'gh auth token' failed, container gets no GitHub auth.")
+        return auth
+
+    auth.env_args = ["-e", f"GH_TOKEN={token}", "-e", f"GITHUB_TOKEN={token}"]
+    auth.setup_commands = [
+        "gh auth setup-git",
+        "git config --global --add url.https://github.com/.insteadOf git@github.com:",
+        "git config --global --add url.https://github.com/.insteadOf ssh://git@github.com/",
+    ]
+    return auth
+
+
 def cmd_build() -> None:
     exec(
         [
@@ -234,12 +291,24 @@ def cmd_build() -> None:
             "start",
         ]
     )
+
+    claude_version = host_claude_version()
+    if claude_version is None:
+        claude_version = "latest"
+        print(
+            "Warning: could not read the host Claude version, building with "
+            "'latest'. The install layer may be served from cache and stay on "
+            "an older version. Add --no-cache if the container Claude is stale."
+        )
+
     exec_replace(
         [
             "container",
             "build",
             "-f",
             str(SCRIPT_DIR / "Containerfile"),
+            "--build-arg",
+            f"CLAUDE_VERSION={claude_version}",
             "-t",
             IMAGE_TAG,
             f"{SCRIPT_DIR}/",
@@ -247,17 +316,65 @@ def cmd_build() -> None:
     )
 
 
-def cmd_prune() -> None:
-    print("Removing vm2 containers...")
-    vm2_containers = [n for n in container_ls_names() if n.startswith("vm2")]
-    container_remove(vm2_containers, force=True)
+def print_disk_usage(label: str) -> None:
+    print(f"{label}:")
+    print(exec(["container", "system", "df"]).stdout, end="")
 
-    print("Removing vm2 volumes...")
-    vm2_volumes = [n for n in volume_ls_names() if n.startswith("vm2")]
-    if vm2_volumes:
-        exec(["container", "volume", "rm", *vm2_volumes])
 
-    print("Prune complete.")
+def prune_containers(*, project: str | None, force: bool) -> None:
+    running = set(container_ls_names(include_stopped=False))
+    targets = [n for n in container_ls_names() if is_vm2_resource(n, project)]
+    if not targets:
+        print("No vm2 containers to remove.")
+        return
+
+    removable = [n for n in targets if force or n not in running]
+    kept = [n for n in targets if n not in removable]
+
+    if removable:
+        print(f"Removing containers: {', '.join(removable)}")
+        container_remove(removable, force=True)
+    if kept:
+        print(f"Leaving running containers alone (use --force): {', '.join(kept)}")
+
+
+def prune_volumes(*, project: str | None) -> None:
+    targets = [n for n in volume_ls_names() if is_vm2_resource(n, project)]
+    if not targets:
+        print("No vm2 volumes to remove.")
+        return
+
+    for volume in targets:
+        result = exec(["container", "volume", "rm", volume], check=False)
+        if result.returncode == 0:
+            print(f"Removed volume {volume}")
+            continue
+        print(f"Kept volume {volume}, it is still attached to a container")
+
+
+def prune_images(*, all_unused: bool) -> None:
+    print("Pruning images...")
+    cmd = ["container", "image", "prune"] + (["--all"] if all_unused else [])
+    exec(cmd, quite=False, check=False)
+
+
+def prune_builder() -> None:
+    if "buildkit" not in container_ls_names():
+        return
+    print("Deleting the builder to drop its build cache...")
+    exec(["container", "builder", "delete", "--force"], check=False)
+
+
+def cmd_prune(*, project: str | None, force: bool, all_images: bool) -> None:
+    print_disk_usage("Disk usage before")
+
+    prune_containers(project=project, force=force)
+    prune_volumes(project=project)
+    if project is None:
+        prune_images(all_unused=all_images)
+        prune_builder()
+
+    print_disk_usage("Disk usage after")
 
 
 def cmd_run(*, size: str) -> None:
@@ -279,11 +396,12 @@ def cmd_run(*, size: str) -> None:
                 container_name,
                 "zsh",
                 "-c",
-                "claude --dangerously-skip-permissions; exec zsh",
+                f"{CLAUDE_LAUNCH}; exec zsh",
             ]
         )
 
-    plugins = load_plugins()
+    plugins = github_auth()
+    plugins.extend(load_plugins())
     volumes = project_volumes(pwd=pwd)
 
     setup_commands = []
@@ -296,7 +414,7 @@ def cmd_run(*, size: str) -> None:
     for cache_dir in volumes.cache_dirs:
         setup_commands.append([f"sudo chown node:node {shlex.quote(str(cache_dir))}"])
     setup_commands.extend([command] for command in plugins.setup_commands)
-    setup_commands.append(["claude --dangerously-skip-permissions"])
+    setup_commands.append([CLAUDE_LAUNCH])
     setup_commands.append(["exec zsh"])
     init = "; ".join(" && ".join(parts) for parts in setup_commands)
 
@@ -354,9 +472,28 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
         "build",
         help="Rebuild the vm2 image.",
     )
-    subparsers.add_parser(
+    prune_parser = subparsers.add_parser(
         "prune",
-        help="Remove all vm2 containers and volumes.",
+        help="Reclaim disk from vm2 containers, volumes, images, and build cache.",
+    )
+    prune_parser.add_argument(
+        "project",
+        nargs="?",
+        help=(
+            "Only prune this project's container and volumes. "
+            "Images and the build cache are left alone."
+        ),
+    )
+    prune_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Also remove running containers, killing their sessions.",
+    )
+    prune_parser.add_argument(
+        "--all",
+        dest="all_images",
+        action="store_true",
+        help="Remove every unused image, not just dangling ones.",
     )
     parser.set_defaults(command="s")
 
@@ -371,7 +508,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "build":
         cmd_build()
     elif args.command == "prune":
-        cmd_prune()
+        cmd_prune(
+            project=args.project,
+            force=args.force,
+            all_images=args.all_images,
+        )
     else:
         size = "large" if args.command == "l" else "small"
         cmd_run(

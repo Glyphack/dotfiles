@@ -43,7 +43,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/insta
 # claude does not run with --dangerously-skip-permissions on sudo
 RUN echo 'node ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/node-nopasswd && \
   chmod 0440 /etc/sudoers.d/node-nopasswd
-RUN mkdir -p /home/node/.claude /home/node/.config/gh /workspace && \
+RUN mkdir -p /home/node/.claude /workspace && \
   chown -R node:node /home/node /workspace
 USER node
 WORKDIR /home/node
@@ -54,7 +54,8 @@ ENV MISE_TRUSTED_CONFIG_PATHS=/
 RUN curl https://mise.run | sh
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-RUN curl -fsSL https://claude.ai/install.sh | bash
+ARG CLAUDE_VERSION=latest
+RUN curl -fsSL https://claude.ai/install.sh
 RUN curl -fsSL batrachian.ai/install | sh
 RUN curl -fsSL https://opencode.ai/install | bash
 

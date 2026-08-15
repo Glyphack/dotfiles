@@ -1,12 +1,14 @@
-import { Notice, Platform, Plugin } from 'obsidian';
+import { Notice, ObsidianProtocolData, Platform, Plugin } from 'obsidian';
 import { Extension } from '@codemirror/state';
 import { LogEntry, LogInput } from './log';
 import { LogModal } from './log-modal';
 import { TrackTimeInput, TrackTimeSession } from './track-time';
 import { TrackTimeModal } from './track-time-modal';
 import { WeeklyNote } from './weekly-note';
+import { lastFocusSession } from './continue-focus';
+import { returnToPreviousApp } from './focus';
 import { sendScheduledNotification } from './ntfy';
-import { todayStamp } from './dates';
+import { dayHeader, todayStamp } from './dates';
 import { ensureFolder, ensureNote } from './vault';
 import { DEFAULT_SETTINGS, DotsSettings, DotsSettingTab } from './settings';
 import { HugoSync } from './hugo-sync';
@@ -46,9 +48,11 @@ export default class DotsPlugin extends Plugin {
 				new Notice('Log message is required.');
 				return;
 			}
-			this.log(input).catch((error) => {
-				new Notice(`Failed to log: ${message(error)}`);
-			});
+			this.log(input)
+				.then(() => this.returnFocus(params))
+				.catch((error) => {
+					new Notice(`Failed to log: ${message(error)}`);
+				});
 		});
 		this.addCommand({
 			id: 'log',
@@ -70,6 +74,22 @@ export default class DotsPlugin extends Plugin {
 						new Notice(`Failed to track time: ${message(error)}`);
 					});
 				}).open();
+			},
+		});
+		this.registerObsidianProtocolHandler('dots-continue-focus', (params) => {
+			this.continueFocus()
+				.then(() => this.returnFocus(params))
+				.catch((error) => {
+					new Notice(`Failed to continue focus: ${message(error)}`);
+				});
+		});
+		this.addCommand({
+			id: 'continue-focus',
+			name: 'Continue focus',
+			callback: () => {
+				this.continueFocus().catch((error) => {
+					new Notice(`Failed to continue focus: ${message(error)}`);
+				});
 			},
 		});
 		this.addCommand({
@@ -150,6 +170,26 @@ export default class DotsPlugin extends Plugin {
 		new Notice(`Tracking ${session.goal} for ${session.durationMin} min.`);
 		this.startFocusSession(session);
 		await this.scheduleReminder(session);
+	}
+
+	private async continueFocus() {
+		const content = await this.weeklyNote.content();
+		if (content === null) {
+			new Notice('No weekly note found.');
+			return;
+		}
+		const session = lastFocusSession(content, dayHeader(new Date()));
+		if (session === null) {
+			new Notice('No focus session found today.');
+			return;
+		}
+		await this.trackTime(session);
+	}
+
+	private returnFocus(params: ObsidianProtocolData): void {
+		if (params.background === '1') {
+			returnToPreviousApp();
+		}
 	}
 
 	private startFocusSession(session: TrackTimeSession) {

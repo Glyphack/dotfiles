@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: nvim-startup-budget
+        name: nvim startup budget
+        entry: uv run scripts/nvim_startup_bench.py
+        language: system
+        files: ^nvim/
+        pass_filenames: false

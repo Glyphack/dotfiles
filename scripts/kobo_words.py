@@ -13,15 +13,26 @@ whole vocabulary list can be reviewed together.
 
 Each highlight is filled in with as much as Kobo knows:
     text            the word
-    title           the book title (parsed from the file path)
-    author          the book author (parsed from the file path)
+    title           the book title, from the Kobo library database
+    author          the book author, from the Kobo library database
     highlighted_at  the moment the word was saved
     note            an inline ".<tag>" so Readwise applies the tag
     category        "books"
-    source_type     "kobo"
+    source_type     "OctoberForKobo"
 
-Readwise de-duplicates on title, author and text, so re-running is safe and
-only adds words saved since the last run.
+Title and author come from the content table, which is where Kobo keeps the
+metadata it read out of the book itself. The file name is only a fallback for
+volumes with no content row, and it is an unreliable one: Calibre names files
+in title sort order, so "The Wealth of Nations" is stored on disk as
+"Wealth of Nations, The".
+
+Readwise identifies a book by title, author, source and category together, and
+source_type is set to the name the Readwise Kobo integration uses so that words
+land in the same book as the highlights synced from that integration rather
+than in a second copy of it.
+
+Readwise de-duplicates on title, author, text and source_url, so re-running is
+safe and only adds words saved since the last run.
 
 With --delete, each word is removed from the WordList table once its batch has
 been accepted by Readwise. Nothing else in the database is touched.
@@ -38,6 +49,7 @@ Usage:
 import argparse
 import json
 import os
+import re
 import subprocess
 import sqlite3
 import sys
@@ -50,6 +62,7 @@ from dataclasses import dataclass
 READWISE_URL = "https://readwise.io/api/v2/highlights/"
 KEYCHAIN_ACCOUNT = "glyphack"
 KEYCHAIN_SERVICE = "readwise_api"
+SOURCE_TYPE = "OctoberForKobo"
 EBOOK_EXTENSIONS = (
     ".kepub.epub",
     ".kepub",
@@ -61,12 +74,23 @@ EBOOK_EXTENSIONS = (
     ".cbz",
 )
 STRIP_CHARS = ".,;:!?\"“”‘’()[]{}<>-–— \t\n"
+TRAILING_ARTICLE = re.compile(r"^(.*?),\s+(The|A|An)$", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
 class Book:
     title: str
     author: str
+
+    @classmethod
+    def resolve(cls, volume_id: str, library_title: str, library_author: str) -> "Book":
+        title = (library_title or "").strip()
+        author = (library_author or "").strip()
+        if title:
+            return cls(title, author)
+
+        from_path = cls.from_volume_id(volume_id)
+        return cls(from_path.title, author or from_path.author)
 
     @classmethod
     def from_volume_id(cls, volume_id: str) -> "Book":
@@ -83,7 +107,7 @@ class Book:
 
         title, author_from_name = split_title_author(stem)
         author = author_from_name or folder_to_author(parent)
-        return cls(restore_colon(title) or "Words", author)
+        return cls(restore_article(restore_colon(title)) or "Words", author)
 
 
 @dataclass(frozen=True)
@@ -92,6 +116,7 @@ class SavedWord:
     book: Book
     saved_at: str
     raw: str
+    volume_id: str | None
 
     def to_highlight(self, tag: str) -> dict:
         highlight = {
@@ -99,7 +124,7 @@ class SavedWord:
             "title": self.book.title,
             "note": f".{tag}",
             "category": "books",
-            "source_type": "kobo",
+            "source_type": SOURCE_TYPE,
         }
         if self.book.author:
             highlight["author"] = self.book.author
@@ -134,6 +159,13 @@ def restore_colon(title: str) -> str:
     return title.replace("_ ", ": ").strip()
 
 
+def restore_article(title: str) -> str:
+    match = TRAILING_ARTICLE.match(title.strip())
+    if not match:
+        return title
+    return f"{match.group(2)} {match.group(1)}"
+
+
 def clean_word(raw: str) -> str:
     if not raw:
         return ""
@@ -144,27 +176,36 @@ def read_saved_words(db_path: str) -> list[SavedWord]:
     connection = sqlite3.connect(db_path)
     try:
         rows = connection.execute(
-            "SELECT Text, VolumeId, DateCreated FROM WordList ORDER BY DateCreated"
+            "SELECT w.Text, w.VolumeId, w.DateCreated, c.Title, c.Attribution "
+            "FROM WordList w LEFT JOIN content c ON c.ContentID = w.VolumeId "
+            "ORDER BY w.DateCreated"
         ).fetchall()
     finally:
         connection.close()
 
     words = []
-    for text, volume_id, date_created in rows:
+    for text, volume_id, date_created, library_title, library_author in rows:
         cleaned = clean_word(text)
         if not cleaned:
             continue
         words.append(
-            SavedWord(cleaned, Book.from_volume_id(volume_id or ""), date_created or "", text)
+            SavedWord(
+                text=cleaned,
+                book=Book.resolve(volume_id or "", library_title, library_author),
+                saved_at=date_created or "",
+                raw=text,
+                volume_id=volume_id,
+            )
         )
     return words
 
 
-def delete_words(db_path: str, raw_texts: list[str]) -> None:
+def delete_words(db_path: str, words: list[SavedWord]) -> None:
     connection = sqlite3.connect(db_path)
     try:
         connection.executemany(
-            "DELETE FROM WordList WHERE Text = ?", [(raw,) for raw in raw_texts]
+            "DELETE FROM WordList WHERE Text = ? AND VolumeId IS ?",
+            [(word.raw, word.volume_id) for word in words],
         )
         connection.commit()
     finally:
@@ -287,7 +328,7 @@ def main() -> int:
             print(f"Error: {error}", file=sys.stderr)
             return 1
         if args.delete:
-            delete_words(args.db, [word.raw for word in batch])
+            delete_words(args.db, batch)
         sent += len(batch)
         if not args.delete:
             print(f"  sent {sent}/{total}")
