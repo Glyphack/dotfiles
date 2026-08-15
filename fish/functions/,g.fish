@@ -23,6 +23,33 @@ function __g_remote_branch --description 'resolve the base as remote or local if
     and echo $remote/$base; or echo $base
 end
 
+function __g_gh --description 'run gh with a short network timeout'
+    command -v gh >/dev/null; or return 1
+    set -l t (command -v timeout; or command -v gtimeout)
+    if test -n "$t"
+        $t 3 gh $argv
+    else
+        gh $argv
+    end
+end
+
+function __g_remote_ref_for --description 'find a remote ref for a branch, preferring the chosen remote'
+    set -l branch $argv[1]
+    set -l remote (__g_remote)
+    if test -n "$remote"; and git show-ref --verify --quiet refs/remotes/$remote/$branch
+        echo $remote/$branch
+        return
+    end
+    git for-each-ref --format='%(refname:short)' refs/remotes | string match -- "*/$branch" | head -1
+end
+
+function __g_ensure_local --description 'create a local branch from its remote ref if missing'
+    set -l branch $argv[1]
+    git show-ref --verify --quiet refs/heads/$branch; and return 0
+    set -l rref (__g_remote_ref_for $branch)
+    test -n "$rref"; and git branch --track $branch $rref
+end
+
 function __g_fetch_base --description 'fetch the base branch from the chosen remote'
     set -l remote (__g_remote); or return 1
     git fetch $remote (__g_base) 2>/dev/null
@@ -72,25 +99,29 @@ end
 
 function __g_auto_stash --description 'stash dirty and untracked changes'
     __g_dirty; or __g_untracked; or return 0
-    set -l flag -u
-    if __g_untracked
-        echo "Untracked files:"
-        git ls-files --others --exclude-standard | sed 's/^/  /'
-        gum confirm --default=true "Include untracked in stash?"; or set flag ""
-    end
-    not __g_dirty; and test -z "$flag"; and return 0
     set -l name ",g/auto/$argv[1]>$argv[2]@"(__g_ts)
-    git stash push $flag -m $name; or return 1
-    echo "$name (restore: ,g unstash)"
+    git stash push -u -m $name; or return 1
+    echo "Stashed: $name (restore: ,g unstash)"
 end
 
-function __g_restore_prompt --description 'Prompt to restore stash'
-    set -l cur $argv[1]
-    set -l matches (git stash list --format='%gd %gs' | string match -e -- ",g/auto/$cur>")
+function __g_stash_notice --description 'mention any auto-stash saved from a branch'
+    set -l matches (git stash list --format=%gs | string match -e -- ",g/auto/$argv[1]>")
     test (count $matches) -eq 0; and return 0
-    set -l sel (printf '%s\n' $matches "(skip)" | gum choose --header "Restore auto-stash for '$cur'?")
-    test -z "$sel"; or test "$sel" = "(skip)"; and return 0
-    git stash pop (string split ' ' -m 1 -- $sel)[1]
+    echo "Auto-stash for '$argv[1]' exists (restore: ,g unstash)"
+end
+
+function __g_switch --description 'switch to a branch: cd to its worktree, or stash and check out here'
+    set -l branch $argv[1]
+    set -l existing_path (__g_wt_for $branch)
+    test -n "$existing_path"; and cd $existing_path; and return
+    __g_auto_stash (__g_cur) $branch; or return 1
+    if __g_ensure_local $branch
+        git checkout $branch; or return 1
+    else
+        __g_gh pr checkout $branch
+        or begin; __g_err "no ref found for '$branch'"; return 1; end
+    end
+    __g_stash_notice $branch
 end
 
 function __g_stash_worktree --description 'stash dirty+untracked in another worktree before removal (no prompt)'
@@ -148,10 +179,18 @@ function __g_cmd_bco --description 'checkout the base branch'
     git checkout $base
 end
 
-function __g_cmd_new --description 'create a new branch in a worktree (-b for in-place)'
+function __g_cmd_new --description 'create a new branch off base (-w: in a new worktree)'
     __g_inprocess_abort; or return 1
-    __g_need_arg "$argv[1]" ',g new <name> [-b]'; or return 1
-    set -l branch (__g_prefix $argv[1])
+    set -l to_wt false; set -l name ""
+    for arg in $argv
+        switch $arg
+            case -w; set to_wt true
+            case '-*'; __g_err "unknown flag: $arg"; return 1
+            case '*'; set name $arg
+        end
+    end
+    __g_need_arg "$name" ',g new <name> [-w]'; or return 1
+    set -l branch (__g_prefix $name)
     git show-ref --verify --quiet refs/heads/$branch
     and begin; __g_err "branch '$branch' already exists locally"; return 1; end
     set -l remote (__g_remote)
@@ -159,7 +198,7 @@ function __g_cmd_new --description 'create a new branch in a worktree (-b for in
     and begin; __g_err "branch '$branch' already exists on $remote"; return 1; end
     __g_fetch_base
     set -l base_ref (__g_remote_branch)
-    if contains -- -b $argv
+    if test $to_wt = false
         __g_auto_stash (__g_cur) $branch; or return 1
         git checkout -b $branch $base_ref
         return
@@ -190,16 +229,25 @@ function __g_convert_to_worktree --description 'move the current branch into a n
     test $stashed = true; and git stash pop
 end
 
-function __g_cmd_co --description 'checkout (-a all, -d delete, -w into worktree)'
+function __g_cmd_co --description 'checkout my branches (-a/--all every branch incl. remote, -d delete, -w worktree, - previous)'
     __g_inprocess_abort; or return 1
-    set -l all false; set -l del false; set -l wt false; set -l query ""
+    set -l all false; set -l del false; set -l to_wt false; set -l query ""
     for arg in $argv
         switch $arg
-            case -a; set all true
+            case -a --all; set all true
             case -d; set del true
-            case -w; set wt true
+            case -w; set to_wt true
+            case -; set query -
+            case '-*'; __g_err "unknown flag: $arg"; return 1
             case '*'; set query $arg
         end
+    end
+
+    if test "$query" = -
+        set -l prev (git rev-parse --abbrev-ref '@{-1}' 2>/dev/null)
+        test -n "$prev"; or begin; __g_err "no previous branch"; return 1; end
+        __g_switch $prev
+        return
     end
 
     set -l worktree_branches (git worktree list --porcelain | string match -r '^branch refs/heads/(.*)' --groups-only)
@@ -210,22 +258,36 @@ function __g_cmd_co --description 'checkout (-a all, -d delete, -w into worktree
         or contains $branch $worktree_branches
         and set -a branches $branch
     end
+
+    if test $all = true
+        set -l remote (__g_remote)
+        test -n "$remote"; and git fetch --prune --quiet $remote 2>/dev/null
+        for rb in (git for-each-ref --format='%(refname:short)' refs/remotes)
+            string match -q -- '*/*' $rb; or continue
+            string match -q -r '(^|/)HEAD$' -- $rb; and continue
+            set -l short (string replace -r '^[^/]+/' '' -- $rb)
+            contains $short $branches; or set -a branches $short
+        end
+    else
+        for head in (__g_gh pr list --author '@me' --state open --json headRefName -q '.[].headRefName' 2>/dev/null)
+            contains $head $branches; or set -a branches $head
+        end
+    end
+
     test -n "$query"; and set branches (string match -- "*$query*" $branches)
     test (count $branches) -gt 0; or begin; __g_err "no matches"; return 1; end
 
-    set -l pr_data
-    command -v gh >/dev/null
-    and set pr_data (gh pr list --state all --json number,state,headRefName -L 300 -q '.[] | "\(.headRefName)\t#\(.number) \(.state)"' 2>/dev/null)
+    set -l pr_data (__g_gh pr list --state all --json number,state,headRefName -L 300 -q '.[] | "\(.headRefName)\t#\(.number) \(.state)"' 2>/dev/null)
 
     set -l wts; set -l prs
     set -l max_branch_w 0; set -l max_wt_w 0
     for branch in $branches
         set -l bw (string length -- $branch)
         test $bw -gt $max_branch_w; and set max_branch_w $bw
-        set -l wt ""
-        contains $branch $worktree_branches; and set wt (__g_wt_for $branch)
-        set -a wts "$wt"
-        set -l ww (string length -- "$wt")
+        set -l wpath ""
+        contains $branch $worktree_branches; and set wpath (__g_wt_for $branch)
+        set -a wts "$wpath"
+        set -l ww (string length -- "$wpath")
         test $ww -gt $max_wt_w; and set max_wt_w $ww
         set -l pr ""
         for p in $pr_data
@@ -256,21 +318,20 @@ function __g_cmd_co --description 'checkout (-a all, -d delete, -w into worktree
         return
     end
 
-    set -l existing_path (__g_wt_for $branch)
-    set -l cur (__g_cur)
-    if test $wt = true
-        test $branch = $cur; and __g_in_main; and __g_convert_to_worktree $branch; and return
+    if test $to_wt = true
+        test $branch = (__g_cur); and __g_in_main; and __g_convert_to_worktree $branch; and return
+        set -l existing_path (__g_wt_for $branch)
         test -n "$existing_path"; and cd $existing_path; and return
+        __g_ensure_local $branch
+        or begin; __g_err "no local or remote ref for '$branch'"; return 1; end
         set -l new_path (__g_wt_path $branch); or return 1
         test -e $new_path; and begin; __g_err "path exists: $new_path"; return 1; end
         mkdir -p (dirname $new_path)
         git worktree add $new_path $branch; and cd $new_path
         return
     end
-    test -n "$existing_path"; and cd $existing_path; and return
-    __g_auto_stash $cur $branch; or return 1
-    git checkout $branch; or return 1
-    __g_restore_prompt $branch
+
+    __g_switch $branch
 end
 
 function __g_cmd_sync --description 'fast-forward the base branch from its remote'
@@ -393,19 +454,9 @@ $link"
     echo "Copied:"; echo $text
 end
 
-function __g_pr_list --description 'pick one of your open PRs and check it out locally'
-    set -l data (gh pr list --author '@me' --json number,title -q '.[] | "\(.number)\t\(.title)"')
-    test -z "$data"; and echo "No open PRs"; and return 0
-    set -l sel (printf '%s\n' $data | gum choose --height 15 --header "PR:")
-    test -z "$sel"; and echo "No selection"; and return 1
-    set -l pr_number (string split \t -- $sel)[1]
-    __g_auto_stash (__g_cur) "pr-$pr_number"; or return 1
-    gh pr checkout $pr_number
-end
-
 function __g_cmd_pr --description 'PR commands'
     set -l sub $argv[1]
-    __g_need_arg "$sub" ',g pr <create|open|share [link]|list>'; or return 1
+    __g_need_arg "$sub" ',g pr <create|open|share [link]>'; or return 1
     set -e argv[1]
     set -l fn __g_pr_$sub
     functions -q $fn; or begin; __g_err "unknown pr: $sub"; return 1; end
@@ -436,15 +487,11 @@ function __g_cmd_status --description 'show worktree kind, ahead/behind base, an
         echo "vs base:   "(git rev-list --count $ref..HEAD)" ahead, "(git rev-list --count HEAD..$ref)" behind ($ref)"
     end
     set -l pr_state unknown
-    set -l timeout_cmd ""
-    command -v gh >/dev/null; and set timeout_cmd (command -v timeout; or command -v gtimeout)
-    if test -n "$timeout_cmd"
-        set -l output (eval $timeout_cmd 2 gh pr view $cur --json state -q .state 2>&1)
-        if string match -q '*no pull requests*' -- $output
-            set pr_state 0
-        else if test -n "$output"; and not string match -q '* *' -- $output
-            set pr_state $output
-        end
+    set -l output (__g_gh pr view $cur --json state -q .state 2>&1)
+    if string match -q '*no pull requests*' -- $output
+        set pr_state none
+    else if test -n "$output"; and not string match -q '* *' -- $output
+        set pr_state $output
     end
     echo "pr state:  $pr_state"
     if test $cur != $base; and git rev-parse --verify $ref >/dev/null 2>&1

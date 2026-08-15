@@ -3048,6 +3048,39 @@
             ]
           },
           {
+            "description": "Mouse side buttons to copy and paste",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "pointing_button": "button4"
+                },
+                "to": [
+                  {
+                    "key_code": "c",
+                    "modifiers": [
+                      "left_command"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "pointing_button": "button5"
+                },
+                "to": [
+                  {
+                    "key_code": "v",
+                    "modifiers": [
+                      "left_command"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "Capslock to Hyper",
             "manipulators": [
               {
@@ -3184,6 +3217,86 @@
               "key_code": "left_option"
             }
           ]
+        },
+        {
+          "from": {
+            "key_code": "f1"
+          },
+          "to": [
+            {
+              "consumer_key_code": "display_brightness_decrement"
+            }
+          ]
+        },
+        {
+          "from": {
+            "key_code": "f2"
+          },
+          "to": [
+            {
+              "consumer_key_code": "display_brightness_increment"
+            }
+          ]
+        },
+        {
+          "from": {
+            "key_code": "f7"
+          },
+          "to": [
+            {
+              "consumer_key_code": "rewind"
+            }
+          ]
+        },
+        {
+          "from": {
+            "key_code": "f8"
+          },
+          "to": [
+            {
+              "consumer_key_code": "play_or_pause"
+            }
+          ]
+        },
+        {
+          "from": {
+            "key_code": "f9"
+          },
+          "to": [
+            {
+              "consumer_key_code": "fastforward"
+            }
+          ]
+        },
+        {
+          "from": {
+            "key_code": "f10"
+          },
+          "to": [
+            {
+              "consumer_key_code": "mute"
+            }
+          ]
+        },
+        {
+          "from": {
+            "key_code": "f11"
+          },
+          "to": [
+            {
+              "consumer_key_code": "volume_decrement"
+            }
+          ]
+        },
+        {
+          "from": {
+            "key_code": "f12"
+          },
+          "to": [
+            {
+              "consumer_key_code": "volume_increment"
+            }
+          ]
         }
       ],
       "devices": [
@@ -3195,6 +3308,22 @@
           },
           "ignore": false,
           "treat_as_built_in_keyboard": true
+        },
+        {
+          "identifiers": {
+            "is_pointing_device": true,
+            "vendor_id": 1133,
+            "product_id": 45085
+          },
+          "ignore": false
+        },
+        {
+          "identifiers": {
+            "is_pointing_device": true,
+            "vendor_id": 1133,
+            "product_id": 50475
+          },
+          "ignore": false
         }
       ]
     },

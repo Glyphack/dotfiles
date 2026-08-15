@@ -23,9 +23,6 @@ mylocal_*
 # cspell
 cspell.json
 
-# asdf
-*.tool-versions
-
 # mise: commit mise.toml + mise.lock, ignore only local overrides
 mise.local.toml
 mise.*.local.toml

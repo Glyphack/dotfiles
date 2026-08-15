@@ -10,7 +10,8 @@ config.key_tables = {
 config.font = wezterm.font("Hack Nerd Font Mono", { weight = "Regular", stretch = "Normal", style = "Normal" })
 config.font_size = 16
 
-local function scheme_for_appearance(appearance)
+local function color_scheme()
+	local appearance = wezterm.gui.get_appearance()
 	if appearance:find("Dark") then
 		return "flexoki-dark"
 	else
@@ -18,14 +19,7 @@ local function scheme_for_appearance(appearance)
 	end
 end
 
-local function get_appearance()
-	if wezterm.gui then
-		return wezterm.gui.get_appearance()
-	end
-	return "Dark"
-end
-
-config.color_scheme = scheme_for_appearance(get_appearance())
+config.color_scheme = color_scheme()
 
 local run_child_process = function(cmd)
 	local process_args = { os.getenv("SHELL"), "-c", cmd }
@@ -65,8 +59,22 @@ local function pick_directory_and_switch(win, pane, callback)
 	local cmd = run_child_process("echo $FZF_ALT_C_COMMAND")
 	local stdout = run_child_process(cmd)
 
-	local choices = {}
+	local dirs = {}
+	local order = {}
 	for dir in stdout:gmatch("[^\n]+") do
+		table.insert(dirs, dir)
+		order[dir] = order[dir] or #dirs
+	end
+
+	table.sort(dirs, function(a, b)
+		if #a ~= #b then
+			return #a < #b
+		end
+		return order[a] < order[b]
+	end)
+
+	local choices = {}
+	for _, dir in ipairs(dirs) do
 		table.insert(choices, { label = dir })
 	end
 
@@ -376,11 +384,7 @@ config.keys = {
 	},
 }
 
-config.enable_scroll_bar = true
-config.min_scroll_bar_height = "2cell"
-config.colors = {
-	scrollbar_thumb = "gray",
-}
+config.enable_scroll_bar = false
 config.background = {
 	{
 		source = {

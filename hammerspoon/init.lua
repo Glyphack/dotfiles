@@ -1,7 +1,6 @@
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/hammerspoon/?.lua"
 SpoonInstall = hs.loadSpoon("SpoonInstall")
-local fnutils = require("hs.fnutils")
 local alert = require("hs.alert")
 local ipc = require("hs.ipc")
 local window = require("hs.window")
@@ -57,31 +56,87 @@ local function windowBelongsToApp(win, appName)
 	return nameOnDisk:find(appName, 1, true) ~= nil
 end
 
-local function selectTabByTitle(app, pattern)
-	local menus = app:getMenuItems()
-	if not menus then
-		return false
-	end
-	for _, top in ipairs(menus) do
-		if top.AXTitle == "Tab" and top.AXChildren then
-			for _, item in ipairs(top.AXChildren[1]) do
-				if item.AXTitle and item.AXTitle:find(pattern, 1, true) then
-					app:selectMenuItem({ "Tab", item.AXTitle })
-					return true
-				end
-			end
-		end
-	end
-	return false
+local APP_LAUNCH_RETRY_DELAY = 0.3
+local APP_LAUNCH_MAX_ATTEMPTS = 20
+
+local function escapeForAppleScript(text)
+	return (text:gsub("\\", "\\\\"):gsub('"', '\\"'))
 end
 
+-- Tabs are driven over AppleScript, which covers Chromium based browsers such
+-- as Chrome, Brave and Edge. macOS asks once for permission to control the
+-- browser and every script here fails until that is granted.
+local browserTabs = {}
+
+function browserTabs.run(appName, body)
+	local script = string.format('tell application "%s"\n%s\nend tell', escapeForAppleScript(appName), body)
+	local ok, result, err = hs.osascript.applescript(script)
+	if not ok then
+		log.w("browser script failed for " .. appName .. ": " .. hs.inspect(err))
+	end
+	return ok, result
+end
+
+-- Brings forward the first tab in any window whose title or address contains
+-- the pattern.
+function browserTabs.focus(target)
+	local pattern = escapeForAppleScript(target.tab)
+	local ok, found = browserTabs.run(
+		target.app,
+		string.format(
+			[[
+	repeat with theWindow in windows
+		set tabIndex to 0
+		repeat with theTab in tabs of theWindow
+			set tabIndex to tabIndex + 1
+			if (title of theTab contains "%s") or (URL of theTab contains "%s") then
+				set active tab index of theWindow to tabIndex
+				set index of theWindow to 1
+				return true
+			end if
+		end repeat
+	end repeat
+	return false]],
+			pattern,
+			pattern
+		)
+	)
+	return ok and found == true
+end
+
+function browserTabs.openURL(target)
+	local url = escapeForAppleScript(target.url)
+	local ok = browserTabs.run(
+		target.app,
+		string.format(
+			[[
+	if (count of windows) is 0 then
+		make new window
+		set URL of active tab of front window to "%s"
+	else
+		tell front window to make new tab with properties {URL:"%s"}
+		set index of front window to 1
+	end if]],
+			url,
+			url
+		)
+	)
+	return ok
+end
+
+-- Focuses the tab matching target.tab, and opens target.url in a new tab when
+-- no tab matches.
 local function selectTabOrOpenURL(app, target)
-	if selectTabByTitle(app, target.tab) then
+	if browserTabs.focus(target) then
 		return
 	end
-	if target.url then
-		hs.urlevent.openURLWithBundle(target.url, app:bundleID())
+	if not target.url then
+		return
 	end
+	if browserTabs.openURL(target) then
+		return
+	end
+	hs.urlevent.openURLWithBundle(target.url, app:bundleID())
 end
 
 local function focusPreviousOrHide(app)
@@ -113,20 +168,28 @@ local function rotateWindows(app, appName)
 	moveMouseToWindowCenter(targetWin)
 end
 
+local function withApp(appName, fn, attempt)
+	attempt = attempt or 1
+	local app = application.get(appName)
+	if app then
+		fn(app)
+		return
+	end
+	if attempt >= APP_LAUNCH_MAX_ATTEMPTS then
+		log.w("App never showed up: " .. appName)
+		return
+	end
+	timer.doAfter(APP_LAUNCH_RETRY_DELAY, function()
+		withApp(appName, fn, attempt + 1)
+	end)
+end
+
 local function openTarget(target)
 	application.launchOrFocus(target.app)
 	if target.tab then
-		local function trySelectTab()
-			local app = application.get(target.app)
-			if app == nil then
-				return false
-			end
+		withApp(target.app, function(app)
 			selectTabOrOpenURL(app, target)
-			return true
-		end
-		if not trySelectTab() then
-			timer.doAfter(1, trySelectTab)
-		end
+		end)
 	end
 	centerMouseOnFocusedWindow()
 end
@@ -251,6 +314,33 @@ local function moveWindow(position)
 	end
 end
 
+-- Maximizes the focused window on the screen it currently sits on. Triggering
+-- it again restores the pre-maximize frame, but only while the window is still
+-- on that same screen; otherwise it just maximizes on the new screen.
+local maximizeToggle = {
+	savedFrames = {},
+}
+
+function maximizeToggle:toggle()
+	local win = hs.window.focusedWindow()
+	if not win then
+		return
+	end
+	local id = win:id()
+	if not id then
+		return
+	end
+	local screen = win:screen()
+	local saved = self.savedFrames[id]
+	if saved and saved.screenId == screen:id() then
+		win:setFrame(saved.frame)
+		self.savedFrames[id] = nil
+		return
+	end
+	self.savedFrames[id] = { frame = win:frame(), screenId = screen:id() }
+	win:setFrame(screen:frame())
+end
+
 -- WINDOW
 
 HOME_MONITOR = "DELL U2723QE"
@@ -357,7 +447,15 @@ SHORTCUTS = {
 			end
 		end,
 	},
-	{ "fullscreen", HYPER, "i", "full screen", moveWindow(gobig) },
+	{
+		"fullscreen",
+		HYPER,
+		"i",
+		"toggle full screen",
+		function()
+			maximizeToggle:toggle()
+		end,
+	},
 	{ "grid", HYPER, "g", "show grid", grid.show },
 	{ "layout_split", HYPER, "6", "Brave+WezTerm split", applyLayout(braveWezTermLayout) },
 	-- Screen (Spoon-managed)
@@ -388,8 +486,27 @@ function GetShortcut(name)
 	error("Shortcut not found: " .. name)
 end
 
+-- An entry reusing an existing name replaces it instead of adding a second
+-- binding for the same key, where whichever bound last would silently win.
+local function mergeShortcuts(base, extra)
+	local indexByName = {}
+	for i, s in ipairs(base) do
+		indexByName[s[1]] = i
+	end
+	for _, s in ipairs(extra) do
+		local existing = indexByName[s[1]]
+		if existing then
+			base[existing] = s
+		else
+			table.insert(base, s)
+			indexByName[s[1]] = #base
+		end
+	end
+	return base
+end
+
 if hasCustom and custom.SHORTCUTS then
-	SHORTCUTS = fnutils.concat(SHORTCUTS, custom.SHORTCUTS)
+	SHORTCUTS = mergeShortcuts(SHORTCUTS, custom.SHORTCUTS)
 end
 
 for _, s in ipairs(SHORTCUTS) do
@@ -426,6 +543,22 @@ SpoonInstall:andUse("WindowScreenLeftAndRight", {
 		screen_left = GetShortcut("screen_left"),
 		screen_right = GetShortcut("screen_right"),
 	},
+})
+
+-- Opens http(s) URLs in the first app whose pattern matches; unmatched URLs
+-- go to the default handler. Hammerspoon must be set as the system default
+-- browser for URLs to be routed through this.
+SpoonInstall:andUse("URLDispatcher", {
+	config = {
+		url_patterns = {
+			{ "teams%.microsoft%.com", "com.google.Chrome" },
+			{ "^https://github%.com/letsrotate/", "com.google.Chrome" },
+			{ "cloud%.databricks%.com", "com.google.Chrome" },
+			{ "^https://letsrotate.atlassian.net/", "com.google.Chrome" },
+		},
+		default_handler = "com.brave.Browser",
+	},
+	start = true,
 })
 
 local function handleAppLaunch(appName, eventType, app)
@@ -472,6 +605,75 @@ end
 
 local appWatcher = application.watcher.new(handleAppLaunch)
 appWatcher:start()
+
+local autostart = {
+	apps = {
+		"Todoist",
+		"Igloo",
+		"Whispertron",
+		"Flameshot",
+	},
+	pending = {},
+	watcher = nil,
+}
+
+function autostart:hideApp(app)
+	for _, delay in ipairs({ 0, 0.5, 1.5, 3 }) do
+		timer.doAfter(delay, function()
+			if not app:isHidden() then
+				app:hide()
+			end
+		end)
+	end
+end
+
+function autostart:stop()
+	if not self.watcher then
+		return
+	end
+	self.watcher:stop()
+	self.watcher = nil
+end
+
+function autostart:onAppEvent(appName, eventType, app)
+	if eventType ~= application.watcher.launched or appName == nil then
+		return
+	end
+	local key = appName:lower()
+	if not self.pending[key] then
+		return
+	end
+	self.pending[key] = nil
+	self:hideApp(app)
+	if next(self.pending) == nil then
+		self:stop()
+	end
+end
+
+function autostart:start()
+	local toLaunch = {}
+	for _, name in ipairs(self.apps) do
+		if not application.get(name) then
+			table.insert(toLaunch, name)
+			self.pending[name:lower()] = true
+		end
+	end
+	if #toLaunch == 0 then
+		return
+	end
+	self.watcher = application.watcher.new(function(appName, eventType, app)
+		self:onAppEvent(appName, eventType, app)
+	end)
+	self.watcher:start()
+	timer.doAfter(60, function()
+		self:stop()
+	end)
+	for _, name in ipairs(toLaunch) do
+		hs.task.new("/usr/bin/open", nil, { "-gj", "-a", name }):start()
+	end
+end
+
+autostart:start()
 
 -- SOUND
 local GlobalMute = hs.loadSpoon("GlobalMute")
