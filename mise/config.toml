@@ -21,7 +21,8 @@ rust = { version = "1.91.0", components = "rust-src,llvm-tools,rustfmt,rust-anal
 
 # Python
 ruff = "latest"
-ty = "latest"
+# I develop ty sometimes
+ty = "path:{{env.HOME}}/.cargo/bin/ty"
 uv = "latest"
 
 "pipx:djlint" = "latest"
