@@ -102,6 +102,7 @@ local function map(mode, lhs, rhs, desc, opts)
 	vim.keymap.set(mode, lhs, rhs, vim.tbl_extend("force", { desc = desc }, opts or {}))
 end
 
+map("n", ";", ":", "https://x.com/Neovim/status/2089768728724484148")
 map("n", "<Esc>", "<cmd>nohlsearch<CR>", "Clear search highlight")
 
 -- Diagnostics
@@ -718,7 +719,15 @@ require("lazy").setup({
 				MiniDiff.toggle_overlay(0)
 			end, "toggle diff overlay")
 			require("mini.ai").setup({ n_lines = 500 })
-			require("mini.jump").setup()
+			require("mini.jump").setup({
+				mappings = {
+					forward = "f",
+					backward = "F",
+					forward_till = "t",
+					backward_till = "T",
+					repeat_jump = "<CR>",
+				},
+			})
 			-- Add/delete/replace surroundings (brackets, quotes, etc.)
 			--
 			-- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
@@ -1288,21 +1297,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 vim.cmd.colorscheme("flexoki")
 
--- Tell the terminal the colorscheme background, and reset it on exit. Registered
--- after the colorscheme is set so startup reports one colour instead of two.
--- 'background' is left alone so it stays driven by the terminal's OSC 11 reply.
-vim.api.nvim_create_autocmd({ "UIEnter", "ColorScheme" }, {
+-- This catches the delayed terminal response (or live OS changes)
+-- and re-triggers the colorscheme to adapt.
+vim.api.nvim_create_autocmd("OptionSet", {
+	pattern = "background",
 	callback = function()
-		local normal = vim.api.nvim_get_hl(0, { name = "Normal" })
-		if not normal.bg then
-			return
-		end
-		io.write(string.format("\027]11;#%06x\027\\", normal.bg))
-	end,
-})
-
-vim.api.nvim_create_autocmd("UILeave", {
-	callback = function()
-		io.write("\027]111\027\\")
+		vim.cmd.colorscheme("flexoki")
 	end,
 })
