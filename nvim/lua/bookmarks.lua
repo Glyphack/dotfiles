@@ -269,38 +269,26 @@ function M.show_bookmarks_picker()
 		return
 	end
 
-	local pickers = require("telescope.pickers")
-	local finders = require("telescope.finders")
-	local actions = require("telescope.actions")
-	local action_state = require("telescope.actions.state")
-	local conf = require("telescope.config").values
+	local items = {}
+	for i, bookmark in ipairs(bookmarks) do
+		items[i] = {
+			text = string.format("%s → %s:%d", bookmark.name, bookmark.file, bookmark.line),
+			bookmark = bookmark,
+		}
+	end
 
-	pickers
-		.new({}, {
-			prompt_title = "Bookmarks",
-			finder = finders.new_table({
-				results = bookmarks,
-				entry_maker = function(bookmark)
-					return {
-						value = bookmark,
-						display = string.format("%s → %s:%d", bookmark.name, bookmark.file, bookmark.line),
-						ordinal = bookmark.name .. " " .. bookmark.file,
-					}
-				end,
-			}),
-			sorter = conf.generic_sorter({}),
-			attach_mappings = function(prompt_bufnr, map)
-				actions.select_default:replace(function()
-					local selection = action_state.get_selected_entry()
-					actions.close(prompt_bufnr)
-					if selection then
-						jump_to_bookmark(selection.value)
-					end
+	MiniPick.start({
+		source = {
+			name = "Bookmarks",
+			items = items,
+			choose = function(item)
+				local win_target = MiniPick.get_picker_state().windows.target
+				vim.api.nvim_win_call(win_target, function()
+					jump_to_bookmark(item.bookmark)
 				end)
-				return true
 			end,
-		})
-		:find()
+		},
+	})
 end
 
 function M.show_delete_picker()
@@ -315,38 +303,23 @@ function M.show_delete_picker()
 		return
 	end
 
-	local pickers = require("telescope.pickers")
-	local finders = require("telescope.finders")
-	local actions = require("telescope.actions")
-	local action_state = require("telescope.actions.state")
-	local conf = require("telescope.config").values
+	local items = {}
+	for i, bookmark in ipairs(bookmarks) do
+		items[i] = {
+			text = string.format("%s → %s:%d", bookmark.name, bookmark.file, bookmark.line),
+			bookmark = bookmark,
+		}
+	end
 
-	pickers
-		.new({}, {
-			prompt_title = "Delete Bookmark",
-			finder = finders.new_table({
-				results = bookmarks,
-				entry_maker = function(bookmark)
-					return {
-						value = bookmark,
-						display = string.format("%s → %s:%d", bookmark.name, bookmark.file, bookmark.line),
-						ordinal = bookmark.name .. " " .. bookmark.file,
-					}
-				end,
-			}),
-			sorter = conf.generic_sorter({}),
-			attach_mappings = function(prompt_bufnr, map)
-				actions.select_default:replace(function()
-					local selection = action_state.get_selected_entry()
-					actions.close(prompt_bufnr)
-					if selection then
-						M.delete_bookmark(selection.value.name)
-					end
-				end)
-				return true
+	MiniPick.start({
+		source = {
+			name = "Delete Bookmark",
+			items = items,
+			choose = function(item)
+				M.delete_bookmark(item.bookmark.name)
 			end,
-		})
-		:find()
+		},
+	})
 end
 
 function M.setup_highlights()

@@ -10,16 +10,31 @@ config.key_tables = {
 config.font = wezterm.font("Hack Nerd Font Mono", { weight = "Regular", stretch = "Normal", style = "Normal" })
 config.font_size = 16
 
-local function color_scheme()
-	local appearance = wezterm.gui.get_appearance()
-	if appearance:find("Dark") then
-		return "flexoki-dark"
-	else
-		return "flexoki-dark"
-	end
-end
+local img_background = {
+	source = {
+		File = wezterm.home_dir .. "/Programming/dotfiles/wallpapers/e9drzv651to21.jpg",
+	},
+	hsb = { brightness = 0.5 },
+}
+local appearance = wezterm.gui.get_appearance()
 
-config.color_scheme = color_scheme()
+if appearance:find("Dark") then
+	config.background = { img_background }
+	config.color_scheme = "flexoki-dark"
+else
+	config.background = {
+		img_background,
+		{
+			source = {
+				Color = "rgba(255, 255, 255, 0.61)",
+			},
+			width = "100%",
+			height = "100%",
+		},
+	}
+
+	config.color_scheme = "flexoki-light"
+end
 
 local run_child_process = function(cmd)
 	local process_args = { os.getenv("SHELL"), "-c", cmd }
@@ -385,16 +400,6 @@ config.keys = {
 }
 
 config.enable_scroll_bar = false
-config.background = {
-	{
-		source = {
-			File = wezterm.home_dir .. "/Programming/dotfiles/wallpapers/e9drzv651to21.jpg",
-		},
-		repeat_x = "Mirror",
-		hsb = { brightness = 0.05 },
-	},
-}
-
 config.switch_to_last_active_tab_when_closing_tab = true
 
 config.inactive_pane_hsb = {
