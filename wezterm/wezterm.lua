@@ -22,17 +22,6 @@ if appearance:find("Dark") then
 	config.background = { img_background }
 	config.color_scheme = "flexoki-dark"
 else
-	config.background = {
-		img_background,
-		{
-			source = {
-				Color = "rgba(255, 255, 255, 0.61)",
-			},
-			width = "100%",
-			height = "100%",
-		},
-	}
-
 	config.color_scheme = "flexoki-light"
 end
 
