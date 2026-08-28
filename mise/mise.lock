@@ -44,6 +44,10 @@ backend = "cargo:toml2json"
 version = "0.21.14"
 backend = "cargo:trunk"
 
+[[tools.clojure]]
+version = "1.12.4.1635"
+backend = "asdf:clojure"
+
 [[tools."github:apple/container"]]
 version = "1.0.0"
 backend = "github:apple/container"
@@ -250,6 +254,72 @@ checksum = "sha256:cd42e890176bc5cfeb36225a77e66b9410ddd3a59a03551e23f6b210d29e1
 url = "https://github.com/golangci/golangci-lint/releases/download/v2.11.3/golangci-lint-2.11.3-windows-amd64.zip"
 provenance = "github-attestations"
 
+[[tools.hunk]]
+version = "0.19.0"
+backend = "aqua:modem-dev/hunk"
+
+[tools.hunk."platforms.linux-arm64"]
+checksum = "sha256:2f5dc255fbf47d594ed31afdec088f02831e442281d55405930163c8e20a5edf"
+url = "https://github.com/modem-dev/hunk/releases/download/v0.19.0/hunkdiff-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/modem-dev/hunk/releases/assets/517164664"
+
+[tools.hunk."platforms.linux-arm64-musl"]
+checksum = "sha256:2f5dc255fbf47d594ed31afdec088f02831e442281d55405930163c8e20a5edf"
+url = "https://github.com/modem-dev/hunk/releases/download/v0.19.0/hunkdiff-linux-arm64.tar.gz"
+url_api = "https://api.github.com/repos/modem-dev/hunk/releases/assets/517164664"
+
+[tools.hunk."platforms.linux-x64"]
+checksum = "sha256:d4d942fedc05b8bb5173e2913e545406a5d9412ba0ddb88f8e7f4dcd77fd0602"
+url = "https://github.com/modem-dev/hunk/releases/download/v0.19.0/hunkdiff-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/modem-dev/hunk/releases/assets/517164661"
+
+[tools.hunk."platforms.linux-x64-musl"]
+checksum = "sha256:d4d942fedc05b8bb5173e2913e545406a5d9412ba0ddb88f8e7f4dcd77fd0602"
+url = "https://github.com/modem-dev/hunk/releases/download/v0.19.0/hunkdiff-linux-x64.tar.gz"
+url_api = "https://api.github.com/repos/modem-dev/hunk/releases/assets/517164661"
+
+[tools.hunk."platforms.macos-arm64"]
+checksum = "sha256:7eece6982cb1461c0c22f9d70a41b0fb8094d965ef02dc22f838abc0de71a429"
+url = "https://github.com/modem-dev/hunk/releases/download/v0.19.0/hunkdiff-darwin-arm64.tar.gz"
+url_api = "https://api.github.com/repos/modem-dev/hunk/releases/assets/517164666"
+
+[tools.hunk."platforms.macos-x64"]
+checksum = "sha256:e379460cd0ecccbd0f109b98bdedca129055cfffa000bc68dd8255531616db31"
+url = "https://github.com/modem-dev/hunk/releases/download/v0.19.0/hunkdiff-darwin-x64.tar.gz"
+url_api = "https://api.github.com/repos/modem-dev/hunk/releases/assets/517164663"
+
+[[tools.java]]
+version = "corretto-21.0.1.12.1"
+backend = "core:java"
+
+[tools.java."platforms.linux-arm64"]
+checksum = "sha256:aa43295803595f78d73e9c7c02866301c9729377277144e2829f54a58e5f6d21"
+url = "https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-linux-aarch64.tar.gz"
+
+[tools.java."platforms.linux-arm64-musl"]
+checksum = "sha256:e49c651e2f544fcf9e6daeba928dbd4def0ca3788c4df52bc3dbb67b0718b0fe"
+url = "https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-alpine-linux-aarch64.tar.gz"
+
+[tools.java."platforms.linux-x64"]
+checksum = "sha256:3e718a86cfa6c1173c469f5e9d6b07fa37381a28ebb1f80593250cc380baf22f"
+url = "https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-linux-x64.tar.gz"
+
+[tools.java."platforms.linux-x64-musl"]
+checksum = "sha256:aed3d6d99d9faac8b0809036ffff6ace84079834e326999dce0505eb53414108"
+url = "https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-alpine-linux-x64.tar.gz"
+
+[tools.java."platforms.macos-arm64"]
+checksum = "sha256:0c4e08fc4b7c0c887651a97f315d6995eeac38627eb7bca0cb3c698d21af349f"
+url = "https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-macosx-aarch64.tar.gz"
+
+[tools.java."platforms.macos-x64"]
+checksum = "sha256:cafff566097c6f440afe5aac6e268073d8b5ceadcf7898eeb364753d00743074"
+url = "https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-macosx-x64.tar.gz"
+
+[tools.java."platforms.windows-x64"]
+checksum = "sha256:9f13477c8209ec5e2d59d728503fb61f0c2ee8765431ea542d721cb60b9061a8"
+url = "https://corretto.aws/downloads/resources/21.0.1.12.1/amazon-corretto-21.0.1.12.1-windows-x64-jdk.zip"
+
 [[tools.meson]]
 version = "1.11.2"
 backend = "pipx:meson"
@@ -356,6 +426,52 @@ provenance = "github-attestations"
 checksum = "sha256:e49a7c8fedb4f16038556e19c8bf7a68ffae46445ef693b28c1fa461f03df2c7"
 url = "https://github.com/j178/prek/releases/download/v0.4.9/prek-x86_64-pc-windows-msvc.zip"
 provenance = "github-attestations"
+
+[[tools.ruby]]
+version = "3.3.0"
+backend = "core:ruby"
+
+[tools.ruby.options]
+compile = "false"
+precompiled_url = "jdx/ruby"
+ruby_build_repo = "https://github.com/rbenv/ruby-build.git"
+ruby_install = "false"
+
+[tools.ruby."platforms.linux-arm64"]
+checksum = "sha256:d03e0e1dc566aa6512baffb9373be48d36d4fde3ca9b58e0184eb5113a507eda"
+url = "https://github.com/jdx/ruby/releases/download/3.3.0-4/ruby-3.3.0.arm64_linux.tar.gz"
+provenance = "github-attestations"
+
+[tools.ruby."platforms.linux-arm64-musl"]
+checksum = "sha256:d03e0e1dc566aa6512baffb9373be48d36d4fde3ca9b58e0184eb5113a507eda"
+url = "https://github.com/jdx/ruby/releases/download/3.3.0-4/ruby-3.3.0.arm64_linux.tar.gz"
+provenance = "github-attestations"
+
+[tools.ruby."platforms.linux-x64"]
+checksum = "sha256:7b2cec2a09b60b225b2b216938332ea009cf17dd21b9a2096aeaf963df957641"
+url = "https://github.com/jdx/ruby/releases/download/3.3.0-4/ruby-3.3.0.x86_64_linux.tar.gz"
+provenance = "github-attestations"
+
+[tools.ruby."platforms.linux-x64-musl"]
+checksum = "sha256:7b2cec2a09b60b225b2b216938332ea009cf17dd21b9a2096aeaf963df957641"
+url = "https://github.com/jdx/ruby/releases/download/3.3.0-4/ruby-3.3.0.x86_64_linux.tar.gz"
+provenance = "github-attestations"
+
+[tools.ruby."platforms.macos-arm64"]
+checksum = "sha256:0f3be0a98f46c6771f546ae753a6affd5f87dda4e5fbb222424c39a7fa82a99a"
+url = "https://github.com/jdx/ruby/releases/download/3.3.0-4/ruby-3.3.0.macos.tar.gz"
+provenance = "github-attestations"
+
+[tools.ruby."platforms.macos-x64"]
+checksum = "sha256:96518814d9832bece92a85415a819d4893b307db5921ae1f0f751a9a89a56b7d"
+url = "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz"
+
+[[tools.ruby]]
+version = "3.3.0"
+backend = "core:ruby"
+
+[tools.ruby."platforms.windows-x64"]
+url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.0-1/rubyinstaller-3.3.0-1-x64.7z"
 
 [[tools.ruff]]
 version = "0.15.21"

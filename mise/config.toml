@@ -49,6 +49,7 @@ node = "24"
 "npm:typescript" = "latest"
 "go:oss.terrastruct.com/d2" = "latest"
 "go:rsc.io/2fa" = "latest"
+hunk = "latest"
 
 [settings]
 experimental = true
