@@ -172,6 +172,45 @@ checksum = "sha256:b2816e506390a89941c63c9187d58a3cc10e9a55f2ef0685f9ea0eccaf7c9
 url = "https://github.com/sharkdp/fd/releases/download/v10.4.2/fd-v10.4.2-x86_64-pc-windows-msvc.zip"
 url_api = "https://api.github.com/repos/sharkdp/fd/releases/assets/370661516"
 
+[[tools."github:wezterm/wezterm"]]
+version = "nightly"
+backend = "github:wezterm/wezterm"
+
+[tools."github:wezterm/wezterm"."platforms.linux-arm64"]
+checksum = "sha256:9dc0163b22fe36bd4aa96bf2765437700eee8f09802c65550f232c9e6612b253"
+url = "https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly-src.tar.gz"
+url_api = "https://api.github.com/repos/wezterm/wezterm/releases/assets/534682993"
+
+[tools."github:wezterm/wezterm"."platforms.linux-arm64-musl"]
+checksum = "sha256:9dc0163b22fe36bd4aa96bf2765437700eee8f09802c65550f232c9e6612b253"
+url = "https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly-src.tar.gz"
+url_api = "https://api.github.com/repos/wezterm/wezterm/releases/assets/534682993"
+
+[tools."github:wezterm/wezterm"."platforms.linux-x64"]
+checksum = "sha256:9dc0163b22fe36bd4aa96bf2765437700eee8f09802c65550f232c9e6612b253"
+url = "https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly-src.tar.gz"
+url_api = "https://api.github.com/repos/wezterm/wezterm/releases/assets/534682993"
+
+[tools."github:wezterm/wezterm"."platforms.linux-x64-musl"]
+checksum = "sha256:9dc0163b22fe36bd4aa96bf2765437700eee8f09802c65550f232c9e6612b253"
+url = "https://github.com/wezterm/wezterm/releases/download/nightly/wezterm-nightly-src.tar.gz"
+url_api = "https://api.github.com/repos/wezterm/wezterm/releases/assets/534682993"
+
+[tools."github:wezterm/wezterm"."platforms.macos-arm64"]
+checksum = "sha256:83997dc0bd381a61d70f6a6213f743c2df2498c779409a78a00cb9036f1cd146"
+url = "https://github.com/wezterm/wezterm/releases/download/nightly/WezTerm-macos-nightly.zip"
+url_api = "https://api.github.com/repos/wezterm/wezterm/releases/assets/534701139"
+
+[tools."github:wezterm/wezterm"."platforms.macos-x64"]
+checksum = "sha256:83997dc0bd381a61d70f6a6213f743c2df2498c779409a78a00cb9036f1cd146"
+url = "https://github.com/wezterm/wezterm/releases/download/nightly/WezTerm-macos-nightly.zip"
+url_api = "https://api.github.com/repos/wezterm/wezterm/releases/assets/534701139"
+
+[tools."github:wezterm/wezterm"."platforms.windows-x64"]
+checksum = "sha256:d3b8fe699e4490fb0a90ff779835d0b15b83724382a54f684d76145ea729dc1c"
+url = "https://github.com/wezterm/wezterm/releases/download/nightly/WezTerm-windows-nightly.zip"
+url_api = "https://api.github.com/repos/wezterm/wezterm/releases/assets/534712835"
+
 [[tools.go]]
 version = "1.26.5"
 backend = "core:go"
@@ -431,6 +470,13 @@ provenance = "github-attestations"
 version = "3.3.0"
 backend = "core:ruby"
 
+[tools.ruby."platforms.windows-x64"]
+url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.0-1/rubyinstaller-3.3.0-1-x64.7z"
+
+[[tools.ruby]]
+version = "3.3.0"
+backend = "core:ruby"
+
 [tools.ruby.options]
 compile = "false"
 precompiled_url = "jdx/ruby"
@@ -465,13 +511,6 @@ provenance = "github-attestations"
 [tools.ruby."platforms.macos-x64"]
 checksum = "sha256:96518814d9832bece92a85415a819d4893b307db5921ae1f0f751a9a89a56b7d"
 url = "https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz"
-
-[[tools.ruby]]
-version = "3.3.0"
-backend = "core:ruby"
-
-[tools.ruby."platforms.windows-x64"]
-url = "https://github.com/oneclick/rubyinstaller2/releases/download/RubyInstaller-3.3.0-1/rubyinstaller-3.3.0-1-x64.7z"
 
 [[tools.ruff]]
 version = "0.15.21"
@@ -520,42 +559,28 @@ backend = "core:rust"
 components = "llvm-tools,rust-analyzer,rust-src,rustfmt"
 
 [[tools.ty]]
-version = "0.0.59"
+version = "path:~/.cargo/bin/ty"
 backend = "aqua:astral-sh/ty"
 
 [tools.ty."platforms.linux-arm64"]
-checksum = "sha256:8d92f98a3a1f8a799419b78ca645f64ede26b4ada3406b9d18cc6c3d56e58fd2"
-url = "https://github.com/astral-sh/ty/releases/download/0.0.59/ty-aarch64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools.ty."platforms.linux-arm64-musl"]
-checksum = "sha256:8d92f98a3a1f8a799419b78ca645f64ede26b4ada3406b9d18cc6c3d56e58fd2"
-url = "https://github.com/astral-sh/ty/releases/download/0.0.59/ty-aarch64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools.ty."platforms.linux-x64"]
-checksum = "sha256:6038c362f4ad340741a5b1ebb5ffa9d227983b145c2c7f8baf98fe1cab3acfc5"
-url = "https://github.com/astral-sh/ty/releases/download/0.0.59/ty-x86_64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools.ty."platforms.linux-x64-musl"]
-checksum = "sha256:6038c362f4ad340741a5b1ebb5ffa9d227983b145c2c7f8baf98fe1cab3acfc5"
-url = "https://github.com/astral-sh/ty/releases/download/0.0.59/ty-x86_64-unknown-linux-musl.tar.gz"
 provenance = "github-attestations"
 
 [tools.ty."platforms.macos-arm64"]
-checksum = "sha256:920497d7bf09f1bebbeccbe3ddec0dc00485e7c0bbd9fd4839dced77aafbcc71"
-url = "https://github.com/astral-sh/ty/releases/download/0.0.59/ty-aarch64-apple-darwin.tar.gz"
 provenance = "github-attestations"
 
 [tools.ty."platforms.macos-x64"]
-checksum = "sha256:3010df34b67ee1f061baf6e339bfa08ca8bd6b141020ab67606ef7835b3d5d46"
-url = "https://github.com/astral-sh/ty/releases/download/0.0.59/ty-x86_64-apple-darwin.tar.gz"
 provenance = "github-attestations"
 
 [tools.ty."platforms.windows-x64"]
-checksum = "sha256:0e5ef0fd783ef5921259edd404dd4f000a75732660bf5247f70e6a3713efa55f"
-url = "https://github.com/astral-sh/ty/releases/download/0.0.59/ty-x86_64-pc-windows-msvc.zip"
 provenance = "github-attestations"
 
 [[tools.uv]]

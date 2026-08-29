@@ -30,11 +30,11 @@ export class DotsSettingTab extends PluginSettingTab {
 		new Setting(containerEl)
 			.setName('Hugo content path')
 			.setDesc(
-				'Absolute path to your Hugo content directory. Notes with publish: true are exported here as leaf bundles. Desktop only.',
+				'Path to your Hugo content directory. Can start with a tilde for your home folder. Notes with publish: true are exported here as leaf bundles. Desktop only.',
 			)
 			.addText((text) =>
 				text
-					.setPlaceholder('/path/to/site/content')
+					.setPlaceholder('~/path/to/site/content')
 					.setValue(this.plugin.settings.hugoContentPath)
 					.onChange(async (value) => {
 						this.plugin.settings.hugoContentPath = value;

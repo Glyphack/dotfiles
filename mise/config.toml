@@ -1,6 +1,17 @@
 [env]
 
 [tools]
+# General
+"github:wezterm/wezterm" = "nightly"
+"github:sharkdp/fd" = "latest"
+prek = "latest"
+meson = "latest"
+"cargo:diskus" = "latest"
+"github:cli/cli" = "latest"
+
+"go:oss.terrastruct.com/d2" = "latest"
+"go:rsc.io/2fa" = "latest"
+
 # Go
 go = "1.26"
 "go:golang.org/x/tools/gopls" = "latest"
@@ -31,14 +42,6 @@ uv = "latest"
 "pipx:towelie" = "latest"
 "pipx:yt-dlp" = "latest"
 
-# General
-meson = "latest"
-prek = "latest"
-"cargo:diskus" = "latest"
-"github:cli/cli" = "latest"
-"github:sharkdp/fd" = "latest"
-
-
 clojure = "1.12.4"
 java = "corretto-21.0.1.12.1"
 ruby = "3.3.0"
@@ -47,8 +50,6 @@ node = "24"
 "npm:pnpm" = "latest"
 "npm:typescript-language-server" = "latest"
 "npm:typescript" = "latest"
-"go:oss.terrastruct.com/d2" = "latest"
-"go:rsc.io/2fa" = "latest"
 hunk = "latest"
 
 [settings]

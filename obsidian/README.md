@@ -74,8 +74,50 @@ Add `dest` property, for a blog it's `blog/my-post` and for a note it's `my-note
 
 Run `publish-notes` command and the notes are copied to blog folder.
 
+Set the content path in Dots settings.
+It can start with `~` or `$HOME`, so the same setting works on machines with different usernames.
+The path is checked before anything is written, so a wrong path gives you one clear message instead of one failure per note.
+
 Handling images is tricky. To make it simpler I bundle a note and all of it's attachments into one folder.
 So a `my-post.md` becomes `my-post/index.md` and attachments can be inside the folder.
+
+Only wikilinks are rewritten.
+Markdown links you wrote yourself are left exactly as they are, including heading links like `[Introduction](#introduction)` used in a table of contents.
+
+A rewritten link is two parts, a text and an address, decided separately.
+
+The text is whatever you typed.
+A pipe alias is kept as written, otherwise the note name is used.
+
+The address is picked in this order:
+
+- The target is published: the link points at its published page.
+- The target is not published but has a `source` property: the link points at that address.
+- Neither: the address is dropped and only the text is left behind, as plain words in the sentence.
+
+A published note always links to its own page, even when it also has a `source`.
+So publishing a note never starts sending readers away from your site.
+
+Use `source` for notes about something that is already on the web, like a paper, a post you took notes on, or a project with a repository.
+A reader following the link lands on that thing instead of a dead end.
+
+The property is called `source` and not `url` on purpose.
+Hugo treats `url` as the address the page is served at, so a published note carrying `url` would end up at the wrong path.
+
+Notes are transformed so they render correctly on the website this is the rule:
+
+- Only wiki links that start with `[[` or `![[` are transformed. Normal markdown links are kept as is.
+- A wiki link is resolved to another note.
+	- If the other note is published the link is constructed based on the `dest` so on the website the link works.
+	- If the other note is not published and has no `source` then the link becomes normal text.
+	- If the other note is not published bu has a `source` then the link is the source.
+- The text for the link is either the text or the alias text. [[text|alias]] shows alias but [[text]] shows text.
+
+Attachments live next to not so ![a chart](attachments/chart.png) becomes  ![a chart](chart.png)
+
+The frontmatter links are untouched and just unwrapped.
+
+Links like [[other-note#heading]] will end up as (other-note)[/path/to/note] so the heading information is dropped.
 
 ## Keep Text in the Middle
 
