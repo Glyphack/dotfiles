@@ -10,6 +10,7 @@ import { DotsSettings } from './settings';
 import {
 	BundleDeletion,
 	DEST_KEY,
+	FailedResult,
 	FRONTMATTER_CONFIG,
 	INDEX_FILE,
 	MANIFEST_FILE,
@@ -22,7 +23,14 @@ import {
 	RemovedResult,
 	Resolution,
 	ResolvedReference,
+	SOURCE_KEY,
 	SyncSummary,
+	describeError,
+	expandHome,
+	isWikilink,
+	linkDisplayText,
+	linkpath,
+	noteLinkUrl,
 	parseEmbedDisplay,
 	transformNote,
 } from './sync';
@@ -41,6 +49,7 @@ interface DiscoveryResult {
 
 const MISSING_CODES = new Set(['ENOENT']);
 const NOT_EMPTY_CODES = new Set(['ENOTEMPTY', 'EEXIST']);
+const NOTICE_MS = 15000;
 
 export class HugoSync {
 	constructor(
@@ -49,20 +58,30 @@ export class HugoSync {
 	) {}
 
 	async run(): Promise<void> {
-		const contentPath = this.getSettings().hugoContentPath.trim();
-		if (!contentPath) {
+		const configured = this.getSettings().hugoContentPath.trim();
+		if (!configured) {
 			new Notice('Set the Hugo content path in Dots settings first.');
 			return;
 		}
 
 		const fs = require('fs') as typeof import('fs');
 		const path = require('path') as typeof import('path');
+		const os = require('os') as typeof import('os');
+		const contentPath = expandHome(configured, os.homedir());
 		const io: Io = { fs: fs.promises, path, contentPath };
+
+		const unusable = await checkContentPath(fs, io);
+		if (unusable) {
+			new Notice(unusable, NOTICE_MS);
+			console.error(`Publish notes: ${unusable}`);
+			return;
+		}
 
 		const { index, skipped } = this.discover();
 		const oldManifest = await this.readManifest();
 		const newManifest = new Manifest();
 		const published: PublishedResult[] = [];
+		const failed: FailedResult[] = [];
 
 		for (const note of index.all()) {
 			const file = this.app.vault.getAbstractFileByPath(note.vaultPath);
@@ -83,12 +102,12 @@ export class HugoSync {
 				if (previous) {
 					newManifest.set(note.vaultPath, previous);
 				}
-				published.push({
+				const target = io.path.join(io.contentPath, note.bundleDir);
+				console.error(`Publish notes: ${note.vaultPath} -> ${target}`, error);
+				failed.push({
 					path: note.vaultPath,
-					dest: note.dest,
-					url: note.url,
-					action: 'failed',
-					detail: describe(error),
+					target,
+					error: describeError(error),
 				});
 			}
 		}
@@ -100,7 +119,7 @@ export class HugoSync {
 			try {
 				await this.applyDeletion(io, deletion);
 			} catch (error) {
-				deletionErrors.push(`${deletion.bundleDir}: ${describe(error)}`);
+				deletionErrors.push(`${deletion.bundleDir}: ${describeError(error)}`);
 			}
 		}
 		if (deletionErrors.length > 0) {
@@ -109,7 +128,7 @@ export class HugoSync {
 
 		await this.writeManifest(newManifest);
 
-		const summary: SyncSummary = { published, skipped, removed };
+		const summary: SyncSummary = { published, failed, skipped, removed };
 		new SyncSummaryModal(this.app, summary).open();
 	}
 
@@ -183,11 +202,14 @@ export class HugoSync {
 		const attachments = new Map<string, TFile>();
 
 		for (const link of cache?.links ?? []) {
+			if (!rewritable(link)) {
+				continue;
+			}
 			references.push(
 				toReference(
 					link,
 					false,
-					this.linkText(link),
+					linkDisplayText(link),
 					this.resolveLink(link.link, file, index),
 				),
 			);
@@ -199,8 +221,11 @@ export class HugoSync {
 				continue;
 			}
 			if (target.extension === 'md') {
+				if (!rewritable(embed)) {
+					continue;
+				}
 				references.push(
-					toReference(embed, true, this.linkText(embed), this.resolveFile(target, index)),
+					toReference(embed, true, linkDisplayText(embed), this.resolveFile(target, index)),
 				);
 				continue;
 			}
@@ -222,29 +247,28 @@ export class HugoSync {
 	private resolveLink(link: string, file: TFile, index: PublishIndex): Resolution {
 		const target = this.resolveTarget(link, file);
 		if (!target || target.extension !== 'md') {
-			return { kind: 'note', published: false, url: null };
+			return { kind: 'note', url: null };
 		}
 		return this.resolveFile(target, index);
 	}
 
 	private resolveFile(target: TFile, index: PublishIndex): Resolution {
-		const published = index.get(target.path);
-		if (published) {
-			return { kind: 'note', published: true, url: published.url };
+		const url = noteLinkUrl(index.get(target.path), this.sourceUrl(target));
+		return { kind: 'note', url };
+	}
+
+	private sourceUrl(target: TFile): string | null {
+		const frontmatter = this.app.metadataCache.getFileCache(target)?.frontmatter;
+		const value = frontmatter?.[SOURCE_KEY] as unknown;
+		if (typeof value !== 'string') {
+			return null;
 		}
-		return { kind: 'note', published: false, url: null };
+		const url = value.trim();
+		return url.length > 0 ? url : null;
 	}
 
 	private resolveTarget(link: string, file: TFile): TFile | null {
 		return this.app.metadataCache.getFirstLinkpathDest(linkpath(link), file.path);
-	}
-
-	private linkText(reference: ReferenceCache): string {
-		const display = reference.displayText?.trim();
-		if (display) {
-			return display;
-		}
-		return displayFallback(reference.link);
 	}
 
 	private async applyDeletion(io: Io, deletion: BundleDeletion): Promise<void> {
@@ -318,20 +342,8 @@ function toReference(
 	};
 }
 
-function linkpath(link: string): string {
-	const withoutSubpath = link.split('#')[0] ?? link;
-	try {
-		return decodeURIComponent(withoutSubpath);
-	} catch {
-		return withoutSubpath;
-	}
-}
-
-function displayFallback(link: string): string {
-	const base = linkpath(link);
-	const segments = base.split('/');
-	const last = segments[segments.length - 1] ?? base;
-	return last.endsWith('.md') ? last.slice(0, -3) : last;
+function rewritable(reference: ReferenceCache): boolean {
+	return isWikilink(reference.original) && linkpath(reference.link).length > 0;
 }
 
 function removeFile(io: Io, target: string): Promise<void> {
@@ -360,6 +372,23 @@ function hasCode(error: unknown, codes: Set<string>): boolean {
 	return typeof code === 'string' && codes.has(code);
 }
 
-function describe(error: unknown): string {
-	return error instanceof Error ? error.message : String(error);
+async function checkContentPath(
+	fs: typeof import('fs'),
+	io: Io,
+): Promise<string | null> {
+	const label = `Hugo content path ${io.contentPath}`;
+	try {
+		const stats = await io.fs.stat(io.contentPath);
+		if (!stats.isDirectory()) {
+			return `${label} is not a folder. Fix it in Dots settings.`;
+		}
+	} catch (error) {
+		return `${label} cannot be read: ${describeError(error)}. Fix it in Dots settings.`;
+	}
+	try {
+		await io.fs.access(io.contentPath, fs.constants.W_OK);
+	} catch (error) {
+		return `${label} is not writable: ${describeError(error)}. Fix it in Dots settings.`;
+	}
+	return null;
 }

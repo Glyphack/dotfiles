@@ -6,6 +6,12 @@ import {
 	PublishedNote,
 	Resolution,
 	ResolvedReference,
+	describeError,
+	expandHome,
+	isWikilink,
+	linkDisplayText,
+	linkpath,
+	noteLinkUrl,
 	parseEmbedDisplay,
 	rewriteFrontmatter,
 	stripFrontmatterKeys,
@@ -43,22 +49,32 @@ test('PublishedNote computes slug, bundleDir, and url', () => {
 
 	const typo = new PublishedNote('Notes/C.md', 'blg/dv-8');
 	assert.equal(typo.slug, 'dv-8');
-	assert.equal(typo.bundleDir, 'sync/dv-8');
-	assert.equal(typo.url, '/sync/dv-8/');
+	assert.equal(typo.bundleDir, 'synced/dv-8');
+	assert.equal(typo.url, '/synced/dv-8/');
 
 	const bare = new PublishedNote('Notes/D.md', 'dv-8');
-	assert.equal(bare.bundleDir, 'sync/dv-8');
-	assert.equal(bare.url, '/sync/dv-8/');
+	assert.equal(bare.bundleDir, 'synced/dv-8');
+	assert.equal(bare.url, '/synced/dv-8/');
 
 	const foreign = new PublishedNote('Notes/E.md', 'notes/dv-8');
-	assert.equal(foreign.bundleDir, 'sync/dv-8');
-	assert.equal(foreign.url, '/sync/dv-8/');
+	assert.equal(foreign.bundleDir, 'synced/dv-8');
+	assert.equal(foreign.url, '/synced/dv-8/');
+});
+
+test('noteLinkUrl prefers the published page over source', () => {
+	const published = new PublishedNote('Notes/A.md', 'blog/a');
+	const source = 'https://example.com/a';
+
+	assert.equal(noteLinkUrl(published, source), '/blog/a/');
+	assert.equal(noteLinkUrl(published, null), '/blog/a/');
+	assert.equal(noteLinkUrl(undefined, source), source);
+	assert.equal(noteLinkUrl(undefined, null), null);
 });
 
 test('rewrites a published note link to its url', () => {
 	const body = 'See [[Other]] now.';
 	const out = transformNote(body, 0, [
-		ref(body, '[[Other]]', 'Other', { kind: 'note', published: true, url: '/s/other/' }),
+		ref(body, '[[Other]]', 'Other', { kind: 'note', url: '/s/other/' }),
 	]);
 	assert.equal(out.content, 'See [Other](/s/other/) now.');
 	assert.deepEqual(out.attachments, []);
@@ -67,13 +83,20 @@ test('rewrites a published note link to its url', () => {
 test('drops a link to an unpublished note down to plain text', () => {
 	const body = 'See [[Secret|the secret]] now.';
 	const out = transformNote(body, 0, [
-		ref(body, '[[Secret|the secret]]', 'the secret', {
-			kind: 'note',
-			published: false,
-			url: null,
-		}),
+		ref(body, '[[Secret|the secret]]', 'the secret', { kind: 'note', url: null }),
 	]);
 	assert.equal(out.content, 'See the secret now.');
+});
+
+test('links an unpublished note to its source address', () => {
+	const body = 'See [[External|the write-up]] now.';
+	const out = transformNote(body, 0, [
+		ref(body, '[[External|the write-up]]', 'the write-up', {
+			kind: 'note',
+			url: 'https://example.com/write-up',
+		}),
+	]);
+	assert.equal(out.content, 'See [the write-up](https://example.com/write-up) now.');
 });
 
 test('rewrites a wikilink image embed and collects the attachment', () => {
@@ -142,10 +165,51 @@ test('parseEmbedDisplay separates alt text from size', () => {
 	assert.deepEqual(parseEmbedDisplay(''), { alt: '', width: null, height: null });
 });
 
+test('linkpath drops the heading and decodes the note path', () => {
+	assert.equal(linkpath('other-note#heading'), 'other-note');
+	assert.equal(linkpath('other-note#^abc123'), 'other-note');
+	assert.equal(linkpath('Some%20Note'), 'Some Note');
+	assert.equal(linkpath('#heading'), '');
+});
+
+test('linkDisplayText uses the alias only when one was written', () => {
+	const text = (original: string, link: string, displayText?: string) =>
+		linkDisplayText({ original, link, displayText });
+
+	assert.equal(text('[[other-note]]', 'other-note', 'other-note'), 'other-note');
+	assert.equal(
+		text('[[other-note#heading]]', 'other-note#heading', 'other-note > heading'),
+		'other-note',
+	);
+	assert.equal(
+		text('[[other-note#^abc123]]', 'other-note#^abc123', 'other-note > ^abc123'),
+		'other-note',
+	);
+	assert.equal(text('[[folder/other-note]]', 'folder/other-note'), 'other-note');
+	assert.equal(text('![[other-note]]', 'other-note'), 'other-note');
+
+	assert.equal(text('[[other-note|my alias]]', 'other-note', 'my alias'), 'my alias');
+	assert.equal(
+		text('[[other-note#heading|my alias]]', 'other-note#heading', 'my alias'),
+		'my alias',
+	);
+});
+
+test('isWikilink only accepts bracket links', () => {
+	assert.equal(isWikilink('[[Some Note]]'), true);
+	assert.equal(isWikilink('[[Some Note|alias]]'), true);
+	assert.equal(isWikilink('![[diagram.png]]'), true);
+
+	assert.equal(isWikilink('[Introduction](#introduction)'), false);
+	assert.equal(isWikilink('[Site](https://example.com)'), false);
+	assert.equal(isWikilink('[Second Note](Second%20Note.md)'), false);
+	assert.equal(isWikilink('![a chart](chart.png)'), false);
+});
+
 test('leaves external links untouched', () => {
 	const body = 'Go to [Site](https://example.com) and [[Other]].';
 	const out = transformNote(body, 0, [
-		ref(body, '[[Other]]', 'Other', { kind: 'note', published: true, url: '/blog/other/' }),
+		ref(body, '[[Other]]', 'Other', { kind: 'note', url: '/blog/other/' }),
 	]);
 	assert.equal(
 		out.content,
@@ -162,8 +226,8 @@ test('applies multiple edits without corrupting offsets', () => {
 			width: null,
 			height: null,
 		}, true),
-		ref(body, '[[A|first]]', 'first', { kind: 'note', published: true, url: '/s/a/' }),
-		ref(body, '[[B]]', 'B', { kind: 'note', published: false, url: null }),
+		ref(body, '[[A|first]]', 'first', { kind: 'note', url: '/s/a/' }),
+		ref(body, '[[B]]', 'B', { kind: 'note', url: null }),
 	]);
 	assert.equal(out.content, '![](a.png) then [first](/s/a/) then B');
 	assert.deepEqual(out.attachments, ['a.png']);
@@ -186,7 +250,7 @@ test('dedupes a repeated attachment', () => {
 	assert.deepEqual(out.attachments, ['a.png']);
 });
 
-test('strips control keys and configured removals, keeping a quoted date', () => {
+test('strips control keys and keeps every other property', () => {
 	const raw = [
 		'---',
 		'title: Hello',
@@ -205,6 +269,7 @@ test('strips control keys and configured removals, keeping a quoted date', () =>
 		'---',
 		'title: Hello',
 		'date: "2026-06-29"',
+		'tags: [a, b]',
 		'---',
 		'',
 		'Body here.',
@@ -213,7 +278,7 @@ test('strips control keys and configured removals, keeping a quoted date', () =>
 	assert.equal(out.content, expected);
 });
 
-test('removes a block style tags property and all its items', () => {
+test('keeps a block style property, and removes it only when configured', () => {
 	const raw = [
 		'---',
 		'title: T',
@@ -229,17 +294,32 @@ test('removes a block style tags property and all its items', () => {
 		'',
 	].join('\n');
 	const fmEnd = raw.indexOf('---', 3) + 3;
-	const out = transformNote(raw, fmEnd, []);
-	const expected = [
-		'---',
-		'title: T',
-		'date: 2026-01-01',
-		'---',
-		'',
-		'Body.',
-		'',
-	].join('\n');
-	assert.equal(out.content, expected);
+
+	const kept = transformNote(raw, fmEnd, []);
+	assert.equal(
+		kept.content,
+		[
+			'---',
+			'title: T',
+			'tags:',
+			'  - intro',
+			'  - notes',
+			'date: 2026-01-01',
+			'---',
+			'',
+			'Body.',
+			'',
+		].join('\n'),
+	);
+
+	const removed = transformNote(raw, fmEnd, [], {
+		removeKeys: ['tags'],
+		renameKeys: {},
+	});
+	assert.equal(
+		removed.content,
+		['---', 'title: T', 'date: 2026-01-01', '---', '', 'Body.', ''].join('\n'),
+	);
 });
 
 test('transformNote honors a custom frontmatter config', () => {
@@ -293,9 +373,81 @@ test('rewriteFrontmatter renames created and keeps the quoted value', () => {
 	);
 });
 
+test('unwraps wikilinks in frontmatter values', () => {
+	const raw = [
+		'---',
+		'title: After Interview',
+		'category:',
+		'  - "[[Blog]]"',
+		'tags: ["[[A]]", "[[B|bee]]"]',
+		'ref: "[[Note#Heading]]"',
+		'share: true',
+		'dest: blog/after-interview',
+		'---',
+		'',
+		'Body keeps its [[Other]] link handling.',
+		'',
+	].join('\n');
+	const fmEnd = raw.indexOf('---', 3) + 3;
+	const out = transformNote(raw, fmEnd, []);
+	const expected = [
+		'---',
+		'title: After Interview',
+		'category:',
+		'  - "Blog"',
+		'tags: ["A", "bee"]',
+		'ref: "Note"',
+		'---',
+		'',
+		'Body keeps its [[Other]] link handling.',
+		'',
+	].join('\n');
+	assert.equal(out.content, expected);
+});
+
+test('leaves frontmatter without wikilinks untouched', () => {
+	assert.equal(
+		rewriteFrontmatter('---\ntitle: Plain [text] here\n---', [], {}),
+		'---\ntitle: Plain [text] here\n---',
+	);
+});
+
 test('stripFrontmatterKeys does not touch nested or similarly named keys', () => {
 	const raw = ['---', 'published: yes', 'destination: x', '  dest: nested', '---'].join('\n');
 	assert.equal(stripFrontmatterKeys(raw, ['publish', 'dest']), raw);
+});
+
+test('expandHome resolves a leading home marker only', () => {
+	const home = '/Users/me';
+
+	assert.equal(expandHome('~/site/content', home), '/Users/me/site/content');
+	assert.equal(expandHome('$HOME/site/content', home), '/Users/me/site/content');
+	assert.equal(expandHome('${HOME}/site/content', home), '/Users/me/site/content');
+	assert.equal(expandHome('  ~/site  ', home), '/Users/me/site');
+	assert.equal(expandHome('~', home), home);
+
+	assert.equal(expandHome('/Users/other/site', home), '/Users/other/site');
+	assert.equal(expandHome('/opt/$HOME/site', home), '/opt/$HOME/site');
+	assert.equal(expandHome('~backup/site', home), '~backup/site');
+});
+
+test('describeError keeps the message and adds only missing detail', () => {
+	const fsError = Object.assign(
+		new Error("EACCES: permission denied, mkdir '/Users/me/site'"),
+		{ code: 'EACCES', syscall: 'mkdir', path: '/Users/me/site' },
+	);
+	assert.equal(describeError(fsError), "EACCES: permission denied, mkdir '/Users/me/site'");
+
+	const terse = Object.assign(new Error('write failed'), {
+		code: 'ENOSPC',
+		path: '/Users/me/site/index.md',
+	});
+	assert.equal(
+		describeError(terse),
+		'write failed (code=ENOSPC, path=/Users/me/site/index.md)',
+	);
+
+	assert.equal(describeError('plain string'), 'plain string');
 });
 
 test('reconcile removes bundles for unpublished or deleted notes', () => {

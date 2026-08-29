@@ -1,5 +1,5 @@
 import { App, Modal } from 'obsidian';
-import { PUBLISH_KEY, PublishedResult, SyncSummary } from './sync';
+import { FailedResult, PUBLISH_KEY, PublishedResult, SyncSummary } from './sync';
 
 export class SyncSummaryModal extends Modal {
 	constructor(
@@ -15,6 +15,7 @@ export class SyncSummaryModal extends Modal {
 
 		if (
 			summary.published.length === 0 &&
+			summary.failed.length === 0 &&
 			summary.skipped.length === 0 &&
 			summary.removed.length === 0
 		) {
@@ -22,6 +23,7 @@ export class SyncSummaryModal extends Modal {
 			return;
 		}
 
+		this.renderFailed();
 		this.renderPublished();
 		this.renderSkipped();
 		this.renderRemoved();
@@ -40,6 +42,18 @@ export class SyncSummaryModal extends Modal {
 		const list = this.contentEl.createEl('ul');
 		for (const item of items) {
 			list.createEl('li', { text: describeItem(item) });
+		}
+	}
+
+	private renderFailed(): void {
+		const items = this.summary.failed;
+		if (items.length === 0) {
+			return;
+		}
+		this.contentEl.createEl('h3', { text: `Failed (${items.length})` });
+		const list = this.contentEl.createEl('ul');
+		for (const item of items) {
+			list.createEl('li', { text: describeFailure(item) });
 		}
 	}
 
@@ -72,10 +86,11 @@ export class SyncSummaryModal extends Modal {
 
 const DEST_LABEL = 'destination';
 
+function describeFailure(item: FailedResult): string {
+	return `${item.path} -> ${item.target}: ${item.error}`;
+}
+
 function describeItem(item: PublishedResult): string {
-	if (item.action === 'failed') {
-		return `${item.path}: failed, ${item.detail ?? 'unknown error'}`;
-	}
 	if (item.detail) {
 		return `${item.path}: ${item.action} at ${item.url}, ${item.detail}`;
 	}

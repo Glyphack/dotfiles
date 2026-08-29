@@ -1,5 +1,6 @@
 export const PUBLISH_KEY = 'share';
 export const DEST_KEY = 'dest';
+export const SOURCE_KEY = 'source';
 export const CONTROL_KEYS = [PUBLISH_KEY, DEST_KEY];
 
 export const INDEX_FILE = 'index.md';
@@ -70,8 +71,15 @@ export class PublishIndex {
 	}
 }
 
+export function noteLinkUrl(
+	published: PublishedNote | undefined,
+	source: string | null,
+): string | null {
+	return published?.url ?? source ?? null;
+}
+
 export type Resolution =
-	| { kind: 'note'; published: boolean; url: string | null }
+	| { kind: 'note'; url: string | null }
 	| { kind: 'attachment'; filename: string; width: number | null; height: number | null };
 
 export interface EmbedDisplay {
@@ -156,7 +164,7 @@ function renderReference(reference: ResolvedReference): string {
 	if (resolution.kind === 'attachment') {
 		return `![${text}](${resolution.filename}${sizeQuery(resolution.width, resolution.height)})`;
 	}
-	if (resolution.published && resolution.url) {
+	if (resolution.url) {
 		return `[${text}](${resolution.url})`;
 	}
 	return text;
@@ -199,9 +207,22 @@ export function rewriteFrontmatter(
 			skipping = true;
 			continue;
 		}
-		out.push(applyRenames(line, renamePairs));
+		out.push(unwrapWikilinks(applyRenames(line, renamePairs)));
 	}
 	return out.join('\n');
+}
+
+const WIKILINK_PATTERN = /\[\[([^\]]*)\]\]/g;
+
+function unwrapWikilinks(line: string): string {
+	return line.replace(WIKILINK_PATTERN, (match, inner: string) => {
+		const parts = inner.split('|');
+		if (parts.length > 1) {
+			return (parts[parts.length - 1] ?? '').trim();
+		}
+		const target = (parts[0] ?? '').split('#')[0]?.trim() ?? '';
+		return target.length > 0 ? target : match;
+	});
 }
 
 function isIndented(line: string): boolean {
@@ -332,7 +353,7 @@ export class Manifest {
 	}
 }
 
-export type SyncAction = 'created' | 'updated' | 'moved' | 'failed';
+export type SyncAction = 'created' | 'updated' | 'moved';
 
 export interface PublishedResult {
 	path: string;
@@ -342,6 +363,12 @@ export interface PublishedResult {
 	detail: string | null;
 }
 
+export interface FailedResult {
+	path: string;
+	target: string;
+	error: string;
+}
+
 export interface RemovedResult {
 	path: string;
 	bundleDir: string;
@@ -349,6 +376,78 @@ export interface RemovedResult {
 
 export interface SyncSummary {
 	published: PublishedResult[];
+	failed: FailedResult[];
 	skipped: string[];
 	removed: RemovedResult[];
+}
+
+export interface LinkReference {
+	original: string;
+	displayText?: string;
+	link: string;
+}
+
+export function linkpath(link: string): string {
+	const withoutSubpath = link.split('#')[0] ?? link;
+	try {
+		return decodeURIComponent(withoutSubpath);
+	} catch {
+		return withoutSubpath;
+	}
+}
+
+export function noteName(link: string): string {
+	const base = linkpath(link);
+	const segments = base.split('/');
+	const last = segments[segments.length - 1] ?? base;
+	return last.endsWith('.md') ? last.slice(0, -3) : last;
+}
+
+export function linkDisplayText(reference: LinkReference): string {
+	if (reference.original.includes('|')) {
+		const alias = reference.displayText?.trim();
+		if (alias) {
+			return alias;
+		}
+	}
+	return noteName(reference.link);
+}
+
+export function isWikilink(original: string): boolean {
+	return original.startsWith('[[') || original.startsWith('![[');
+}
+
+const HOME_PREFIXES = ['~', '$HOME', '${HOME}'];
+
+export function expandHome(target: string, home: string): string {
+	const trimmed = target.trim();
+	for (const prefix of HOME_PREFIXES) {
+		if (trimmed === prefix) {
+			return home;
+		}
+		if (trimmed.startsWith(`${prefix}/`)) {
+			return home + trimmed.slice(prefix.length);
+		}
+	}
+	return trimmed;
+}
+
+const ERROR_FIELDS = ['code', 'syscall', 'path', 'dest'] as const;
+
+export function describeError(error: unknown): string {
+	if (!(error instanceof Error)) {
+		return String(error);
+	}
+	const record = error as unknown as Record<string, unknown>;
+	const extra: string[] = [];
+	for (const field of ERROR_FIELDS) {
+		const value = record[field];
+		if (typeof value === 'string' && !error.message.includes(value)) {
+			extra.push(`${field}=${value}`);
+		}
+	}
+	if (extra.length === 0) {
+		return error.message;
+	}
+	return `${error.message} (${extra.join(', ')})`;
 }
