@@ -79,7 +79,7 @@ export class SyncSummaryModal extends Modal {
 		this.contentEl.createEl('h3', { text: `Removed (${items.length})` });
 		const list = this.contentEl.createEl('ul');
 		for (const item of items) {
-			list.createEl('li', { text: `${item.path} (/${item.bundleDir}/)` });
+			list.createEl('li', { text: `/${item.bundleDir}/` });
 		}
 	}
 }
@@ -91,8 +91,5 @@ function describeFailure(item: FailedResult): string {
 }
 
 function describeItem(item: PublishedResult): string {
-	if (item.detail) {
-		return `${item.path}: ${item.action} at ${item.url}, ${item.detail}`;
-	}
 	return `${item.path}: ${item.action} at ${item.url}`;
 }

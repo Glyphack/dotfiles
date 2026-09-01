@@ -51,7 +51,7 @@ local function windowBelongsToApp(win, appName)
 	-- See https://www.hammerspoon.org/docs/hs.window.html#application
 	local path = win:application():path()
 	local nameOnDisk = string.gsub(path, "/Applications/", "")
-	nameOnDisk = string.gsub(nameOnDisk, ".app", "")
+	nameOnDisk = string.gsub(nameOnDisk, "%.app$", "")
 	nameOnDisk = string.gsub(nameOnDisk, "/System/Library/CoreServices/", "")
 	return nameOnDisk:find(appName, 1, true) ~= nil
 end
@@ -426,7 +426,7 @@ SHORTCUTS = {
 			launchOrFocusOrRotate({
 				app = "Google Chrome",
 				tab = "Microsoft Teams",
-				url = "https://teams.microsoft.com",
+				url = "https://teams.cloud.microsoft/",
 			})
 		end,
 	},
@@ -552,9 +552,10 @@ SpoonInstall:andUse("URLDispatcher", {
 	config = {
 		url_patterns = {
 			{ "teams%.microsoft%.com", "com.google.Chrome" },
+			{ "teams%.cloud%.microsoft", "com.google.Chrome" },
 			{ "^https://github%.com/letsrotate/", "com.google.Chrome" },
 			{ "cloud%.databricks%.com", "com.google.Chrome" },
-			{ "^https://letsrotate.atlassian.net/", "com.google.Chrome" },
+			{ "^https://letsrotate%.atlassian%.net/", "com.google.Chrome" },
 		},
 		default_handler = "com.brave.Browser",
 	},

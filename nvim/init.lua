@@ -670,11 +670,11 @@ require("lazy").setup({
 			vim.api.nvim_create_user_command("NotifyHistory", function()
 				MiniNotify.show_history()
 			end, { desc = "Open past notifications in a scratch buffer" })
-			require("mini.pairs").setup()
 			vim.api.nvim_create_autocmd("FileType", {
 				group = vim.api.nvim_create_augroup("lisp-quote-pairs", { clear = true }),
 				pattern = { "clojure", "fennel", "scheme", "lisp" },
 				callback = function(args)
+					require("mini.pairs").setup()
 					map("i", "'", "'", "Literal quote, no auto pair", { buffer = args.buf })
 					map("i", "`", "`", "Literal backtick, no auto pair", { buffer = args.buf })
 				end,
@@ -1182,12 +1182,35 @@ require("lazy").setup({
 			require("rayso").setup({})
 		end,
 	},
+	{
+		"obsidian-nvim/obsidian.nvim",
+		version = "*",
+		config = function()
+			require("obsidian").setup({
+				legacy_commands = false,
+				workspaces = {
+					{
+						name = "personal",
+						path = "$vault",
+					},
+				},
+				picker = {
+					name = "mini.pick",
+				},
+				frontmatter = { enabled = false },
+				-- ui = { enable = false },
+			})
+			-- for beautiful visuals, or:
+			vim.o.conceallevel = 1
+		end,
+	},
 })
 
 -- My keymaps and commands
 
 require("agent").setup()
 require("bookmarks").setup()
+require("splitline").setup()
 
 map("n", "<leader>fc", 'gg"+yG``', "Copy entire file to clipboard")
 map("v", "<leader>k", ":Link<CR>", "Convert selection to markdown link", { silent = true })
@@ -1242,10 +1265,6 @@ vim.api.nvim_create_user_command("Link", function(opts)
 	vim.cmd('normal! gv"zP')
 	vim.api.nvim_win_set_cursor(0, { start_pos[2], cursor_col })
 end, { range = true, desc = "Convert selection to markdown link" })
-
-vim.api.nvim_create_user_command("SentenceBreaks", function()
-	vim.cmd([[%s/\. /.\r/g]])
-end, {})
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	group = vim.api.nvim_create_augroup("lsp-server-tweaks", { clear = true }),
