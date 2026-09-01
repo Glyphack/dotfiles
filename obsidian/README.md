@@ -74,6 +74,21 @@ Add `dest` property, for a blog it's `blog/my-post` and for a note it's `my-note
 
 Run `publish-notes` command and the notes are copied to blog folder.
 
+Turn on auto publish in settings and you don't have to run the command at all.
+A note is published a few seconds after you stop typing in it, as long as it has `share: true` and a `dest`.
+A note with no `dest` yet is left alone, and clearing the `dest` of a published note removes its folder from the site.
+Nothing is shown when it works. A failure shows a notice and the details go to the console.
+
+Auto publish also keeps removals in sync.
+Take `share` off a note or delete it and its folder is removed from the site.
+Renaming a note does not change anything on the site, because the address comes from `dest` and not from where the note lives in the vault.
+
+A `.dots-synced` file appears at the top of the content folder listing every folder the plugin created, one per line.
+Keep it with the blog, it is how an unpublished note gets removed later.
+The plugin only ever deletes folders listed in it, so a hand made folder in the blog is never touched.
+Delete the file and the plugin forgets what it made, so nothing is cleaned up until it publishes those folders again.
+Hugo ignores it, so it never becomes a page resource on the built site.
+
 Set the content path in Dots settings.
 It can start with `~` or `$HOME`, so the same setting works on machines with different usernames.
 The path is checked before anything is written, so a wrong path gives you one clear message instead of one failure per note.
@@ -81,13 +96,15 @@ The path is checked before anything is written, so a wrong path gives you one cl
 Handling images is tricky. To make it simpler I bundle a note and all of it's attachments into one folder.
 So a `my-post.md` becomes `my-post/index.md` and attachments can be inside the folder.
 
-Only wikilinks are rewritten.
-Markdown links you wrote yourself are left exactly as they are, including heading links like `[Introduction](#introduction)` used in a table of contents.
+A link is rewritten when it points at a note in the vault, whether you wrote it as a wikilink or as a markdown link.
+Everything else is left exactly as it is, so an external address and a heading link like `[Introduction](#introduction)` used in a table of contents both survive untouched.
+A wikilink is the one exception: it is always rewritten, even when it points at nothing, because it would not render on the site anyway.
 
 A rewritten link is two parts, a text and an address, decided separately.
 
 The text is whatever you typed.
-A pipe alias is kept as written, otherwise the note name is used.
+For a markdown link it is the text in the brackets.
+For a wikilink a pipe alias is kept as written, otherwise the note name is used.
 
 The address is picked in this order:
 
@@ -106,12 +123,13 @@ Hugo treats `url` as the address the page is served at, so a published note carr
 
 Notes are transformed so they render correctly on the website this is the rule:
 
-- Only wiki links that start with `[[` or `![[` are transformed. Normal markdown links are kept as is.
-- A wiki link is resolved to another note.
+- A wiki link that starts with `[[` or `![[` is always transformed.
+- A markdown link is transformed only when it resolves to a note in the vault. Anything else, like a web address or a `#heading` link, is kept as is.
+- A link that resolves to a note gets its address this way.
 	- If the other note is published the link is constructed based on the `dest` so on the website the link works.
 	- If the other note is not published and has no `source` then the link becomes normal text.
 	- If the other note is not published bu has a `source` then the link is the source.
-- The text for the link is either the text or the alias text. [[text|alias]] shows alias but [[text]] shows text.
+- The text for the link is either the text or the alias text. [[text|alias]] shows alias but [[text]] shows text. `[text](note.md)` shows text.
 
 Attachments live next to not so ![a chart](attachments/chart.png) becomes  ![a chart](chart.png)
 
@@ -119,10 +137,14 @@ The frontmatter links are untouched and just unwrapped.
 
 Links like [[other-note#heading]] will end up as (other-note)[/path/to/note] so the heading information is dropped.
 
+## Todo
+
+- Remove all traces of `sync-manifest.json`, the old record of published notes. The plugin still deletes a leftover one from the vault config folder on startup.
+
 ## Keep Text in the Middle
 
 This feature mimics the `scrolloff=999` setting in vim.
-Run the `Toggle typewriter mode` command to turn it on or off.
+Turn it on with the `Typewriter mode` toggle in Dots settings, or run the `Toggle typewriter mode` command.
 The state is saved, so it stays on across restarts.
 
 When on, the line you are typing stays vertically centered.

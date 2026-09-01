@@ -1,17 +1,13 @@
 set -gx VIMCONFIG $HOME/.config/nvim/
 set -gx VISUAL nvim
 set -gx EDITOR nvim
+
+# Personal
 set -gx PROGRAMMING_DIR ~/Programming
 set -gx DOTFILES_DIR ~/Programming/dotfiles
 set -gx WORKTREES_DIR $PROGRAMMING_DIR/wk
-set -gx FZF_DEFAULT_COMMAND "fd --hidden"
-set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
-set -gx FZF_ALT_C_COMMAND "\
-fd -t d . $PROGRAMMING_DIR -d 1 -E wk; \
-fd -t d . $HOME/Work -d 1 2>/dev/null; \
-fd -t d . $WORKTREES_DIR -d 1 2>/dev/null; \
-echo $HOME/Downloads\n$HOME/Documents\n$HOME/Movies\n$HOME/Work\n$HOME/Programming
-"
+
+# Tools
 set -gx NPM_PRE $HOME/.npm-global/bin
 set -gx RIPGREP_CONFIG_PATH $HOME/.ripgreprc
 set -gx POETRY $HOME/.poetry
@@ -27,8 +23,6 @@ set -gx tyty $HOME/Programming/ruff/target/debug/ty
 set -gx JAVA_HOME "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 set -gx ANDROID_HOME "$HOME/Library/Android/sdk"
 set -gx NDK_HOME "$ANDROID_HOME/ndk/30.0.14904198"
-
-
 if test -d "$HOME/flutter"
     set -gx FLUTTER_PATH $HOME/flutter/bin
 else
@@ -63,48 +57,29 @@ fish_add_path -g "$HOME/.rd/bin" \
     "$ANDROID_HOME/emulator" \
     "$ANDROID_HOME/platform-tools"
 
+# I can quickly jump to my useful directories
+set -gx FZF_DEFAULT_COMMAND "fd --hidden"
+set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
+set -gx FZF_ALT_C_COMMAND "\
+fd -t d . $PROGRAMMING_DIR -d 1 -E wk; \
+fd -t d . $HOME/Work -d 1 2>/dev/null; \
+fd -t d . $WORKTREES_DIR -d 1 2>/dev/null; \
+echo $HOME/Downloads\n$HOME/Documents\n$HOME/Movies\n$HOME/Work\n$HOME/Programming
+"
 
 if test -f ~/Programming/dotfiles/local.fish
     source ~/Programming/dotfiles/local.fish
 end
 
+source "$__fish_config_dir/aliases.fish"
+
 if status is-interactive
     fzf --fish | source
 
-    if type -q direnv
-        direnv hook fish | source
-    end
-
-    bind -M insert \cf accept-autosuggestion
-    
     if type -q fish_hybrid_key_bindings
         fish_hybrid_key_bindings
     end
-
-    if test -f "$__fish_config_dir/aliases.fish"
-        source "$__fish_config_dir/aliases.fish"
-    end
+    bind -M insert \cf accept-autosuggestion
     bind -M insert \cf accept-autosuggestion
 
-end
-
-function vm
-    set gh_token (gh auth token)
-
-    set vibe_args \
-        --mount $HOME/Programming/dotfiles/gitconf/:/root/git_conf \
-        --mount $HOME/Programming/dotfiles/agent/:$HOME/Programming/dotfiles/agent/ \
-        --mount $HOME/.config/gh/:/root/.config/gh/
-
-    set git_common_dir (git rev-parse --git-common-dir 2>/dev/null)
-    if test -n "$git_common_dir" && test "$git_common_dir" != ".git"
-        set -a vibe_args --mount $git_common_dir:$git_common_dir
-    end
-
-    command vibe \
-        $vibe_args \
-        --send "export GH_TOKEN='$gh_token';export CLAUDE_CONFIG_DIR='/root/.claude/';alias claude='claude --dangerously-skip-permissions';umount .git;echo vibe_send_done" \
-        --expect "vibe_send_done" \
-        --script ~/Programming/dotfiles/scripts/vibe-config.sh \
-        --expect "vibe_setup_done"
 end

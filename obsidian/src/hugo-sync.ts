@@ -7,190 +7,208 @@ import {
 	normalizePath,
 } from 'obsidian';
 import { DotsSettings } from './settings';
+import { BundleFile, BundleStore } from './bundles';
 import {
-	BundleDeletion,
-	DEST_KEY,
-	FailedResult,
 	FRONTMATTER_CONFIG,
+	FailedResult,
 	INDEX_FILE,
-	MANIFEST_FILE,
-	Manifest,
-	ManifestEntry,
-	PUBLISH_KEY,
 	PublishIndex,
 	PublishedNote,
 	PublishedResult,
-	RemovedResult,
 	Resolution,
 	ResolvedReference,
 	SOURCE_KEY,
 	SyncSummary,
 	describeError,
+	diffBundles,
 	expandHome,
 	isWikilink,
 	linkDisplayText,
 	linkpath,
 	noteLinkUrl,
 	parseEmbedDisplay,
+	shareState,
 	transformNote,
 } from './sync';
 import { SyncSummaryModal } from './sync-summary-modal';
-
-interface Io {
-	fs: typeof import('fs').promises;
-	path: typeof import('path');
-	contentPath: string;
-}
 
 interface DiscoveryResult {
 	index: PublishIndex;
 	skipped: string[];
 }
 
-const MISSING_CODES = new Set(['ENOENT']);
-const NOT_EMPTY_CODES = new Set(['ENOTEMPTY', 'EEXIST']);
 const NOTICE_MS = 15000;
+const LEGACY_MANIFEST_FILE = 'sync-manifest.json';
 
 export class HugoSync {
+	private chain: Promise<unknown> = Promise.resolve();
+
 	constructor(
 		private readonly app: App,
 		private readonly getSettings: () => DotsSettings,
 	) {}
 
-	async run(): Promise<void> {
-		const configured = this.getSettings().hugoContentPath.trim();
-		if (!configured) {
+	async publishAll(): Promise<void> {
+		if (!this.contentPath()) {
 			new Notice('Set the Hugo content path in Dots settings first.');
 			return;
+		}
+		const summary = await this.serialize(() => this.run(null));
+		if (summary) {
+			new SyncSummaryModal(this.app, summary).open();
+		}
+	}
+
+	async publishOne(vaultPath: string): Promise<void> {
+		const summary = await this.serialize(() => this.run(vaultPath));
+		const failure = summary?.failed[0];
+		if (failure) {
+			new Notice(`Failed to publish ${failure.path}: ${failure.error}`, NOTICE_MS);
+		}
+	}
+
+	async removeLegacyManifest(): Promise<void> {
+		const target = normalizePath(`${this.app.vault.configDir}/${LEGACY_MANIFEST_FILE}`);
+		const adapter = this.app.vault.adapter;
+		if (await adapter.exists(target)) {
+			await adapter.remove(target);
+		}
+	}
+
+	private serialize<T>(task: () => Promise<T>): Promise<T> {
+		const result = this.chain.then(task, task);
+		this.chain = result.catch(() => undefined);
+		return result;
+	}
+
+	private async run(only: string | null): Promise<SyncSummary | null> {
+		const store = await this.openStore();
+		if (!store) {
+			return null;
+		}
+
+		const previous = await store.readManifest();
+		const owned = new Set(previous);
+		const { index, skipped } = this.discover();
+		const targets =
+			only === null ? index.all() : index.all().filter((note) => note.vaultPath === only);
+
+		const published: PublishedResult[] = [];
+		const failed: FailedResult[] = [];
+		const written: string[] = [];
+		for (const note of targets) {
+			const file = this.app.vault.getAbstractFileByPath(note.vaultPath);
+			if (!(file instanceof TFile)) {
+				continue;
+			}
+			const known = owned.has(note.bundleDir);
+			try {
+				await this.writeBundle(store, file, note, index, known);
+				written.push(note.bundleDir);
+				published.push({
+					path: note.vaultPath,
+					dest: note.dest,
+					url: note.url,
+					action: known ? 'updated' : 'created',
+				});
+			} catch (error) {
+				const target = store.path.join(store.contentPath, note.bundleDir);
+				console.error(`Publish notes: ${note.vaultPath} -> ${target}`, error);
+				failed.push({ path: note.vaultPath, target, error: describeError(error) });
+			}
+		}
+
+		const diff = diffBundles(previous, index.bundleDirs(), written);
+		await this.removeBundles(store, diff.stale);
+		await store.writeManifest(diff.synced);
+
+		return {
+			published,
+			failed,
+			skipped,
+			removed: diff.stale.map((bundleDir) => ({ bundleDir })),
+		};
+	}
+
+	private async removeBundles(store: BundleStore, bundleDirs: string[]): Promise<void> {
+		const errors: string[] = [];
+		for (const bundleDir of bundleDirs) {
+			try {
+				await store.remove(bundleDir);
+			} catch (error) {
+				errors.push(`${bundleDir}: ${describeError(error)}`);
+			}
+		}
+		if (errors.length > 0) {
+			console.error(`Publish notes cleanup errors:\n${errors.join('\n')}`);
+		}
+	}
+
+	private contentPath(): string {
+		return this.getSettings().hugoContentPath.trim();
+	}
+
+	private async openStore(): Promise<BundleStore | null> {
+		const configured = this.contentPath();
+		if (!configured) {
+			return null;
 		}
 
 		const fs = require('fs') as typeof import('fs');
 		const path = require('path') as typeof import('path');
 		const os = require('os') as typeof import('os');
-		const contentPath = expandHome(configured, os.homedir());
-		const io: Io = { fs: fs.promises, path, contentPath };
+		const store = new BundleStore(fs.promises, path, expandHome(configured, os.homedir()));
 
-		const unusable = await checkContentPath(fs, io);
+		const unusable = await store.check();
 		if (unusable) {
 			new Notice(unusable, NOTICE_MS);
 			console.error(`Publish notes: ${unusable}`);
-			return;
+			return null;
 		}
-
-		const { index, skipped } = this.discover();
-		const oldManifest = await this.readManifest();
-		const newManifest = new Manifest();
-		const published: PublishedResult[] = [];
-		const failed: FailedResult[] = [];
-
-		for (const note of index.all()) {
-			const file = this.app.vault.getAbstractFileByPath(note.vaultPath);
-			if (!(file instanceof TFile)) {
-				continue;
-			}
-			const previous = oldManifest.get(note.vaultPath);
-			try {
-				newManifest.set(note.vaultPath, await this.writeBundle(io, file, note, index));
-				published.push({
-					path: note.vaultPath,
-					dest: note.dest,
-					url: note.url,
-					action: classifyAction(previous, note),
-					detail: movedDetail(previous, note),
-				});
-			} catch (error) {
-				if (previous) {
-					newManifest.set(note.vaultPath, previous);
-				}
-				const target = io.path.join(io.contentPath, note.bundleDir);
-				console.error(`Publish notes: ${note.vaultPath} -> ${target}`, error);
-				failed.push({
-					path: note.vaultPath,
-					target,
-					error: describeError(error),
-				});
-			}
-		}
-
-		const removed = this.removedNotes(oldManifest, newManifest);
-
-		const deletionErrors: string[] = [];
-		for (const deletion of oldManifest.reconcile(newManifest)) {
-			try {
-				await this.applyDeletion(io, deletion);
-			} catch (error) {
-				deletionErrors.push(`${deletion.bundleDir}: ${describeError(error)}`);
-			}
-		}
-		if (deletionErrors.length > 0) {
-			console.error(`Publish notes cleanup errors:\n${deletionErrors.join('\n')}`);
-		}
-
-		await this.writeManifest(newManifest);
-
-		const summary: SyncSummary = { published, failed, skipped, removed };
-		new SyncSummaryModal(this.app, summary).open();
-	}
-
-	private removedNotes(oldManifest: Manifest, newManifest: Manifest): RemovedResult[] {
-		const removed: RemovedResult[] = [];
-		for (const path of oldManifest.paths()) {
-			if (newManifest.get(path)) {
-				continue;
-			}
-			const entry = oldManifest.get(path);
-			removed.push({ path, bundleDir: entry?.bundleDir ?? '' });
-		}
-		return removed;
+		return store;
 	}
 
 	private discover(): DiscoveryResult {
 		const index = new PublishIndex();
 		const skipped: string[] = [];
 		for (const file of this.app.vault.getMarkdownFiles()) {
-			const frontmatter = this.app.metadataCache.getFileCache(file)?.frontmatter;
-			if (!frontmatter || frontmatter[PUBLISH_KEY] !== true) {
+			const state = shareState(this.app.metadataCache.getFileCache(file)?.frontmatter);
+			if (state.kind === 'unshared') {
 				continue;
 			}
-			const dest =
-				typeof frontmatter[DEST_KEY] === 'string' ? frontmatter[DEST_KEY].trim() : '';
-			if (!dest) {
+			if (state.kind === 'incomplete') {
 				skipped.push(file.path);
 				continue;
 			}
-			index.add(new PublishedNote(file.path, dest));
+			index.add(new PublishedNote(file.path, state.dest));
 		}
 		return { index, skipped };
 	}
 
 	private async writeBundle(
-		io: Io,
+		store: BundleStore,
 		file: TFile,
 		note: PublishedNote,
 		index: PublishIndex,
-	): Promise<ManifestEntry> {
+		owned: boolean,
+	): Promise<void> {
 		const cache = this.app.metadataCache.getFileCache(file);
 		const raw = await this.app.vault.read(file);
 		const frontmatterEnd = cache?.frontmatterPosition?.end.offset ?? 0;
 		const { references, attachments } = this.resolveReferences(file, cache, index);
 		const result = transformNote(raw, frontmatterEnd, references, FRONTMATTER_CONFIG);
 
-		const bundleDir = io.path.join(io.contentPath, note.bundleDir);
-		await io.fs.mkdir(bundleDir, { recursive: true });
-		await io.fs.writeFile(io.path.join(bundleDir, INDEX_FILE), result.content, 'utf8');
-
-		const files = [INDEX_FILE];
+		const files: BundleFile[] = [{ name: INDEX_FILE, data: result.content }];
 		for (const filename of result.attachments) {
 			const source = attachments.get(filename);
 			if (!source) {
 				continue;
 			}
 			const bytes = await this.app.vault.readBinary(source);
-			await io.fs.writeFile(io.path.join(bundleDir, filename), new Uint8Array(bytes));
-			files.push(filename);
+			files.push({ name: filename, data: new Uint8Array(bytes) });
 		}
 
-		return new ManifestEntry(note.dest, note.bundleDir, files);
+		await store.write(note.bundleDir, files, owned);
 	}
 
 	private resolveReferences(
@@ -202,7 +220,11 @@ export class HugoSync {
 		const attachments = new Map<string, TFile>();
 
 		for (const link of cache?.links ?? []) {
-			if (!rewritable(link)) {
+			if (linkpath(link.link).length === 0) {
+				continue;
+			}
+			const target = this.resolveNote(link.link, file);
+			if (!target && !isWikilink(link.original)) {
 				continue;
 			}
 			references.push(
@@ -210,7 +232,7 @@ export class HugoSync {
 					link,
 					false,
 					linkDisplayText(link),
-					this.resolveLink(link.link, file, index),
+					target ? this.resolveFile(target, index) : { kind: 'note', url: null },
 				),
 			);
 		}
@@ -244,12 +266,12 @@ export class HugoSync {
 		return { references, attachments };
 	}
 
-	private resolveLink(link: string, file: TFile, index: PublishIndex): Resolution {
+	private resolveNote(link: string, file: TFile): TFile | null {
 		const target = this.resolveTarget(link, file);
 		if (!target || target.extension !== 'md') {
-			return { kind: 'note', url: null };
+			return null;
 		}
-		return this.resolveFile(target, index);
+		return target;
 	}
 
 	private resolveFile(target: TFile, index: PublishIndex): Resolution {
@@ -270,60 +292,6 @@ export class HugoSync {
 	private resolveTarget(link: string, file: TFile): TFile | null {
 		return this.app.metadataCache.getFirstLinkpathDest(linkpath(link), file.path);
 	}
-
-	private async applyDeletion(io: Io, deletion: BundleDeletion): Promise<void> {
-		const bundleDir = io.path.join(io.contentPath, deletion.bundleDir);
-		for (const filename of deletion.files) {
-			await removeFile(io, io.path.join(bundleDir, filename));
-		}
-		if (deletion.removeDirIfEmpty) {
-			await removeDirIfEmpty(io, bundleDir);
-		}
-	}
-
-	private async readManifest(): Promise<Manifest> {
-		const target = this.manifestPath();
-		const adapter = this.app.vault.adapter;
-		if (!(await adapter.exists(target))) {
-			return new Manifest();
-		}
-		try {
-			return Manifest.parse(await adapter.read(target));
-		} catch {
-			return new Manifest();
-		}
-	}
-
-	private async writeManifest(manifest: Manifest): Promise<void> {
-		await this.app.vault.adapter.write(this.manifestPath(), manifest.serialize());
-	}
-
-	private manifestPath(): string {
-		return normalizePath(`${this.app.vault.configDir}/${MANIFEST_FILE}`);
-	}
-}
-
-function classifyAction(
-	previous: ManifestEntry | undefined,
-	note: PublishedNote,
-): 'created' | 'updated' | 'moved' {
-	if (!previous) {
-		return 'created';
-	}
-	if (previous.bundleDir !== note.bundleDir) {
-		return 'moved';
-	}
-	return 'updated';
-}
-
-function movedDetail(
-	previous: ManifestEntry | undefined,
-	note: PublishedNote,
-): string | null {
-	if (previous && previous.bundleDir !== note.bundleDir) {
-		return `from /${previous.bundleDir}/`;
-	}
-	return null;
 }
 
 function toReference(
@@ -344,51 +312,4 @@ function toReference(
 
 function rewritable(reference: ReferenceCache): boolean {
 	return isWikilink(reference.original) && linkpath(reference.link).length > 0;
-}
-
-function removeFile(io: Io, target: string): Promise<void> {
-	return io.fs.unlink(target).catch((error: unknown) => {
-		if (hasCode(error, MISSING_CODES)) {
-			return;
-		}
-		throw error;
-	});
-}
-
-function removeDirIfEmpty(io: Io, dir: string): Promise<void> {
-	return io.fs.rmdir(dir).catch((error: unknown) => {
-		if (hasCode(error, MISSING_CODES) || hasCode(error, NOT_EMPTY_CODES)) {
-			return;
-		}
-		throw error;
-	});
-}
-
-function hasCode(error: unknown, codes: Set<string>): boolean {
-	if (typeof error !== 'object' || error === null || !('code' in error)) {
-		return false;
-	}
-	const { code } = error;
-	return typeof code === 'string' && codes.has(code);
-}
-
-async function checkContentPath(
-	fs: typeof import('fs'),
-	io: Io,
-): Promise<string | null> {
-	const label = `Hugo content path ${io.contentPath}`;
-	try {
-		const stats = await io.fs.stat(io.contentPath);
-		if (!stats.isDirectory()) {
-			return `${label} is not a folder. Fix it in Dots settings.`;
-		}
-	} catch (error) {
-		return `${label} cannot be read: ${describeError(error)}. Fix it in Dots settings.`;
-	}
-	try {
-		await io.fs.access(io.contentPath, fs.constants.W_OK);
-	} catch (error) {
-		return `${label} is not writable: ${describeError(error)}. Fix it in Dots settings.`;
-	}
-	return null;
 }

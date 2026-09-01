@@ -3,6 +3,7 @@ import type DotsPlugin from './main';
 
 export interface DotsSettings {
 	hugoContentPath: string;
+	autoPublish: boolean;
 	ntfyServer: string;
 	ntfyTopic: string;
 	typewriterMode: boolean;
@@ -10,6 +11,7 @@ export interface DotsSettings {
 
 export const DEFAULT_SETTINGS: DotsSettings = {
 	hugoContentPath: '',
+	autoPublish: false,
 	ntfyServer: 'https://ntfy.sh',
 	ntfyTopic: '',
 	typewriterMode: false,
@@ -28,6 +30,19 @@ export class DotsSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
+			.setName('Typewriter mode')
+			.setDesc(
+				'Keep the line you are typing vertically centered, the way scrolloff=999 works in vim.',
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.typewriterMode)
+					.onChange(async (value) => {
+						await this.plugin.setTypewriterMode(value);
+					}),
+			);
+
+		new Setting(containerEl)
 			.setName('Hugo content path')
 			.setDesc(
 				'Path to your Hugo content directory. Can start with a tilde for your home folder. Notes with publish: true are exported here as leaf bundles. Desktop only.',
@@ -38,6 +53,20 @@ export class DotsSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.hugoContentPath)
 					.onChange(async (value) => {
 						this.plugin.settings.hugoContentPath = value;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName('Auto publish')
+			.setDesc(
+				'Publish a note a few seconds after you edit it, without running the command. Only notes with share: true and a dest are touched. Failures show a notice. Desktop only.',
+			)
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.autoPublish)
+					.onChange(async (value) => {
+						this.plugin.settings.autoPublish = value;
 						await this.plugin.saveSettings();
 					}),
 			);

@@ -3,8 +3,26 @@ export const DEST_KEY = 'dest';
 export const SOURCE_KEY = 'source';
 export const CONTROL_KEYS = [PUBLISH_KEY, DEST_KEY];
 
+export type ShareState =
+	| { kind: 'shared'; dest: string }
+	| { kind: 'incomplete' }
+	| { kind: 'unshared' };
+
+export function shareState(
+	frontmatter: Record<string, unknown> | undefined,
+): ShareState {
+	if (!frontmatter || frontmatter[PUBLISH_KEY] !== true) {
+		return { kind: 'unshared' };
+	}
+	const raw = frontmatter[DEST_KEY];
+	const dest = typeof raw === 'string' ? raw.trim() : '';
+	if (!dest) {
+		return { kind: 'incomplete' };
+	}
+	return { kind: 'shared', dest };
+}
+
 export const INDEX_FILE = 'index.md';
-export const MANIFEST_FILE = 'sync-manifest.json';
 
 const BLOG_SECTION = 'blog';
 const CATCHALL_SECTION = 'synced';
@@ -68,6 +86,10 @@ export class PublishIndex {
 
 	all(): PublishedNote[] {
 		return Array.from(this.notes.values());
+	}
+
+	bundleDirs(): string[] {
+		return this.all().map((note) => note.bundleDir);
 	}
 }
 
@@ -245,122 +267,36 @@ export function stripFrontmatterKeys(frontmatter: string, keys: string[]): strin
 	return rewriteFrontmatter(frontmatter, keys, {});
 }
 
-export interface BundleDeletion {
-	bundleDir: string;
-	files: string[];
-	removeDirIfEmpty: boolean;
+export interface BundleDiff {
+	stale: string[];
+	synced: string[];
 }
 
-export class ManifestEntry {
-	constructor(
-		public readonly dest: string,
-		public readonly bundleDir: string,
-		public readonly files: string[],
-	) {}
-}
-
-interface SerializedEntry {
-	dest: string;
-	bundleDir: string;
-	files: string[];
-}
-
-interface SerializedManifest {
-	version: number;
-	entries: Record<string, SerializedEntry>;
-}
-
-export class Manifest {
-	static readonly VERSION = 1;
-	private readonly entries = new Map<string, ManifestEntry>();
-
-	constructor(public readonly version: number = Manifest.VERSION) {}
-
-	static parse(raw: string): Manifest {
-		try {
-			const data = JSON.parse(raw) as Partial<SerializedManifest> | null;
-			if (!data || typeof data !== 'object' || !data.entries) {
-				return new Manifest();
-			}
-			const version =
-				typeof data.version === 'number' ? data.version : Manifest.VERSION;
-			const manifest = new Manifest(version);
-			for (const [vaultPath, entry] of Object.entries(data.entries)) {
-				if (!entry || typeof entry.bundleDir !== 'string') {
-					continue;
-				}
-				const files = Array.isArray(entry.files)
-					? entry.files.filter((file): file is string => typeof file === 'string')
-					: [];
-				const dest = typeof entry.dest === 'string' ? entry.dest : '';
-				manifest.set(vaultPath, new ManifestEntry(dest, entry.bundleDir, files));
-			}
-			return manifest;
-		} catch {
-			return new Manifest();
+export function diffBundles(
+	previous: Iterable<string>,
+	wanted: Iterable<string>,
+	written: Iterable<string>,
+): BundleDiff {
+	const keep = new Set(wanted);
+	const synced = new Set(written);
+	const stale: string[] = [];
+	for (const bundleDir of previous) {
+		if (!keep.has(bundleDir)) {
+			stale.push(bundleDir);
+			continue;
 		}
+		synced.add(bundleDir);
 	}
-
-	serialize(): string {
-		const entries: Record<string, SerializedEntry> = {};
-		for (const [vaultPath, entry] of this.entries) {
-			entries[vaultPath] = {
-				dest: entry.dest,
-				bundleDir: entry.bundleDir,
-				files: entry.files,
-			};
-		}
-		const data: SerializedManifest = { version: this.version, entries };
-		return `${JSON.stringify(data, null, 2)}\n`;
-	}
-
-	get(vaultPath: string): ManifestEntry | undefined {
-		return this.entries.get(vaultPath);
-	}
-
-	set(vaultPath: string, entry: ManifestEntry): void {
-		this.entries.set(vaultPath, entry);
-	}
-
-	paths(): string[] {
-		return Array.from(this.entries.keys());
-	}
-
-	reconcile(next: Manifest): BundleDeletion[] {
-		const deletions: BundleDeletion[] = [];
-		for (const [vaultPath, oldEntry] of this.entries) {
-			const newEntry = next.get(vaultPath);
-			if (!newEntry || newEntry.bundleDir !== oldEntry.bundleDir) {
-				deletions.push({
-					bundleDir: oldEntry.bundleDir,
-					files: oldEntry.files,
-					removeDirIfEmpty: true,
-				});
-				continue;
-			}
-			const dropped = oldEntry.files.filter(
-				(file) => !newEntry.files.includes(file),
-			);
-			if (dropped.length > 0) {
-				deletions.push({
-					bundleDir: oldEntry.bundleDir,
-					files: dropped,
-					removeDirIfEmpty: false,
-				});
-			}
-		}
-		return deletions;
-	}
+	return { stale, synced: Array.from(synced) };
 }
 
-export type SyncAction = 'created' | 'updated' | 'moved';
+export type SyncAction = 'created' | 'updated';
 
 export interface PublishedResult {
 	path: string;
 	dest: string;
 	url: string;
 	action: SyncAction;
-	detail: string | null;
 }
 
 export interface FailedResult {
@@ -370,7 +306,6 @@ export interface FailedResult {
 }
 
 export interface RemovedResult {
-	path: string;
 	bundleDir: string;
 }
 
@@ -404,6 +339,10 @@ export function noteName(link: string): string {
 }
 
 export function linkDisplayText(reference: LinkReference): string {
+	const written = markdownLinkText(reference.original);
+	if (written) {
+		return written;
+	}
 	if (reference.original.includes('|')) {
 		const alias = reference.displayText?.trim();
 		if (alias) {
@@ -411,6 +350,19 @@ export function linkDisplayText(reference: LinkReference): string {
 		}
 	}
 	return noteName(reference.link);
+}
+
+function markdownLinkText(original: string): string | null {
+	if (isWikilink(original)) {
+		return null;
+	}
+	const close = original.lastIndexOf('](');
+	if (close < 0) {
+		return null;
+	}
+	const open = original.startsWith('![') ? 2 : 1;
+	const text = original.slice(open, close).trim();
+	return text.length > 0 ? text : null;
 }
 
 export function isWikilink(original: string): boolean {

@@ -42,7 +42,7 @@ export default tseslint.config(
 		},
 	},
 	{
-		files: ['src/hugo-sync.ts', 'src/main.ts'],
+		files: ['src/hugo-sync.ts', 'src/main.ts', 'src/bundles.ts'],
 		languageOptions: {
 			globals: {
 				require: 'readonly',

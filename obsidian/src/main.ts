@@ -12,6 +12,7 @@ import { dayHeader, todayStamp } from './dates';
 import { ensureFolder, ensureNote } from './vault';
 import { DEFAULT_SETTINGS, DotsSettings, DotsSettingTab } from './settings';
 import { HugoSync } from './hugo-sync';
+import { AutoPublisher } from './auto-publish';
 import { typewriterScroll } from './typewriter';
 
 const DAILY_FOLDER = 'Daily';
@@ -19,6 +20,7 @@ const DAILY_FOLDER = 'Daily';
 export default class DotsPlugin extends Plugin {
 	settings!: DotsSettings;
 	private hugoSync!: HugoSync;
+	private autoPublisher!: AutoPublisher;
 	private weeklyNote!: WeeklyNote;
 	private typewriterExtension: Extension[] = [];
 
@@ -29,6 +31,13 @@ export default class DotsPlugin extends Plugin {
 			(await this.loadData()) as Partial<DotsSettings>,
 		);
 		this.hugoSync = new HugoSync(this.app, () => this.settings);
+		this.hugoSync.removeLegacyManifest().catch((error) => {
+			console.error(`Failed to remove legacy manifest: ${message(error)}`);
+		});
+		this.autoPublisher = new AutoPublisher(
+			this.hugoSync,
+			() => this.settings.autoPublish,
+		);
 		this.weeklyNote = new WeeklyNote(this.app);
 		this.addSettingTab(new DotsSettingTab(this.app, this));
 
@@ -110,6 +119,7 @@ export default class DotsPlugin extends Plugin {
 		});
 		this.addRibbonIcon('upload-cloud', 'Publish notes', () => this.syncToHugo());
 		this.app.workspace.onLayoutReady(async () => {
+			this.watchVault();
 			try {
 				await this.createTodayNote();
 			} catch (error) {
@@ -129,19 +139,32 @@ export default class DotsPlugin extends Plugin {
 			new Notice('Publishing notes is only available on desktop.');
 			return;
 		}
-		this.hugoSync.run().catch((error) => {
+		this.hugoSync.publishAll().catch((error) => {
 			new Notice(`Failed to publish notes: ${message(error)}`);
 		});
+	}
+
+	private watchVault() {
+		this.registerEvent(
+			this.app.metadataCache.on('changed', (file) => this.autoPublisher.queue(file)),
+		);
+		this.registerEvent(
+			this.app.vault.on('delete', (file) => this.autoPublisher.queue(file)),
+		);
 	}
 
 	async openWeeklyNote() {
 		await this.weeklyNote.open();
 	}
 
-	async toggleTypewriterMode() {
-		this.settings.typewriterMode = !this.settings.typewriterMode;
+	async setTypewriterMode(enabled: boolean) {
+		this.settings.typewriterMode = enabled;
 		await this.saveSettings();
 		this.applyTypewriterMode();
+	}
+
+	async toggleTypewriterMode() {
+		await this.setTypewriterMode(!this.settings.typewriterMode);
 		new Notice(`Typewriter mode ${this.settings.typewriterMode ? 'on' : 'off'}.`);
 	}
 

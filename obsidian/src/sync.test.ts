@@ -1,12 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-	Manifest,
-	ManifestEntry,
 	PublishedNote,
 	Resolution,
 	ResolvedReference,
 	describeError,
+	diffBundles,
 	expandHome,
 	isWikilink,
 	linkDisplayText,
@@ -14,6 +13,7 @@ import {
 	noteLinkUrl,
 	parseEmbedDisplay,
 	rewriteFrontmatter,
+	shareState,
 	stripFrontmatterKeys,
 	transformNote,
 } from './sync';
@@ -28,13 +28,6 @@ function ref(
 	const start = full.indexOf(original);
 	assert.notEqual(start, -1, `original not found in body: ${original}`);
 	return { start, end: start + original.length, isEmbed, text, original, resolution };
-}
-
-function only<T>(items: T[]): T {
-	assert.equal(items.length, 1);
-	const first = items[0];
-	assert.ok(first);
-	return first;
 }
 
 test('PublishedNote computes slug, bundleDir, and url', () => {
@@ -192,6 +185,35 @@ test('linkDisplayText uses the alias only when one was written', () => {
 	assert.equal(
 		text('[[other-note#heading|my alias]]', 'other-note#heading', 'my alias'),
 		'my alias',
+	);
+});
+
+test('rewrites a markdown link to a published note', () => {
+	const body = 'See [self feature](Ty%20Self.md) now.';
+	const out = transformNote(body, 0, [
+		ref(body, '[self feature](Ty%20Self.md)', 'self feature', {
+			kind: 'note',
+			url: '/blog/ty-self/',
+		}),
+	]);
+	assert.equal(out.content, 'See [self feature](/blog/ty-self/) now.');
+});
+
+test('linkDisplayText keeps the text written in a markdown link', () => {
+	assert.equal(
+		linkDisplayText({
+			original: '[self feature](Adding%20Support%20for%20Self%20to%20Ty.md)',
+			link: 'Adding Support for Self to Ty.md',
+			displayText: 'self feature',
+		}),
+		'self feature',
+	);
+});
+
+test('linkDisplayText falls back to the note name when a markdown link has no text', () => {
+	assert.equal(
+		linkDisplayText({ original: '[](Second%20Note.md)', link: 'Second Note.md' }),
+		'Second Note',
 	);
 });
 
@@ -450,59 +472,47 @@ test('describeError keeps the message and adds only missing detail', () => {
 	assert.equal(describeError('plain string'), 'plain string');
 });
 
-test('reconcile removes bundles for unpublished or deleted notes', () => {
-	const old = new Manifest();
-	old.set('Notes/A.md', new ManifestEntry('blog/a', 'blog/a', ['index.md', 'a.png']));
-	const deletion = only(old.reconcile(new Manifest()));
-	assert.deepEqual(deletion, {
-		bundleDir: 'blog/a',
-		files: ['index.md', 'a.png'],
-		removeDirIfEmpty: true,
+test('shareState separates a ready note from one still missing a dest', () => {
+	assert.deepEqual(shareState(undefined), { kind: 'unshared' });
+	assert.deepEqual(shareState({ title: 'note' }), { kind: 'unshared' });
+	assert.deepEqual(shareState({ share: false, dest: 'blog/post' }), {
+		kind: 'unshared',
+	});
+	assert.deepEqual(shareState({ share: true }), { kind: 'incomplete' });
+	assert.deepEqual(shareState({ share: true, dest: '   ' }), { kind: 'incomplete' });
+	assert.deepEqual(shareState({ share: true, dest: 42 }), { kind: 'incomplete' });
+	assert.deepEqual(shareState({ share: true, dest: ' blog/post ' }), {
+		kind: 'shared',
+		dest: 'blog/post',
 	});
 });
 
-test('reconcile removes the old bundle when dest moves', () => {
-	const old = new Manifest();
-	old.set('Notes/A.md', new ManifestEntry('blog/a', 'blog/a', ['index.md']));
-	const next = new Manifest();
-	next.set('Notes/A.md', new ManifestEntry('s/a', 's/a', ['index.md']));
-	const deletion = only(old.reconcile(next));
-	assert.equal(deletion.bundleDir, 'blog/a');
-	assert.equal(deletion.removeDirIfEmpty, true);
+test('diffBundles flags a folder nobody wants', () => {
+	const diff = diffBundles(['blog/a', 'blog/b'], ['blog/a'], ['blog/a']);
+	assert.deepEqual(diff.stale, ['blog/b']);
+	assert.deepEqual(diff.synced, ['blog/a']);
 });
 
-test('reconcile prunes orphan attachments for surviving bundles', () => {
-	const old = new Manifest();
-	old.set('Notes/A.md', new ManifestEntry('s/a', 's/a', ['index.md', 'old.png']));
-	const next = new Manifest();
-	next.set('Notes/A.md', new ManifestEntry('s/a', 's/a', ['index.md', 'new.png']));
-	const deletion = only(old.reconcile(next));
-	assert.deepEqual(deletion, {
-		bundleDir: 's/a',
-		files: ['old.png'],
-		removeDirIfEmpty: false,
-	});
+test('diffBundles flags the old folder after a dest change', () => {
+	const diff = diffBundles(['blog/old'], ['blog/new'], ['blog/new']);
+	assert.deepEqual(diff.stale, ['blog/old']);
+	assert.deepEqual(diff.synced, ['blog/new']);
 });
 
-test('reconcile leaves unchanged bundles alone', () => {
-	const old = new Manifest();
-	old.set('Notes/A.md', new ManifestEntry('s/a', 's/a', ['index.md']));
-	const next = new Manifest();
-	next.set('Notes/A.md', new ManifestEntry('s/a', 's/a', ['index.md']));
-	assert.deepEqual(old.reconcile(next), []);
+test('diffBundles removes nothing when nothing was synced before', () => {
+	const diff = diffBundles([], ['blog/a'], ['blog/a']);
+	assert.deepEqual(diff.stale, []);
+	assert.deepEqual(diff.synced, ['blog/a']);
 });
 
-test('Manifest round-trips through serialize and parse', () => {
-	const manifest = new Manifest();
-	manifest.set('Notes/A.md', new ManifestEntry('blog/a', 'blog/a', ['index.md', 'a.png']));
-	const parsed = Manifest.parse(manifest.serialize());
-	const entry = parsed.get('Notes/A.md');
-	assert.ok(entry);
-	assert.equal(entry.bundleDir, 'blog/a');
-	assert.deepEqual(entry.files, ['index.md', 'a.png']);
+test('diffBundles keeps a wanted folder that this run did not write', () => {
+	const diff = diffBundles(['blog/a', 'blog/b'], ['blog/a', 'blog/b'], ['blog/b']);
+	assert.deepEqual(diff.stale, []);
+	assert.deepEqual(diff.synced.sort(), ['blog/a', 'blog/b']);
 });
 
-test('Manifest.parse falls back to empty on invalid input', () => {
-	assert.deepEqual(Manifest.parse('not json').reconcile(new Manifest()), []);
-	assert.equal(Manifest.parse('{}').get('anything'), undefined);
+test('diffBundles drops a wanted folder that was never written', () => {
+	const diff = diffBundles([], ['blog/a'], []);
+	assert.deepEqual(diff.stale, []);
+	assert.deepEqual(diff.synced, []);
 });
