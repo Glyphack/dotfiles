@@ -36,13 +36,13 @@ export default tseslint.config(
 			'obsidianmd/ui/sentence-case': [
 				'error',
 				{
-					brands: ['Hugo', 'Dots'],
+					brands: ['Hugo', 'Dots', 'EXIF'],
 				},
 			],
 		},
 	},
 	{
-		files: ['src/hugo-sync.ts', 'src/main.ts', 'src/bundles.ts'],
+		files: ['src/hugo-sync.ts', 'src/main.ts', 'src/bundles.ts', 'src/image.ts'],
 		languageOptions: {
 			globals: {
 				require: 'readonly',
@@ -58,6 +58,7 @@ export default tseslint.config(
 		rules: {
 			'import/no-nodejs-modules': 'off',
 			'@typescript-eslint/no-floating-promises': 'off',
+			'no-restricted-globals': 'off',
 		},
 	},
 );

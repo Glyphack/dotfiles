@@ -1,1 +1,1 @@
-brew bundle dump -f ~/Programming/dotfiles/Brewfile
+brew bundle install --cleanup --file=~/Programming/dotfiles/Brewfile

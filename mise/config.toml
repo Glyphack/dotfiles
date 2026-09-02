@@ -51,6 +51,7 @@ node = "24"
 "npm:typescript-language-server" = "latest"
 "npm:typescript" = "latest"
 hunk = "latest"
+"pipx:pre-commit" = "latest"
 
 [settings]
 experimental = true
