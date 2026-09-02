@@ -1,12 +1,14 @@
 import {
 	App,
 	CachedMetadata,
+	FileSystemAdapter,
 	Notice,
 	ReferenceCache,
 	TFile,
 	normalizePath,
 } from 'obsidian';
 import { DotsSettings } from './settings';
+import { ExifTool } from './image';
 import { BundleFile, BundleStore } from './bundles';
 import {
 	FRONTMATTER_CONFIG,
@@ -37,6 +39,14 @@ interface DiscoveryResult {
 	skipped: string[];
 }
 
+interface PreparedNote {
+	note: PublishedNote;
+	file: TFile;
+	references: ResolvedReference[];
+	attachments: Map<string, TFile>;
+	missingEmbeds: string[];
+}
+
 const NOTICE_MS = 15000;
 const LEGACY_MANIFEST_FILE = 'sync-manifest.json';
 
@@ -46,6 +56,7 @@ export class HugoSync {
 	constructor(
 		private readonly app: App,
 		private readonly getSettings: () => DotsSettings,
+		private readonly exiftool: ExifTool,
 	) {}
 
 	async publishAll(): Promise<void> {
@@ -93,17 +104,32 @@ export class HugoSync {
 		const targets =
 			only === null ? index.all() : index.all().filter((note) => note.vaultPath === only);
 
-		const published: PublishedResult[] = [];
-		const failed: FailedResult[] = [];
-		const written: string[] = [];
+		const prepared: PreparedNote[] = [];
 		for (const note of targets) {
 			const file = this.app.vault.getAbstractFileByPath(note.vaultPath);
 			if (!(file instanceof TFile)) {
 				continue;
 			}
+			const cache = this.app.metadataCache.getFileCache(file);
+			prepared.push({ note, file, ...this.resolveReferences(file, cache, index) });
+		}
+
+		const metadataFailures = await this.removeAttachmentMetadata(prepared);
+
+		const published: PublishedResult[] = [];
+		const failed: FailedResult[] = [];
+		const written: string[] = [];
+		for (const item of prepared) {
+			const { note } = item;
+			const target = store.path.join(store.contentPath, note.bundleDir);
+			const problems = publishProblems(item, metadataFailures);
+			if (problems.length > 0) {
+				failed.push({ path: note.vaultPath, target, error: problems.join('; ') });
+				continue;
+			}
 			const known = owned.has(note.bundleDir);
 			try {
-				await this.writeBundle(store, file, note, index, known);
+				await this.writeBundle(store, item, known);
 				written.push(note.bundleDir);
 				published.push({
 					path: note.vaultPath,
@@ -112,7 +138,6 @@ export class HugoSync {
 					action: known ? 'updated' : 'created',
 				});
 			} catch (error) {
-				const target = store.path.join(store.contentPath, note.bundleDir);
 				console.error(`Publish notes: ${note.vaultPath} -> ${target}`, error);
 				failed.push({ path: note.vaultPath, target, error: describeError(error) });
 			}
@@ -128,6 +153,40 @@ export class HugoSync {
 			skipped,
 			removed: diff.stale.map((bundleDir) => ({ bundleDir })),
 		};
+	}
+
+	private async removeAttachmentMetadata(
+		prepared: PreparedNote[],
+	): Promise<Map<string, string>> {
+		const attachments = new Map<string, string>();
+		const adapter = this.app.vault.adapter;
+		for (const item of prepared) {
+			for (const file of item.attachments.values()) {
+				if (attachments.has(file.path)) {
+					continue;
+				}
+				if (!(adapter instanceof FileSystemAdapter)) {
+					throw new Error('Publishing attachments needs the desktop app.');
+				}
+				attachments.set(file.path, adapter.getFullPath(file.path));
+			}
+		}
+		if (attachments.size === 0) {
+			return new Map();
+		}
+
+		const report = await this.exiftool.removeMetadata(Array.from(attachments.values()));
+
+		const vaultPathByAbsolute = new Map<string, string>();
+		for (const [vaultPath, absolute] of attachments) {
+			vaultPathByAbsolute.set(absolute, vaultPath);
+		}
+		const failures = new Map<string, string>();
+		for (const failure of report.failures) {
+			const vaultPath = vaultPathByAbsolute.get(failure.path) ?? failure.path;
+			failures.set(vaultPath, failure.reason);
+		}
+		return failures;
 	}
 
 	private async removeBundles(store: BundleStore, bundleDirs: string[]): Promise<void> {
@@ -187,15 +246,13 @@ export class HugoSync {
 
 	private async writeBundle(
 		store: BundleStore,
-		file: TFile,
-		note: PublishedNote,
-		index: PublishIndex,
+		item: PreparedNote,
 		owned: boolean,
 	): Promise<void> {
+		const { note, file, references, attachments } = item;
 		const cache = this.app.metadataCache.getFileCache(file);
 		const raw = await this.app.vault.read(file);
 		const frontmatterEnd = cache?.frontmatterPosition?.end.offset ?? 0;
-		const { references, attachments } = this.resolveReferences(file, cache, index);
 		const result = transformNote(raw, frontmatterEnd, references, FRONTMATTER_CONFIG);
 
 		const files: BundleFile[] = [{ name: INDEX_FILE, data: result.content }];
@@ -215,9 +272,14 @@ export class HugoSync {
 		file: TFile,
 		cache: CachedMetadata | null,
 		index: PublishIndex,
-	): { references: ResolvedReference[]; attachments: Map<string, TFile> } {
+	): {
+		references: ResolvedReference[];
+		attachments: Map<string, TFile>;
+		missingEmbeds: string[];
+	} {
 		const references: ResolvedReference[] = [];
 		const attachments = new Map<string, TFile>();
+		const missingEmbeds: string[] = [];
 
 		for (const link of cache?.links ?? []) {
 			if (linkpath(link.link).length === 0) {
@@ -240,6 +302,7 @@ export class HugoSync {
 		for (const embed of cache?.embeds ?? []) {
 			const target = this.resolveTarget(embed.link, file);
 			if (!target) {
+				missingEmbeds.push(embed.link);
 				continue;
 			}
 			if (target.extension === 'md') {
@@ -263,7 +326,7 @@ export class HugoSync {
 			);
 		}
 
-		return { references, attachments };
+		return { references, attachments, missingEmbeds };
 	}
 
 	private resolveNote(link: string, file: TFile): TFile | null {
@@ -308,6 +371,24 @@ function toReference(
 		original: reference.original,
 		resolution,
 	};
+}
+
+function publishProblems(item: PreparedNote, failures: Map<string, string>): string[] {
+	const problems: string[] = [];
+	if (item.missingEmbeds.length > 0) {
+		problems.push(`unresolved embeds: ${item.missingEmbeds.join(', ')}`);
+	}
+	const blocked: string[] = [];
+	for (const file of item.attachments.values()) {
+		const reason = failures.get(file.path);
+		if (reason) {
+			blocked.push(`${file.name} (${reason})`);
+		}
+	}
+	if (blocked.length > 0) {
+		problems.push(`EXIF removal failed: ${blocked.join('; ')}`);
+	}
+	return problems;
 }
 
 function rewritable(reference: ReferenceCache): boolean {

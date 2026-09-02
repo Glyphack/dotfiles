@@ -62,15 +62,21 @@ The site generator picks up the notes and generates pages for them.
 There are two kinds of notes:
 
 - blogs: These end up in content/blog
-- non-blogs: These end up in content/synced
+- pages: These end up in content/synced
 
 The synced notes have a `layout` property that defines what template is used to render them.
 Blogs are rendered as normal posts.
 
-To publish a note:
+Tags:
 
-Add `share: true` property.
-Add `dest` property, for a blog it's `blog/my-post` and for a note it's `my-note`. Notes are moved to `synced` because they don't have blog prefix in destination.
+- `share: true`: publish this note.
+- `dest`: for a blog it's `blog/my-post` and for a page it's `my-note`. Pages end up in `s/my-note`
+
+hugo tags are also supported:
+- `url` to specify what URL to use.
+- `layout`
+
+
 
 Run `publish-notes` command and the notes are copied to blog folder.
 
@@ -136,6 +142,17 @@ Attachments live next to not so ![a chart](attachments/chart.png) becomes  ![a c
 The frontmatter links are untouched and just unwrapped.
 
 Links like [[other-note#heading]] will end up as (other-note)[/path/to/note] so the heading information is dropped.
+
+### Image metadata
+
+Publishing needs `exiftool` installed (`brew install exiftool`).
+
+This is for removing exif metadata like location from the image before publishing.
+
+Two commands clean images without publishing:
+
+- `Remove EXIF data`: cleans the images embedded in the current note.
+- `Remove EXIF data from all files`: checks every file in the vault and cleans all images.
 
 ## Todo
 

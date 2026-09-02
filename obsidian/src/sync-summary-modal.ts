@@ -24,8 +24,8 @@ export class SyncSummaryModal extends Modal {
 		}
 
 		this.renderFailed();
-		this.renderPublished();
 		this.renderSkipped();
+		this.renderPublished();
 		this.renderRemoved();
 	}
 
@@ -50,8 +50,9 @@ export class SyncSummaryModal extends Modal {
 		if (items.length === 0) {
 			return;
 		}
-		this.contentEl.createEl('h3', { text: `Failed (${items.length})` });
-		const list = this.contentEl.createEl('ul');
+		const section = this.contentEl.createDiv({ cls: 'dots-sync-failed' });
+		section.createEl('h3', { text: `Failed (${items.length})` });
+		const list = section.createEl('ul');
 		for (const item of items) {
 			list.createEl('li', { text: describeFailure(item) });
 		}
@@ -62,10 +63,11 @@ export class SyncSummaryModal extends Modal {
 		if (items.length === 0) {
 			return;
 		}
-		this.contentEl.createEl('h3', {
+		const section = this.contentEl.createDiv({ cls: 'dots-sync-skipped' });
+		section.createEl('h3', {
 			text: `Skipped, no ${DEST_LABEL} (${items.length})`,
 		});
-		const list = this.contentEl.createEl('ul');
+		const list = section.createEl('ul');
 		for (const path of items) {
 			list.createEl('li', { text: path });
 		}

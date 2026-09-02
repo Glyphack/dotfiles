@@ -36,3 +36,13 @@
 	white-space: pre-wrap;
 	word-break: break-word;
 }
+
+.dots-sync-failed h3,
+.dots-sync-failed li {
+	color: var(--text-error);
+}
+
+.dots-sync-skipped h3,
+.dots-sync-skipped li {
+	color: var(--text-warning);
+}

@@ -1,4 +1,11 @@
-import { Notice, ObsidianProtocolData, Platform, Plugin } from 'obsidian';
+import {
+	FileSystemAdapter,
+	Notice,
+	ObsidianProtocolData,
+	Platform,
+	Plugin,
+	TFile,
+} from 'obsidian';
 import { Extension } from '@codemirror/state';
 import { LogEntry, LogInput } from './log';
 import { LogModal } from './log-modal';
@@ -13,6 +20,8 @@ import { ensureFolder, ensureNote } from './vault';
 import { DEFAULT_SETTINGS, DotsSettings, DotsSettingTab } from './settings';
 import { HugoSync } from './hugo-sync';
 import { AutoPublisher } from './auto-publish';
+import { linkpath } from './sync';
+import { ExifTool } from './image';
 import { typewriterScroll } from './typewriter';
 
 const DAILY_FOLDER = 'Daily';
@@ -22,6 +31,7 @@ export default class DotsPlugin extends Plugin {
 	private hugoSync!: HugoSync;
 	private autoPublisher!: AutoPublisher;
 	private weeklyNote!: WeeklyNote;
+	private readonly exiftool = new ExifTool();
 	private typewriterExtension: Extension[] = [];
 
 	async onload() {
@@ -30,7 +40,7 @@ export default class DotsPlugin extends Plugin {
 			DEFAULT_SETTINGS,
 			(await this.loadData()) as Partial<DotsSettings>,
 		);
-		this.hugoSync = new HugoSync(this.app, () => this.settings);
+		this.hugoSync = new HugoSync(this.app, () => this.settings, this.exiftool);
 		this.hugoSync.removeLegacyManifest().catch((error) => {
 			console.error(`Failed to remove legacy manifest: ${message(error)}`);
 		});
@@ -106,6 +116,24 @@ export default class DotsPlugin extends Plugin {
 			name: 'Publish notes',
 			callback: () => this.syncToHugo(),
 		});
+		this.addCommand({
+			id: 'remove-exif-current',
+			name: 'Remove EXIF data',
+			callback: () => {
+				this.removeExifFromCurrentNote().catch((error) => {
+					new Notice(`Failed to remove EXIF data: ${message(error)}`);
+				});
+			},
+		});
+		this.addCommand({
+			id: 'remove-exif-all',
+			name: 'Remove EXIF data from all files',
+			callback: () => {
+				this.removeExifFromVault().catch((error) => {
+					new Notice(`Failed to remove EXIF data: ${message(error)}`);
+				});
+			},
+		});
 		this.registerEditorExtension(this.typewriterExtension);
 		this.applyTypewriterMode();
 		this.addCommand({
@@ -142,6 +170,66 @@ export default class DotsPlugin extends Plugin {
 		this.hugoSync.publishAll().catch((error) => {
 			new Notice(`Failed to publish notes: ${message(error)}`);
 		});
+	}
+
+	private async removeExifFromCurrentNote() {
+		const active = this.app.workspace.getActiveFile();
+		if (!active) {
+			new Notice('No active note.');
+			return;
+		}
+		const embeds = this.app.metadataCache.getFileCache(active)?.embeds ?? [];
+		const files: TFile[] = [];
+		const seen = new Set<string>();
+		for (const embed of embeds) {
+			const target = this.app.metadataCache.getFirstLinkpathDest(
+				linkpath(embed.link),
+				active.path,
+			);
+			if (!(target instanceof TFile) || target.extension === 'md') {
+				continue;
+			}
+			if (seen.has(target.path)) {
+				continue;
+			}
+			seen.add(target.path);
+			files.push(target);
+		}
+		if (files.length === 0) {
+			new Notice('No attachments in the current note.');
+			return;
+		}
+		await this.removeExif(files);
+	}
+
+	private async removeExifFromVault() {
+		const files = this.app.vault.getFiles().filter((file) => file.extension !== 'md');
+		if (files.length === 0) {
+			new Notice('No files to check.');
+			return;
+		}
+		await this.removeExif(files);
+	}
+
+	private async removeExif(files: TFile[]) {
+		const adapter = this.app.vault.adapter;
+		if (!Platform.isDesktopApp || !(adapter instanceof FileSystemAdapter)) {
+			new Notice('Removing EXIF data is only available on desktop.');
+			return;
+		}
+		new Notice(`Checking ${files.length} files for EXIF data...`);
+		const report = await this.exiftool.removeMetadata(
+			files.map((file) => adapter.getFullPath(file.path)),
+		);
+		new Notice(report.describe());
+		if (report.failures.length > 0) {
+			console.error('EXIF removal failures:', report.failures);
+			const names = report.failures
+				.slice(0, 3)
+				.map((failure) => failure.path.split('/').pop() ?? failure.path);
+			const more = report.failures.length > 3 ? ', ...' : '';
+			new Notice(`Could not clean: ${names.join(', ')}${more} (details in console).`);
+		}
 	}
 
 	private watchVault() {
