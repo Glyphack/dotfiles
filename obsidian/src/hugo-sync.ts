@@ -8,7 +8,7 @@ import {
 	normalizePath,
 } from 'obsidian';
 import { DotsSettings } from './settings';
-import { ExifTool } from './image';
+import type { ExifTool } from './image';
 import { BundleFile, BundleStore } from './bundles';
 import {
 	FRONTMATTER_CONFIG,
@@ -56,7 +56,7 @@ export class HugoSync {
 	constructor(
 		private readonly app: App,
 		private readonly getSettings: () => DotsSettings,
-		private readonly exiftool: ExifTool,
+		private readonly loadExifTool: () => Promise<ExifTool>,
 	) {}
 
 	async publishAll(): Promise<void> {
@@ -175,7 +175,8 @@ export class HugoSync {
 			return new Map();
 		}
 
-		const report = await this.exiftool.removeMetadata(Array.from(attachments.values()));
+		const exiftool = await this.loadExifTool();
+		const report = await exiftool.removeMetadata(Array.from(attachments.values()));
 
 		const vaultPathByAbsolute = new Map<string, string>();
 		for (const [vaultPath, absolute] of attachments) {
