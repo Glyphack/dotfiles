@@ -677,12 +677,10 @@ end
 autostart:start()
 
 -- SOUND
-local GlobalMute = hs.loadSpoon("GlobalMute")
-GlobalMute:bindHotkeys({
-	toggle = GetShortcut("toggle_mute"),
+hs.spoons.use("Mic", {
+	hotkeys = { toggle = GetShortcut("toggle_mute") },
+	start = true,
 })
-GlobalMute:configure({})
-GlobalMute:unmute()
 
 local PREFERRED_OUT = {
 	"WH-1000XM5",

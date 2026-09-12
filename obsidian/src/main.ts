@@ -21,7 +21,7 @@ import { DEFAULT_SETTINGS, DotsSettings, DotsSettingTab } from './settings';
 import { HugoSync } from './hugo-sync';
 import { AutoPublisher } from './auto-publish';
 import { linkpath } from './sync';
-import { ExifTool } from './image';
+import type { ExifTool } from './image';
 import { typewriterScroll } from './typewriter';
 
 const DAILY_FOLDER = 'Daily';
@@ -31,7 +31,7 @@ export default class DotsPlugin extends Plugin {
 	private hugoSync!: HugoSync;
 	private autoPublisher!: AutoPublisher;
 	private weeklyNote!: WeeklyNote;
-	private readonly exiftool = new ExifTool();
+	private exiftool: ExifTool | null = null;
 	private typewriterExtension: Extension[] = [];
 
 	async onload() {
@@ -40,7 +40,9 @@ export default class DotsPlugin extends Plugin {
 			DEFAULT_SETTINGS,
 			(await this.loadData()) as Partial<DotsSettings>,
 		);
-		this.hugoSync = new HugoSync(this.app, () => this.settings, this.exiftool);
+		this.hugoSync = new HugoSync(this.app, () => this.settings, () =>
+			this.loadExifTool(),
+		);
 		this.hugoSync.removeLegacyManifest().catch((error) => {
 			console.error(`Failed to remove legacy manifest: ${message(error)}`);
 		});
@@ -172,6 +174,16 @@ export default class DotsPlugin extends Plugin {
 		});
 	}
 
+	// image.ts pulls in node builtins that only exist in the desktop app, so it
+	// is loaded on demand instead of at plugin load.
+	private async loadExifTool(): Promise<ExifTool> {
+		if (!this.exiftool) {
+			const { ExifTool } = await import('./image');
+			this.exiftool = new ExifTool();
+		}
+		return this.exiftool;
+	}
+
 	private async removeExifFromCurrentNote() {
 		const active = this.app.workspace.getActiveFile();
 		if (!active) {
@@ -218,7 +230,8 @@ export default class DotsPlugin extends Plugin {
 			return;
 		}
 		new Notice(`Checking ${files.length} files for EXIF data...`);
-		const report = await this.exiftool.removeMetadata(
+		const exiftool = await this.loadExifTool();
+		const report = await exiftool.removeMetadata(
 			files.map((file) => adapter.getFullPath(file.path)),
 		);
 		new Notice(report.describe());
