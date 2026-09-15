@@ -1,0 +1,25 @@
+var rule = {
+  description: 'Section sign to backtick',
+  manipulators: [
+    {
+      type: 'basic',
+      from: { key_code: 'non_us_backslash' },
+      to: [{ key_code: 'grave_accent_and_tilde' }],
+    },
+    {
+      type: 'basic',
+      from: { key_code: 'non_us_backslash', modifiers: { mandatory: ['option'] } },
+      to: [{ key_code: 'grave_accent_and_tilde', modifiers: ['option'] }],
+    },
+    {
+      type: 'basic',
+      from: {
+        key_code: 'non_us_backslash',
+        modifiers: { mandatory: ['shift'], optional: ['caps_lock'] },
+      },
+      to: [{ key_code: 'grave_accent_and_tilde', modifiers: ['shift'] }],
+    },
+  ],
+}
+
+rule

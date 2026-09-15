@@ -10,7 +10,7 @@ link::
 	mkdir -p ${HOME}/.config/nvim && stow --adopt --target=${HOME}/.config/nvim nvim
 	mkdir -p ${HOME}/.config/mise && stow --adopt --target=${HOME}/.config/mise mise
 	mkdir -p ${HOME}/.config/fd && stow --adopt --target=${HOME}/.config/fd fd
-	python3 karabiner/karabiner_generate.py
+	sh karabiner/build.sh
 	[ "$$(readlink ${HOME}/.config/karabiner)" = "${CURDIR}/karabiner" ] || { \
 		mkdir -p ${HOME}/.config && rm -rf ${HOME}/.config/karabiner && ln -s ${CURDIR}/karabiner ${HOME}/.config/karabiner && \
 		{ launchctl kickstart -k gui/$$(id -u)/org.pqrs.service.agent.Karabiner-Console-User-Server || true; }; }

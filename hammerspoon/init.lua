@@ -18,6 +18,8 @@ HYPER = { "cmd", "ctrl", "alt" }
 local hasCustom, custom = pcall(require, "custom")
 local _, _ = pcall(require, "secrets")
 require("karabiner")
+local windowChooser = require("window_chooser")
+local bookmarkChooser = require("bookmark_chooser")
 
 if ipc.cliStatus() ~= true then
 	ipc.cliInstall()
@@ -458,6 +460,24 @@ SHORTCUTS = {
 	},
 	{ "grid", HYPER, "g", "show grid", grid.show },
 	{ "layout_split", HYPER, "6", "Brave+WezTerm split", applyLayout(braveWezTermLayout) },
+	{
+		"window_chooser",
+		HYPER,
+		"m",
+		"choose window",
+		function()
+			windowChooser:show()
+		end,
+	},
+	{
+		"bookmark_chooser",
+		HYPER,
+		"b",
+		"choose bookmark",
+		function()
+			bookmarkChooser:show()
+		end,
+	},
 	-- Screen (Spoon-managed)
 	{ "screen_left", HYPER, "[", "move to left screen", nil },
 	{ "screen_right", HYPER, "]", "move to right screen", nil },
@@ -607,19 +627,36 @@ end
 local appWatcher = application.watcher.new(handleAppLaunch)
 appWatcher:start()
 
+local AUTOSTART_HIDE_DELAYS = { 0, 0.5, 1.5, 3 }
+local AUTOSTART_WATCHER_TIMEOUT = 60
+local AUTOSTART_VERIFY_DELAY = 15
+
 local autostart = {
 	apps = {
-		"Todoist",
-		"Igloo",
-		"Whispertron",
-		"Flameshot",
+		{ name = "Todoist", bundleID = "com.todoist.mac.Todoist" },
+		{ name = "Igloo", bundleID = "com.igloo.client" },
+		{ name = "Whispertron", bundleID = "com.glyphack.whispertron" },
+		{ name = "Flameshot", bundleID = "org.flameshot.Flameshot" },
+		{ name = "Raycast", bundleID = "com.raycast.macos" },
 	},
 	pending = {},
+	tasks = {},
 	watcher = nil,
 }
 
+-- Menu bar only apps never show a window, and hiding them leaves them stuck in a
+-- hidden state where their hotkeys stop working.
+function autostart:isMenuBarApp(entry)
+	local info = application.infoForBundleID(entry.bundleID)
+	if not info then
+		return false
+	end
+	local flag = info.LSUIElement
+	return flag == true or flag == 1 or flag == "1"
+end
+
 function autostart:hideApp(app)
-	for _, delay in ipairs({ 0, 0.5, 1.5, 3 }) do
+	for _, delay in ipairs(AUTOSTART_HIDE_DELAYS) do
 		timer.doAfter(delay, function()
 			if not app:isHidden() then
 				app:hide()
@@ -636,41 +673,117 @@ function autostart:stop()
 	self.watcher = nil
 end
 
-function autostart:onAppEvent(appName, eventType, app)
-	if eventType ~= application.watcher.launched or appName == nil then
+function autostart:onAppEvent(_, eventType, app)
+	if eventType ~= application.watcher.launched or app == nil then
 		return
 	end
-	local key = appName:lower()
-	if not self.pending[key] then
+	local bundleID = app:bundleID()
+	if not bundleID then
 		return
 	end
-	self.pending[key] = nil
+	local entry = self.pending[bundleID]
+	if not entry then
+		return
+	end
+	self.pending[bundleID] = nil
 	self:hideApp(app)
 	if next(self.pending) == nil then
 		self:stop()
 	end
 end
 
+function autostart:shouldLaunch(entry)
+	local path = application.pathForBundleID(entry.bundleID)
+	if path == nil or path == "" then
+		log.ef("autostart: skipping %s, no app installed with bundle id %s", entry.name, entry.bundleID)
+		return false
+	end
+	local running = application.get(entry.bundleID)
+	if running then
+		log.f("autostart: skipping %s, already running as pid %d", entry.name, running:pid())
+		return false
+	end
+	log.f("autostart: launching %s from %s", entry.name, path)
+	return true
+end
+
+function autostart:launch(entry)
+	local args = { "-g", "-b", entry.bundleID }
+	if self.pending[entry.bundleID] then
+		table.insert(args, 2, "-j")
+	end
+
+	local task = hs.task.new("/usr/bin/open", function(code, stdout, stderr)
+		self.tasks[entry.bundleID] = nil
+		if code == 0 then
+			return
+		end
+		self.pending[entry.bundleID] = nil
+		log.ef(
+			"autostart: open failed for %s with exit code %d: %s",
+			entry.name,
+			code,
+			(stderr ~= "" and stderr) or stdout or "no output"
+		)
+	end, args)
+
+	if not task then
+		self.pending[entry.bundleID] = nil
+		log.ef("autostart: could not build the open task for %s", entry.name)
+		return
+	end
+
+	self.tasks[entry.bundleID] = task
+	if not task:start() then
+		self.tasks[entry.bundleID] = nil
+		self.pending[entry.bundleID] = nil
+		log.ef("autostart: could not run open for %s", entry.name)
+		return
+	end
+
+	timer.doAfter(AUTOSTART_VERIFY_DELAY, function()
+		if application.get(entry.bundleID) then
+			return
+		end
+		log.ef("autostart: %s is still not running %d seconds after launching it", entry.name, AUTOSTART_VERIFY_DELAY)
+	end)
+end
+
+function autostart:onWatcherTimeout()
+	for _, entry in pairs(self.pending) do
+		log.ef("autostart: never saw %s launch, so it was left visible", entry.name)
+	end
+	self.pending = {}
+	self:stop()
+end
+
 function autostart:start()
 	local toLaunch = {}
-	for _, name in ipairs(self.apps) do
-		if not application.get(name) then
-			table.insert(toLaunch, name)
-			self.pending[name:lower()] = true
+	for _, entry in ipairs(self.apps) do
+		if self:shouldLaunch(entry) then
+			table.insert(toLaunch, entry)
+			if not self:isMenuBarApp(entry) then
+				self.pending[entry.bundleID] = entry
+			end
 		end
 	end
+
 	if #toLaunch == 0 then
 		return
 	end
-	self.watcher = application.watcher.new(function(appName, eventType, app)
-		self:onAppEvent(appName, eventType, app)
-	end)
-	self.watcher:start()
-	timer.doAfter(60, function()
-		self:stop()
-	end)
-	for _, name in ipairs(toLaunch) do
-		hs.task.new("/usr/bin/open", nil, { "-gj", "-a", name }):start()
+
+	if next(self.pending) ~= nil then
+		self.watcher = application.watcher.new(function(appName, eventType, app)
+			self:onAppEvent(appName, eventType, app)
+		end)
+		self.watcher:start()
+		timer.doAfter(AUTOSTART_WATCHER_TIMEOUT, function()
+			self:onWatcherTimeout()
+		end)
+	end
+
+	for _, entry in ipairs(toLaunch) do
+		self:launch(entry)
 	end
 end
 

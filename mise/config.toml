@@ -2,7 +2,7 @@
 
 [tools]
 # General
-"github:wezterm/wezterm" = "nightly"
+# "github:wezterm/wezterm" = "nightly"
 "github:sharkdp/fd" = "latest"
 prek = "latest"
 meson = "latest"
@@ -15,6 +15,7 @@ meson = "latest"
 # Go
 go = "1.26"
 "go:golang.org/x/tools/gopls" = "latest"
+"go:golang.org/x/tools/cmd/goimports" = "latest"
 golangci-lint = "v2.11.3"
 
 # Rust
