@@ -638,6 +638,7 @@ local autostart = {
 		{ name = "Whispertron", bundleID = "com.glyphack.whispertron" },
 		{ name = "Flameshot", bundleID = "org.flameshot.Flameshot" },
 		{ name = "Raycast", bundleID = "com.raycast.macos" },
+		{ name = "MonitorControl", bundleID = "app.monitorcontrol.MonitorControl" },
 	},
 	pending = {},
 	tasks = {},
@@ -1043,3 +1044,8 @@ end
 
 local lightsWatcher = hs.caffeinate.watcher.new(ToggleLights)
 lightsWatcher:start()
+
+-- Omacy configuration DO NOT EDIT
+local omacy = require("omacy")
+omacy.apply()
+-- Omacy configuration DO NOT EDIT

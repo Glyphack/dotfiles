@@ -1198,13 +1198,15 @@ require("lazy").setup({
 	{
 		"obsidian-nvim/obsidian.nvim",
 		version = "*",
+		ft = "markdown",
+		cmd = "Obsidian",
 		config = function()
 			require("obsidian").setup({
 				legacy_commands = false,
 				workspaces = {
 					{
 						name = "personal",
-						path = "$vault",
+						path = vim.fn.expand("$vault"),
 					},
 				},
 				picker = {
