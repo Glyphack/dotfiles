@@ -1,0 +1,21 @@
+mode({
+  description: 'd layer: numbers',
+  trigger: 'd',
+  variable: 'dmode',
+  mappings: [
+    { from: 'u', to: '7' },
+    { from: 'i', to: '8' },
+    { from: 'o', to: '9' },
+    { from: 'p', to: 'equal_sign', modifiers: SHIFT },
+    { from: 'h', to: 'period' },
+    { from: 'j', to: '4' },
+    { from: 'k', to: '5' },
+    { from: 'l', to: '6' },
+    { from: 'semicolon', to: 'hyphen' },
+    { from: 'n', to: '0' },
+    { from: 'm', to: '1' },
+    { from: 'comma', to: '2' },
+    { from: 'period', to: '3' },
+    { from: 'slash', to: 'return_or_enter' },
+  ],
+})

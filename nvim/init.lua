@@ -121,6 +121,20 @@ map("t", "<c-w><c-j>", "<ESC><c-w><c-j>", "Move to the window below", { remap = 
 map("t", "<c-w><c-k>", "<ESC><c-w><c-k>", "Move to the window above", { remap = true })
 map("t", "<c-w><c-l>", "<ESC><c-w><c-l>", "Move to the window on the right", { remap = true })
 
+map("n", "gx", function()
+	local url = vim.fn.expand("<cfile>")
+	local path, line = url:match("^file://([^#]*)#?L?(%d*)")
+	if not path then
+		return vim.ui.open(url)
+	end
+
+	vim.cmd.edit(vim.fn.fnameescape(vim.uri_decode(path)))
+	if line ~= "" then
+		pcall(vim.api.nvim_win_set_cursor, 0, { tonumber(line), 0 })
+		vim.cmd("normal! zz")
+	end
+end, "Open the link under the cursor")
+
 -- Keys hit by accident more often than they are used on purpose
 map("v", "<CR>", "<nop>", "Disabled")
 map("n", "<BS>", "<nop>", "Disabled")
@@ -1164,7 +1178,6 @@ require("lazy").setup({
 		},
 		opts = {},
 	},
-	{ "rmagatti/gx-extended.nvim", event = "VeryLazy" },
 	{ "mzlogin/vim-markdown-toc", ft = { "markdown" } },
 	{
 		"iamcco/markdown-preview.nvim",

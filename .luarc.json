@@ -11,6 +11,7 @@
     "${3rd}/luv/library"
   ],
   "runtime.version": "Lua 5.4",
+  "runtime.path": ["?.lua", "?/init.lua", "hammerspoon/?.lua"],
   "diagnostics.globals": [
     "hs",
     "vim"

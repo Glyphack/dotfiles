@@ -1,0 +1,22 @@
+mode({
+  description: 's layer: symbols',
+  trigger: 's',
+  variable: 's-mode',
+  mappings: [
+    { from: 'y', to: 'grave_accent_and_tilde' },
+    { from: 'u', to: '2', modifiers: SHIFT },
+    { from: 'i', to: '3', modifiers: SHIFT },
+    { from: 'o', to: '4', modifiers: SHIFT },
+    { from: 'p', to: '5', modifiers: SHIFT },
+    { from: 'h', to: 'grave_accent_and_tilde', modifiers: SHIFT },
+    { from: 'j', to: 'hyphen' },
+    { from: 'k', to: 'hyphen', modifiers: SHIFT },
+    { from: 'l', to: 'equal_sign' },
+    { from: 'semicolon', to: 'equal_sign', modifiers: SHIFT },
+    { from: 'n', to: 'period', modifiers: SHIFT },
+    { from: 'm', to: '1', modifiers: SHIFT },
+    { from: 'comma', to: '7', modifiers: SHIFT },
+    { from: 'period', to: '8', modifiers: SHIFT },
+    { from: 'slash', to: 'backslash', modifiers: SHIFT },
+  ],
+})

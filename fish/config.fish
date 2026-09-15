@@ -83,3 +83,5 @@ if status is-interactive
     bind -M insert \cf accept-autosuggestion
 
 end
+
+eval "$(/opt/homebrew/bin/brew shellenv fish)"
