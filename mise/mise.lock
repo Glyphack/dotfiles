@@ -134,6 +134,45 @@ url = "https://github.com/cli/cli/releases/download/v2.98.0/gh_2.98.0_windows_am
 url_api = "https://api.github.com/repos/cli/cli/releases/assets/522857996"
 provenance = "github-attestations"
 
+[[tools."github:glyphack/whispertron"]]
+version = "0.1.0"
+backend = "github:glyphack/whispertron"
+
+[tools."github:glyphack/whispertron"."platforms.linux-arm64"]
+checksum = "sha256:2f064a9a5d5d1adeb82623dda679d548c17638efd3db03847c486d97147f651c"
+url = "https://github.com/Glyphack/whispertron/releases/download/v0.1.0/whispertron.zip"
+url_api = "https://api.github.com/repos/Glyphack/whispertron/releases/assets/502269443"
+
+[tools."github:glyphack/whispertron"."platforms.linux-arm64-musl"]
+checksum = "sha256:2f064a9a5d5d1adeb82623dda679d548c17638efd3db03847c486d97147f651c"
+url = "https://github.com/Glyphack/whispertron/releases/download/v0.1.0/whispertron.zip"
+url_api = "https://api.github.com/repos/Glyphack/whispertron/releases/assets/502269443"
+
+[tools."github:glyphack/whispertron"."platforms.linux-x64"]
+checksum = "sha256:2f064a9a5d5d1adeb82623dda679d548c17638efd3db03847c486d97147f651c"
+url = "https://github.com/Glyphack/whispertron/releases/download/v0.1.0/whispertron.zip"
+url_api = "https://api.github.com/repos/Glyphack/whispertron/releases/assets/502269443"
+
+[tools."github:glyphack/whispertron"."platforms.linux-x64-musl"]
+checksum = "sha256:2f064a9a5d5d1adeb82623dda679d548c17638efd3db03847c486d97147f651c"
+url = "https://github.com/Glyphack/whispertron/releases/download/v0.1.0/whispertron.zip"
+url_api = "https://api.github.com/repos/Glyphack/whispertron/releases/assets/502269443"
+
+[tools."github:glyphack/whispertron"."platforms.macos-arm64"]
+checksum = "sha256:2f064a9a5d5d1adeb82623dda679d548c17638efd3db03847c486d97147f651c"
+url = "https://github.com/Glyphack/whispertron/releases/download/v0.1.0/whispertron.zip"
+url_api = "https://api.github.com/repos/Glyphack/whispertron/releases/assets/502269443"
+
+[tools."github:glyphack/whispertron"."platforms.macos-x64"]
+checksum = "sha256:2f064a9a5d5d1adeb82623dda679d548c17638efd3db03847c486d97147f651c"
+url = "https://github.com/Glyphack/whispertron/releases/download/v0.1.0/whispertron.zip"
+url_api = "https://api.github.com/repos/Glyphack/whispertron/releases/assets/502269443"
+
+[tools."github:glyphack/whispertron"."platforms.windows-x64"]
+checksum = "sha256:2f064a9a5d5d1adeb82623dda679d548c17638efd3db03847c486d97147f651c"
+url = "https://github.com/Glyphack/whispertron/releases/download/v0.1.0/whispertron.zip"
+url_api = "https://api.github.com/repos/Glyphack/whispertron/releases/assets/502269443"
+
 [[tools."github:sharkdp/fd"]]
 version = "10.5.0"
 backend = "github:sharkdp/fd"

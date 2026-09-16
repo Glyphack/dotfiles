@@ -18,6 +18,10 @@
                     {
                         "description": "omacy: caps-lock",
                         "eval_js": "var rule = {\n  description: 'omacy: Caps lock to escape or hyper',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { key_code: 'caps_lock', modifiers: { optional: ['any'] } },\n      to: [{ key_code: 'right_command', modifiers: ['right_control', 'right_option'] }],\n      to_if_alone: [{ key_code: 'escape' }],\n    },\n  ],\n}\n\nrule\n"
+                    },
+                    {
+                        "description": "omacy: paste-no-formatting",
+                        "eval_js": "var rule = {\n  description: 'omacy: paste with no formatting',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { key_code: 'v', modifiers: { mandatory: ['command'] } },\n      to: [{\n        key_code: 'v',\n        modifiers: ['command', 'option', 'shift'],\n      }],\n    },\n  ],\n}\n\nrule\n"
                     }
                 ]
             },

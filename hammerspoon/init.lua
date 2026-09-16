@@ -1,3 +1,13 @@
+-- Omacy load DO NOT EDIT
+local omacy = nil
+if hs.spoons.isInstalled("Omacy") then
+	hs.loadSpoon("Omacy")
+	omacy = spoon.Omacy
+else
+	print("omacy is not installed on this machine, its Hammerspoon shortcuts stay off")
+end
+-- Omacy load DO NOT EDIT
+
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/hammerspoon/?.lua"
 SpoonInstall = hs.loadSpoon("SpoonInstall")
@@ -18,7 +28,6 @@ HYPER = { "cmd", "ctrl", "alt" }
 local hasCustom, custom = pcall(require, "custom")
 local _, _ = pcall(require, "secrets")
 require("karabiner")
-local windowChooser = require("window_chooser")
 local bookmarkChooser = require("bookmark_chooser")
 
 if ipc.cliStatus() ~= true then
@@ -26,207 +35,6 @@ if ipc.cliStatus() ~= true then
 end
 
 -- UTILS
-
-local function moveMouseToWindowCenter(win)
-	timer.doAfter(0.01, function()
-		local frame = win:frame()
-		local centerPoint = {
-			x = frame.x + frame.w / 2,
-			y = frame.y + frame.h / 2,
-		}
-		hs.mouse.absolutePosition(centerPoint)
-	end)
-end
-
-local previousWindow = nil
-
-local function centerMouseOnFocusedWindow()
-	timer.doAfter(0.1, function()
-		local win = hs.window.focusedWindow()
-		if win then
-			moveMouseToWindowCenter(win)
-		end
-	end)
-end
-
-local function windowBelongsToApp(win, appName)
-	-- See https://www.hammerspoon.org/docs/hs.window.html#application
-	local path = win:application():path()
-	local nameOnDisk = string.gsub(path, "/Applications/", "")
-	nameOnDisk = string.gsub(nameOnDisk, "%.app$", "")
-	nameOnDisk = string.gsub(nameOnDisk, "/System/Library/CoreServices/", "")
-	return nameOnDisk:find(appName, 1, true) ~= nil
-end
-
-local APP_LAUNCH_RETRY_DELAY = 0.3
-local APP_LAUNCH_MAX_ATTEMPTS = 20
-
-local function escapeForAppleScript(text)
-	return (text:gsub("\\", "\\\\"):gsub('"', '\\"'))
-end
-
--- Tabs are driven over AppleScript, which covers Chromium based browsers such
--- as Chrome, Brave and Edge. macOS asks once for permission to control the
--- browser and every script here fails until that is granted.
-local browserTabs = {}
-
-function browserTabs.run(appName, body)
-	local script = string.format('tell application "%s"\n%s\nend tell', escapeForAppleScript(appName), body)
-	local ok, result, err = hs.osascript.applescript(script)
-	if not ok then
-		log.w("browser script failed for " .. appName .. ": " .. hs.inspect(err))
-	end
-	return ok, result
-end
-
--- Brings forward the first tab in any window whose title or address contains
--- the pattern.
-function browserTabs.focus(target)
-	local pattern = escapeForAppleScript(target.tab)
-	local ok, found = browserTabs.run(
-		target.app,
-		string.format(
-			[[
-	repeat with theWindow in windows
-		set tabIndex to 0
-		repeat with theTab in tabs of theWindow
-			set tabIndex to tabIndex + 1
-			if (title of theTab contains "%s") or (URL of theTab contains "%s") then
-				set active tab index of theWindow to tabIndex
-				set index of theWindow to 1
-				return true
-			end if
-		end repeat
-	end repeat
-	return false]],
-			pattern,
-			pattern
-		)
-	)
-	return ok and found == true
-end
-
-function browserTabs.openURL(target)
-	local url = escapeForAppleScript(target.url)
-	local ok = browserTabs.run(
-		target.app,
-		string.format(
-			[[
-	if (count of windows) is 0 then
-		make new window
-		set URL of active tab of front window to "%s"
-	else
-		tell front window to make new tab with properties {URL:"%s"}
-		set index of front window to 1
-	end if]],
-			url,
-			url
-		)
-	)
-	return ok
-end
-
--- Focuses the tab matching target.tab, and opens target.url in a new tab when
--- no tab matches.
-local function selectTabOrOpenURL(app, target)
-	if browserTabs.focus(target) then
-		return
-	end
-	if not target.url then
-		return
-	end
-	if browserTabs.openURL(target) then
-		return
-	end
-	hs.urlevent.openURLWithBundle(target.url, app:bundleID())
-end
-
-local function focusPreviousOrHide(app)
-	if previousWindow and previousWindow:isVisible() then
-		previousWindow:focus()
-		moveMouseToWindowCenter(previousWindow)
-		return
-	end
-	app:hide()
-end
-
-local function rotateWindows(app, appName)
-	local appWindows = app:allWindows()
-	if #appWindows <= 1 then
-		focusPreviousOrHide(app)
-		return
-	end
-
-	previousWindow = hs.window.focusedWindow()
-	-- The window list order changes after one window gets focused,
-	-- so directly bring the last one to focus every time
-	-- https://www.hammerspoon.org/docs/hs.window.html#focus
-	local targetWin = appWindows[#appWindows]
-	if appName == "Finder" then
-		-- Finder reports one more window than actually exists, so subtract one
-		targetWin = appWindows[#appWindows - 1]
-	end
-	targetWin:focus()
-	moveMouseToWindowCenter(targetWin)
-end
-
-local function withApp(appName, fn, attempt)
-	attempt = attempt or 1
-	local app = application.get(appName)
-	if app then
-		fn(app)
-		return
-	end
-	if attempt >= APP_LAUNCH_MAX_ATTEMPTS then
-		log.w("App never showed up: " .. appName)
-		return
-	end
-	timer.doAfter(APP_LAUNCH_RETRY_DELAY, function()
-		withApp(appName, fn, attempt + 1)
-	end)
-end
-
-local function openTarget(target)
-	application.launchOrFocus(target.app)
-	if target.tab then
-		withApp(target.app, function(app)
-			selectTabOrOpenURL(app, target)
-		end)
-	end
-	centerMouseOnFocusedWindow()
-end
-
--- target is an app name string or a table { app = "...", tab = "...", url = "..." }.
--- When tab is set, focuses the app tab whose title matches; if no tab matches
--- and url is set, opens the url in the app instead.
--- Pressing the shortcut again while the target is focused goes back to the
--- previous window (or hides the app); multi-window apps rotate their windows.
-function launchOrFocusOrRotate(target)
-	if type(target) == "string" then
-		target = { app = target }
-	end
-	log.d("launchOrFocusOrRotate: " .. target.app .. (target.tab and (" tab=" .. target.tab) or ""))
-
-	local focusedWindow = hs.window.focusedWindow()
-	if not focusedWindow or not windowBelongsToApp(focusedWindow, target.app) then
-		previousWindow = focusedWindow
-		openTarget(target)
-		return
-	end
-
-	local app = focusedWindow:application()
-	if not target.tab then
-		rotateWindows(app, target.app)
-		return
-	end
-
-	local title = focusedWindow:title() or ""
-	if title:find(target.tab, 1, true) then
-		focusPreviousOrHide(app)
-		return
-	end
-	selectTabOrOpenURL(app, target)
-end
 
 function SendClickableNotification(notification, link)
 	local function notificationCallback()
@@ -304,44 +112,6 @@ local gw = grid.GRIDWIDTH
 local gh = grid.GRIDHEIGHT
 local goleft = { x = 0, y = 0, w = gw / 2, h = gh }
 local goright = { x = gw / 2, y = 0, w = gw / 2, h = gh }
-local goup = { x = 0, y = 0, w = gw, h = gh / 2 }
-local godown = { x = 0, y = gh / 2, w = gw, h = gh / 2 }
-local gobig = { x = 0, y = 0, w = gw, h = gh }
-local function moveWindow(position)
-	return function()
-		local win = hs.window.focusedWindow()
-		if win then
-			applyPlace(win, { nil, position })
-		end
-	end
-end
-
--- Maximizes the focused window on the screen it currently sits on. Triggering
--- it again restores the pre-maximize frame, but only while the window is still
--- on that same screen; otherwise it just maximizes on the new screen.
-local maximizeToggle = {
-	savedFrames = {},
-}
-
-function maximizeToggle:toggle()
-	local win = hs.window.focusedWindow()
-	if not win then
-		return
-	end
-	local id = win:id()
-	if not id then
-		return
-	end
-	local screen = win:screen()
-	local saved = self.savedFrames[id]
-	if saved and saved.screenId == screen:id() then
-		win:setFrame(saved.frame)
-		self.savedFrames[id] = nil
-		return
-	end
-	self.savedFrames[id] = { frame = win:frame(), screenId = screen:id() }
-	win:setFrame(screen:frame())
-end
 
 -- WINDOW
 
@@ -371,7 +141,7 @@ SHORTCUTS = {
 		"u",
 		"qutebrowser",
 		function()
-			launchOrFocusOrRotate("qutebrowser")
+			omacy.focus.launchOrFocusOrRotate({ app = "qutebrowser" })
 		end,
 	},
 	{
@@ -380,7 +150,7 @@ SHORTCUTS = {
 		"j",
 		"Brave Browser",
 		function()
-			launchOrFocusOrRotate("Brave Browser")
+			omacy.focus.launchOrFocusOrRotate({ app = "Brave Browser" })
 		end,
 	},
 	{
@@ -389,7 +159,7 @@ SHORTCUTS = {
 		"k",
 		"WezTerm",
 		function()
-			launchOrFocusOrRotate("WezTerm")
+			omacy.focus.launchOrFocusOrRotate({ app = "WezTerm" })
 		end,
 	},
 	{
@@ -398,7 +168,7 @@ SHORTCUTS = {
 		"o",
 		"Obsidian",
 		function()
-			launchOrFocusOrRotate("Obsidian")
+			omacy.focus.launchOrFocusOrRotate({ app = "Obsidian" })
 		end,
 	},
 	{
@@ -407,7 +177,7 @@ SHORTCUTS = {
 		"p",
 		"OBS",
 		function()
-			launchOrFocusOrRotate("OBS")
+			omacy.focus.launchOrFocusOrRotate({ app = "OBS" })
 		end,
 	},
 	{
@@ -416,7 +186,7 @@ SHORTCUTS = {
 		"y",
 		"Discord",
 		function()
-			launchOrFocusOrRotate("Discord")
+			omacy.focus.launchOrFocusOrRotate({ app = "Discord" })
 		end,
 	},
 	{
@@ -425,50 +195,22 @@ SHORTCUTS = {
 		"1",
 		"Teams tab in Chrome",
 		function()
-			launchOrFocusOrRotate({
+			omacy.focus.launchOrFocusOrRotate({
 				app = "Google Chrome",
-				tab = "Microsoft Teams",
-				url = "https://teams.cloud.microsoft/",
+				tab = "https://teams.cloud.microsoft/",
 			})
 		end,
 	},
-	-- Window Management
-	{ "snap_left", HYPER, "a", "snap left", moveWindow(goleft) },
-	{ "snap_right", HYPER, "d", "snap right", moveWindow(goright) },
-	{ "snap_top", HYPER, "w", "snap top", moveWindow(goup) },
-	{ "snap_bottom", HYPER, "s", "snap bottom", moveWindow(godown) },
-	{
-		"center",
-		HYPER,
-		"c",
-		"center window",
-		function()
-			local w = hs.window.focusedWindow()
-			if w then
-				w:centerOnScreen()
-			end
-		end,
-	},
-	{
-		"fullscreen",
-		HYPER,
-		"i",
-		"toggle full screen",
-		function()
-			maximizeToggle:toggle()
-		end,
-	},
+	-- Window Management (Spoon-managed)
+	{ "snap_left", HYPER, "a", "snap left", nil },
+	{ "snap_right", HYPER, "d", "snap right", nil },
+	{ "snap_top", HYPER, "w", "snap top", nil },
+	{ "snap_bottom", HYPER, "s", "snap bottom", nil },
+	{ "center", HYPER, "c", "center window", nil },
+	{ "fullscreen", HYPER, "i", "toggle full screen", nil },
 	{ "grid", HYPER, "g", "show grid", grid.show },
 	{ "layout_split", HYPER, "6", "Brave+WezTerm split", applyLayout(braveWezTermLayout) },
-	{
-		"window_chooser",
-		HYPER,
-		"m",
-		"choose window",
-		function()
-			windowChooser:show()
-		end,
-	},
+	{ "window_chooser", HYPER, "m", "choose window", nil },
 	{
 		"bookmark_chooser",
 		HYPER,
@@ -543,27 +285,6 @@ function ShowShortcuts()
 	end
 end
 ShowShortcuts()
-
-SavedWin = nil
-function SaveFocus()
-	SavedWin = window.focusedWindow()
-	alert.show("Window '" .. SavedWin:title() .. "' saved.")
-end
-function FocusSaved()
-	if SavedWin then
-		SavedWin:focus()
-	end
-end
-
-SpoonInstall:andUse("WindowScreenLeftAndRight", {
-	config = {
-		animationDuration = 0,
-	},
-	hotkeys = {
-		screen_left = GetShortcut("screen_left"),
-		screen_right = GetShortcut("screen_right"),
-	},
-})
 
 -- Opens http(s) URLs in the first app whose pattern matches; unmatched URLs
 -- go to the default handler. Hammerspoon must be set as the system default
@@ -791,11 +512,6 @@ end
 autostart:start()
 
 -- SOUND
-hs.spoons.use("Mic", {
-	hotkeys = { toggle = GetShortcut("toggle_mute") },
-	start = true,
-})
-
 local PREFERRED_OUT = {
 	"WH-1000XM5",
 	"Farbod's JBL Flip 6",
@@ -871,57 +587,6 @@ hs.screen.watcher
 	end)
 	:start()
 screenCallback(false)
-
--- scroll with mouse button
-local scrollMouseButton = 2
-local deferred = false
-
-overrideOtherMouseDown = hs.eventtap.new({ hs.eventtap.event.types.otherMouseDown }, function(e)
-	local pressedMouseButton = e:getProperty(hs.eventtap.event.properties["mouseEventButtonNumber"])
-	if scrollMouseButton == pressedMouseButton then
-		deferred = true
-		return true
-	end
-end)
-
-overrideOtherMouseUp = hs.eventtap.new({ hs.eventtap.event.types.otherMouseUp }, function(e)
-	local pressedMouseButton = e:getProperty(hs.eventtap.event.properties["mouseEventButtonNumber"])
-	if scrollMouseButton == pressedMouseButton then
-		if deferred then
-			overrideOtherMouseDown:stop()
-			overrideOtherMouseUp:stop()
-			hs.eventtap.otherClick(e:location(), pressedMouseButton)
-			overrideOtherMouseDown:start()
-			overrideOtherMouseUp:start()
-			return true
-		end
-		return false
-	end
-	return false
-end)
-
-local oldmousepos = {}
-local scrollmult = -4 -- negative multiplier makes mouse work like traditional scrollwheel
-
-dragOtherToScroll = hs.eventtap.new({ hs.eventtap.event.types.otherMouseDragged }, function(e)
-	local pressedMouseButton = e:getProperty(hs.eventtap.event.properties["mouseEventButtonNumber"])
-	if scrollMouseButton == pressedMouseButton then
-		deferred = false
-		oldmousepos = hs.mouse.absolutePosition()
-		local dx = e:getProperty(hs.eventtap.event.properties["mouseEventDeltaX"])
-		local dy = e:getProperty(hs.eventtap.event.properties["mouseEventDeltaY"])
-		local scroll = hs.eventtap.event.newScrollEvent({ -dx * scrollmult, dy * scrollmult }, {}, "pixel")
-		-- put the mouse back
-		hs.mouse.absolutePosition(oldmousepos)
-		return true, { scroll }
-	else
-		return false, {}
-	end
-end)
-
-overrideOtherMouseDown:start()
-overrideOtherMouseUp:start()
-dragOtherToScroll:start()
 
 -- Hue Automation
 local HOME_WIFI = "tardis"
@@ -1045,7 +710,8 @@ end
 local lightsWatcher = hs.caffeinate.watcher.new(ToggleLights)
 lightsWatcher:start()
 
--- Omacy configuration DO NOT EDIT
-local omacy = require("omacy")
-omacy.apply()
--- Omacy configuration DO NOT EDIT
+-- Omacy apply DO NOT EDIT
+if omacy then
+	omacy:start()
+end
+-- Omacy apply DO NOT EDIT

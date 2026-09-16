@@ -4,7 +4,7 @@
 
 local chooser = require("hs.chooser")
 local json = require("hs.json")
-local FuzzyQuery = require("fuzzy_query")
+local FuzzyQuery = spoon.Omacy.fuzzyQuery
 
 local BOOKMARKS_PATH = os.getenv("HOME")
 	.. "/Library/Application Support/BraveSoftware/Brave-Browser/Default/Bookmarks"
