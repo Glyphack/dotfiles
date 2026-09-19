@@ -126,53 +126,18 @@ local function switch_to_workspace_for_directory(win, pane, opts)
 	end)
 end
 
-local function output_groups(pane)
-	local groups = {}
-	local prev_type = nil
-	for _, zone in ipairs(pane:get_semantic_zones()) do
-		if zone.semantic_type == "Output" then
-			if prev_type == "Output" then
-				groups[#groups].last = zone
-			else
-				table.insert(groups, { first = zone, last = zone })
-			end
-		end
-		prev_type = zone.semantic_type
-	end
-	return groups
-end
-
-local function group_text(pane, group)
-	local text = pane:get_text_from_semantic_zone({
-		start_x = group.first.start_x,
-		start_y = group.first.start_y,
-		end_x = group.last.end_x,
-		end_y = group.last.end_y,
-		semantic_type = "Output",
-	})
-	text = text:gsub("[ \t]+\n", "\n"):gsub("%s+$", "")
-	-- fish draws ⏎ after output that did not end with a newline
-	return (text:gsub("⏎$", ""))
-end
-
-local function last_command_output(pane)
-	local groups = output_groups(pane)
-	for i = #groups, 1, -1 do
-		local text = group_text(pane, groups[i])
-		if text ~= "" then
-			return text
-		end
-	end
-	return nil
-end
-
 local function copy_last_command_output(window, pane)
-	local text = last_command_output(pane)
-	if not text then
-		window:toast_notification("wezterm", "No command output found", nil, 2000)
-		return
+	local zones = pane:get_semantic_zones("Output")
+	for i = #zones, 1, -1 do
+		local text = pane:get_text_from_semantic_zone(zones[i]):gsub("%s+$", "")
+		-- fish draws ⏎ after output that did not end with a newline
+		text = text:gsub("⏎$", "")
+		if text ~= "" then
+			window:copy_to_clipboard(text, "Clipboard")
+			return
+		end
 	end
-	window:copy_to_clipboard(text, "Clipboard")
+	window:toast_notification("wezterm", "No command output found", nil, 2000)
 end
 
 config.keys = {
@@ -221,56 +186,6 @@ config.keys = {
 		action = act.CloseCurrentPane({ confirm = true }),
 		description = "Close current pane",
 	},
-	{
-		key = "L",
-		mods = "CMD|SHIFT",
-		description = "Create 3-pane layout: Editor | Terminal / Agent",
-		action = wezterm.action_callback(function(window, pane)
-			local tab = pane:tab()
-			if #tab:panes() >= 3 then
-				return
-			end
-			local right = pane:split({ direction = "Right", size = 0.4 })
-			local agent = right:split({ direction = "Bottom", size = 0.5 })
-			pane:send_text("vim\n")
-			agent:send_text("amp --ide\n")
-			pane:activate()
-		end),
-	},
-	{
-		key = "u",
-		mods = "CMD",
-		description = "Focus editor pane (index 0)",
-		action = wezterm.action_callback(function(window, pane)
-			local tab = pane:tab()
-			local was_zoomed = tab:set_zoomed(false)
-			window:perform_action(act.ActivatePaneByIndex(0), pane)
-			tab:set_zoomed(was_zoomed)
-		end),
-	},
-	{
-		key = "i",
-		mods = "CMD",
-		description = "Focus terminal pane (index 1)",
-		action = wezterm.action_callback(function(window, pane)
-			local tab = pane:tab()
-			local was_zoomed = tab:set_zoomed(false)
-			window:perform_action(act.ActivatePaneByIndex(1), pane)
-			tab:set_zoomed(was_zoomed)
-		end),
-	},
-	{
-		key = "o",
-		mods = "CMD",
-		description = "Focus agent pane (index 2)",
-		action = wezterm.action_callback(function(window, pane)
-			local tab = pane:tab()
-			local was_zoomed = tab:set_zoomed(false)
-			window:perform_action(act.ActivatePaneByIndex(2), pane)
-			tab:set_zoomed(was_zoomed)
-		end),
-	},
-
 	-- Move around
 	{
 		key = "e",

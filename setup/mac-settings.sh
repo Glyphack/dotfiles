@@ -7,3 +7,5 @@ defaults write NSGlobalDomain AppleLanguages -array en
 defaults write NSGlobalDomain AppleLocale -string en_US@currency=USD
 defaults write NSGlobalDomain AppleMeasurementUnits -string Centimeters
 defaults write NSGlobalDomain AppleMetricUnits -bool true
+
+duti -s dev.zed.Zed public.text all

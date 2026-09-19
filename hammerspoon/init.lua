@@ -1,4 +1,5 @@
 -- Omacy load DO NOT EDIT
+require("hs.ipc")
 local omacy = nil
 if hs.spoons.isInstalled("Omacy") then
 	hs.loadSpoon("Omacy")
@@ -286,9 +287,6 @@ function ShowShortcuts()
 end
 ShowShortcuts()
 
--- Opens http(s) URLs in the first app whose pattern matches; unmatched URLs
--- go to the default handler. Hammerspoon must be set as the system default
--- browser for URLs to be routed through this.
 SpoonInstall:andUse("URLDispatcher", {
 	config = {
 		url_patterns = {
