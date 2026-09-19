@@ -1,0 +1,91 @@
+{
+    "global": {
+        "show_in_menu_bar": false
+    },
+    "profiles": [
+        {
+            "complex_modifications": {
+                "parameters": {
+                    "basic.simultaneous_threshold_milliseconds": 150
+                },
+                "rules": [
+                    {
+                        "eval_js": "// rule: a-layer.js\nvar SHIFT = ['left_shift']\nvar CTRL = ['left_control']\nvar OPT = ['left_option']\nvar SHIFT_CTRL = ['left_shift', 'left_control']\n\nvar SIMULTANEOUS_THRESHOLD_MILLISECONDS = 150\n\nfunction mode(layer) {\n  var manipulators = []\n\n  layer.mappings.forEach(function (mapping) {\n    manipulators.push(whileHeld(layer, mapping))\n    manipulators.push(pressedTogether(layer, mapping))\n  })\n\n  return { description: layer.description, manipulators: manipulators }\n}\n\nfunction whileHeld(layer, mapping) {\n  return {\n    type: 'basic',\n    conditions: [{ name: layer.variable, type: 'variable_if', value: 1 }],\n    from: { key_code: mapping.from, modifiers: { optional: ['any'] } },\n    to: [output(mapping)],\n  }\n}\n\nfunction pressedTogether(layer, mapping) {\n  return {\n    type: 'basic',\n    parameters: {\n      'basic.simultaneous_threshold_milliseconds': SIMULTANEOUS_THRESHOLD_MILLISECONDS,\n    },\n    from: {\n      simultaneous: [{ key_code: layer.trigger }, { key_code: mapping.from }],\n      simultaneous_options: {\n        detect_key_down_uninterruptedly: true,\n        key_down_order: 'strict',\n        key_up_order: 'strict_inverse',\n        key_up_when: 'any',\n        to_after_key_up: [{ set_variable: { name: layer.variable, value: 0 } }],\n      },\n    },\n    to: [{ set_variable: { name: layer.variable, value: 1 } }, output(mapping)],\n  }\n}\n\nfunction output(mapping) {\n  if (!mapping.modifiers) {\n    return { key_code: mapping.to }\n  }\n\n  return { key_code: mapping.to, modifiers: mapping.modifiers }\n}\nmode({\n  description: 'a layer: arrows',\n  trigger: 'a',\n  variable: 'a-mode',\n  mappings: [\n    { from: 'u', to: 'tab' },\n    { from: 'i', to: 'tab', modifiers: SHIFT_CTRL },\n    { from: 'o', to: 'tab', modifiers: CTRL },\n    { from: 'p', to: 'tab', modifiers: SHIFT },\n    { from: 'h', to: 'left_arrow' },\n    { from: 'j', to: 'down_arrow' },\n    { from: 'k', to: 'up_arrow' },\n    { from: 'l', to: 'right_arrow' },\n    { from: 'm', to: 'left_arrow', modifiers: OPT },\n    { from: 'comma', to: 'right_arrow', modifiers: OPT },\n  ],\n})\n"
+                    },
+                    {
+                        "eval_js": "// rule: command-delete.js\nvar rule = {\n  description: 'Command delete to backspace',\n  manipulators: [\n    {\n      type: 'basic',\n      from: {\n        key_code: 'delete_forward',\n        modifiers: { mandatory: ['command'], optional: ['any'] },\n      },\n      to: [{ key_code: 'delete_or_backspace', modifiers: ['command'] }],\n    },\n  ],\n}\n\nrule\n"
+                    },
+                    {
+                        "eval_js": "// rule: d-layer.js\nvar SHIFT = ['left_shift']\nvar CTRL = ['left_control']\nvar OPT = ['left_option']\nvar SHIFT_CTRL = ['left_shift', 'left_control']\n\nvar SIMULTANEOUS_THRESHOLD_MILLISECONDS = 150\n\nfunction mode(layer) {\n  var manipulators = []\n\n  layer.mappings.forEach(function (mapping) {\n    manipulators.push(whileHeld(layer, mapping))\n    manipulators.push(pressedTogether(layer, mapping))\n  })\n\n  return { description: layer.description, manipulators: manipulators }\n}\n\nfunction whileHeld(layer, mapping) {\n  return {\n    type: 'basic',\n    conditions: [{ name: layer.variable, type: 'variable_if', value: 1 }],\n    from: { key_code: mapping.from, modifiers: { optional: ['any'] } },\n    to: [output(mapping)],\n  }\n}\n\nfunction pressedTogether(layer, mapping) {\n  return {\n    type: 'basic',\n    parameters: {\n      'basic.simultaneous_threshold_milliseconds': SIMULTANEOUS_THRESHOLD_MILLISECONDS,\n    },\n    from: {\n      simultaneous: [{ key_code: layer.trigger }, { key_code: mapping.from }],\n      simultaneous_options: {\n        detect_key_down_uninterruptedly: true,\n        key_down_order: 'strict',\n        key_up_order: 'strict_inverse',\n        key_up_when: 'any',\n        to_after_key_up: [{ set_variable: { name: layer.variable, value: 0 } }],\n      },\n    },\n    to: [{ set_variable: { name: layer.variable, value: 1 } }, output(mapping)],\n  }\n}\n\nfunction output(mapping) {\n  if (!mapping.modifiers) {\n    return { key_code: mapping.to }\n  }\n\n  return { key_code: mapping.to, modifiers: mapping.modifiers }\n}\nmode({\n  description: 'd layer: numbers',\n  trigger: 'd',\n  variable: 'dmode',\n  mappings: [\n    { from: 'u', to: '7' },\n    { from: 'i', to: '8' },\n    { from: 'o', to: '9' },\n    { from: 'p', to: 'equal_sign', modifiers: SHIFT },\n    { from: 'h', to: 'period' },\n    { from: 'j', to: '4' },\n    { from: 'k', to: '5' },\n    { from: 'l', to: '6' },\n    { from: 'semicolon', to: 'hyphen' },\n    { from: 'n', to: '0' },\n    { from: 'm', to: '1' },\n    { from: 'comma', to: '2' },\n    { from: 'period', to: '3' },\n    { from: 'slash', to: 'return_or_enter' },\n  ],\n})\n"
+                    },
+                    {
+                        "eval_js": "// rule: f-layer.js\nvar SHIFT = ['left_shift']\nvar CTRL = ['left_control']\nvar OPT = ['left_option']\nvar SHIFT_CTRL = ['left_shift', 'left_control']\n\nvar SIMULTANEOUS_THRESHOLD_MILLISECONDS = 150\n\nfunction mode(layer) {\n  var manipulators = []\n\n  layer.mappings.forEach(function (mapping) {\n    manipulators.push(whileHeld(layer, mapping))\n    manipulators.push(pressedTogether(layer, mapping))\n  })\n\n  return { description: layer.description, manipulators: manipulators }\n}\n\nfunction whileHeld(layer, mapping) {\n  return {\n    type: 'basic',\n    conditions: [{ name: layer.variable, type: 'variable_if', value: 1 }],\n    from: { key_code: mapping.from, modifiers: { optional: ['any'] } },\n    to: [output(mapping)],\n  }\n}\n\nfunction pressedTogether(layer, mapping) {\n  return {\n    type: 'basic',\n    parameters: {\n      'basic.simultaneous_threshold_milliseconds': SIMULTANEOUS_THRESHOLD_MILLISECONDS,\n    },\n    from: {\n      simultaneous: [{ key_code: layer.trigger }, { key_code: mapping.from }],\n      simultaneous_options: {\n        detect_key_down_uninterruptedly: true,\n        key_down_order: 'strict',\n        key_up_order: 'strict_inverse',\n        key_up_when: 'any',\n        to_after_key_up: [{ set_variable: { name: layer.variable, value: 0 } }],\n      },\n    },\n    to: [{ set_variable: { name: layer.variable, value: 1 } }, output(mapping)],\n  }\n}\n\nfunction output(mapping) {\n  if (!mapping.modifiers) {\n    return { key_code: mapping.to }\n  }\n\n  return { key_code: mapping.to, modifiers: mapping.modifiers }\n}\nmode({\n  description: 'f layer: brackets',\n  trigger: 'f',\n  variable: 'f-mode',\n  mappings: [\n    { from: 'u', to: 'open_bracket', modifiers: SHIFT },\n    { from: 'i', to: 'close_bracket', modifiers: SHIFT },\n    { from: 'j', to: '9', modifiers: SHIFT },\n    { from: 'k', to: '0', modifiers: SHIFT },\n    { from: 'l', to: 'comma', modifiers: SHIFT },\n    { from: 'semicolon', to: 'period', modifiers: SHIFT },\n    { from: 'm', to: 'open_bracket' },\n    { from: 'comma', to: 'close_bracket' },\n  ],\n})\n"
+                    },
+                    {
+                        "eval_js": "// rule: media-keys.js\nfunction mediaKey(mapping) {\n  return {\n    type: 'basic',\n    from: {\n      key_code: mapping.from,\n      modifiers: { optional: ['any'] },\n    },\n    to: [{ consumer_key_code: mapping.to }],\n  }\n}\n\nfunction main() {\n  var mappings = [\n    { from: 'f1', to: 'display_brightness_decrement' },\n    { from: 'f2', to: 'display_brightness_increment' },\n    { from: 'f7', to: 'rewind' },\n    { from: 'f8', to: 'play_or_pause' },\n    { from: 'f9', to: 'fastforward' },\n    { from: 'f10', to: 'mute' },\n    { from: 'f11', to: 'volume_decrement' },\n    { from: 'f12', to: 'volume_increment' },\n  ]\n\n  return {\n    description: 'Function keys to brightness, media and volume',\n    manipulators: mappings.map(mediaKey),\n  }\n}\n\nmain()\n"
+                    },
+                    {
+                        "eval_js": "// rule: mouse-buttons.js\nvar rule = {\n  description: 'Mouse side buttons copy and paste',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { pointing_button: 'button4' },\n      to: [{ key_code: 'c', modifiers: ['left_command'] }],\n    },\n    {\n      type: 'basic',\n      from: { pointing_button: 'button5' },\n      to: [{ key_code: 'v', modifiers: ['left_command'] }],\n    },\n  ],\n}\n\nrule\n"
+                    },
+                    {
+                        "eval_js": "// rule: right-modifiers.js\nfunction swap(mapping) {\n  return {\n    type: 'basic',\n    from: {\n      key_code: mapping.from,\n      modifiers: { optional: ['any'] },\n    },\n    to: [{ key_code: mapping.to }],\n  }\n}\n\nfunction main() {\n  var mappings = [\n    { from: 'right_command', to: 'right_control' },\n    { from: 'right_option', to: 'left_option' },\n  ]\n\n  return {\n    description: 'Right command to control, right option to left option',\n    manipulators: mappings.map(swap),\n  }\n}\n\nmain()\n"
+                    },
+                    {
+                        "eval_js": "// rule: s-layer.js\nvar SHIFT = ['left_shift']\nvar CTRL = ['left_control']\nvar OPT = ['left_option']\nvar SHIFT_CTRL = ['left_shift', 'left_control']\n\nvar SIMULTANEOUS_THRESHOLD_MILLISECONDS = 150\n\nfunction mode(layer) {\n  var manipulators = []\n\n  layer.mappings.forEach(function (mapping) {\n    manipulators.push(whileHeld(layer, mapping))\n    manipulators.push(pressedTogether(layer, mapping))\n  })\n\n  return { description: layer.description, manipulators: manipulators }\n}\n\nfunction whileHeld(layer, mapping) {\n  return {\n    type: 'basic',\n    conditions: [{ name: layer.variable, type: 'variable_if', value: 1 }],\n    from: { key_code: mapping.from, modifiers: { optional: ['any'] } },\n    to: [output(mapping)],\n  }\n}\n\nfunction pressedTogether(layer, mapping) {\n  return {\n    type: 'basic',\n    parameters: {\n      'basic.simultaneous_threshold_milliseconds': SIMULTANEOUS_THRESHOLD_MILLISECONDS,\n    },\n    from: {\n      simultaneous: [{ key_code: layer.trigger }, { key_code: mapping.from }],\n      simultaneous_options: {\n        detect_key_down_uninterruptedly: true,\n        key_down_order: 'strict',\n        key_up_order: 'strict_inverse',\n        key_up_when: 'any',\n        to_after_key_up: [{ set_variable: { name: layer.variable, value: 0 } }],\n      },\n    },\n    to: [{ set_variable: { name: layer.variable, value: 1 } }, output(mapping)],\n  }\n}\n\nfunction output(mapping) {\n  if (!mapping.modifiers) {\n    return { key_code: mapping.to }\n  }\n\n  return { key_code: mapping.to, modifiers: mapping.modifiers }\n}\nmode({\n  description: 's layer: symbols',\n  trigger: 's',\n  variable: 's-mode',\n  mappings: [\n    { from: 'y', to: 'grave_accent_and_tilde' },\n    { from: 'u', to: '2', modifiers: SHIFT },\n    { from: 'i', to: '3', modifiers: SHIFT },\n    { from: 'o', to: '4', modifiers: SHIFT },\n    { from: 'p', to: '5', modifiers: SHIFT },\n    { from: 'h', to: 'grave_accent_and_tilde', modifiers: SHIFT },\n    { from: 'j', to: 'hyphen' },\n    { from: 'k', to: 'hyphen', modifiers: SHIFT },\n    { from: 'l', to: 'equal_sign' },\n    { from: 'semicolon', to: 'equal_sign', modifiers: SHIFT },\n    { from: 'n', to: 'period', modifiers: SHIFT },\n    { from: 'm', to: '1', modifiers: SHIFT },\n    { from: 'comma', to: '7', modifiers: SHIFT },\n    { from: 'period', to: '8', modifiers: SHIFT },\n    { from: 'slash', to: 'backslash', modifiers: SHIFT },\n  ],\n})\n"
+                    },
+                    {
+                        "eval_js": "// rule: section-sign.js\nvar rule = {\n  description: 'Section sign to backtick',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { key_code: 'non_us_backslash' },\n      to: [{ key_code: 'grave_accent_and_tilde' }],\n    },\n    {\n      type: 'basic',\n      from: { key_code: 'non_us_backslash', modifiers: { mandatory: ['option'] } },\n      to: [{ key_code: 'grave_accent_and_tilde', modifiers: ['option'] }],\n    },\n    {\n      type: 'basic',\n      from: {\n        key_code: 'non_us_backslash',\n        modifiers: { mandatory: ['shift'], optional: ['caps_lock'] },\n      },\n      to: [{ key_code: 'grave_accent_and_tilde', modifiers: ['shift'] }],\n    },\n  ],\n}\n\nrule\n"
+                    },
+                    {
+                        "eval_js": "var rule = {\n  description: 'omacy: Caps lock to escape or hyper',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { key_code: 'caps_lock', modifiers: { optional: ['any'] } },\n      to: [{ key_code: 'right_command', modifiers: ['right_control', 'right_option'] }],\n      to_if_alone: [{ key_code: 'escape' }],\n    },\n  ],\n}\n\nrule\n",
+                        "description": "omacy: caps-lock"
+                    },
+                    {
+                        "eval_js": "var rule = {\n  description: 'omacy: paste with no formatting in chat and browser apps',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { key_code: 'v', modifiers: { mandatory: ['command'] } },\n      to: [\n        {\n          key_code: 'v',\n          modifiers: ['command', 'shift'],\n        },\n      ],\n      conditions: [\n        {\n          type: 'frontmost_application_if',\n          bundle_identifiers: [\n            '^com\\\\.tinyspeck\\\\.slackmacgap$',\n            '^com\\\\.microsoft\\\\.teams$',\n            '^com\\\\.microsoft\\\\.teams2$',\n            '^com\\\\.microsoft\\\\.Outlook$',\n            '^com\\\\.google\\\\.Chrome$',\n            '^com\\\\.brave\\\\.Browser$',\n          ],\n        },\n      ],\n    },\n  ],\n}\n\nrule\n",
+                        "description": "omacy: paste-no-formatting"
+                    }
+                ]
+            },
+            "devices": [
+                {
+                    "identifiers": {
+                        "device_address": "f0-81-d4-b9-f3-2b",
+                        "is_keyboard": true,
+                        "is_pointing_device": true
+                    },
+                    "ignore": false,
+                    "treat_as_built_in_keyboard": true
+                },
+                {
+                    "identifiers": {
+                        "is_pointing_device": true,
+                        "product_id": 45085,
+                        "vendor_id": 1133
+                    },
+                    "ignore": false
+                },
+                {
+                    "identifiers": {
+                        "is_pointing_device": true,
+                        "product_id": 50475,
+                        "vendor_id": 1133
+                    },
+                    "ignore": false
+                }
+            ],
+            "name": "Generated Profile",
+            "selected": true,
+            "virtual_hid_keyboard": {
+                "country_code": 0,
+                "keyboard_type_v2": "ansi"
+            }
+        },
+        {
+            "name": "Empty Profile",
+            "virtual_hid_keyboard": {
+                "country_code": 0,
+                "keyboard_type_v2": "ansi"
+            }
+        }
+    ]
+}

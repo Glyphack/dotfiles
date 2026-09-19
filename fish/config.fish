@@ -8,19 +8,13 @@ set -gx DOTFILES_DIR ~/Programming/dotfiles
 set -gx WORKTREES_DIR $PROGRAMMING_DIR/wk
 
 # Tools
-set -gx NPM_PRE $HOME/.npm-global/bin
-set -gx RIPGREP_CONFIG_PATH $HOME/.ripgreprc
-set -gx POETRY $HOME/.poetry
 set -gx GOPATH $HOME/go
 set -gx GOBIN $GOPATH/bin
 set -gx RUST_HOME $HOME/.cargo/bin
 set -gx VIMDATA ~/.local/share/nvim
 set -gx KUBECONFIG $HOME/.kube/config
-set -gx VIRTUALFISH_ACTIVATION_FILE .venv
 set -gx HOME_BIN $HOME/bin
 set -gx scripts $HOME/Programming/dotfiles/scripts
-set -gx tyty $HOME/Programming/ruff/target/debug/ty
-set -gx JAVA_HOME "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 set -gx ANDROID_HOME "$HOME/Library/Android/sdk"
 set -gx NDK_HOME "$ANDROID_HOME/ndk/30.0.14904198"
 if test -d "$HOME/flutter"
@@ -28,6 +22,7 @@ if test -d "$HOME/flutter"
 else
     set -gx FLUTTER_PATH /Users/Shared/flutter/bin
 end
+set -gx BREWFILE_PATH "$HOME/Programming/dotfiles/Brewfile"
 
 fish_add_path -g "$HOME/.rd/bin" \
     "/opt/homebrew/bin" \
@@ -37,10 +32,7 @@ fish_add_path -g "$HOME/.rd/bin" \
     "$GOBIN" \
     "$RUST_HOME" \
     "$FLUTTER_PATH" \
-    "$JAVA_HOME/bin" \
     "$HOME/.local/bin" \
-    "$POETRY/bin" \
-    "$NPM_PRE" \
     "$HOME_BIN/maelstrom" \
     "/opt/homebrew/opt/llvm/bin" \
     "$HOME/flutter/flutter/bin" \

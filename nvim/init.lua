@@ -329,6 +329,27 @@ end, {
 	desc = "Save session, restart Neovim, and restore session",
 })
 
+vim.api.nvim_create_user_command("MarkdownView", function()
+	local file = vim.fn.expand("%:p")
+	vim.cmd("tabnew")
+	local buf = vim.api.nvim_get_current_buf()
+	vim.bo[buf].bufhidden = "wipe"
+	vim.cmd("terminal glow -p -s " .. vim.o.background .. " -- " .. vim.fn.shellescape(file))
+	vim.cmd("startinsert")
+	vim.api.nvim_create_autocmd("TermClose", {
+		buffer = buf,
+		once = true,
+		callback = function()
+			vim.schedule(function()
+				for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+					if vim.api.nvim_win_is_valid(win) then
+						vim.api.nvim_win_close(win, true)
+					end
+				end
+			end)
+		end,
+	})
+end, { desc = "Render the current file with glow in a new tab" })
 -- Plugins
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -1109,6 +1130,49 @@ require("lazy").setup({
 				end
 			end
 			map("n", "<leader>hs", fugitive_toggle, "Toggle Git")
+			local function swap_to_working_tree_file()
+				local name = vim.api.nvim_buf_get_name(0)
+				if not name:match("^fugitive://") then
+					return
+				end
+				local real = vim.fn.FugitiveReal(name)
+				if real == "" or vim.fn.filereadable(real) == 0 then
+					return
+				end
+				local pos = vim.api.nvim_win_get_cursor(0)
+				vim.cmd("edit " .. vim.fn.fnameescape(real))
+				pcall(vim.api.nvim_win_set_cursor, 0, pos)
+			end
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "fugitive",
+				callback = function(args)
+					vim.keymap.set("n", "<CR>", function()
+						vim.api.nvim_feedkeys(
+							vim.api.nvim_replace_termcodes("<Plug>fugitive:O", true, false, true),
+							"mx",
+							false
+						)
+						swap_to_working_tree_file()
+					end, {
+						buffer = args.buf,
+						desc = "Open file in a new tab",
+					})
+					map("n", "<leader>p", function()
+						local worktree = vim.fn.FugitiveWorkTree(args.buf)
+						fugitive_toggle()
+						vim.notify("Pushing...", vim.log.levels.INFO)
+						vim.system({ "git", "push" }, { cwd = worktree }, function(out)
+							vim.schedule(function()
+								if out.code == 0 then
+									vim.notify("Git push succeeded", vim.log.levels.INFO)
+								else
+									vim.notify("Git push failed: " .. out.stderr, vim.log.levels.ERROR)
+								end
+							end)
+						end)
+					end, "Push changes", { buffer = args.buf })
+				end,
+			})
 			map("n", "<leader>gb", ":.GBrowse!<CR>", "Copy line URL in git remote", { silent = true })
 			map("v", "<leader>gb", ":GBrowse!<CR>", "Copy selection URL in git remote", { silent = true })
 			map("n", "<leader>hd", function()
@@ -1255,11 +1319,26 @@ map("v", "<leader>r", function()
 	)
 end, "Substitute the selected text", { silent = true })
 
+local function copy_path_with_line(modifier)
+	if vim.bo.ft == "minifiles" then
+		local entry = MiniFiles.get_fs_entry()
+		if not entry then
+			vim.notify("mini.files: no entry under cursor", vim.log.levels.WARN)
+			return
+		end
+		vim.fn.setreg("+", vim.fn.fnamemodify(entry.path, modifier))
+		return
+	end
+	vim.fn.setreg("+", vim.fn.expand("%" .. modifier) .. ":" .. vim.fn.line("."))
+end
+
 map("n", "<leader>cl", function()
-	local file = vim.fn.expand("%:.")
-	local line = vim.fn.line(".")
-	vim.fn.setreg("+", file .. ":" .. line)
-end, "Copy file and line number to clipboard")
+	copy_path_with_line(":.")
+end, "Copy relative file and line number to clipboard")
+
+map("n", "<leader>cL", function()
+	copy_path_with_line(":p")
+end, "Copy full file and line number to clipboard")
 
 vim.api.nvim_create_user_command("Link", function(opts)
 	local start_pos = vim.fn.getpos("'<")

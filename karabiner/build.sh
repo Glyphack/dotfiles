@@ -6,6 +6,7 @@ set -e
 
 dir=$(cd "$(dirname "$0")" && pwd)
 cli="/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli"
+dir="$dir/config"
 config="$dir/karabiner.json"
 profile="Generated Profile"
 

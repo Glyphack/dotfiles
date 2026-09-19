@@ -53,6 +53,9 @@ node = "24"
 "npm:typescript" = "latest"
 hunk = "latest"
 "pipx:pre-commit" = "latest"
+"go:glyphack/omacy" = "path:{{env.HOME}}/Programming/omacy"
+"go:charm.land/glow/v3" = "latest"
+"github:jqlang/jq" = "latest"
 
 [settings]
 experimental = true
