@@ -20,7 +20,7 @@ brew "duti"
 # Perl lib for reading and writing EXIF metadata
 brew "exiftool"
 # Cryptography and SSL/TLS Toolkit
-brew "openssl@3"
+brew "openssl@3", link: true
 # Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
 # User-friendly command-line shell for UNIX-like operating systems
@@ -87,3 +87,10 @@ cask "raycast"
 cask "wezterm@nightly"
 # Multiplayer code editor
 cask "zed"
+vscode "astral-sh.ty"
+vscode "golang.go"
+vscode "ms-python.debugpy"
+vscode "ms-python.python"
+vscode "ms-python.vscode-pylance"
+vscode "ms-python.vscode-python-envs"
+vscode "rust-lang.rust-analyzer"

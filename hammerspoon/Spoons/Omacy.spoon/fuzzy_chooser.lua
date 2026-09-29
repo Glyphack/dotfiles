@@ -1,8 +1,4 @@
--- Ranks texts against a typed query with fzy. Every word of the query must
--- appear in a text for it to match. Texts that contain every word as an
--- exact substring rank above texts that only match letter by letter, and
--- inside each group the fzy score decides.
-
+local chooser = require("hs.chooser")
 local fzy = dofile(hs.spoons.resourcePath("fzy.lua"))
 
 local EXACT = 0
@@ -11,7 +7,6 @@ local FUZZY = 1
 local FuzzyQuery = {}
 FuzzyQuery.__index = FuzzyQuery
 
--- Splits the query into lowercase words.
 function FuzzyQuery.new(text)
 	local words = {}
 	for word in text:lower():gmatch("%S+") do
@@ -20,8 +15,6 @@ function FuzzyQuery.new(text)
 	return setmetatable({ words = words }, FuzzyQuery)
 end
 
--- Matches every word against the text. Returns nil when a word is missing,
--- otherwise the tier (EXACT or FUZZY) and the summed fzy score.
 function FuzzyQuery:match(text)
 	local lowerText = text:lower()
 	local tier = EXACT
@@ -38,8 +31,6 @@ function FuzzyQuery:match(text)
 	return { tier = tier, score = score }
 end
 
--- Returns the indices of the texts that match, best first. Ties keep the
--- original order.
 function FuzzyQuery:rank(texts)
 	local matches = {}
 	for index, text in ipairs(texts) do
@@ -65,4 +56,44 @@ function FuzzyQuery:rank(texts)
 	return indices
 end
 
-return FuzzyQuery
+local FuzzyChooser = {}
+FuzzyChooser.__index = FuzzyChooser
+
+function FuzzyChooser.new(placeholder, load, pick)
+	local self = setmetatable({ load = load, choices = {} }, FuzzyChooser)
+	self.chooser = chooser
+		.new(function(choice)
+			if choice then
+				pick(choice)
+			end
+		end)
+		:placeholderText(placeholder)
+		:queryChangedCallback(function(query)
+			self.chooser:choices(self:filter(query))
+		end)
+	return self
+end
+
+function FuzzyChooser:filter(query)
+	if query == "" then
+		return self.choices
+	end
+	local texts = {}
+	for _, choice in ipairs(self.choices) do
+		table.insert(texts, choice.text .. " " .. choice.subText)
+	end
+	local result = {}
+	for _, index in ipairs(FuzzyQuery.new(query):rank(texts)) do
+		table.insert(result, self.choices[index])
+	end
+	return result
+end
+
+function FuzzyChooser:show()
+	self.choices = self.load()
+	self.chooser:query("")
+	self.chooser:choices(self.choices)
+	self.chooser:show()
+end
+
+return FuzzyChooser

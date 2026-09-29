@@ -1,12 +1,7 @@
--- Launching apps, focusing them, and rotating between their windows or
--- browser tabs from a single entry point.
 ---@class omacy.Focus
 local focus = {}
 
 local log = hs.logger.new("omacy.focus", "info")
-
-local APP_LAUNCH_RETRY_DELAY = 0.3
-local APP_LAUNCH_MAX_ATTEMPTS = 20
 
 local focusHistory = {}
 local currentFocusedId = nil
@@ -45,12 +40,8 @@ local function mouseToCenter(window)
 	end
 end
 
-local function windowBelongsToApp(win, appName)
-	local path = win:application():path()
-	if not path then
-		return false
-	end
-	return path:find(appName, 1, true) ~= nil
+local function windowBelongsToApp(win, bundleID)
+	return win:application():bundleID() == bundleID
 end
 
 local function escapeForAppleScript(text)
@@ -59,17 +50,21 @@ end
 
 local browserTabs = {}
 
-function browserTabs.run(appName, body)
-	local script = string.format('tell application "%s"\n%s\nend tell', escapeForAppleScript(appName), body)
+function browserTabs.matchText(target)
+	return target.tab or target.url
+end
+
+function browserTabs.run(bundleID, body)
+	local script = string.format('tell application id "%s"\n%s\nend tell', escapeForAppleScript(bundleID), body)
 	local ok, result, err = hs.osascript.applescript(script)
 	if not ok then
-		log.e("browser script failed for " .. appName .. ": " .. hs.inspect(err))
+		log.e("browser script failed for " .. bundleID .. ": " .. hs.inspect(err))
 	end
 	return ok, result
 end
 
 function browserTabs.focus(target)
-	local pattern = escapeForAppleScript(target.tab)
+	local pattern = escapeForAppleScript(browserTabs.matchText(target))
 	local ok, found = browserTabs.run(
 		target.app,
 		string.format(
@@ -94,7 +89,7 @@ function browserTabs.focus(target)
 end
 
 function browserTabs.isFocusedOn(target)
-	local pattern = escapeForAppleScript(target.tab)
+	local pattern = escapeForAppleScript(browserTabs.matchText(target))
 	local ok, found = browserTabs.run(
 		target.app,
 		string.format(
@@ -114,7 +109,7 @@ function browserTabs.isFocusedOn(target)
 end
 
 function browserTabs.openURL(target)
-	local url = escapeForAppleScript(target.tab)
+	local url = escapeForAppleScript(target.url)
 	local ok = browserTabs.run(
 		target.app,
 		string.format(
@@ -133,10 +128,12 @@ function browserTabs.openURL(target)
 	return ok
 end
 
--- Focuses the tab whose title or URL matches target.tab, and opens target.tab
--- as a new tab when no tab matches.
 local function selectTabOrOpenURL(target)
 	if browserTabs.focus(target) then
+		return
+	end
+	if not target.url then
+		log.e("no url to open for " .. target.app .. " tab " .. tostring(target.tab))
 		return
 	end
 	browserTabs.openURL(target)
@@ -154,8 +151,6 @@ local function focusPreviousOrHide(hsApp)
 	end
 end
 
--- hs.window.allWindows() drops Finder's desktop window by keeping only
--- windows whose role is AXWindow; this does the same for a single app.
 local function realWindows(hsApp)
 	local windows = {}
 	for _, win in ipairs(hsApp:allWindows()) do
@@ -173,38 +168,18 @@ local function rotateWindows(hsApp)
 		return
 	end
 
-	-- The window list order changes after one window gets focused,
-	-- so directly bring the last one to focus every time
-	-- https://www.hammerspoon.org/docs/hs.window.html#focus
 	local targetWin = appWindows[#appWindows]
 	targetWin:focus()
 	mouseToCenter(targetWin)
 end
 
-local function withApp(appName, fn, attempt)
-	attempt = attempt or 1
-	local hsApp = hs.application.get(appName)
-	if hsApp then
-		fn(hsApp)
-		return
-	end
-	if attempt >= APP_LAUNCH_MAX_ATTEMPTS then
-		log.e("App never showed up: " .. appName)
-		return
-	end
-	hs.timer.doAfter(APP_LAUNCH_RETRY_DELAY, function()
-		withApp(appName, fn, attempt + 1)
-	end)
-end
-
 local function openTarget(target)
-	if not hs.application.launchOrFocus(target.app) then
+	if not hs.application.launchOrFocusByBundleID(target.app) then
 		log.e("Failed to launch or focus: " .. target.app)
+		return
 	end
-	if target.tab then
-		withApp(target.app, function()
-			selectTabOrOpenURL(target)
-		end)
+	if browserTabs.matchText(target) then
+		selectTabOrOpenURL(target)
 	end
 	hs.timer.doAfter(0.1, function()
 		local win = hs.window.focusedWindow()
@@ -214,10 +189,11 @@ local function openTarget(target)
 	end)
 end
 
--- target is a table { app = "...", tab = "..." }.
--- app is app name. opens the app or focuses it's window. If it's window is already focused then it cycles between other windows of the app. If there are no other windows it moves the focus to previous window.
--- tab is a URL opens the tab with that url in the browser.
--- Must be provided with app = Brave Browser or app = Chrome. It will open the app and focus this tab or create it if does not exist.
+-- target is a table { app = "...", tab = "...", url = "..." }.
+-- app is the bundle ID of the app, such as "com.brave.Browser". opens the app or focuses it's window. If it's window is already focused then it cycles between other windows of the app. If there are no other windows it moves the focus to previous window.
+-- url is the address opened in a new browser tab when no tab matches.
+-- tab is an optional title or URL fragment matched against open tabs, the url is matched when it is missing.
+-- Must be provided with the bundle ID of Brave Browser or Chrome. It will open the app and focus this tab or create it if does not exist.
 function focus.launchOrFocusOrRotate(target)
 	local focusedWindow = hs.window.focusedWindow()
 	if not focusedWindow or not windowBelongsToApp(focusedWindow, target.app) then
@@ -226,7 +202,7 @@ function focus.launchOrFocusOrRotate(target)
 	end
 
 	local hsApp = focusedWindow:application()
-	if not target.tab then
+	if not browserTabs.matchText(target) then
 		rotateWindows(hsApp)
 		return
 	end

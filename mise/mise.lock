@@ -721,29 +721,8 @@ backend = "core:rust"
 components = "llvm-tools,rust-analyzer,rust-src,rustfmt"
 
 [[tools.ty]]
-version = "path:~/.cargo/bin/ty"
+version = "dev"
 backend = "aqua:astral-sh/ty"
-
-[tools.ty."platforms.linux-arm64"]
-provenance = "github-attestations"
-
-[tools.ty."platforms.linux-arm64-musl"]
-provenance = "github-attestations"
-
-[tools.ty."platforms.linux-x64"]
-provenance = "github-attestations"
-
-[tools.ty."platforms.linux-x64-musl"]
-provenance = "github-attestations"
-
-[tools.ty."platforms.macos-arm64"]
-provenance = "github-attestations"
-
-[tools.ty."platforms.macos-x64"]
-provenance = "github-attestations"
-
-[tools.ty."platforms.windows-x64"]
-provenance = "github-attestations"
 
 [[tools.uv]]
 version = "0.12.6"

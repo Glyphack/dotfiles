@@ -1,5 +1,3 @@
--- Mutes and unmutes every microphone at once. While muted, a crossed-out
--- microphone icon is shown in the menubar; while live, nothing is shown.
 ---@class omacy.MicMute
 local micMute = {}
 
@@ -65,9 +63,6 @@ function micMute.toggle()
 	end
 end
 
--- Watches every input device so the menubar icon stays in sync with mute
--- state changed from outside Hammerspoon, such as a headset button. Runs for
--- as long as Omacy is loaded, no start/stop needed.
 for _, device in ipairs(hs.audiodevice.allInputDevices()) do
 	device:watcherCallback(function(_, event)
 		if event == "mute" then

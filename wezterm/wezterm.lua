@@ -172,8 +172,8 @@ config.keys = {
 	{ key = "[", mods = "LEADER", action = act.ScrollToPrompt(-1), description = "Scroll to previous prompt" },
 	{ key = "]", mods = "LEADER", action = act.ScrollToPrompt(1), description = "Scroll to next prompt" },
 	{
-		key = "y",
-		mods = "LEADER",
+		key = "c",
+		mods = "CMD|SHIFT",
 		description = "Copy last command output to clipboard",
 		action = wezterm.action_callback(copy_last_command_output),
 	},

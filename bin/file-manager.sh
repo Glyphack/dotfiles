@@ -8,15 +8,8 @@ RESULT_FILE="${1:-/dev/stdout}"
 cd "." || exit 1
 
 while true; do
-    # 1. List files and directories
-    # -p adds trailing slash to dirs, -a shows hidden
-    # grep removes ./ and ../ from the listing itself to avoid duplication
     FILES=$(ls -p -a | grep -vE '^\./$|^\.\./$')
-    
-    # 2. Create the list for gum
     OPTIONS=$(echo -e ".\n..\n~\n$FILES")
-    
-    # 3. Pick selection
     SELECTION=$(echo "$OPTIONS" | gum filter --height 20 --placeholder "Navigate ('.' to Select/Exit, '~' for Home)")
 
     # 4. Handle selection

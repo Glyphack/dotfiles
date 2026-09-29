@@ -1,18 +1,12 @@
--- Moving and resizing the focused window.
 ---@class omacy.Window
 local window = {}
 
--- Holds the previous frame of the one window most recently moved or resized
--- by an action below, so the same action can undo it. Acting on a different
--- window (or a different action on the same window) just replaces this.
 local savedFrame = nil
 
 local function focused()
 	return hs.window.focusedWindow()
 end
 
--- Runs applyFn on win, remembering its frame first so the same action can be
--- pressed again on the same window to undo it, like a single-window ctrl-z.
 local function withUndo(win, action, applyFn)
 	local id = win:id()
 	if not id then

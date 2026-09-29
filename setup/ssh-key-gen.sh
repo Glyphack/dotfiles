@@ -14,8 +14,13 @@ eval "$(ssh-agent -s)"
 # Add key to SSH agent and Apple keychain
 ssh-add --apple-use-keychain ~/.ssh/id_${email}_ed25519
 
-# Copy public key to clipboard
-pbcopy < ~/.ssh/id_${email}_ed25519.pub
+# Uploading keys needs the admin:public_key scope on the gh token
+if ! gh auth status 2>&1 | grep -q "admin:public_key"; then
+    gh auth refresh -h github.com -s admin:public_key
+fi
+
+# Upload public key to GitHub, titled with this Mac's name
+gh ssh-key add ~/.ssh/id_${email}_ed25519.pub --title "$(scutil --get ComputerName)"
 
 # Check if ~/.ssh/config exists
 if [ ! -f ~/.ssh/config ]; then
@@ -44,5 +49,4 @@ Host github.com
 " >> ~/.ssh/config
 fi
 
-echo "SSH key setup complete. The public key has been copied to your clipboard."
-echo "You can now add this key to your GitHub account."
+echo "SSH key setup complete. The public key has been added to your GitHub account."
