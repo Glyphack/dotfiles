@@ -28,6 +28,7 @@ mise.local.toml
 mise.*.local.toml
 .mise.local.toml
 .mise.*.local.toml
+mise.local.lock
 
 typos.toml
 .aider*

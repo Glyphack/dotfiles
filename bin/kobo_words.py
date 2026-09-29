@@ -41,9 +41,9 @@ The Readwise token is read from the macOS keychain (same entry the Highlight
 Raycast command uses) or from the READWISE_TOKEN environment variable.
 
 Usage:
-    uv run scripts/kobo_words.py --db /path/to/KoboReader.sqlite
-    uv run scripts/kobo_words.py --db KoboReader.sqlite --dry-run
-    uv run scripts/kobo_words.py --db KoboReader.sqlite --delete
+    uv run bin/kobo_words.py --db /path/to/KoboReader.sqlite
+    uv run bin/kobo_words.py --db KoboReader.sqlite --dry-run
+    uv run bin/kobo_words.py --db KoboReader.sqlite --delete
 """
 
 import argparse

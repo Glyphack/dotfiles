@@ -14,7 +14,7 @@ set -gx RUST_HOME $HOME/.cargo/bin
 set -gx VIMDATA ~/.local/share/nvim
 set -gx KUBECONFIG $HOME/.kube/config
 set -gx HOME_BIN $HOME/bin
-set -gx scripts $HOME/Programming/dotfiles/scripts
+set -gx DOTFILES_BIN $DOTFILES_DIR/bin
 set -gx ANDROID_HOME "$HOME/Library/Android/sdk"
 set -gx NDK_HOME "$ANDROID_HOME/ndk/30.0.14904198"
 if test -d "$HOME/flutter"
@@ -27,7 +27,7 @@ set -gx BREWFILE_PATH "$HOME/Programming/dotfiles/Brewfile"
 fish_add_path -g "$HOME/.rd/bin" \
     "/opt/homebrew/bin" \
     "$HOME_BIN" \
-    "$scripts" \
+    "$DOTFILES_BIN" \
     "$PYENV_ROOT/bin" \
     "$GOBIN" \
     "$RUST_HOME" \

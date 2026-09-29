@@ -12,28 +12,52 @@ end
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/hammerspoon/?.lua"
 SpoonInstall = hs.loadSpoon("SpoonInstall")
-local alert = require("hs.alert")
+SpoonInstall:andUse("ReloadConfiguration", {
+	config = {
+		watch_paths = { os.getenv("HOME") .. "/Programming/dotfiles/hammerspoon" },
+	},
+	start = true,
+})
 local ipc = require("hs.ipc")
-local window = require("hs.window")
 local timer = require("hs.timer")
-local eventtap = require("hs.eventtap")
-local popclick = require("hs.noises")
-local hotkey = require("hs.hotkey")
 require("hs.task")
 local application = require("hs.application")
 local grid = require("hs.grid")
 local log = hs.logger.new("hammerspoon", "info")
 
-HYPER = { "cmd", "ctrl", "alt" }
-
-local hasCustom, custom = pcall(require, "custom")
-local _, _ = pcall(require, "secrets")
-require("karabiner")
-local bookmarkChooser = require("bookmark_chooser")
-
 if ipc.cliStatus() ~= true then
 	ipc.cliInstall()
 end
+
+-- Setup
+
+omacy:map("hyper u", function()
+	omacy.focus.launchOrFocusOrRotate({ app = "qutebrowser" })
+end, "qutebrowser")
+omacy:map("hyper o", function()
+	omacy.focus.launchOrFocusOrRotate({ app = "Obsidian" })
+end, "Obsidian")
+omacy:map("hyper p", function()
+	omacy.focus.launchOrFocusOrRotate({ app = "OBS" })
+end, "OBS")
+omacy:map("hyper y", function()
+	omacy.focus.launchOrFocusOrRotate({ app = "Discord" })
+end, "Discord")
+omacy:map("hyper g", grid.show, "show grid")
+
+local wm = hs.webview.windowMasks
+SpoonInstall:andUse("PopupTranslateSelection", {
+	config = {
+		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,
+	},
+})
+omacy:map("hyper \\", function()
+	spoon.PopupTranslateSelection:translateSelectionPopup("en", "nl")
+end, "translate selection")
+
+pcall(require, "local")
+
+omacy:showShortcuts()
 
 -- UTILS
 
@@ -43,30 +67,6 @@ function SendClickableNotification(notification, link)
 	end
 	local notificationObject = hs.notify.new(notificationCallback, notification)
 	notificationObject:send()
-end
-
-local function findScreenByName(name)
-	for _, screen in ipairs(hs.screen.allScreens()) do
-		if screen:name() == name then
-			return screen
-		end
-	end
-	return nil
-end
-
-local function moveAppToScreen(app, screenName, matchedPattern)
-	local screen = findScreenByName(screenName)
-	if not screen then
-		log.w("Screen not found: " .. screenName)
-		return
-	end
-	timer.doAfter(0.1, function()
-		local wins = app:allWindows()
-		for _, win in ipairs(wins) do
-			log.d("Moving " .. app:name() .. " (matched: " .. matchedPattern .. ") to " .. screenName)
-			win:moveToScreen(screen, true, true)
-		end
-	end)
 end
 
 local function openApp(bundle)
@@ -81,476 +81,26 @@ local function openApp(bundle)
 	return app
 end
 
-grid.GRIDWIDTH = 6
-grid.GRIDHEIGHT = 8
-grid.MARGINX = 0
-grid.MARGINY = 0
-grid.setMargins({ w = 0, h = 0 })
-
-local function applyPlace(win, place)
-	local scrs = hs.screen.allScreens()
-	local scr = nil
-	if place[1] ~= nil then
-		scr = scrs[place[1]]
-	end
-	grid.set(win, place[2], scr)
-end
-
-local function applyLayout(layout)
-	return function()
-		for appName, place in pairs(layout) do
-			local app = application.get(appName)
-			if app then
-				for _, win in ipairs(app:allWindows()) do
-					applyPlace(win, place)
-				end
-			end
-		end
-	end
-end
-
-local gw = grid.GRIDWIDTH
-local gh = grid.GRIDHEIGHT
-local goleft = { x = 0, y = 0, w = gw / 2, h = gh }
-local goright = { x = gw / 2, y = 0, w = gw / 2, h = gh }
-
--- WINDOW
-
-HOME_MONITOR = "DELL U2723QE"
-MACBOOK_MONITOR = "Built-in Retina Display"
-LG_MONITOR = "LG HDR 4K"
-
-WINDOWS_TO_PRIMARY = {
-	"",
-}
-WINDOWS_TO_BIG_SCREEN = {
-	"",
-}
-
-local braveWezTermLayout = {
-	["Brave Browser"] = { 1, goleft },
-	["WezTerm"] = { 1, goright },
-}
-
--- { name, mods, key, desc, fn }
--- fn = nil means binding is managed by a Spoon (use GetShortcut to look up)
-SHORTCUTS = {
-	-- App Launching
-	{
-		"app_qutebrowser",
-		HYPER,
-		"u",
-		"qutebrowser",
-		function()
-			omacy.focus.launchOrFocusOrRotate({ app = "qutebrowser" })
-		end,
-	},
-	{
-		"app_brave",
-		HYPER,
-		"j",
-		"Brave Browser",
-		function()
-			omacy.focus.launchOrFocusOrRotate({ app = "Brave Browser" })
-		end,
-	},
-	{
-		"app_wezterm",
-		HYPER,
-		"k",
-		"WezTerm",
-		function()
-			omacy.focus.launchOrFocusOrRotate({ app = "WezTerm" })
-		end,
-	},
-	{
-		"app_obsidian",
-		HYPER,
-		"o",
-		"Obsidian",
-		function()
-			omacy.focus.launchOrFocusOrRotate({ app = "Obsidian" })
-		end,
-	},
-	{
-		"app_obs",
-		HYPER,
-		"p",
-		"OBS",
-		function()
-			omacy.focus.launchOrFocusOrRotate({ app = "OBS" })
-		end,
-	},
-	{
-		"app_discord",
-		HYPER,
-		"y",
-		"Discord",
-		function()
-			omacy.focus.launchOrFocusOrRotate({ app = "Discord" })
-		end,
-	},
-	{
-		"app_teams",
-		HYPER,
-		"1",
-		"Teams tab in Chrome",
-		function()
-			omacy.focus.launchOrFocusOrRotate({
-				app = "Google Chrome",
-				tab = "https://teams.cloud.microsoft/",
-			})
-		end,
-	},
-	-- Window Management (Spoon-managed)
-	{ "snap_left", HYPER, "a", "snap left", nil },
-	{ "snap_right", HYPER, "d", "snap right", nil },
-	{ "snap_top", HYPER, "w", "snap top", nil },
-	{ "snap_bottom", HYPER, "s", "snap bottom", nil },
-	{ "center", HYPER, "c", "center window", nil },
-	{ "fullscreen", HYPER, "i", "toggle full screen", nil },
-	{ "grid", HYPER, "g", "show grid", grid.show },
-	{ "layout_split", HYPER, "6", "Brave+WezTerm split", applyLayout(braveWezTermLayout) },
-	{ "window_chooser", HYPER, "m", "choose window", nil },
-	{
-		"bookmark_chooser",
-		HYPER,
-		"b",
-		"choose bookmark",
-		function()
-			bookmarkChooser:show()
-		end,
-	},
-	-- Screen (Spoon-managed)
-	{ "screen_left", HYPER, "[", "move to left screen", nil },
-	{ "screen_right", HYPER, "]", "move to right screen", nil },
-	-- Audio (Spoon-managed)
-	{ "toggle_mute", HYPER, "t", "toggle mic mute", nil },
-	-- Translation (Spoon-managed)
-	{ "translate", HYPER, "\\", "translate selection", nil },
-	-- Misc
-	{
-		"reload",
-		{ "ctrl" },
-		"`",
-		"reload config",
-		function()
-			hs.reload()
-		end,
-	},
-}
-
-function GetShortcut(name)
-	for _, s in ipairs(SHORTCUTS) do
-		if s[1] == name then
-			return { s[2], s[3] }
-		end
-	end
-	error("Shortcut not found: " .. name)
-end
-
--- An entry reusing an existing name replaces it instead of adding a second
--- binding for the same key, where whichever bound last would silently win.
-local function mergeShortcuts(base, extra)
-	local indexByName = {}
-	for i, s in ipairs(base) do
-		indexByName[s[1]] = i
-	end
-	for _, s in ipairs(extra) do
-		local existing = indexByName[s[1]]
-		if existing then
-			base[existing] = s
-		else
-			table.insert(base, s)
-			indexByName[s[1]] = #base
-		end
-	end
-	return base
-end
-
-if hasCustom and custom.SHORTCUTS then
-	SHORTCUTS = mergeShortcuts(SHORTCUTS, custom.SHORTCUTS)
-end
-
-for _, s in ipairs(SHORTCUTS) do
-	if s[5] then
-		hotkey.bind(s[2], s[3], s[5])
-	end
-end
-
-function ShowShortcuts()
-	print("=== Shortcuts (HYPER = Cmd+Ctrl+Alt) ===")
-	for _, s in ipairs(SHORTCUTS) do
-		local mods = table.concat(s[2], "+")
-		print(string.format("  %-20s  %s", mods .. "+" .. s[3], s[4]))
-	end
-end
-ShowShortcuts()
-
-SpoonInstall:andUse("URLDispatcher", {
-	config = {
-		url_patterns = {
-			{ "teams%.microsoft%.com", "com.google.Chrome" },
-			{ "teams%.cloud%.microsoft", "com.google.Chrome" },
-			{ "^https://github%.com/letsrotate/", "com.google.Chrome" },
-			{ "cloud%.databricks%.com", "com.google.Chrome" },
-			{ "^https://letsrotate%.atlassian%.net/", "com.google.Chrome" },
-		},
-		default_handler = "com.brave.Browser",
-	},
-	start = true,
-})
-
-local function handleAppLaunch(appName, eventType, app)
-	if eventType ~= application.watcher.launched then
-		return
-	end
-
-	local screens = hs.screen.allScreens()
-	if #screens <= 1 then
-		log.d("[WindowPlacement] Skipping - only one screen")
-		return
-	end
-
-	log.d("[WindowPlacement] App launched: " .. appName)
-
-	local function matches(pattern)
-		if appName == pattern then
-			return true
-		end
-		local wins = app:allWindows()
-		for _, win in ipairs(wins) do
-			local title = win:title() or ""
-			if title:find(pattern, 1, true) then
-				return true
-			end
-		end
-		return false
-	end
-
-	for _, pattern in ipairs(WINDOWS_TO_PRIMARY) do
-		if matches(pattern) then
-			moveAppToScreen(app, MACBOOK_MONITOR, pattern)
-			return
-		end
-	end
-
-	for _, pattern in ipairs(WINDOWS_TO_BIG_SCREEN) do
-		if matches(pattern) then
-			moveAppToScreen(app, HOME_MONITOR, pattern)
-			return
-		end
-	end
-end
-
-local appWatcher = application.watcher.new(handleAppLaunch)
-appWatcher:start()
-
-local AUTOSTART_HIDE_DELAYS = { 0, 0.5, 1.5, 3 }
-local AUTOSTART_WATCHER_TIMEOUT = 60
-local AUTOSTART_VERIFY_DELAY = 15
-
-local autostart = {
-	apps = {
-		{ name = "Todoist", bundleID = "com.todoist.mac.Todoist" },
-		{ name = "Igloo", bundleID = "com.igloo.client" },
-		{ name = "Whispertron", bundleID = "com.glyphack.whispertron" },
-		{ name = "Flameshot", bundleID = "org.flameshot.Flameshot" },
-		{ name = "Raycast", bundleID = "com.raycast.macos" },
-		{ name = "MonitorControl", bundleID = "app.monitorcontrol.MonitorControl" },
-	},
-	pending = {},
-	tasks = {},
-	watcher = nil,
-}
-
--- Menu bar only apps never show a window, and hiding them leaves them stuck in a
--- hidden state where their hotkeys stop working.
-function autostart:isMenuBarApp(entry)
-	local info = application.infoForBundleID(entry.bundleID)
-	if not info then
-		return false
-	end
-	local flag = info.LSUIElement
-	return flag == true or flag == 1 or flag == "1"
-end
-
-function autostart:hideApp(app)
-	for _, delay in ipairs(AUTOSTART_HIDE_DELAYS) do
-		timer.doAfter(delay, function()
-			if not app:isHidden() then
-				app:hide()
-			end
-		end)
-	end
-end
-
-function autostart:stop()
-	if not self.watcher then
-		return
-	end
-	self.watcher:stop()
-	self.watcher = nil
-end
-
-function autostart:onAppEvent(_, eventType, app)
-	if eventType ~= application.watcher.launched or app == nil then
-		return
-	end
-	local bundleID = app:bundleID()
-	if not bundleID then
-		return
-	end
-	local entry = self.pending[bundleID]
-	if not entry then
-		return
-	end
-	self.pending[bundleID] = nil
-	self:hideApp(app)
-	if next(self.pending) == nil then
-		self:stop()
-	end
-end
-
-function autostart:shouldLaunch(entry)
-	local path = application.pathForBundleID(entry.bundleID)
-	if path == nil or path == "" then
-		log.ef("autostart: skipping %s, no app installed with bundle id %s", entry.name, entry.bundleID)
-		return false
-	end
-	local running = application.get(entry.bundleID)
-	if running then
-		log.f("autostart: skipping %s, already running as pid %d", entry.name, running:pid())
-		return false
-	end
-	log.f("autostart: launching %s from %s", entry.name, path)
-	return true
-end
-
-function autostart:launch(entry)
-	local args = { "-g", "-b", entry.bundleID }
-	if self.pending[entry.bundleID] then
-		table.insert(args, 2, "-j")
-	end
-
-	local task = hs.task.new("/usr/bin/open", function(code, stdout, stderr)
-		self.tasks[entry.bundleID] = nil
-		if code == 0 then
-			return
-		end
-		self.pending[entry.bundleID] = nil
-		log.ef(
-			"autostart: open failed for %s with exit code %d: %s",
-			entry.name,
-			code,
-			(stderr ~= "" and stderr) or stdout or "no output"
-		)
-	end, args)
-
-	if not task then
-		self.pending[entry.bundleID] = nil
-		log.ef("autostart: could not build the open task for %s", entry.name)
-		return
-	end
-
-	self.tasks[entry.bundleID] = task
-	if not task:start() then
-		self.tasks[entry.bundleID] = nil
-		self.pending[entry.bundleID] = nil
-		log.ef("autostart: could not run open for %s", entry.name)
-		return
-	end
-
-	timer.doAfter(AUTOSTART_VERIFY_DELAY, function()
-		if application.get(entry.bundleID) then
-			return
-		end
-		log.ef("autostart: %s is still not running %d seconds after launching it", entry.name, AUTOSTART_VERIFY_DELAY)
-	end)
-end
-
-function autostart:onWatcherTimeout()
-	for _, entry in pairs(self.pending) do
-		log.ef("autostart: never saw %s launch, so it was left visible", entry.name)
-	end
-	self.pending = {}
-	self:stop()
-end
-
-function autostart:start()
-	local toLaunch = {}
-	for _, entry in ipairs(self.apps) do
-		if self:shouldLaunch(entry) then
-			table.insert(toLaunch, entry)
-			if not self:isMenuBarApp(entry) then
-				self.pending[entry.bundleID] = entry
-			end
-		end
-	end
-
-	if #toLaunch == 0 then
-		return
-	end
-
-	if next(self.pending) ~= nil then
-		self.watcher = application.watcher.new(function(appName, eventType, app)
-			self:onAppEvent(appName, eventType, app)
-		end)
-		self.watcher:start()
-		timer.doAfter(AUTOSTART_WATCHER_TIMEOUT, function()
-			self:onWatcherTimeout()
-		end)
-	end
-
-	for _, entry in ipairs(toLaunch) do
-		self:launch(entry)
-	end
-end
-
-autostart:start()
+omacy.autostart.launch({ "Todoist", "Igloo", "Whispertron", "Flameshot", "Raycast", "MonitorControl" })
 
 -- SOUND
-local PREFERRED_OUT = {
-	"WH-1000XM5",
-	"Farbod's JBL Flip 6",
-	"External Headphones",
-	"MacBook Pro Speakers",
-	"Mac mini Speakers",
-}
+omacy.audio.prefer({
+	output = {
+		"WH-1000XM5",
+		"Farbod's JBL Flip 6",
+		"External Headphones",
+		"MacBook Pro Speakers",
+		"Mac mini Speakers",
+	},
+	input = {
+		"Yeti Stereo Microphone",
+		"Anker PowerConf C200",
+		"MacBook Pro Microphone",
+	},
+})
 
-local PREFERRED_IN = {
-	"Yeti Stereo Microphone",
-	"Anker PowerConf C200",
-	"MacBook Pro Microphone",
-}
-
-local function audiodeviceCallback(event)
-	log.d("audiodeviceDeviceCallback: " .. event)
-	if event == "dev#" then
-		timer.doAfter(2, function()
-			for _, name in ipairs(PREFERRED_IN) do
-				local device = hs.audiodevice.findInputByName(name)
-				if device then
-					device:setDefaultInputDevice()
-					break
-				end
-			end
-
-			for _, name in ipairs(PREFERRED_OUT) do
-				local device = hs.audiodevice.findOutputByName(name)
-				if device then
-					device:setDefaultOutputDevice()
-					break
-				end
-			end
-		end)
-	end
-end
-
-hs.audiodevice.watcher.setCallback(audiodeviceCallback)
-hs.audiodevice.watcher.start()
-
-audiodeviceCallback("dev#")
+-- Restart flameshot if monitor is connected
+local MACBOOK_MONITOR = "Built-in Retina Display"
 
 local function screenCallback(layout)
 	if layout == true then
@@ -614,30 +164,6 @@ local function fishRunCommand(command)
 	end
 end
 
-local wm = hs.webview.windowMasks
-SpoonInstall:andUse("PopupTranslateSelection", {
-	disable = false,
-	config = {
-		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,
-	},
-	hotkeys = {
-		translate_nl_en = GetShortcut("translate"),
-	},
-})
-
-local function printWindowsTitle()
-	local windows = hs.window.allWindows()
-	for _, win in ipairs(windows) do
-		log.i(win:title())
-	end
-end
-local function printScreenNames()
-	local screens = hs.screen.allScreens()
-	for i, screen in ipairs(screens) do
-		log.i(string.format("Screen %d: %s", i, screen:name()))
-	end
-end
-
 local function bluetoothOn()
 	local _, btOn = hs.execute("/usr/sbin/system_profiler SPBluetoothDataType 2>/dev/null | grep -q 'State: On'")
 	if not btOn then
@@ -696,12 +222,6 @@ function ToggleLights(eventType)
 	if eventType == hs.caffeinate.watcher.screensDidUnlock or eventType == hs.caffeinate.watcher.systemDidWake then
 		HueTurnOn()
 		HueEnableAlarms()
-	elseif
-		eventType == hs.caffeinate.watcher.screensDidLock
-		or eventType == hs.caffeinate.watcher.systemWillSleep
-		or eventType == hs.caffeinate.watcher.systemWillPowerOff
-		or eventType == hs.caffeinate.watcher.screensDidSleep
-	then
 	end
 end
 

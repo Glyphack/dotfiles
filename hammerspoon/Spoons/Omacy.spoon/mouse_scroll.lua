@@ -1,9 +1,8 @@
--- Grab scrolling: turns holding and dragging a mouse button into scroll events.
 ---@class omacy.MouseScroll
 local mouseScroll = {}
 
 local SCROLL_MOUSE_BUTTON = 2
-local SCROLL_MULTIPLIER = -4 -- negative multiplier makes mouse work like traditional scrollwheel
+local SCROLL_MULTIPLIER = -4
 
 local deferred = false
 local oldMousePos = {}
@@ -48,7 +47,6 @@ local function onDrag(e)
 	local dx = e:getProperty(hs.eventtap.event.properties["mouseEventDeltaX"])
 	local dy = e:getProperty(hs.eventtap.event.properties["mouseEventDeltaY"])
 	local scroll = hs.eventtap.event.newScrollEvent({ -dx * SCROLL_MULTIPLIER, dy * SCROLL_MULTIPLIER }, {}, "pixel")
-	-- put the mouse back
 	hs.mouse.absolutePosition(oldMousePos)
 	return true, { scroll }
 end

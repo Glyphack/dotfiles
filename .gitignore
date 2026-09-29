@@ -1,14 +1,2 @@
-*/secrets/*
-*custom*
-pv_*
-secret*
-local.mk
-local.fish
-
-.aider*
-*__pycache__*
-
-*scratch/**
-.wk/**
-wallpapers/
-karabiner/automatic_backups/
+local*
+__pycache__/

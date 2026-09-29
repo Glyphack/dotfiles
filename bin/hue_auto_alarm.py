@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+Automatically enable my alarms.
+"""
 
 import json
 import subprocess
