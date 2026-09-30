@@ -32,16 +32,16 @@ end
 -- Setup
 
 omacy:map("hyper u", function()
-	omacy.focus.launchOrFocusOrRotate({ app = "qutebrowser" })
+	omacy.focus.launchOrFocusOrRotate({ app = "org.qutebrowser.qutebrowser" })
 end, "qutebrowser")
 omacy:map("hyper o", function()
-	omacy.focus.launchOrFocusOrRotate({ app = "Obsidian" })
+	omacy.focus.launchOrFocusOrRotate({ app = "md.obsidian" })
 end, "Obsidian")
 omacy:map("hyper p", function()
-	omacy.focus.launchOrFocusOrRotate({ app = "OBS" })
+	omacy.focus.launchOrFocusOrRotate({ app = "com.obsproject.obs-studio" })
 end, "OBS")
 omacy:map("hyper y", function()
-	omacy.focus.launchOrFocusOrRotate({ app = "Discord" })
+	omacy.focus.launchOrFocusOrRotate({ app = "com.hnc.Discord" })
 end, "Discord")
 omacy:map("hyper g", grid.show, "show grid")
 
