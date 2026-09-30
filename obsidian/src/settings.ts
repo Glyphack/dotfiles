@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
+import { App, PluginSettingTab, SecretComponent, Setting } from 'obsidian';
 import type DotsPlugin from './main';
 
 export interface DotsSettings {
@@ -7,6 +7,7 @@ export interface DotsSettings {
 	ntfyServer: string;
 	ntfyTopic: string;
 	typewriterMode: boolean;
+	typefullySecret: string;
 }
 
 export const DEFAULT_SETTINGS: DotsSettings = {
@@ -15,6 +16,7 @@ export const DEFAULT_SETTINGS: DotsSettings = {
 	ntfyServer: 'https://ntfy.sh',
 	ntfyTopic: '',
 	typewriterMode: false,
+	typefullySecret: '',
 };
 
 export class DotsSettingTab extends PluginSettingTab {
@@ -95,6 +97,20 @@ export class DotsSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.ntfyTopic)
 					.onChange(async (value) => {
 						this.plugin.settings.ntfyTopic = value;
+						await this.plugin.saveSettings();
+					}),
+			);
+
+		new Setting(containerEl)
+			.setName('Typefully API key')
+			.setDesc(
+				'Secret that holds your Typefully API key. It is used to send the selection or the note to Typefully as a draft for X.',
+			)
+			.addComponent((el) =>
+				new SecretComponent(this.app, el)
+					.setValue(this.plugin.settings.typefullySecret)
+					.onChange(async (value) => {
+						this.plugin.settings.typefullySecret = value;
 						await this.plugin.saveSettings();
 					}),
 			);

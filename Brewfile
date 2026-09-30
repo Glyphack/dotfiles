@@ -41,6 +41,8 @@ brew "libtool"
 brew "graphviz"
 # Tool for glamorous shell scripts
 brew "gum"
+# Grammar Checker for Developers
+brew "harper"
 # Improved top (interactive process viewer)
 brew "htop"
 # Polyglot runtime manager (asdf rust clone)

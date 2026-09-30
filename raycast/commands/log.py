@@ -23,6 +23,7 @@ from pathlib import Path
 from urllib.parse import quote, urlencode
 
 FISH_SHELL = "/opt/homebrew/bin/fish"
+OBSIDIAN_BUNDLE_ID = "md.obsidian"
 
 
 def get_vault_name():
@@ -40,6 +41,15 @@ def get_vault_name():
     return Path(result.stdout.strip()).name
 
 
+def obsidian_is_frontmost():
+    result = subprocess.run(
+        ["osascript", "-e", "id of app (path to frontmost application as text)"],
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout.strip() == OBSIDIAN_BUNDLE_ID
+
+
 @dataclass
 class LogRequest:
     message: str
@@ -51,8 +61,9 @@ class LogRequest:
         params = {
             "vault": get_vault_name(),
             "message": self.message,
-            "background": "1",
         }
+        if not obsidian_is_frontmost():
+            params["background"] = "1"
         if self.place:
             params["place"] = self.place
         if self.start:

@@ -5,6 +5,8 @@ import {
 	Platform,
 	Plugin,
 	TFile,
+	getFrontMatterInfo,
+	requestUrl,
 } from 'obsidian';
 import { Extension } from '@codemirror/state';
 import { LogEntry, LogInput } from './log';
@@ -23,6 +25,7 @@ import { AutoPublisher } from './auto-publish';
 import { linkpath } from './sync';
 import type { ExifTool } from './image';
 import { typewriterScroll } from './typewriter';
+import { Typefully } from './typefully';
 
 const DAILY_FOLDER = 'Daily';
 
@@ -147,6 +150,18 @@ export default class DotsPlugin extends Plugin {
 				});
 			},
 		});
+		this.addCommand({
+			id: 'post-to-x',
+			name: 'Post to X',
+			editorCallback: (editor) => {
+				const note = editor.getValue();
+				const body = note.slice(getFrontMatterInfo(note).contentStart);
+				const text = (editor.getSelection() || body).trim();
+				this.postToX(text).catch((error) => {
+					new Notice(`Failed to post to X: ${message(error)}`);
+				});
+			},
+		});
 		this.addRibbonIcon('upload-cloud', 'Publish notes', () => this.syncToHugo());
 		this.app.workspace.onLayoutReady(async () => {
 			this.watchVault();
@@ -172,6 +187,20 @@ export default class DotsPlugin extends Plugin {
 		this.hugoSync.publishAll().catch((error) => {
 			new Notice(`Failed to publish notes: ${message(error)}`);
 		});
+	}
+
+	private async postToX(text: string) {
+		const key = this.app.secretStorage.getSecret(this.settings.typefullySecret);
+		if (!key) {
+			new Notice('Set the Typefully API key in Dots settings.');
+			return;
+		}
+		if (!text) {
+			new Notice('Nothing to post.');
+			return;
+		}
+		await new Typefully(key, requestUrl).createXDraft(text);
+		new Notice('Draft for X made in Typefully.');
 	}
 
 	// image.ts pulls in node builtins that only exist in the desktop app, so it

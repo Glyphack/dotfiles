@@ -36,7 +36,7 @@ export default tseslint.config(
 			'obsidianmd/ui/sentence-case': [
 				'error',
 				{
-					brands: ['Hugo', 'Dots', 'EXIF'],
+					brands: ['Hugo', 'Dots', 'EXIF', 'Typefully', 'X'],
 				},
 			],
 		},

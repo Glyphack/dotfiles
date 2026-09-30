@@ -38,6 +38,9 @@ export class LogEntry {
 	}
 }
 
+const LOG_SEPARATOR = '***';
+const LOG_LINE = /^\d{2}:\d{2} [AP]M(?:-\d{2}:\d{2} [AP]M)? > /;
+
 export class WeeklyLog {
 	private readonly lines: string[];
 
@@ -52,7 +55,8 @@ export class WeeklyLog {
 			return;
 		}
 
-		let insertAt = this.findNextHeader(headerIdx) ?? this.lines.length;
+		const sectionEnd = this.findNextHeader(headerIdx) ?? this.lines.length;
+		let insertAt = sectionEnd;
 		while (insertAt > headerIdx + 1) {
 			const previous = this.lines[insertAt - 1];
 			if (previous === undefined || previous.trim() !== '') {
@@ -60,7 +64,12 @@ export class WeeklyLog {
 			}
 			insertAt--;
 		}
-		this.lines.splice(insertAt, 0, entry.format());
+		if (this.hasSeparator(headerIdx, sectionEnd)) {
+			const lastLog = this.findLastLog(headerIdx, sectionEnd);
+			this.lines.splice(lastLog === null ? insertAt : lastLog + 1, 0, entry.format());
+			return;
+		}
+		this.lines.splice(insertAt, 0, '', LOG_SEPARATOR, '', entry.format());
 	}
 
 	toString(): string {
@@ -68,7 +77,7 @@ export class WeeklyLog {
 	}
 
 	private createSection(dateHeader: string, entry: LogEntry): void {
-		const section = [dateHeader, '', entry.format(), ''];
+		const section = [dateHeader, '', LOG_SEPARATOR, '', entry.format(), ''];
 		const firstDateIdx = this.findFirstDateHeader();
 		if (firstDateIdx === null) {
 			this.lines.push('', ...section);
@@ -84,6 +93,21 @@ export class WeeklyLog {
 			return trimmed === header || trimmed === plain;
 		});
 		return idx === -1 ? null : idx;
+	}
+
+	private hasSeparator(from: number, to: number): boolean {
+		return this.lines
+			.slice(from + 1, to)
+			.some((line) => line.trim() === LOG_SEPARATOR);
+	}
+
+	private findLastLog(from: number, to: number): number | null {
+		for (let i = to - 1; i > from; i--) {
+			if (LOG_LINE.test(this.lines[i] ?? '')) {
+				return i;
+			}
+		}
+		return null;
 	}
 
 	private findNextHeader(after: number): number | null {
