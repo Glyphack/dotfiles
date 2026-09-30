@@ -179,34 +179,12 @@ local function bluetoothOn()
 end
 
 function HueEnableAlarms()
-	if hs.wifi.currentNetwork() ~= HOME_WIFI then
-		return
-	end
-
 	if bluetoothOn() == false then
 		return
 	end
 
 	fishRunCommand("hue_auto_alarm.py")
 end
-
-function WifiChanged()
-	if hs.wifi.currentNetwork() ~= HOME_WIFI then
-		local speaker = hs.audiodevice.defaultOutputDevice()
-		if speaker then
-			speaker:setMuted(true)
-		else
-			log.w("No default output device found to mute")
-		end
-		return
-	end
-
-	HueEnableAlarms()
-end
-
-local wifiWatcher = hs.wifi.watcher.new(WifiChanged)
-wifiWatcher:start()
-WifiChanged()
 
 function HueTurnOn()
 	local currentHour = os.date("*t").hour
@@ -223,16 +201,36 @@ function HueTurnOn()
 	fishRunCommand("huec power on")
 end
 
-function ToggleLights(eventType)
+local WIFI_CONNECT_DELAY_SECONDS = 3
+
+local function muteSpeaker()
+	local speaker = hs.audiodevice.defaultOutputDevice()
+	if not speaker then
+		log.w("No default output device found to mute")
+		return
+	end
+	speaker:setMuted(true)
+end
+
+local function checkHomeWifi()
+	if hs.wifi.currentNetwork() ~= HOME_WIFI then
+		muteSpeaker()
+		return
+	end
+
+	HueEnableAlarms()
+end
+
+function OnWake(eventType)
 	log.i("event: " .. eventType)
 	if eventType == hs.caffeinate.watcher.screensDidUnlock or eventType == hs.caffeinate.watcher.systemDidWake then
 		HueTurnOn()
-		HueEnableAlarms()
+		timer.doAfter(WIFI_CONNECT_DELAY_SECONDS, checkHomeWifi)
 	end
 end
 
-local lightsWatcher = hs.caffeinate.watcher.new(ToggleLights)
-lightsWatcher:start()
+local wakeWatcher = hs.caffeinate.watcher.new(OnWake)
+wakeWatcher:start()
 
 -- Omacy apply DO NOT EDIT
 if omacy then
