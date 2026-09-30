@@ -10,7 +10,6 @@
 ---@field autostart omacy.Autostart
 ---@field audio omacy.Audio
 ---@field hotkeys omacy.Hotkey[] the shortcuts bound when Omacy starts
----@field configWatchers table[]|nil the hs.pathwatcher objects that reload the config
 local obj = {}
 obj.__index = obj
 
@@ -176,74 +175,12 @@ function obj:showShortcuts()
 	return self
 end
 
-local function watchConfig(files)
-	for _, file in ipairs(files) do
-		if file:sub(-4) == ".lua" then
-			hs.reload()
-			return
-		end
-	end
-end
-
-local function isInside(path, dir)
-	return path == dir or path:sub(1, #dir + 1) == dir .. "/"
-end
-
--- The folder a symlink points to, or the folder holding the file it points
--- to. nil when path is not a symlink.
-local function linkedDir(path)
-	if hs.fs.symlinkAttributes(path, "mode") ~= "link" then
-		return nil
-	end
-	local target = hs.fs.pathToAbsolute(path)
-	if not target then
-		return nil
-	end
-	if hs.fs.attributes(target, "mode") == "directory" then
-		return target
-	end
-	return target:match("^(.*)/[^/]*$")
-end
-
--- The folders to watch for config changes: hs.configdir and the folders its
--- symlinks lead to, since a watcher does not follow symlinks. A folder inside
--- another one on the list is dropped, as the outer watcher already sees it.
-local function configDirs()
-	local dirs = { hs.configdir }
-	for name in hs.fs.dir(hs.configdir) do
-		local dir = name ~= "." and name ~= ".." and linkedDir(hs.configdir .. "/" .. name)
-		if dir then
-			table.insert(dirs, dir)
-		end
-	end
-	table.sort(dirs, function(a, b)
-		return #a < #b
-	end)
-
-	local outer = {}
-	for _, dir in ipairs(dirs) do
-		local covered = false
-		for _, kept in ipairs(outer) do
-			covered = covered or isInside(dir, kept)
-		end
-		if not covered then
-			table.insert(outer, dir)
-		end
-	end
-	return outer
-end
-
 function obj:start()
 	for _, entry in ipairs(self.hotkeys) do
 		enableWhenFree(entry.mods, entry.key, entry.fn)
 	end
 	self.mouseScroll.start()
 	self.audio.start()
-
-	self.configWatchers = {}
-	for _, dir in ipairs(configDirs()) do
-		table.insert(self.configWatchers, hs.pathwatcher.new(dir, watchConfig):start())
-	end
 
 	return self
 end
