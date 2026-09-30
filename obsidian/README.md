@@ -105,6 +105,12 @@ Two commands clean images without publishing:
 - `Remove EXIF data`: cleans the images embedded in the current note.
 - `Remove EXIF data from all files`: checks every file in the vault and cleans all images.
 
+## Post to X
+
+Run the `Post to X` command to send the selection, or the note without its front matter, to Typefully.
+Typefully makes a draft for X. Review it there and post it.
+Set the Typefully API key in Dots settings first. It is kept in Obsidian's secret storage.
+
 ## Todo
 
 - Remove all traces of `sync-manifest.json`, the old record of published notes. The plugin still deletes a leftover one from the vault config folder on startup.

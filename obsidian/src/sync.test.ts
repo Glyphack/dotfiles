@@ -10,6 +10,7 @@ import {
 	isWikilink,
 	linkDisplayText,
 	linkpath,
+	missingKeys,
 	noteLinkUrl,
 	parseEmbedDisplay,
 	rewriteFrontmatter,
@@ -485,6 +486,14 @@ test('shareState separates a ready note from one still missing a dest', () => {
 		kind: 'shared',
 		dest: 'blog/post',
 	});
+});
+
+test('missingKeys lists the required properties that are absent or blank', () => {
+	const keys = ['created', 'summary'];
+	assert.deepEqual(missingKeys(undefined, keys), ['created', 'summary']);
+	assert.deepEqual(missingKeys({ created: '2026-01-04', summary: 'x' }, keys), []);
+	assert.deepEqual(missingKeys({ created: '  ', summary: null }, keys), ['created', 'summary']);
+	assert.deepEqual(missingKeys({ created: 0, summary: false }, keys), []);
 });
 
 test('diffBundles flags a folder nobody wants', () => {

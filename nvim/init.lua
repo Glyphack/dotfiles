@@ -71,6 +71,7 @@ vim.o.scrolloff = 999
 vim.o.spell = true
 -- handle camel case
 vim.o.spelloptions = "camel"
+vim.o.spellfile = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
 
 vim.o.clipboard = "unnamedplus"
 
@@ -329,6 +330,10 @@ end, {
 	desc = "Save session, restart Neovim, and restore session",
 })
 
+vim.api.nvim_create_user_command("Messages", "put =trim(execute('messages'))", {
+	desc = "Put the message history below the cursor",
+})
+
 vim.api.nvim_create_user_command("MarkdownView", function()
 	local file = vim.fn.expand("%:p")
 	vim.cmd("tabnew")
@@ -533,29 +538,16 @@ require("lazy").setup({
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter",
 		dependencies = {
-			{
-				"L3MON4D3/LuaSnip",
-				build = "make install_jsregexp",
-			},
 			"hrsh7th/cmp-nvim-lsp",
-			"saadparwaiz1/cmp_luasnip",
 			{ "hrsh7th/cmp-buffer" },
 			{ "hrsh7th/cmp-path" },
-			{ "saadparwaiz1/cmp_luasnip" },
 			{ "hrsh7th/cmp-nvim-lsp-signature-help" },
 			{ "petertriho/cmp-git", dependencies = "nvim-lua/plenary.nvim", opts = {} },
 			"lukas-reineke/cmp-rg",
 		},
 		config = function()
 			local cmp = require("cmp")
-			local luasnip = require("luasnip")
-			luasnip.config.setup({})
 			cmp.setup({
-				snippet = {
-					expand = function(args)
-						luasnip.lsp_expand(args.body)
-					end,
-				},
 				completion = { completeopt = "menu,menuone" },
 				preselect = cmp.PreselectMode.None,
 				mapping = cmp.mapping.preset.insert({
@@ -563,24 +555,6 @@ require("lazy").setup({
 					["<C-p>"] = cmp.mapping.select_prev_item(),
 					["<C-i>"] = cmp.mapping.confirm({ select = true }),
 					["<C-Space>"] = cmp.mapping.complete({}),
-					-- Think of <c-l> as moving to the right of your snippet expansion.
-					--  So if you have a snippet that's like:
-					--  function $name($args)
-					--    $body
-					--  end
-					--
-					-- <c-l> will move you to the right of each of the expansion locations.
-					-- <c-h> is similar, except moving you backwards.
-					["<C-l>"] = cmp.mapping(function()
-						if luasnip.expand_or_locally_jumpable() then
-							luasnip.expand_or_jump()
-						end
-					end, { "i", "s" }),
-					["<C-h>"] = cmp.mapping(function()
-						if luasnip.locally_jumpable(-1) then
-							luasnip.jump(-1)
-						end
-					end, { "i", "s" }),
 				}),
 				sources = {
 					{
@@ -596,7 +570,6 @@ require("lazy").setup({
 							},
 						},
 					},
-					{ name = "luasnip", keyword_length = 2 },
 					{ name = "path" },
 					{ name = "buffer", keyword_length = 3 },
 					{ name = "nvim_lsp_signature_help" },
@@ -1243,15 +1216,6 @@ require("lazy").setup({
 		opts = {},
 	},
 	{ "mzlogin/vim-markdown-toc", ft = { "markdown" } },
-	{
-		"iamcco/markdown-preview.nvim",
-		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-		build = "cd app && npm install",
-		init = function()
-			vim.g.mkdp_filetypes = { "markdown" }
-		end,
-		ft = { "markdown" },
-	},
 	{
 		"TobinPalmer/rayso.nvim",
 		cmd = { "Rayso" },

@@ -22,6 +22,22 @@ export function shareState(
 	return { kind: 'shared', dest };
 }
 
+export const REQUIRED_KEYS = ['created', 'title'];
+
+export function missingKeys(
+	frontmatter: Record<string, unknown> | undefined,
+	keys: string[],
+): string[] {
+	return keys.filter((key) => isBlank(frontmatter?.[key]));
+}
+
+function isBlank(value: unknown): boolean {
+	if (value === null || value === undefined) {
+		return true;
+	}
+	return typeof value === 'string' && value.trim().length === 0;
+}
+
 export const INDEX_FILE = 'index.md';
 
 const BLOG_SECTION = 'blog';

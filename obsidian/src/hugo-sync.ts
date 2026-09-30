@@ -17,6 +17,7 @@ import {
 	PublishIndex,
 	PublishedNote,
 	PublishedResult,
+	REQUIRED_KEYS,
 	Resolution,
 	ResolvedReference,
 	SOURCE_KEY,
@@ -27,6 +28,7 @@ import {
 	isWikilink,
 	linkDisplayText,
 	linkpath,
+	missingKeys,
 	noteLinkUrl,
 	parseEmbedDisplay,
 	shareState,
@@ -45,6 +47,7 @@ interface PreparedNote {
 	references: ResolvedReference[];
 	attachments: Map<string, TFile>;
 	missingEmbeds: string[];
+	missingKeys: string[];
 }
 
 const NOTICE_MS = 15000;
@@ -111,7 +114,12 @@ export class HugoSync {
 				continue;
 			}
 			const cache = this.app.metadataCache.getFileCache(file);
-			prepared.push({ note, file, ...this.resolveReferences(file, cache, index) });
+			prepared.push({
+				note,
+				file,
+				...this.resolveReferences(file, cache, index),
+				missingKeys: missingKeys(cache?.frontmatter, REQUIRED_KEYS),
+			});
 		}
 
 		const metadataFailures = await this.removeAttachmentMetadata(prepared);
@@ -376,6 +384,9 @@ function toReference(
 
 function publishProblems(item: PreparedNote, failures: Map<string, string>): string[] {
 	const problems: string[] = [];
+	if (item.missingKeys.length > 0) {
+		problems.push(`missing required properties: ${item.missingKeys.join(', ')}`);
+	}
 	if (item.missingEmbeds.length > 0) {
 		problems.push(`unresolved embeds: ${item.missingEmbeds.join(', ')}`);
 	}
