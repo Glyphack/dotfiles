@@ -8,8 +8,6 @@ local HIDE_DELAY = 2
 local tasks = {}
 local hideTimers = {}
 
--- Menu bar apps (LSUIElement) have no Dock icon and no Cmd+Tab entry, so once
--- hidden nothing unhides them and their own hotkeys show nothing.
 local function isMenuBarApp(bundleID)
 	local info = hs.application.infoForBundleID(bundleID)
 	if not info then
@@ -46,8 +44,7 @@ local function hide(bundleID)
 end
 
 -- Starts each app in bundleIDs that is not running yet and hides it a moment
--- later. Menu bar apps are started but never hidden. Bundle IDs look like
--- { "com.todoist.mac.Todoist", "com.raycast.macos" }.
+-- later. Menu bar apps are started but never hidden.
 function autostart.launch(bundleIDs)
 	local toHide = {}
 	for _, bundleID in ipairs(bundleIDs) do

@@ -10,8 +10,8 @@ link::
 	mkdir -p ${HOME}/.config/nvim && stow --adopt --target=${HOME}/.config/nvim nvim
 	mkdir -p ${HOME}/.config/mise && stow --adopt --target=${HOME}/.config/mise mise
 	mkdir -p ${HOME}/.config/fd && stow --adopt --target=${HOME}/.config/fd fd
-	sh karabiner/build.sh
-	mkdir -p ${HOME}/.config/karabiner && stow --dir=karabiner --adopt --target=${HOME}/.config/karabiner config
+	uv run karabiner/build.py
+	ln -sfn $(CURDIR)/karabiner/config ${HOME}/.config/karabiner
 	launchctl kickstart -k gui/$$(id -u)/org.pqrs.service.agent.Karabiner-Console-User-Server || true;
 	mkdir -p ${HOME}/.config/wezterm && stow --adopt --target=${HOME}/.config/wezterm wezterm
 	mkdir -p ${HOME}/.hammerspoon && stow --adopt --target=${HOME}/.hammerspoon hammerspoon

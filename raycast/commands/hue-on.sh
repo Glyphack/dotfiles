@@ -6,4 +6,4 @@
 # @raycast.mode silent
 # @raycast.icon 💡
 
-/Users/shayeganhooshyari/.local/bin/huec power on
+mise exec -- huec power on
