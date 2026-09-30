@@ -3,8 +3,9 @@
 """
 Free disk space by cleaning developer caches and build artifacts.
 
-Deletes Rust target folders under ~/Programming, old rustup toolchains, and
-tool caches. --dry-run prints what would run or be deleted instead.
+Deletes Rust target folders under ~/Programming, old rustup toolchains, unused
+mise tool versions, unused container images and volumes, and tool caches.
+--dry-run prints what would run or be deleted instead.
 """
 
 import argparse
@@ -18,13 +19,20 @@ HOME = Path.home()
 PROGRAMMING = HOME / "Programming"
 
 COMMANDS = [
-    ["uv", "cache", "prune"],
+    ["uv", "cache", "clean"],
     ["go", "clean", "-cache", "-modcache"],
     ["npm", "cache", "clean", "--force"],
     ["pnpm", "store", "prune"],
     ["pre-commit", "gc"],
     ["brew", "cleanup", "--prune=all"],
     ["mise", "cache", "clear"],
+    ["mise", "prune", "--yes"],
+]
+
+CONTAINER_COMMANDS = [
+    ["container", "image", "prune", "--all"],
+    ["container", "volume", "prune"],
+    ["container", "builder", "delete", "--force"],
 ]
 
 FOLDERS = [
@@ -99,6 +107,19 @@ def remove_old_toolchains(dry_run: bool) -> None:
         run(["rustup", "toolchain", "uninstall", name], dry_run)
 
 
+def clean_containers(dry_run: bool) -> None:
+    if shutil.which("container") is None:
+        return
+    status = subprocess.run(["container", "system", "status"], capture_output=True)
+    stopped = status.returncode != 0
+    if stopped:
+        run(["container", "system", "start"], dry_run)
+    for cmd in CONTAINER_COMMANDS:
+        run(cmd, dry_run)
+    if stopped:
+        run(["container", "system", "stop"], dry_run)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true")
@@ -107,6 +128,7 @@ def main() -> None:
     for cmd in COMMANDS:
         run(cmd, dry_run)
     remove_old_toolchains(dry_run)
+    clean_containers(dry_run)
     paths = [HOME / folder for folder in FOLDERS] + cargo_targets()
     total_kb = sum(remove(path, dry_run) for path in paths)
     print(f"deleted {total_kb / 1024**2:.1f} GB")

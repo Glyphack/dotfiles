@@ -81,7 +81,13 @@ local function openApp(bundle)
 	return app
 end
 
-omacy.autostart.launch({ "Todoist", "Igloo", "Whispertron", "Flameshot", "Raycast", "MonitorControl" })
+omacy.autostart.launch({
+	"com.todoist.mac.Todoist",
+	"com.glyphack.whispertron",
+	"org.flameshot.Flameshot",
+	"com.raycast.macos",
+	"app.monitorcontrol.MonitorControl",
+})
 
 -- SOUND
 omacy.audio.prefer({
