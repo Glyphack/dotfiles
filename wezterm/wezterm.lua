@@ -29,7 +29,7 @@ if appearance:find("Dark") then
 	config.background = { img_background }
 	config.color_scheme = "flexoki-dark"
 else
-	config.color_scheme = "flexoki-light"
+	config.color_scheme = "Solarized Light (Gogh)"
 end
 
 local run_child_process = function(cmd)
