@@ -1417,8 +1417,6 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 
 vim.cmd.colorscheme("flexoki")
 
--- This catches the delayed terminal response (or live OS changes)
--- and re-triggers the colorscheme to adapt.
 vim.api.nvim_create_autocmd("OptionSet", {
 	pattern = "background",
 	callback = function()
