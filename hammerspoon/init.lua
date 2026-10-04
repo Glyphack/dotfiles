@@ -44,13 +44,12 @@ omacy:map(omacy.HYPER, "y", function()
 end, "Discord")
 
 local wm = hs.webview.windowMasks
-SpoonInstall:andUse("PopupTranslateSelection", {
-	config = {
-		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,
-	},
-})
 omacy:map(omacy.HYPER, "\\", function()
-	spoon.PopupTranslateSelection:translateSelectionPopup("en", "nl")
+	omacy.translate:translateSelectionPopup({
+		from = "nl",
+		to = "en",
+		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,
+	})
 end, "translate selection")
 
 pcall(require, "local")
