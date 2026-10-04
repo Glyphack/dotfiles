@@ -9,7 +9,7 @@
 ---@field mouseScroll omacy.MouseScroll
 ---@field autostart omacy.Autostart
 ---@field audio omacy.Audio
----@field hotkeys omacy.Hotkey[] the shortcuts bound when Omacy starts
+---@field mappings omacy.Hotkey[] the shortcuts added with map, applied over the defaults when Omacy starts
 local obj = {}
 obj.__index = obj
 
@@ -33,54 +33,58 @@ obj.audio = dofile(hs.spoons.resourcePath("audio.lua"))
 ---@field mods string[]
 ---@field key string
 ---@field desc string what the shortcut does, printed by showShortcuts
----@field fn function
+---@field fn function? nil turns off the default on the same keys
 
--- Every shortcut bound when Omacy starts, in the order it was added. A user
--- config adds its own with map before Omacy starts.
-obj.hotkeys = {
-	{ mods = obj.HYPER, key = "a", desc = "snap left", fn = obj.window.left },
-	{ mods = obj.HYPER, key = "d", desc = "snap right", fn = obj.window.right },
-	{ mods = obj.HYPER, key = "w", desc = "snap top", fn = obj.window.top },
-	{ mods = obj.HYPER, key = "s", desc = "snap bottom", fn = obj.window.bottom },
-	{ mods = obj.HYPER, key = "c", desc = "center window", fn = obj.window.center },
-	{ mods = obj.HYPER, key = "i", desc = "fill the screen", fn = obj.window.maximize },
-	{ mods = obj.HYPER, key = "]", desc = "move to next screen", fn = obj.window.nextScreen },
-	{ mods = obj.HYPER, key = "[", desc = "move to previous screen", fn = obj.window.previousScreen },
-	{
-		mods = obj.HYPER,
-		key = "m",
-		desc = "choose window",
-		fn = function()
-			obj.windowChooser:show()
-		end,
-	},
-	{
-		mods = obj.HYPER,
-		key = "b",
-		desc = "choose bookmark",
-		fn = function()
-			obj.bookmarkChooser:show()
-		end,
-	},
-	{
-		mods = obj.HYPER,
-		key = "j",
-		desc = "Brave Browser",
-		fn = function()
-			obj.focus.launchOrFocusOrRotate({ app = "com.brave.Browser" })
-		end,
-	},
-	{
-		mods = obj.HYPER,
-		key = "k",
-		desc = "WezTerm",
-		fn = function()
-			obj.focus.launchOrFocusOrRotate({ app = "com.github.wez.wezterm" })
-		end,
-	},
-	{ mods = obj.HYPER, key = "t", desc = "toggle mic mute", fn = obj.micMute.toggle },
-	{ mods = { "ctrl" }, key = "`", desc = "reload config", fn = hs.reload },
-}
+obj.mappings = {}
+
+local function defaultHotkeys(self)
+	local hyper = self.HYPER
+	return {
+		{ mods = hyper, key = "a", desc = "snap left", fn = self.window.left },
+		{ mods = hyper, key = "d", desc = "snap right", fn = self.window.right },
+		{ mods = hyper, key = "w", desc = "snap top", fn = self.window.top },
+		{ mods = hyper, key = "s", desc = "snap bottom", fn = self.window.bottom },
+		{ mods = hyper, key = "c", desc = "center window", fn = self.window.center },
+		{ mods = hyper, key = "i", desc = "fill the screen", fn = self.window.maximize },
+		{ mods = hyper, key = "g", desc = "show grid", fn = self.window.grid },
+		{ mods = hyper, key = "]", desc = "move to next screen", fn = self.window.nextScreen },
+		{ mods = hyper, key = "[", desc = "move to previous screen", fn = self.window.previousScreen },
+		{
+			mods = hyper,
+			key = "m",
+			desc = "choose window",
+			fn = function()
+				self.windowChooser:show()
+			end,
+		},
+		{
+			mods = hyper,
+			key = "b",
+			desc = "choose bookmark",
+			fn = function()
+				self.bookmarkChooser:show()
+			end,
+		},
+		{
+			mods = hyper,
+			key = "j",
+			desc = "Brave Browser",
+			fn = function()
+				self.focus.launchOrFocusOrRotate({ app = "com.brave.Browser" })
+			end,
+		},
+		{
+			mods = hyper,
+			key = "k",
+			desc = "WezTerm",
+			fn = function()
+				self.focus.launchOrFocusOrRotate({ app = "com.github.wez.wezterm" })
+			end,
+		},
+		{ mods = hyper, key = "t", desc = "toggle mic mute", fn = self.micMute.toggle },
+		{ mods = { "ctrl" }, key = "#50", desc = "reload config", fn = hs.reload },
+	}
+end
 
 local function keysOf(mods, key)
 	local parts = {}
@@ -102,6 +106,23 @@ local function indexOf(hotkeys, mods, key)
 	return nil
 end
 
+local function hotkeysOf(self)
+	local hotkeys = defaultHotkeys(self)
+	for _, mapping in ipairs(self.mappings) do
+		local index = indexOf(hotkeys, mapping.mods, mapping.key)
+		if not mapping.fn then
+			if index then
+				table.remove(hotkeys, index)
+			end
+		elseif index then
+			hotkeys[index] = mapping
+		else
+			table.insert(hotkeys, mapping)
+		end
+	end
+	return hotkeys
+end
+
 local function enableWhenFree(mods, key, fn)
 	local hotkey = hs.hotkey.new(mods, key, fn)
 	if not hotkey then
@@ -119,55 +140,20 @@ local function enableWhenFree(mods, key, fn)
 	return true
 end
 
--- Adds a shortcut to hotkeys. shortcut is the mods and the key separated by
--- spaces, such as "hyper u" or "cmd shift m", where hyper stands for the
--- HYPER mods. A shortcut on the same keys as an earlier one replaces it, so
--- a default can be given a new action. A nil fn removes the shortcut on
--- those keys, so a default can be turned off.
-function obj:map(shortcut, fn, desc)
-	local words = {}
-	for word in shortcut:gmatch("%S+") do
-		table.insert(words, word)
-	end
-
-	local key = table.remove(words)
-	if not key then
-		return self
-	end
-
-	local mods = {}
-	for _, word in ipairs(words) do
-		if word == "hyper" then
-			for _, hyperMod in ipairs(self.HYPER) do
-				table.insert(mods, hyperMod)
-			end
-		else
-			table.insert(mods, word)
-		end
-	end
-
-	local index = indexOf(self.hotkeys, mods, key)
-	if not fn then
-		if index then
-			table.remove(self.hotkeys, index)
-		end
-		return self
-	end
-
-	local entry = { mods = mods, key = key, desc = desc, fn = fn }
-	if index then
-		self.hotkeys[index] = entry
-		return self
-	end
-	table.insert(self.hotkeys, entry)
-
+-- Adds a shortcut. mods is the list of modifier keys the way hs.hotkey takes
+-- them, such as omacy.HYPER or { "cmd", "shift" }, and key is the key, such
+-- as "u". A shortcut on the same keys as an earlier one replaces it, so a
+-- default can be given a new action. A nil fn removes the shortcut on those
+-- keys, so a default can be turned off.
+function obj:map(mods, key, fn, desc)
+	table.insert(self.mappings, { mods = mods, key = key, desc = desc, fn = fn })
 	return self
 end
 
--- Prints every shortcut in hotkeys to the Hammerspoon console.
+-- Prints every shortcut bound when Omacy starts to the Hammerspoon console.
 function obj:showShortcuts()
 	print("=== Shortcuts ===")
-	for _, entry in ipairs(self.hotkeys) do
+	for _, entry in ipairs(hotkeysOf(self)) do
 		local keys = { table.unpack(entry.mods) }
 		table.insert(keys, entry.key)
 		print(string.format("  %-20s  %s", table.concat(keys, "+"), entry.desc or ""))
@@ -176,7 +162,8 @@ function obj:showShortcuts()
 end
 
 function obj:start()
-	for _, entry in ipairs(self.hotkeys) do
+	hs.autoLaunch(true)
+	for _, entry in ipairs(hotkeysOf(self)) do
 		enableWhenFree(entry.mods, entry.key, entry.fn)
 	end
 	self.mouseScroll.start()

@@ -6,6 +6,7 @@ local log = hs.logger.new("omacy.focus", "info")
 local focusHistory = {}
 local currentFocusedId = nil
 local previousFocusedId = nil
+local pointerTimer = nil
 
 local function recordFocus(win)
 	if not win then
@@ -181,7 +182,7 @@ local function openTarget(target)
 	if browserTabs.matchText(target) then
 		selectTabOrOpenURL(target)
 	end
-	hs.timer.doAfter(0.1, function()
+	pointerTimer = hs.timer.doAfter(0.1, function()
 		local win = hs.window.focusedWindow()
 		if win then
 			mouseToCenter(win)

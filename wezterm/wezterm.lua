@@ -1,3 +1,10 @@
+-- Omacy load DO NOT EDIT
+local omacy_config = require("omacy").load()
+if omacy_config then
+	return omacy_config
+end
+-- Omacy load DO NOT EDIT
+
 local wezterm = require("wezterm")
 local act = wezterm.action
 

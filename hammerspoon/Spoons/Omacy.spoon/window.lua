@@ -70,16 +70,14 @@ function window.maximize()
 	end)
 end
 
--- Focuses win and puts the mouse pointer in its middle, so keyboard and mouse
--- both land on the screen the window sits on. Does nothing when win is still
--- on fromScreen. frame() already gives the final frame while a move is still
--- animating.
-local function followWindow(win, fromScreen)
-	if win:screen():id() == fromScreen:id() then
-		return
-	end
+local function followWindow(win)
 	win:focus()
 	hs.mouse.absolutePosition(win:frame().center)
+end
+
+function window.grid()
+	hs.grid.setGrid("6x3")
+	hs.grid.show()
 end
 
 -- Moves the focused window to the next screen, keeping its relative size and
@@ -90,11 +88,8 @@ function window.nextScreen()
 	if not win then
 		return
 	end
-	local screen = win:screen()
-	withUndo(win, "nextScreen", function()
-		win:moveToScreen(screen:next(), true, true)
-	end)
-	followWindow(win, screen)
+	win:moveToScreen(win:screen():next(), true, true)
+	followWindow(win)
 end
 
 function window.previousScreen()
@@ -102,11 +97,8 @@ function window.previousScreen()
 	if not win then
 		return
 	end
-	local screen = win:screen()
-	withUndo(win, "previousScreen", function()
-		win:moveToScreen(screen:previous(), true, true)
-	end)
-	followWindow(win, screen)
+	win:moveToScreen(win:screen():previous(), true, true)
+	followWindow(win)
 end
 
 return window

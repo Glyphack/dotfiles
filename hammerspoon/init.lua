@@ -22,7 +22,6 @@ local ipc = require("hs.ipc")
 local timer = require("hs.timer")
 require("hs.task")
 local application = require("hs.application")
-local grid = require("hs.grid")
 local log = hs.logger.new("hammerspoon", "info")
 
 if ipc.cliStatus() ~= true then
@@ -31,19 +30,18 @@ end
 
 -- Setup
 
-omacy:map("hyper u", function()
+omacy:map(omacy.HYPER, "u", function()
 	omacy.focus.launchOrFocusOrRotate({ app = "org.qutebrowser.qutebrowser" })
 end, "qutebrowser")
-omacy:map("hyper o", function()
+omacy:map(omacy.HYPER, "o", function()
 	omacy.focus.launchOrFocusOrRotate({ app = "md.obsidian" })
 end, "Obsidian")
-omacy:map("hyper p", function()
+omacy:map(omacy.HYPER, "p", function()
 	omacy.focus.launchOrFocusOrRotate({ app = "com.obsproject.obs-studio" })
 end, "OBS")
-omacy:map("hyper y", function()
+omacy:map(omacy.HYPER, "y", function()
 	omacy.focus.launchOrFocusOrRotate({ app = "com.hnc.Discord" })
 end, "Discord")
-omacy:map("hyper g", grid.show, "show grid")
 
 local wm = hs.webview.windowMasks
 SpoonInstall:andUse("PopupTranslateSelection", {
@@ -51,7 +49,7 @@ SpoonInstall:andUse("PopupTranslateSelection", {
 		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,
 	},
 })
-omacy:map("hyper \\", function()
+omacy:map(omacy.HYPER, "\\", function()
 	spoon.PopupTranslateSelection:translateSelectionPopup("en", "nl")
 end, "translate selection")
 
@@ -116,8 +114,10 @@ local function screenCallback(layout)
 	local screens = hs.screen.allScreens()
 	for _, screen in pairs(screens) do
 		if screen:name() ~= MACBOOK_MONITOR then
-			log.i("Setting " .. screen:name() .. " as primary")
-			screen:setPrimary()
+			if screen:id() ~= hs.screen.primaryScreen():id() then
+				log.i("Setting " .. screen:name() .. " as primary")
+				screen:setPrimary()
+			end
 
 			timer.doAfter(2, function()
 				openApp("/Applications/flameshot.app")

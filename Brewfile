@@ -41,8 +41,6 @@ brew "libtool"
 brew "graphviz"
 # Tool for glamorous shell scripts
 brew "gum"
-# Grammar Checker for Developers
-brew "harper"
 # Improved top (interactive process viewer)
 brew "htop"
 # Polyglot runtime manager (asdf rust clone)
@@ -81,6 +79,8 @@ cask "keycastr"
 cask "monitorcontrol"
 # Knowledge base that works on top of a local folder of plain text Markdown files
 cask "obsidian"
+# Programmable solid 3D CAD modeller
+cask "openscad@snapshot"
 # Keyboard-driven, vim-like browser based on PyQt5
 cask "qutebrowser"
 # Control your tools with a few keystrokes

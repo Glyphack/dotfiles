@@ -31,7 +31,6 @@ local function open(bundleID, hidden)
 	table.insert(tasks, task)
 end
 
--- The running app with this bundle ID, or nil when it is not running.
 local function running(bundleID)
 	return hs.application.applicationsForBundleID(bundleID)[1]
 end
