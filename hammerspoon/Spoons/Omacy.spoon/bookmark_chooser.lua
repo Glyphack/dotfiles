@@ -33,6 +33,7 @@ function BookmarkChooser:load()
 	local choices = {}
 	local file = io.open(BOOKMARKS_PATH, "r")
 	if not file then
+		hs.alert.show("No Brave bookmarks found")
 		return choices
 	end
 	local contents = file:read("*a")

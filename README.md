@@ -1,18 +1,19 @@
 ## Dotfiles
 
 My personal dotfiles to install and configure software I use.
-Anything I use is configured here.
 
 ## Installation
 
+On a new Mac:
+
 ```bash
-mkdir -p ~/Programming/ && cd ~/Programming
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-git clone https://github.com/Glyphack/dotfiles.git
-cd dotfiles/
-sh setup.sh
-gh auth login
-git remote set-url origin git@github.com/glyphack/dotfiles
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/Glyphack/dotfiles/master/scripts/install.sh)"
+```
+
+On a current Mac:
+
+```bash
+./scripts/setup.sh
 ```
 
 ## Secrets

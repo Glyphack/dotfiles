@@ -10,7 +10,7 @@ local function appIcon(app)
 end
 
 local WindowChooser = {
-	filter = windowFilter.new():keepActive(),
+	filter = windowFilter.new():setDefaultFilter({}):keepActive(),
 	windowsById = {},
 	chooser = nil,
 }
@@ -43,6 +43,9 @@ function WindowChooser:focus(choice)
 	local win = self.windowsById[choice.windowId]
 	if not win then
 		return
+	end
+	if win:isMinimized() then
+		win:unminimize()
 	end
 	win:focus()
 end

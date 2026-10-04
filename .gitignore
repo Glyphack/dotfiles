@@ -2,3 +2,4 @@ local*
 __pycache__/
 wallpapers/
 karabiner/config/automatic_backups/
+setup.local.sh

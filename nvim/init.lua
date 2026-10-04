@@ -1089,6 +1089,7 @@ require("lazy").setup({
 		"tpope/vim-fugitive",
 		dependencies = { "tpope/vim-rhubarb" },
 		cmd = { "Git", "G", "Gvdiffsplit", "Gdiffsplit", "Gread", "Gwrite", "Ggrep", "GMove", "GDelete", "GBrowse" },
+		event = { "BufReadCmd fugitive://*" },
 		keys = {
 			{ "<leader>hs", desc = "Toggle Git" },
 			{ "<leader>hb", "<cmd>Git blame<cr>", desc = "Blame current file" },
@@ -1130,6 +1131,16 @@ require("lazy").setup({
 						buffer = args.buf,
 						desc = "Open file in a new tab",
 					})
+					map("n", "dv", function()
+						local status_tab = vim.api.nvim_get_current_tabpage()
+						vim.cmd("tab split")
+						vim.t.diff_return_tab = status_tab
+						vim.api.nvim_feedkeys(
+							vim.api.nvim_replace_termcodes("<Plug>fugitive:dv", true, false, true),
+							"mx",
+							false
+						)
+					end, "Open diff in a new tab", { buffer = args.buf })
 					map("n", "<leader>p", function()
 						local worktree = vim.fn.FugitiveWorkTree(args.buf)
 						fugitive_toggle()
@@ -1146,6 +1157,13 @@ require("lazy").setup({
 					end, "Push changes", { buffer = args.buf })
 				end,
 			})
+			map("n", "q", function()
+				local status_tab = vim.t.diff_return_tab
+				if not status_tab then
+					return "q"
+				end
+				return "<Cmd>tabclose<CR><Cmd>call nvim_set_current_tabpage(" .. status_tab .. ")<CR>"
+			end, "Close diff tab and return to Git status", { expr = true })
 			map("n", "<leader>gb", ":.GBrowse!<CR>", "Copy line URL in git remote", { silent = true })
 			map("v", "<leader>gb", ":GBrowse!<CR>", "Copy selection URL in git remote", { silent = true })
 			map("n", "<leader>hd", function()
@@ -1168,6 +1186,8 @@ require("lazy").setup({
 				vim.cmd("copen")
 			end, "Branch changes vs base")
 			vim.opt.diffopt:append("algorithm:histogram")
+			vim.opt.diffopt:remove("inline:char")
+			vim.opt.diffopt:append("inline:word")
 		end,
 	},
 
@@ -1371,6 +1391,29 @@ vim.api.nvim_create_autocmd("LspAttach", {
 })
 
 -- Startup
+
+-- Soft diff backgrounds mixed from the flexoki palette, so code keeps its
+-- syntax colors and changed words stay readable in both light and dark mode.
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "flexoki",
+	callback = function()
+		local c = require("flexoki.palette").palette()
+		local function mix(color, alpha)
+			local channels = {}
+			for i = 2, 6, 2 do
+				local top = tonumber(color:sub(i, i + 1), 16)
+				local base = tonumber(c.bg:sub(i, i + 1), 16)
+				table.insert(channels, math.floor(top * alpha + base * (1 - alpha) + 0.5))
+			end
+			return string.format("#%02x%02x%02x", unpack(channels))
+		end
+		vim.api.nvim_set_hl(0, "DiffAdd", { bg = mix(c.gr, 0.2) })
+		vim.api.nvim_set_hl(0, "DiffDelete", { fg = mix(c.re, 0.6), bg = mix(c.re, 0.2) })
+		vim.api.nvim_set_hl(0, "DiffChange", { bg = mix(c.bl, 0.15) })
+		vim.api.nvim_set_hl(0, "DiffText", { bg = mix(c.bl, 0.4) })
+		vim.api.nvim_set_hl(0, "DiffTextAdd", { bg = mix(c.gr, 0.4) })
+	end,
+})
 
 vim.cmd.colorscheme("flexoki")
 

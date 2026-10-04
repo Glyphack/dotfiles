@@ -3,59 +3,59 @@
 [tools]
 # General
 # "github:wezterm/wezterm" = "nightly"
-"github:sharkdp/fd" = "latest"
-prek = "latest"
-meson = "latest"
-"cargo:diskus" = "latest"
-"github:cli/cli" = "latest"
+"github:sharkdp/fd" = { version = "latest", lazy = true }
+prek = { version = "latest", lazy = true }
+meson = { version = "latest", lazy = true }
+"cargo:diskus" = { version = "latest", lazy = true }
+"github:cli/cli" = { version = "latest", lazy = true }
 
-"go:oss.terrastruct.com/d2" = "latest"
-"go:rsc.io/2fa" = "latest"
+"go:oss.terrastruct.com/d2" = { version = "latest", lazy = true }
+"go:rsc.io/2fa" = { version = "latest", lazy = true }
 
 # Go
-go = "1.26"
-"go:golang.org/x/tools/gopls" = "latest"
-"go:golang.org/x/tools/cmd/goimports" = "latest"
-golangci-lint = "v2.11.3"
+go = { version = "1.26", lazy = true }
+"go:golang.org/x/tools/gopls" = { version = "latest", lazy = true }
+"go:golang.org/x/tools/cmd/goimports" = { version = "latest", lazy = true }
+golangci-lint = { version = "v2.11.3", lazy = true }
 
 # Rust
-rust = { version = "1.91.0", components = "rust-src,llvm-tools,rustfmt,rust-analyzer" }
-"cargo:cargo-benchcmp" = "0.4.5"
-"cargo:cargo-fuzz" = "latest"
-"cargo:cargo-insta" = "1.42.2"
-"cargo:cargo-lldb-test" = "0.1.0"
-"cargo:cargo-nextest" = "0.9.93"
-"cargo:flamegraph" = "0.6.8"
-"cargo:inferno" = "0.12.2"
-"cargo:samply" = "0.13.1"
-"cargo:toml2json" = "1.3.1"
-"cargo:trunk" = "0.21.14"
+rust = { version = "1.91.0", components = "rust-src,llvm-tools,rustfmt,rust-analyzer", lazy = true }
+"cargo:cargo-benchcmp" = { version = "0.4.5", lazy = true }
+"cargo:cargo-fuzz" = { version = "latest", lazy = true }
+"cargo:cargo-insta" = { version = "1.42.2", lazy = true }
+"cargo:cargo-lldb-test" = { version = "0.1.0", lazy = true }
+"cargo:cargo-nextest" = { version = "0.9.93", lazy = true }
+"cargo:flamegraph" = { version = "0.6.8", lazy = true }
+"cargo:inferno" = { version = "0.12.2", lazy = true }
+"cargo:samply" = { version = "0.13.1", lazy = true }
+"cargo:trunk" = { version = "0.21.14", lazy = true }
 
 # Python
-ruff = "latest"
+ruff = { version = "latest", lazy = true }
 # I develop ty sometimes
 # ty = "dev"
-uv = "latest"
+uv = { version = "latest", lazy = true }
 
-"pipx:djlint" = "latest"
-"pipx:git+https://github.com/astral-sh/ecosystem-analyzer.git@main" = "latest"
-"pipx:huec" = "latest"
-"pipx:towelie" = "latest"
-"pipx:yt-dlp" = "latest"
+"pipx:djlint" = { version = "latest", lazy = true }
+"pipx:git+https://github.com/astral-sh/ecosystem-analyzer.git@main" = { version = "latest", lazy = true }
+"pipx:huec" = { version = "latest", lazy = true }
+"pipx:towelie" = { version = "latest", lazy = true }
+"pipx:yt-dlp" = { version = "latest", lazy = true }
 
-clojure = "1.12.4"
-java = "corretto-21.0.1.12.1"
-ruby = "3.3.0"
+clojure = { version = "1.12.4", lazy = true }
+java = { version = "corretto-21.0.1.12.1", lazy = true }
+ruby = { version = "3.3.0", lazy = true }
 
-node = "24"
-"npm:pnpm" = "latest"
-"npm:typescript-language-server" = "latest"
-"npm:typescript" = "latest"
-hunk = "latest"
-"pipx:pre-commit" = "latest"
-"go:glyphack/omacy" = "path:{{env.HOME}}/Programming/omacy"
-"go:charm.land/glow/v3" = "latest"
-"github:jqlang/jq" = "latest"
+node = { version = "24", lazy = true }
+"npm:pnpm" = { version = "latest", lazy = true }
+"npm:typescript-language-server" = { version = "latest", lazy = true }
+"npm:typescript" = { version = "latest", lazy = true }
+hunk = { version = "latest", lazy = true }
+"pipx:pre-commit" = { version = "latest", lazy = true }
+
+"go:glyphack/omacy" = { version = "path:{{env.HOME}}/Programming/omacy", lazy = true }
+"go:charm.land/glow/v3" = { version = "latest", lazy = true }
+"github:jqlang/jq" = { version = "latest", lazy = true }
 
 [settings]
 experimental = true

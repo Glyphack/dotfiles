@@ -49,6 +49,17 @@ fish_add_path -g "$HOME/.rd/bin" \
     "$ANDROID_HOME/emulator" \
     "$ANDROID_HOME/platform-tools"
 
+# Every executable in the dotfiles bin folder can be run by its name without
+# the file extension, so bin/hue-on.sh runs as hue-on.
+for script in $DOTFILES_BIN/*
+    if not test -f $script; or not test -x $script
+        continue
+    end
+    function (path change-extension '' (path basename $script)) --inherit-variable script
+        $script $argv
+    end
+end
+
 # I can quickly jump to my useful directories
 set -gx FZF_DEFAULT_COMMAND "fd --hidden"
 set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"

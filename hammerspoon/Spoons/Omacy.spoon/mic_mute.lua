@@ -4,11 +4,18 @@ local micMute = {}
 local MUTED_ICON = "NSTouchBarAudioInputMuteTemplate"
 
 local menubar = nil
-local watchedDevices = {}
+micMute.watchedDevices = {}
 
 local function isMuted()
-	local mic = hs.audiodevice.defaultInputDevice()
-	return mic ~= nil and mic:inputMuted() == true
+	local muted = false
+	for _, device in ipairs(hs.audiodevice.allInputDevices()) do
+		local state = device:inputMuted()
+		if state == false then
+			return false
+		end
+		muted = muted or state == true
+	end
+	return muted
 end
 
 local function showIcon()
@@ -70,7 +77,7 @@ for _, device in ipairs(hs.audiodevice.allInputDevices()) do
 		end
 	end)
 	device:watcherStart()
-	table.insert(watchedDevices, device)
+	table.insert(micMute.watchedDevices, device)
 end
 
 updateMenubar()
