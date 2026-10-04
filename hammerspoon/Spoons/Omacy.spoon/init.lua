@@ -9,6 +9,7 @@
 ---@field mouseScroll omacy.MouseScroll
 ---@field autostart omacy.Autostart
 ---@field audio omacy.Audio
+---@field translate omacy.Translate
 ---@field mappings omacy.Hotkey[] the shortcuts added with map, applied over the defaults when Omacy starts
 local obj = {}
 obj.__index = obj
@@ -28,6 +29,7 @@ obj.micMute = dofile(hs.spoons.resourcePath("mic_mute.lua"))
 obj.mouseScroll = dofile(hs.spoons.resourcePath("mouse_scroll.lua"))
 obj.autostart = dofile(hs.spoons.resourcePath("autostart.lua"))
 obj.audio = dofile(hs.spoons.resourcePath("audio.lua"))
+obj.translate = dofile(hs.spoons.resourcePath("translate.lua"))
 
 ---@class omacy.Hotkey
 ---@field mods string[]
@@ -82,6 +84,14 @@ local function defaultHotkeys(self)
 			end,
 		},
 		{ mods = hyper, key = "t", desc = "toggle mic mute", fn = self.micMute.toggle },
+		{
+			mods = hyper,
+			key = "\\",
+			desc = "translate selection",
+			fn = function()
+				self.translate:translateSelectionPopup()
+			end,
+		},
 		{ mods = { "ctrl" }, key = "#50", desc = "reload config", fn = hs.reload },
 	}
 end
