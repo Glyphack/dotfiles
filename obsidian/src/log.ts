@@ -1,8 +1,48 @@
+export const TIME_ERROR = 'Start time must be a time like 09:30 or 0930.';
+
+const TIME_PATTERN = /^(\d{1,2}):?(\d{2})$/;
+// Log lines may use a 24-hour clock or a 12-hour clock with AM or PM.
+const STAMP = String.raw`\d{1,2}:\d{2}(?:\s*[AP]M)?`;
+const STAMP_PARTS = /^(\d{1,2}):(\d{2})(?:\s*([AP]M))?$/i;
+
+export const STAMP_RANGE = new RegExp(`^(${STAMP})-(${STAMP})`, 'i');
+
+export interface ClockTime {
+	hour: number;
+	minute: number;
+}
+
+export function parseTime(text: string): ClockTime | null {
+	const match = TIME_PATTERN.exec(text.trim());
+	if (!match) {
+		return null;
+	}
+	const hour = Number(match[1]);
+	const minute = Number(match[2]);
+	if (hour > 23 || minute > 59) {
+		return null;
+	}
+	return { hour, minute };
+}
+
+export function parseStamp(text: string): ClockTime | null {
+	const match = STAMP_PARTS.exec(text.trim());
+	if (!match) {
+		return null;
+	}
+	const hour = Number(match[1]);
+	const minute = Number(match[2]);
+	const period = match[3]?.toUpperCase();
+	if (!period) {
+		return { hour, minute };
+	}
+	return { hour: (hour % 12) + (period === 'PM' ? 12 : 0), minute };
+}
+
 export interface LogInput {
 	message: string;
 	place: string;
 	from: string;
-	to: string;
 }
 
 export class LogEntry {
@@ -15,14 +55,14 @@ export class LogEntry {
 
 	static fromInput(input: LogInput, now: Date): LogEntry {
 		const place = input.place ? input.place : null;
-		const start = input.from ? applyTime(now, input.from) : now;
-		if (input.to) {
-			return new LogEntry(input.message, place, start, applyTime(now, input.to));
-		}
 		if (!input.from) {
 			return new LogEntry(input.message, place, now, null);
 		}
-		return new LogEntry(input.message, place, start, now);
+		const time = parseTime(input.from);
+		if (time === null) {
+			throw new Error(TIME_ERROR);
+		}
+		return new LogEntry(input.message, place, applyTime(now, time), now);
 	}
 
 	format(): string {
@@ -39,7 +79,7 @@ export class LogEntry {
 }
 
 const LOG_SEPARATOR = '***';
-const LOG_LINE = /^\d{2}:\d{2} [AP]M(?:-\d{2}:\d{2} [AP]M)? > /;
+const LOG_LINE = new RegExp(`^${STAMP}(?:-${STAMP})? > `, 'i');
 
 export class WeeklyLog {
 	private readonly lines: string[];
@@ -132,16 +172,14 @@ export class WeeklyLog {
 }
 
 function formatTime(date: Date): string {
-	const period = date.getHours() >= 12 ? 'PM' : 'AM';
-	const hour = date.getHours() % 12 || 12;
+	const hours = String(date.getHours()).padStart(2, '0');
 	const minutes = String(date.getMinutes()).padStart(2, '0');
-	return `${String(hour).padStart(2, '0')}:${minutes} ${period}`;
+	return `${hours}:${minutes}`;
 }
 
-function applyTime(now: Date, time: string): Date {
-	const [hour, minute] = time.split(':');
+function applyTime(now: Date, time: ClockTime): Date {
 	const start = new Date(now);
-	start.setHours(Number(hour), Number(minute), 0, 0);
+	start.setHours(time.hour, time.minute, 0, 0);
 	return start;
 }
 

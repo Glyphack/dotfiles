@@ -11,7 +11,12 @@ import {
 import { Extension } from '@codemirror/state';
 import { LogEntry, LogInput } from './log';
 import { LogModal } from './log-modal';
-import { TrackTimeInput, TrackTimeSession } from './track-time';
+import {
+	DURATION_ERROR,
+	TrackTimeInput,
+	TrackTimeSession,
+	parseDuration,
+} from './track-time';
 import { TrackTimeModal } from './track-time-modal';
 import { WeeklyNote } from './weekly-note';
 import { lastFocusSession } from './continue-focus';
@@ -61,23 +66,30 @@ export default class DotsPlugin extends Plugin {
 			name: 'Open weekly note',
 			callback: () => this.openWeeklyNote(),
 		});
-		this.registerObsidianProtocolHandler('dots-log', (params) => {
-			const input: LogInput = {
-				message: params.message ?? '',
+		this.registerAction('dots-log', 'log', async (params) => {
+			if (!params.message) {
+				throw new Error('Log message is required.');
+			}
+			await this.log({
+				message: params.message,
 				place: params.place ?? '',
 				from: params.from ?? '',
-				to: params.to ?? '',
-			};
-			if (!input.message) {
-				new Notice('Log message is required.');
-				return;
-			}
-			this.log(input)
-				.then(() => this.returnFocus(params))
-				.catch((error) => {
-					new Notice(`Failed to log: ${message(error)}`);
-				});
+			});
 		});
+		this.registerAction('dots-track-time', 'track time', async (params) => {
+			const duration = parseDuration(params.duration ?? '');
+			if (duration === null) {
+				throw new Error(DURATION_ERROR);
+			}
+			await this.trackTime({
+				category: params.category ?? '',
+				duration,
+				message: params.message ?? '',
+			});
+		});
+		this.registerAction('dots-continue-focus', 'continue focus', () =>
+			this.continueFocus(),
+		);
 		this.addCommand({
 			id: 'log',
 			name: 'Log',
@@ -99,13 +111,6 @@ export default class DotsPlugin extends Plugin {
 					});
 				}).open();
 			},
-		});
-		this.registerObsidianProtocolHandler('dots-continue-focus', (params) => {
-			this.continueFocus()
-				.then(() => this.returnFocus(params))
-				.catch((error) => {
-					new Notice(`Failed to continue focus: ${message(error)}`);
-				});
 		});
 		this.addCommand({
 			id: 'continue-focus',
@@ -339,6 +344,20 @@ export default class DotsPlugin extends Plugin {
 		await this.trackTime(session);
 	}
 
+	private registerAction(
+		action: string,
+		description: string,
+		run: (params: ObsidianProtocolData) => Promise<void>,
+	) {
+		this.registerObsidianProtocolHandler(action, (params) => {
+			run(params)
+				.then(() => this.returnFocus(params))
+				.catch((error) => {
+					new Notice(`Failed to ${description}: ${message(error)}`);
+				});
+		});
+	}
+
 	private returnFocus(params: ObsidianProtocolData): void {
 		if (params.background === '1') {
 			returnToPreviousApp();
@@ -350,9 +369,12 @@ export default class DotsPlugin extends Plugin {
 			return;
 		}
 		const { shell } = require('electron') as {
-			shell: { openExternal(url: string): Promise<void> };
+			shell: {
+				openExternal(url: string, options?: { activate?: boolean }): Promise<void>;
+			};
 		};
 		void shell.openExternal(session.raycastUrl());
+		void shell.openExternal(session.oneThingUrl(), { activate: false });
 	}
 
 	private async scheduleReminder(session: TrackTimeSession) {

@@ -10,11 +10,10 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export DOTFILES
 
 install_packages() {
-    brew bundle install --file=Brewfile
+    HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install --file=Brewfile
 }
 
 apply_settings() {
-    bash bin/block-sites.sh block
     bash scripts/mac-settings.sh
 }
 

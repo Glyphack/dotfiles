@@ -2,9 +2,11 @@ import { App, Modal, Notice, Setting } from 'obsidian';
 import {
 	DEFAULT_CATEGORY,
 	DEFAULT_DURATION_MIN,
+	DURATION_ERROR,
 	TRACK_TIME_CATEGORIES,
 	TrackTimeInput,
 	TrackTimeSession,
+	parseDuration,
 } from './track-time';
 
 export class TrackTimeModal extends Modal {
@@ -90,7 +92,7 @@ export class TrackTimeModal extends Modal {
 	}
 
 	private session(): TrackTimeSession | null {
-		const duration = this.parseDuration();
+		const duration = parseDuration(this.duration);
 		if (duration === null) {
 			return null;
 		}
@@ -103,23 +105,10 @@ export class TrackTimeModal extends Modal {
 		);
 	}
 
-	private parseDuration(): number | null {
-		const raw = this.duration.trim();
-		if (!raw) {
-			return DEFAULT_DURATION_MIN;
-		}
-
-		const value = Number(raw);
-		if (!Number.isInteger(value) || value <= 0) {
-			return null;
-		}
-		return value;
-	}
-
 	private submit(): void {
-		const duration = this.parseDuration();
+		const duration = parseDuration(this.duration);
 		if (duration === null) {
-			new Notice('Duration must be a positive whole number of minutes.');
+			new Notice(DURATION_ERROR);
 			return;
 		}
 

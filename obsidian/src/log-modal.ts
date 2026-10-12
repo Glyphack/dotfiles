@@ -1,7 +1,6 @@
 import { App, Modal, Notice, Setting } from 'obsidian';
-import { LogInput } from './log';
+import { LogInput, TIME_ERROR, parseTime } from './log';
 
-const TIME_PATTERN = /^\d{1,2}:\d{2}$/;
 const MAX_MESSAGE_HEIGHT_PX = 320;
 
 export class LogModal extends Modal {
@@ -48,7 +47,7 @@ export class LogModal extends Modal {
 		});
 
 		new Setting(contentEl).setName('From').addText((text) => {
-			text.setPlaceholder('Start time, e.g. 09:30 (optional)');
+			text.setPlaceholder('Start time, e.g. 09:30 or 0930 (optional)');
 			text.onChange((value) => (this.from = value));
 		});
 
@@ -76,13 +75,13 @@ export class LogModal extends Modal {
 			new Notice('Message is required.');
 			return;
 		}
-		if (from && !TIME_PATTERN.test(from)) {
-			new Notice('Start time must be a time like 09:30.');
+		if (from && parseTime(from) === null) {
+			new Notice(TIME_ERROR);
 			return;
 		}
 
 		this.close();
-		this.onSubmit({ message, place: this.place.trim(), from, to: '' });
+		this.onSubmit({ message, place: this.place.trim(), from });
 	}
 }
 

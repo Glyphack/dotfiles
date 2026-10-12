@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import quote, urlencode
 
@@ -51,48 +51,44 @@ def obsidian_is_frontmost():
 
 
 @dataclass
-class LogRequest:
-    message: str
-    place: str | None = None
-    start: str | None = None
-    end: str | None = None
+class DotsAction:
+    name: str
+    params: dict[str, str | None] = field(default_factory=dict)
 
-    def params(self):
-        params = {
-            "vault": get_vault_name(),
-            "message": self.message,
-        }
+    def url(self):
+        params = {"vault": get_vault_name()}
         if not obsidian_is_frontmost():
             params["background"] = "1"
-        if self.place:
-            params["place"] = self.place
-        if self.start:
-            params["from"] = self.start
-        if self.end:
-            params["to"] = self.end
-        return params
+        params.update({key: value for key, value in self.params.items() if value})
+        return f"obsidian://dots-{self.name}?{urlencode(params, quote_via=quote)}"
 
     def send(self):
-        url = f"obsidian://dots-log?{urlencode(self.params(), quote_via=quote)}"
-        result = subprocess.run(["open", "-g", url], capture_output=True, text=True)
+        result = subprocess.run(["open", "-g", self.url()], capture_output=True, text=True)
         if result.returncode != 0:
             print(f"Failed to open Obsidian: {result.stderr.strip()}")
             sys.exit(1)
 
 
-def get_arg_optional(i):
+def arg(i):
     return sys.argv[i] if len(sys.argv) > i and sys.argv[i] else None
 
 
-def main():
-    request = LogRequest(
-        message=sys.argv[1],
-        place=get_arg_optional(2),
-        start=get_arg_optional(3),
-    )
-    request.send()
+def log():
+    DotsAction("log", {"message": arg(1), "place": arg(2), "from": arg(3)}).send()
     print("Logged")
 
 
+def track_time(category):
+    DotsAction(
+        "track-time",
+        {"category": category, "duration": arg(1), "message": arg(2)},
+    ).send()
+
+
+def continue_focus():
+    DotsAction("continue-focus").send()
+    print("Continuing focus")
+
+
 if __name__ == "__main__":
-    main()
+    log()

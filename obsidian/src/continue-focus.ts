@@ -1,3 +1,4 @@
+import { ClockTime, STAMP_RANGE, parseStamp } from './log';
 import { TRACK_TIME_CATEGORIES } from './track-time';
 
 export interface ContinuedFocus {
@@ -7,8 +8,6 @@ export interface ContinuedFocus {
 }
 
 const FOCUS_TAG = '#focus-session';
-const TIME_RANGE = /^(\d{1,2}:\d{2}\s*(?:AM|PM))-(\d{1,2}:\d{2}\s*(?:AM|PM))/i;
-const CLOCK = /^(\d{1,2}):(\d{2})\s*(AM|PM)$/i;
 
 export function lastFocusSession(
 	content: string,
@@ -72,32 +71,21 @@ function parseLabel(line: string): { goal: string; message: string } {
 }
 
 function parseDuration(line: string): number {
-	const match = TIME_RANGE.exec(line.trim());
+	const match = STAMP_RANGE.exec(line.trim());
 	if (!match) {
 		return 0;
 	}
-	const start = match[1] ? parseClock(match[1]) : null;
-	const end = match[2] ? parseClock(match[2]) : null;
+	const start = parseStamp(match[1] ?? '');
+	const end = parseStamp(match[2] ?? '');
 	if (start === null || end === null) {
 		return 0;
 	}
-	const elapsed = end - start;
+	const elapsed = minutesOfDay(end) - minutesOfDay(start);
 	return elapsed < 0 ? elapsed + 24 * 60 : elapsed;
 }
 
-function parseClock(text: string): number | null {
-	const match = CLOCK.exec(text.trim());
-	if (!match) {
-		return null;
-	}
-	const hourText = match[1];
-	const minuteText = match[2];
-	const period = match[3];
-	if (hourText === undefined || minuteText === undefined || period === undefined) {
-		return null;
-	}
-	const hour = (Number(hourText) % 12) + (period.toUpperCase() === 'PM' ? 12 : 0);
-	return hour * 60 + Number(minuteText);
+function minutesOfDay(time: ClockTime): number {
+	return time.hour * 60 + time.minute;
 }
 
 function categoryForGoal(goal: string): string {

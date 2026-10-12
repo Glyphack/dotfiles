@@ -53,12 +53,4 @@ export default tseslint.config(
 			'@typescript-eslint/no-require-imports': 'off',
 		},
 	},
-	{
-		files: ['**/*.test.ts'],
-		rules: {
-			'import/no-nodejs-modules': 'off',
-			'@typescript-eslint/no-floating-promises': 'off',
-			'no-restricted-globals': 'off',
-		},
-	},
 );

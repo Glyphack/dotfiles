@@ -19,6 +19,6 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from lockin_core import run
+from log import track_time
 
-run("track")
+track_time("track")
