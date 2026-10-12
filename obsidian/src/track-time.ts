@@ -19,10 +19,12 @@ export const TRACK_TIME_CATEGORIES: TrackTimeCategory[] = [
 	{ value: 'reading', goal: 'Reading' },
 	{ value: 'afk', goal: 'AFK' },
 	{ value: 'break', goal: 'Break' },
+	{ value: 'track', goal: 'Track' },
 ];
 
 export const DEFAULT_CATEGORY = 'writing';
 export const DEFAULT_DURATION_MIN = 30;
+export const DURATION_ERROR = 'Duration must be a positive whole number of minutes.';
 
 const FALLBACK_GOAL = 'Focus';
 const FOCUS_BLOCKS: Record<string, string[]> = {
@@ -51,11 +53,12 @@ export class TrackTimeSession {
 		return this.durationMin * 60;
 	}
 
+	get title(): string {
+		return this.message ? `${this.goal}: ${this.message}` : this.goal;
+	}
+
 	logEntry(): LogEntry {
-		const label = this.message
-			? `#focus-session ${this.goal}: ${this.message}`
-			: `#focus-session ${this.goal}`;
-		return new LogEntry(label, null, this.start, this.end);
+		return new LogEntry(`#focus-session ${this.title}`, null, this.start, this.end);
 	}
 
 	reminder(): ScheduledNotification {
@@ -78,4 +81,20 @@ export class TrackTimeSession {
 		}
 		return `raycast://focus/start?${params.toString()}`;
 	}
+
+	oneThingUrl(): string {
+		return `one-thing:?text=${encodeURIComponent(this.title)}`;
+	}
+}
+
+export function parseDuration(raw: string): number | null {
+	const text = raw.trim();
+	if (!text) {
+		return DEFAULT_DURATION_MIN;
+	}
+	const minutes = Number(text);
+	if (!Number.isInteger(minutes) || minutes <= 0) {
+		return null;
+	}
+	return minutes;
 }

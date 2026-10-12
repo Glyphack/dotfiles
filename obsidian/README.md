@@ -28,7 +28,7 @@ The modal has these fields:
 
 - Message: what happened. Required.
 - Place: an optional location tag.
-- From: an optional start time like `09:30`. When set the line shows a start and end range.
+- From: an optional start time like `09:30` or `0930`. When set the line shows a start and end range.
 
 
 ## Track time
@@ -36,10 +36,21 @@ The modal has these fields:
 Run the `Track time` command to start a focus session and log it to the weekly note.
 It writes the same kind of timestamped line as `Log`, tagged with `#focus-session` and the goal.
 
-On desktop it also opens a Raycast focus session for the goal and duration.
+On desktop it also opens a Raycast focus session for the goal and duration, and sets the goal in One Thing.
 
 If the ntfy topic is set then it will also send a push notification when the session ends.
 Useful to create a reminder when I'm on the phone and track time with the same action.
+
+
+## Links
+
+Scripts outside Obsidian use these links. They only pass the arguments and the plugin does the rest.
+
+- `obsidian://dots-log?message=...&place=...&from=...` works like `Log`.
+- `obsidian://dots-track-time?category=...&duration=...&message=...` works like `Track time`.
+- `obsidian://dots-continue-focus` starts the last focus session of today again.
+
+Add `background=1` to hide Obsidian again when it is done.
 
 
 ## Sync to Blog
@@ -52,19 +63,12 @@ You need to set your blog `content` directory in settings.
 It can start with `~` or `$HOME`, so the same setting works on machines with different usernames.
 This means the blog must be on the same machine. So publishing from mobile is no possible.
 
-There are two kinds of notes:
-
-- blogs: These end up in content/blog
-- pages: These end up in content/synced
-
-Blogs are rendered as normal posts.
-
-Tags:
+Front matter keys:
 
 - `share: true`: publish this note.
-- `dest`: for a blog it's `blog/my-post` and for a page it's `synced/my-note`. Pages end up in `synced/my-note`
+- `dest`: the folder inside `content` where the note goes. It is used as is. `blog/my-post` ends up in `content/blog/my-post` and `my-note` ends up in `content/my-note`.
 
-hugo tags are also supported:
+hugo keys are also supported:
 - `url` to specify what URL to use.
 - `layout` to customize how the page will render.
 
@@ -92,6 +96,8 @@ Note links are transformed so they work on the blog too, here are the rules:
 - `[[other-note#heading]]` links will end up as `(other-note)[/path/to/note]` so the heading information is dropped.
 - Attachments live next to not so `![a chart](attachments/chart.png)` becomes  `![a chart](chart.png)`
 - The front matter links are untouched and just unwrapped.
+
+Dataview blocks are removed before publishing.
 
 
 ### Image metadata

@@ -40,9 +40,6 @@ function isBlank(value: unknown): boolean {
 
 export const INDEX_FILE = 'index.md';
 
-const BLOG_SECTION = 'blog';
-const CATCHALL_SECTION = 'synced';
-
 export interface FrontmatterConfig {
 	removeKeys: string[];
 	renameKeys: Record<string, string>;
@@ -59,33 +56,16 @@ export class PublishedNote {
 		public readonly dest: string,
 	) {}
 
-	get slug(): string {
-		const segments = this.segments();
-		const last = segments[segments.length - 1];
-		return last ?? '';
-	}
-
 	get bundleDir(): string {
-		if (this.isBlog()) {
-			return this.segments().join('/');
-		}
-		return `${CATCHALL_SECTION}/${this.slug}`;
+		return this.dest
+			.split('/')
+			.map((segment) => segment.trim())
+			.filter((segment) => segment.length > 0)
+			.join('/');
 	}
 
 	get url(): string {
 		return `/${this.bundleDir}/`;
-	}
-
-	private segments(): string[] {
-		return this.dest
-			.split('/')
-			.map((segment) => segment.trim())
-			.filter((segment) => segment.length > 0);
-	}
-
-	private isBlog(): boolean {
-		const segments = this.segments();
-		return segments.length >= 2 && segments[0] === BLOG_SECTION;
 	}
 }
 
@@ -184,7 +164,7 @@ export function transformNote(
 		[...CONTROL_KEYS, ...config.removeKeys],
 		config.renameKeys,
 	);
-	const body = text.slice(frontmatterEndOffset);
+	const body = stripDataviewBlocks(text.slice(frontmatterEndOffset));
 
 	const attachments: string[] = [];
 	for (const reference of references) {
@@ -217,6 +197,55 @@ function sizeQuery(width: number | null, height: number | null): string {
 		params.push(`height=${height}`);
 	}
 	return `?${params.join('&')}`;
+}
+
+const DATAVIEW_LANGUAGES = new Set(['dataview', 'dataviewjs']);
+const FENCE_OPEN_PATTERN = /^ {0,3}(`{3,}|~{3,})(.*?)\s*$/;
+const FENCE_CLOSE_PATTERN = /^ {0,3}(`{3,}|~{3,})\s*$/;
+
+class CodeFence {
+	constructor(
+		public readonly marker: string,
+		public readonly isDataview: boolean,
+	) {}
+
+	static open(line: string): CodeFence | null {
+		const match = FENCE_OPEN_PATTERN.exec(line);
+		if (!match) {
+			return null;
+		}
+		const language = (match[2] ?? '').trim().split(/\s+/)[0] ?? '';
+		return new CodeFence(match[1] ?? '', DATAVIEW_LANGUAGES.has(language));
+	}
+
+	closedBy(line: string): boolean {
+		const marker = FENCE_CLOSE_PATTERN.exec(line)?.[1];
+		if (!marker) {
+			return false;
+		}
+		return marker[0] === this.marker[0] && marker.length >= this.marker.length;
+	}
+}
+
+export function stripDataviewBlocks(body: string): string {
+	const out: string[] = [];
+	let fence: CodeFence | null = null;
+	for (const line of body.split('\n')) {
+		if (fence === null) {
+			fence = CodeFence.open(line);
+			if (!fence?.isDataview) {
+				out.push(line);
+			}
+			continue;
+		}
+		if (!fence.isDataview) {
+			out.push(line);
+		}
+		if (fence.closedBy(line)) {
+			fence = null;
+		}
+	}
+	return out.join('\n');
 }
 
 export function rewriteFrontmatter(
