@@ -374,6 +374,11 @@ function __g_cmd_cmp --description 'show commits on the current branch that are 
     git log (__g_remote_branch)..(__g_cur)
 end
 
+function __g_cmd_diff --description 'review the full branch diff against the base in hunk'
+    __g_fetch_base
+    hunk diff (__g_remote_branch)...HEAD $argv
+end
+
 function __g_cmd_done --description 'delete a finished branch and its worktree (-d forces unmerged)'
     __g_inprocess_abort; or return 1
     set -l force false; contains -- -d $argv; and set force true
