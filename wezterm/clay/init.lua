@@ -1,4 +1,4 @@
--- This file belongs to omacy and is written again on every update.
+-- This file belongs to clay and is written again on every update.
 
 local wezterm = require("wezterm")
 

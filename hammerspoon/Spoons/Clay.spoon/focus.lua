@@ -1,7 +1,7 @@
----@class omacy.Focus
+---@class clay.Focus
 local focus = {}
 
-local log = hs.logger.new("omacy.focus", "info")
+local log = hs.logger.new("clay.focus", "info")
 
 local focusHistory = {}
 local currentFocusedId = nil

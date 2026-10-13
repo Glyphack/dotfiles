@@ -1,20 +1,20 @@
----@class omacy.Api
+---@class clay.Api
 ---@field version string
 ---@field HYPER string[] the modifier set the shortcuts use
----@field window omacy.Window
----@field focus omacy.Focus
+---@field window clay.Window
+---@field focus clay.Focus
 ---@field windowChooser table
 ---@field bookmarkChooser table
----@field micMute omacy.MicMute
----@field mouseScroll omacy.MouseScroll
----@field autostart omacy.Autostart
----@field audio omacy.Audio
----@field translate omacy.Translate
----@field mappings omacy.Hotkey[] the shortcuts added with map, applied over the defaults when Omacy starts
+---@field micMute clay.MicMute
+---@field mouseScroll clay.MouseScroll
+---@field autostart clay.Autostart
+---@field audio clay.Audio
+---@field translate clay.Translate
+---@field mappings clay.Hotkey[] the shortcuts added with map, applied over the defaults when Clay starts
 local obj = {}
 obj.__index = obj
 
-obj.name = "Omacy"
+obj.name = "Clay"
 obj.version = "0.1.0"
 obj.author = "Glyphack"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
@@ -33,7 +33,7 @@ obj.translate = dofile(hs.spoons.resourcePath("translate.lua"))
 
 obj.windowChooser:init(obj)
 
----@class omacy.Hotkey
+---@class clay.Hotkey
 ---@field mods string[]
 ---@field key string
 ---@field desc string what the shortcut does, printed by showShortcuts
@@ -153,7 +153,7 @@ local function enableWhenFree(mods, key, fn)
 end
 
 -- Adds a shortcut. mods is the list of modifier keys the way hs.hotkey takes
--- them, such as omacy.HYPER or { "cmd", "shift" }, and key is the key, such
+-- them, such as clay.HYPER or { "cmd", "shift" }, and key is the key, such
 -- as "u". A shortcut on the same keys as an earlier one replaces it, so a
 -- default can be given a new action. A nil fn removes the shortcut on those
 -- keys, so a default can be turned off.
@@ -162,7 +162,7 @@ function obj:map(mods, key, fn, desc)
 	return self
 end
 
--- Prints every shortcut bound when Omacy starts to the Hammerspoon console.
+-- Prints every shortcut bound when Clay starts to the Hammerspoon console.
 function obj:showShortcuts()
 	print("=== Shortcuts ===")
 	for _, entry in ipairs(hotkeysOf(self)) do

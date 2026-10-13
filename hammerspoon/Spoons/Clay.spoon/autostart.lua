@@ -1,7 +1,7 @@
----@class omacy.Autostart
+---@class clay.Autostart
 local autostart = {}
 
-local log = hs.logger.new("omacy.autostart", "info")
+local log = hs.logger.new("clay.autostart", "info")
 
 local HIDE_DELAY = 2
 

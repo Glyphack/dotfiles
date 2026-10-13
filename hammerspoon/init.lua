@@ -1,13 +1,13 @@
--- Omacy load DO NOT EDIT
+-- Clay load DO NOT EDIT
 require("hs.ipc")
-local omacy = nil
-if hs.spoons.isInstalled("Omacy") then
-	hs.loadSpoon("Omacy")
-	omacy = spoon.Omacy
+local clay = nil
+if hs.spoons.isInstalled("Clay") then
+	hs.loadSpoon("Clay")
+	clay = spoon.Clay
 else
-	print("omacy is not installed on this machine, its Hammerspoon shortcuts stay off")
+	print("clay is not installed on this machine, its Hammerspoon shortcuts stay off")
 end
--- Omacy load DO NOT EDIT
+-- Clay load DO NOT EDIT
 
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/private/Spoons/?.spoon/init.lua"
 package.path = package.path .. ";" .. os.getenv("HOME") .. "/Programming/dotfiles/hammerspoon/?.lua"
@@ -30,22 +30,22 @@ end
 
 -- Setup
 
-omacy:map(omacy.HYPER, "u", function()
-	omacy.focus.launchOrFocusOrRotate({ app = "org.qutebrowser.qutebrowser" })
+clay:map(clay.HYPER, "u", function()
+	clay.focus.launchOrFocusOrRotate({ app = "org.qutebrowser.qutebrowser" })
 end, "qutebrowser")
-omacy:map(omacy.HYPER, "o", function()
-	omacy.focus.launchOrFocusOrRotate({ app = "md.obsidian" })
+clay:map(clay.HYPER, "o", function()
+	clay.focus.launchOrFocusOrRotate({ app = "md.obsidian" })
 end, "Obsidian")
-omacy:map(omacy.HYPER, "p", function()
-	omacy.focus.launchOrFocusOrRotate({ app = "com.obsproject.obs-studio" })
+clay:map(clay.HYPER, "p", function()
+	clay.focus.launchOrFocusOrRotate({ app = "com.obsproject.obs-studio" })
 end, "OBS")
-omacy:map(omacy.HYPER, "y", function()
-	omacy.focus.launchOrFocusOrRotate({ app = "com.hnc.Discord" })
+clay:map(clay.HYPER, "y", function()
+	clay.focus.launchOrFocusOrRotate({ app = "com.hnc.Discord" })
 end, "Discord")
 
 local wm = hs.webview.windowMasks
-omacy:map(omacy.HYPER, "\\", function()
-	omacy.translate:translateSelectionPopup({
+clay:map(clay.HYPER, "\\", function()
+	clay.translate:translateSelectionPopup({
 		from = "nl",
 		to = "en",
 		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,
@@ -54,7 +54,7 @@ end, "translate selection")
 
 pcall(require, "local")
 
-omacy:showShortcuts()
+clay:showShortcuts()
 
 -- UTILS
 
@@ -78,7 +78,7 @@ local function openApp(bundle)
 	return app
 end
 
-omacy.autostart.launch({
+clay.autostart.launch({
 	"com.todoist.mac.Todoist",
 	"com.glyphack.whispertron",
 	"org.flameshot.Flameshot",
@@ -87,7 +87,7 @@ omacy.autostart.launch({
 })
 
 -- SOUND
-omacy.audio.prefer({
+clay.audio.prefer({
 	output = {
 		"WH-1000XM5",
 		"Farbod's JBL Flip 6",
@@ -231,8 +231,8 @@ end
 local wakeWatcher = hs.caffeinate.watcher.new(OnWake)
 wakeWatcher:start()
 
--- Omacy apply DO NOT EDIT
-if omacy then
-	omacy:start()
+-- Clay apply DO NOT EDIT
+if clay then
+	clay:start()
 end
--- Omacy apply DO NOT EDIT
+-- Clay apply DO NOT EDIT

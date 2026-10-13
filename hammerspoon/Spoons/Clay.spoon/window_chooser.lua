@@ -13,11 +13,11 @@ local WindowChooser = {
 	filter = windowFilter.new():setDefaultFilter({}):keepActive(),
 	windowsById = {},
 	chooser = nil,
-	omacy = nil,
+	clay = nil,
 }
 
-function WindowChooser:init(omacy)
-	self.omacy = omacy
+function WindowChooser:init(clay)
+	self.clay = clay
 end
 
 function WindowChooser:load()
@@ -49,7 +49,7 @@ function WindowChooser:focus(choice)
 	if not win then
 		return
 	end
-	self.omacy.focus.focusOrRotate(win)
+	self.clay.focus.focusOrRotate(win)
 end
 
 function WindowChooser:show()

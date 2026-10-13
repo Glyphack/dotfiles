@@ -1,4 +1,4 @@
----@class omacy.MouseScroll
+---@class clay.MouseScroll
 local mouseScroll = {}
 
 local SCROLL_MOUSE_BUTTON = 2

@@ -1,4 +1,4 @@
----@class omacy.MicMute
+---@class clay.MicMute
 local micMute = {}
 
 local MUTED_ICON = "NSTouchBarAudioInputMuteTemplate"
