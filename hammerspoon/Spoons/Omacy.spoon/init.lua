@@ -31,6 +31,8 @@ obj.autostart = dofile(hs.spoons.resourcePath("autostart.lua"))
 obj.audio = dofile(hs.spoons.resourcePath("audio.lua"))
 obj.translate = dofile(hs.spoons.resourcePath("translate.lua"))
 
+obj.windowChooser:init(obj)
+
 ---@class omacy.Hotkey
 ---@field mods string[]
 ---@field key string
