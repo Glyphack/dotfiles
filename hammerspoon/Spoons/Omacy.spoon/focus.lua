@@ -34,11 +34,15 @@ end
 focus.watcher = hs.window.filter.new():subscribe(hs.window.filter.windowFocused, recordFocus)
 
 local function mouseToCenter(window)
-	local current_pos = hs.geometry(hs.mouse.absolutePosition())
-	local frame = window:frame()
-	if not current_pos:inside(frame) then
-		hs.mouse.absolutePosition(frame.center)
+	hs.mouse.absolutePosition(window:frame().center)
+end
+
+local function focusWindow(win)
+	if win:isMinimized() then
+		win:unminimize()
 	end
+	win:focus()
+	mouseToCenter(win)
 end
 
 local function windowBelongsToApp(win, bundleID)
@@ -143,8 +147,7 @@ end
 local function focusPreviousOrHide(hsApp)
 	local previous = focusHistory.previousWindow()
 	if previous then
-		previous:focus()
-		mouseToCenter(previous)
+		focusWindow(previous)
 		return
 	end
 	if not hsApp:hide() then
@@ -169,9 +172,7 @@ local function rotateWindows(hsApp)
 		return
 	end
 
-	local targetWin = appWindows[#appWindows]
-	targetWin:focus()
-	mouseToCenter(targetWin)
+	focusWindow(appWindows[#appWindows])
 end
 
 local function openTarget(target)
@@ -213,6 +214,16 @@ function focus.launchOrFocusOrRotate(target)
 		return
 	end
 	selectTabOrOpenURL(target)
+end
+
+-- Focuses win and moves the mouse into it. If win is already focused it cycles between the other windows of its app, and when there are none it moves the focus to the previous window.
+function focus.focusOrRotate(win)
+	local focusedWindow = hs.window.focusedWindow()
+	if focusedWindow and focusedWindow:id() == win:id() then
+		rotateWindows(win:application())
+		return
+	end
+	focusWindow(win)
 end
 
 return focus

@@ -13,7 +13,12 @@ local WindowChooser = {
 	filter = windowFilter.new():setDefaultFilter({}):keepActive(),
 	windowsById = {},
 	chooser = nil,
+	omacy = nil,
 }
+
+function WindowChooser:init(omacy)
+	self.omacy = omacy
+end
 
 function WindowChooser:load()
 	self.windowsById = {}
@@ -44,10 +49,7 @@ function WindowChooser:focus(choice)
 	if not win then
 		return
 	end
-	if win:isMinimized() then
-		win:unminimize()
-	end
-	win:focus()
+	self.omacy.focus.focusOrRotate(win)
 end
 
 function WindowChooser:show()
