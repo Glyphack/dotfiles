@@ -1,4 +1,4 @@
-set -a fish_function_path $__fish_config_dir/omacy
+set -a fish_function_path $__fish_config_dir/clay
 
 fish_add_path --path $HOME/.local/bin
 

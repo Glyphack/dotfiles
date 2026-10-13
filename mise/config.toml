@@ -53,7 +53,7 @@ node = { version = "24", lazy = true }
 hunk = { version = "latest", lazy = true }
 "pipx:pre-commit" = { version = "latest", lazy = true }
 
-"go:glyphack/omacy" = { version = "path:{{env.HOME}}/Programming/omacy", lazy = true }
+"go:glyphack/clay" = { version = "path:{{env.HOME}}/Programming/clay", lazy = true }
 "go:charm.land/glow/v3" = { version = "latest", lazy = true }
 "github:jqlang/jq" = { version = "latest", lazy = true }
 

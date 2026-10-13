@@ -48,6 +48,10 @@ backend = "cargo:trunk"
 version = "1.12.4.1635"
 backend = "asdf:clojure"
 
+[[tools.fd]]
+version = "10.5.0"
+backend = "aqua:sharkdp/fd"
+
 [[tools.fzf]]
 version = "0.74.4"
 backend = "aqua:junegunn/fzf"
@@ -342,13 +346,9 @@ url = "https://dl.google.com/go/go1.26.7.windows-amd64.zip"
 version = "3.0.0"
 backend = "go:charm.land/glow/v3"
 
-[[tools."go:glyphack/foocmd"]]
-version = "path:/private/tmp/claude-501/-Users-shayeganhooshyari-Programming-omacy/b639af8a-dda9-4fb1-93c0-c4aedd863f6c/scratchpad/gopathtest2"
-backend = "go:glyphack/foocmd"
-
-[[tools."go:glyphack/omacy"]]
-version = "path:~/Programming/omacy"
-backend = "go:glyphack/omacy"
+[[tools."go:glyphack/clay"]]
+version = "path:~/Programming/clay"
+backend = "go:glyphack/clay"
 
 [[tools."go:golang.org/x/tools/cmd/goimports"]]
 version = "0.50.0"
@@ -517,14 +517,6 @@ backend = "npm:typescript"
 [[tools."npm:typescript-language-server"]]
 version = "6.0.0"
 backend = "npm:typescript-language-server"
-
-[[tools.omacy]]
-version = "dev"
-backend = "asdf:omacy"
-
-[[tools.omacy-test]]
-version = "dev"
-backend = "asdf:omacy-test"
 
 [[tools."pipx:djlint"]]
 version = "1.44.2"
@@ -762,3 +754,7 @@ provenance = "github-attestations"
 checksum = "sha256:df7cb9f243eae1621400d4fcf5b1b3d90f20e264ece91b64deb3b0078abca6ef"
 url = "https://github.com/astral-sh/uv/releases/download/0.12.6/uv-x86_64-pc-windows-msvc.zip"
 provenance = "github-attestations"
+
+[[tools.yt-dlp]]
+version = "2026.08.19"
+backend = "github:yt-dlp/yt-dlp"

@@ -19,8 +19,6 @@ brew "creduce"
 brew "duti"
 # Perl lib for reading and writing EXIF metadata
 brew "exiftool"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@3", link: true
 # Play, record, convert, and stream select audio and video codecs
 brew "ffmpeg"
 # User-friendly command-line shell for UNIX-like operating systems
@@ -31,6 +29,8 @@ brew "gcc"
 brew "git-lfs"
 # GNU Privacy Guard (OpenPGP)
 brew "gnupg"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3", link: true
 # Command-driven, interactive function plotting
 brew "gnuplot"
 # Library to render SVG files using Cairo

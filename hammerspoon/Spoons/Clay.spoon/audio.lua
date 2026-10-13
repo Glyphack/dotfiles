@@ -1,4 +1,4 @@
----@class omacy.Audio
+---@class clay.Audio
 local audio = {}
 
 local SETTLE_DELAY = 1

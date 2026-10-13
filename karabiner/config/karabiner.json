@@ -6,12 +6,12 @@
                 "parameters": { "basic.simultaneous_threshold_milliseconds": 150 },
                 "rules": [
                     {
-                        "description": "omacy: caps-lock",
-                        "eval_js": "var rule = {\n  description: 'omacy: Caps lock to escape or hyper',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { key_code: 'caps_lock', modifiers: { optional: ['any'] } },\n      to: [{ key_code: 'right_command', modifiers: ['right_control', 'right_option'] }],\n      to_if_alone: [{ key_code: 'escape' }],\n    },\n  ],\n}\n\nrule\n"
+                        "description": "clay: caps-lock",
+                        "eval_js": "var rule = {\n  description: 'clay: Caps lock to escape or hyper',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { key_code: 'caps_lock', modifiers: { optional: ['any'] } },\n      to: [{ key_code: 'right_command', modifiers: ['right_control', 'right_option'] }],\n      to_if_alone: [{ key_code: 'escape' }],\n    },\n  ],\n}\n\nrule\n"
                     },
                     {
-                        "description": "omacy: paste-no-formatting",
-                        "eval_js": "var rule = {\n  description: 'omacy: cmd shift v pastes with no formatting',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { key_code: 'v', modifiers: { mandatory: ['command', 'shift'] } },\n      to: [\n        {\n          key_code: 'v',\n          modifiers: ['command', 'shift', 'option'],\n        },\n      ],\n      conditions: [\n        {\n          type: 'frontmost_application_if',\n          bundle_identifiers: [\n            '^com\\\\.microsoft\\\\.Outlook$',\n            '^com\\\\.apple\\\\.Notes$',\n          ],\n        },\n      ],\n    },\n  ],\n}\n\nrule\n"
+                        "description": "clay: paste-no-formatting",
+                        "eval_js": "var rule = {\n  description: 'clay: cmd shift v pastes with no formatting',\n  manipulators: [\n    {\n      type: 'basic',\n      from: { key_code: 'v', modifiers: { mandatory: ['command', 'shift'] } },\n      to: [\n        {\n          key_code: 'v',\n          modifiers: ['command', 'shift', 'option'],\n        },\n      ],\n      conditions: [\n        {\n          type: 'frontmost_application_if',\n          bundle_identifiers: [\n            '^com\\\\.microsoft\\\\.Outlook$',\n            '^com\\\\.apple\\\\.Notes$',\n          ],\n        },\n      ],\n    },\n  ],\n}\n\nrule\n"
                     },
                     {
                         "description": "dotfiles: a-layer",

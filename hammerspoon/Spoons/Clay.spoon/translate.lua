@@ -23,7 +23,7 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
----@class omacy.Translate
+---@class clay.Translate
 local translate = {}
 
 local POPUP_STYLE = hs.webview.windowMasks.utility

@@ -1,4 +1,4 @@
----@class omacy.Window
+---@class clay.Window
 local window = {}
 
 local savedFrame = nil
