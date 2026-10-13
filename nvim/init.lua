@@ -1271,7 +1271,6 @@ require("lazy").setup({
 
 -- My keymaps and commands
 
-require("agent").setup()
 require("bookmarks").setup()
 require("splitline").setup()
 

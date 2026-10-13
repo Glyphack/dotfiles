@@ -1,4 +1,4 @@
-set -l subcmds base bco co clean cmp coauthored done merge new pr rebase squash status stash sync unstash
+set -l subcmds base bco co clean cmp coauthored diff done merge new pr rebase squash status stash sync unstash
 set -l pr_subs create open share
 
 complete -c ,g -f
@@ -14,6 +14,7 @@ complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a merge      -d "M
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a rebase     -d "Rebase current onto base"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a squash     -d "Squash commits ahead of base"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a cmp        -d "Commits ahead of source-of-truth base"
+complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a diff       -d "Review full branch diff against base in hunk"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a pr         -d "PR: create / open / share"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a status     -d "One-screen branch + worktree + base status"
 complete -c ,g -n "not __fish_seen_subcommand_from $subcmds" -a stash      -d "Manual stash with ,g name"
