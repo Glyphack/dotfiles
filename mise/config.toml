@@ -3,17 +3,17 @@
 [tools]
 # General
 # "github:wezterm/wezterm" = "nightly"
-"github:sharkdp/fd" = { version = "latest", lazy = true }
+"github:sharkdp/fd" = "latest"
 prek = { version = "latest", lazy = true }
 meson = { version = "latest", lazy = true }
 "cargo:diskus" = { version = "latest", lazy = true }
-"github:cli/cli" = { version = "latest", lazy = true }
+"github:cli/cli" = "latest"
 
 "go:oss.terrastruct.com/d2" = { version = "latest", lazy = true }
 "go:rsc.io/2fa" = { version = "latest", lazy = true }
 
 # Go
-go = { version = "1.26", lazy = true }
+go = "1.26"
 "go:golang.org/x/tools/gopls" = { version = "latest", lazy = true }
 "go:golang.org/x/tools/cmd/goimports" = { version = "latest", lazy = true }
 golangci-lint = { version = "v2.11.3", lazy = true }
@@ -46,10 +46,10 @@ clojure = { version = "1.12.4", lazy = true }
 java = { version = "corretto-21.0.1.12.1", lazy = true }
 ruby = { version = "3.3.0", lazy = true }
 
-node = { version = "24", lazy = true }
+node = "24"
 "npm:pnpm" = { version = "latest", lazy = true }
 "npm:typescript-language-server" = { version = "latest", lazy = true }
-"npm:typescript" = { version = "latest", lazy = true }
+"npm:typescript" = "latest"
 hunk = { version = "latest", lazy = true }
 "pipx:pre-commit" = { version = "latest", lazy = true }
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # Bigger mouse pointer
 defaults write com.apple.universalaccess mouseDriverCursorSize -float 4.0
 
