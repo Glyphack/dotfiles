@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 #
 # Sets up this Mac from the dotfiles.
-#
-# Linking first runs setup.local.sh in the dotfiles folder when it exists.
 
 set -euo pipefail
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export DOTFILES
+LOCAL_SETUP="${LOCAL_SETUP:-$DOTFILES/setup.local.sh}"
 
 install_packages() {
     HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install --file=Brewfile
@@ -18,10 +17,10 @@ apply_settings() {
 }
 
 run_local_setup() {
-    if [[ ! -x setup.local.sh ]]; then
+    if [[ ! -x "$LOCAL_SETUP" ]]; then
         return
     fi
-    ./setup.local.sh
+    "$LOCAL_SETUP"
 }
 
 # Links a package into a target folder, creating the folder first and

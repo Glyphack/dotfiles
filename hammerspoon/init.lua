@@ -42,6 +42,12 @@ end, "OBS")
 clay:map(clay.HYPER, "y", function()
 	clay.focus.launchOrFocusOrRotate({ app = "com.hnc.Discord" })
 end, "Discord")
+clay:map(clay.HYPER, "0", function()
+	clay.focus.launchOrFocusOrRotate({
+		app = "com.brave.Browser",
+		url = "https://web.telegram.org/a/",
+	})
+end, "Telegram")
 
 local wm = hs.webview.windowMasks
 clay:map(clay.HYPER, "\\", function()
