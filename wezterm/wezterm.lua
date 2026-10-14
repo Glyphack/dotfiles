@@ -16,6 +16,7 @@ config.key_tables = {
 }
 config.font = wezterm.font("Hack Nerd Font Mono", { weight = "Regular", stretch = "Normal", style = "Normal" })
 config.font_size = 16
+config.window_decorations = "RESIZE"
 
 local img_background = {
 	source = {
