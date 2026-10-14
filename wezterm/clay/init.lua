@@ -17,15 +17,12 @@ local function copy_last_command_output(window, pane)
 	window:toast_notification("wezterm", "No command output found", nil, 2000)
 end
 
-local function follow_system_appearance(config)
-	if config.color_scheme then
-		return
-	end
+function M.set_theme(config, light, dark)
 	if wezterm.gui and wezterm.gui.get_appearance():find("Dark") then
-		config.color_scheme = "flexoki-dark"
+		config.color_scheme = dark
 		return
 	end
-	config.color_scheme = "flexoki-light"
+	config.color_scheme = light
 end
 
 local function use_hack_font(config)
@@ -36,7 +33,9 @@ local function use_hack_font(config)
 end
 
 function M.apply_to_config(config)
-	follow_system_appearance(config)
+	if not config.color_scheme then
+		M.set_theme(config, "flexoki-light", "flexoki-dark")
+	end
 	use_hack_font(config)
 
 	config.keys = config.keys or {}

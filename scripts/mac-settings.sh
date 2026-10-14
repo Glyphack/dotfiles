@@ -10,10 +10,7 @@ defaults write NSGlobalDomain AppleLocale -string en_US@currency=USD
 defaults write NSGlobalDomain AppleMeasurementUnits -string Centimeters
 defaults write NSGlobalDomain AppleMetricUnits -bool true
 
-duti -s dev.zed.Zed public.text all
-
-# Turn off "Automatically adjust brightness" (System Settings > Displays).
-# Displays without a light sensor are skipped.
+# Turn off Automatically adjust brightness
 osascript -l JavaScript >/dev/null <<'JXA'
 ObjC.import('AppKit');
 ObjC.bindFunction('dlopen', ['void *', ['char *', 'int']]);

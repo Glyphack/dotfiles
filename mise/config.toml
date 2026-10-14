@@ -6,29 +6,30 @@
 "github:sharkdp/fd" = "latest"
 prek = { version = "latest", lazy = true }
 meson = { version = "latest", lazy = true }
-"cargo:diskus" = { version = "latest", lazy = true }
+"cargo:diskus" = { version = "latest", lazy = true, lazy_bins = "diskus" }
 "github:cli/cli" = "latest"
+tree-sitter = "latest"
 
-"go:oss.terrastruct.com/d2" = { version = "latest", lazy = true }
-"go:rsc.io/2fa" = { version = "latest", lazy = true }
+"go:oss.terrastruct.com/d2" = { version = "latest", lazy = true, lazy_bins = "d2" }
+"go:rsc.io/2fa" = { version = "latest", lazy = true, lazy_bins = "2fa" }
 
 # Go
 go = "1.26"
-"go:golang.org/x/tools/gopls" = { version = "latest", lazy = true }
-"go:golang.org/x/tools/cmd/goimports" = { version = "latest", lazy = true }
+"go:golang.org/x/tools/gopls" = { version = "latest", lazy = true, lazy_bins = "gopls" }
+"go:golang.org/x/tools/cmd/goimports" = { version = "latest", lazy = true, lazy_bins = "goimports" }
 golangci-lint = { version = "v2.11.3", lazy = true }
 
 # Rust
-rust = { version = "1.91.0", components = "rust-src,llvm-tools,rustfmt,rust-analyzer", lazy = true }
-"cargo:cargo-benchcmp" = { version = "0.4.5", lazy = true }
-"cargo:cargo-fuzz" = { version = "latest", lazy = true }
-"cargo:cargo-insta" = { version = "1.42.2", lazy = true }
-"cargo:cargo-lldb-test" = { version = "0.1.0", lazy = true }
-"cargo:cargo-nextest" = { version = "0.9.93", lazy = true }
-"cargo:flamegraph" = { version = "0.6.8", lazy = true }
-"cargo:inferno" = { version = "0.12.2", lazy = true }
-"cargo:samply" = { version = "0.13.1", lazy = true }
-"cargo:trunk" = { version = "0.21.14", lazy = true }
+rust = { version = "1.91.0", components = "rust-src,llvm-tools,rustfmt,rust-analyzer" }
+"cargo:cargo-benchcmp" = { version = "0.4.5", lazy = true, lazy_bins = "cargo-benchcmp" }
+"cargo:cargo-fuzz" = { version = "latest", lazy = true, lazy_bins = "cargo-fuzz" }
+"cargo:cargo-insta" = { version = "1.42.2", lazy = true, lazy_bins = "cargo-insta" }
+"cargo:cargo-lldb-test" = { version = "0.1.0", lazy = true, lazy_bins = "cargo-lldb-test" }
+"cargo:cargo-nextest" = { version = "0.9.93", lazy = true, lazy_bins = "cargo-nextest" }
+"cargo:flamegraph" = { version = "0.6.8", lazy = true, lazy_bins = ["flamegraph", "cargo-flamegraph"] }
+"cargo:inferno" = "0.12.2"
+"cargo:samply" = { version = "0.13.1", lazy = true, lazy_bins = "samply" }
+"cargo:trunk" = { version = "0.21.14", lazy = true, lazy_bins = "trunk" }
 
 # Python
 ruff = { version = "latest", lazy = true }
@@ -36,26 +37,25 @@ ruff = { version = "latest", lazy = true }
 # ty = "dev"
 uv = { version = "latest", lazy = true }
 
-"pipx:djlint" = { version = "latest", lazy = true }
-"pipx:git+https://github.com/astral-sh/ecosystem-analyzer.git@main" = { version = "latest", lazy = true }
-"pipx:huec" = { version = "latest", lazy = true }
-"pipx:towelie" = { version = "latest", lazy = true }
-"pipx:yt-dlp" = { version = "latest", lazy = true }
+"pipx:djlint" = { version = "latest", lazy = true, lazy_bins = "djlint" }
+"pipx:huec" = { version = "latest", lazy = true, lazy_bins = "huec" }
+"pipx:towelie" = { version = "latest", lazy = true, lazy_bins = "towelie" }
+"pipx:yt-dlp" = { version = "latest", lazy = true, lazy_bins = "yt-dlp" }
 
 clojure = { version = "1.12.4", lazy = true }
 java = { version = "corretto-21.0.1.12.1", lazy = true }
 ruby = { version = "3.3.0", lazy = true }
 
 node = "24"
-"npm:pnpm" = { version = "latest", lazy = true }
-"npm:typescript-language-server" = { version = "latest", lazy = true }
+"npm:pnpm" = { version = "latest", lazy = true, lazy_bins = ["pnpm", "pnpx", "pn", "pnx"] }
+"npm:typescript-language-server" = { version = "latest", lazy = true, lazy_bins = "typescript-language-server" }
 "npm:typescript" = "latest"
 hunk = { version = "latest", lazy = true }
-"pipx:pre-commit" = { version = "latest", lazy = true }
+"pipx:pre-commit" = { version = "latest", lazy = true, lazy_bins = "pre-commit" }
 
-"go:glyphack/clay" = { version = "path:{{env.HOME}}/Programming/clay", lazy = true }
-"go:charm.land/glow/v3" = { version = "latest", lazy = true }
-"github:jqlang/jq" = { version = "latest", lazy = true }
+"go:glyphack/clay" = { version = "path:{{env.HOME}}/Programming/clay", lazy = true, lazy_bins = "clay" }
+"go:charm.land/glow/v3" = { version = "latest", lazy = true, lazy_bins = "glow" }
+"github:jqlang/jq" = { version = "latest", lazy = true, lazy_bins = "jq" }
 
 [settings]
 experimental = true

@@ -8,7 +8,12 @@ local ROOT_KEYS = { "bookmark_bar", "other", "synced" }
 
 local BookmarkChooser = {
 	chooser = nil,
+	clay = nil,
 }
+
+function BookmarkChooser:init(clay)
+	self.clay = clay
+end
 
 local function collectBookmarks(node, folderPath, icon, choices)
 	if not node.children then
@@ -53,7 +58,7 @@ function BookmarkChooser:load()
 end
 
 function BookmarkChooser:open(choice)
-	hs.urlevent.openURLWithBundle(choice.url, BRAVE_BUNDLE_ID)
+	self.clay.focus.launchOrFocusOrRotate({ app = BRAVE_BUNDLE_ID, url = choice.url })
 end
 
 function BookmarkChooser:show()
