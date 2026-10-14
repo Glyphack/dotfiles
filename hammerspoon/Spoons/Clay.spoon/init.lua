@@ -32,6 +32,7 @@ obj.audio = dofile(hs.spoons.resourcePath("audio.lua"))
 obj.translate = dofile(hs.spoons.resourcePath("translate.lua"))
 
 obj.windowChooser:init(obj)
+obj.bookmarkChooser:init(obj)
 
 ---@class clay.Hotkey
 ---@field mods string[]

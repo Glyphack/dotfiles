@@ -4,13 +4,21 @@ set -euo pipefail
 
 REPO="Glyphack/dotfiles"
 DOTFILES="${DOTFILES:-$HOME/Programming/dotfiles}"
+CLAY_REPO="Glyphack/clay"
+CLAY_BIN="$HOME/.local/bin/clay"
 
-install_homebrew() {
-    if command -v brew >/dev/null; then
-        return
-    fi
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    eval "$(/opt/homebrew/bin/brew shellenv)"
+install_clay() {
+    local asset="clay-darwin-arm64"
+    local url="https://github.com/$CLAY_REPO/releases/download/dev/$asset"
+    local tmp
+    tmp="$(mktemp -d)"
+    curl -fL --progress-bar -o "$tmp/$asset" "$url"
+    curl -fsSL -o "$tmp/$asset.sha256" "$url.sha256"
+    (cd "$tmp" && shasum -a 256 -c "$asset.sha256")
+    mkdir -p "$(dirname "$CLAY_BIN")"
+    install -m 755 "$tmp/$asset" "$CLAY_BIN"
+    rm -rf "$tmp"
+    "$CLAY_BIN" --no-interactive --profile install-apps
 }
 
 clone_dotfiles() {
@@ -21,19 +29,18 @@ clone_dotfiles() {
     git clone "https://github.com/$REPO.git" "$DOTFILES"
 }
 
-# Logs in to GitHub, adds an SSH key to the account and switches the repo
-# remote to SSH.
 connect_github() {
     eval "$(mise activate bash --shims)"
     if ! gh auth status >/dev/null 2>&1; then
-        gh auth login --scopes admin:public_key
+        gh auth login --git-protocol ssh
     fi
-    bash "$DOTFILES/scripts/ssh-key-gen.sh"
     git -C "$DOTFILES" remote set-url origin "git@github.com:$REPO.git"
 }
 
-install_homebrew
+install_clay
+eval "$(/opt/homebrew/bin/brew shellenv)"
 clone_dotfiles
 "$DOTFILES/scripts/setup.sh"
+"$CLAY_BIN" --no-interactive --profile current-mac
 connect_github
 exec fish

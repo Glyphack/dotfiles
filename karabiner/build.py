@@ -58,9 +58,13 @@ class RuleSet:
             for rule in self.rules:
                 (Path(work) / f"{rule.name}.js").write_text(rule.code)
             result = subprocess.run(
-                [CLI, "--lint-complex-modifications", f"{work}/*.js"], check=False
+                [CLI, "--lint-complex-modifications", f"{work}/*.js"],
+                check=False,
+                capture_output=True,
+                text=True,
             )
         if result.returncode != 0:
+            print(result.stdout + result.stderr, end="")
             sys.exit("lint failed, karabiner.json was not changed")
 
     def merge_into(self, existing: list[dict]) -> list[dict]:
@@ -104,7 +108,9 @@ class Config:
         new = self.path.with_name(self.path.name + ".new")
         new.write_text(json.dumps(self.data, indent=4, ensure_ascii=False) + "\n")
         new.replace(self.path)
-        subprocess.run([CLI, "--format-json", str(self.path)], check=True)
+        subprocess.run(
+            [CLI, "--format-json", str(self.path)], check=True, stdout=subprocess.DEVNULL
+        )
 
 
 def main() -> None:

@@ -9,11 +9,9 @@ export DOTFILES
 LOCAL_SETUP="${LOCAL_SETUP:-$DOTFILES/setup.local.sh}"
 
 install_packages() {
-    HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install --file=Brewfile
-}
-
-apply_settings() {
-    bash scripts/mac-settings.sh
+    if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install --file=Brewfile; then
+        echo "Some Brewfile packages failed to install, continuing the setup."
+    fi
 }
 
 run_local_setup() {
@@ -23,21 +21,33 @@ run_local_setup() {
     "$LOCAL_SETUP"
 }
 
-# Links a package into a target folder, creating the folder first and
-# moving any existing files in the target into the package.
 stow_into() {
-    local target="$1"
-    local package="$2"
+    local target="$1" package="$2" file
     mkdir -p "$target"
-    stow --adopt --target="$target" "$package"
+    for file in $(stow -n --target="$target" "$package" 2>&1 | sed -n 's/.*existing target \(.*\) since.*/\1/p'); do
+        mv "$target/$file" "$target/$file.bak"
+        echo "Backed up $target/$file to $target/$file.bak"
+    done
+    stow --ignore='\.DS_Store' --target="$target" "$package"
+}
+
+link_dir() {
+    local source="$1"
+    local target="$2"
+    if [[ -d "$target" && ! -L "$target" ]]; then
+        mv "$target" "$target.bak"
+        echo "Backed up $target to $target.bak"
+    fi
+    ln -sfn "$source" "$target"
 }
 
 link() {
     run_local_setup
 
     mkdir -p "$HOME/.config"
-    ln -sfn "$DOTFILES/fish" "$HOME/.config/fish"
-    ln -sfn "$DOTFILES/wezterm" "$HOME/.config/wezterm"
+    link_dir "$DOTFILES/fish" "$HOME/.config/fish"
+    link_dir "$DOTFILES/wezterm" "$HOME/.config/wezterm"
+    # These use stow cause the whole folder is not supposed to be synced
     stow_into "$HOME" gitconf
     stow_into "$HOME" ripgrep
     stow_into "$HOME" zsh
@@ -56,8 +66,8 @@ install_tools() {
 }
 
 build_karabiner() {
+    link_dir "$DOTFILES/karabiner/config" "$HOME/.config/karabiner"
     uv run karabiner/build.py
-    ln -sfn "$DOTFILES/karabiner/config" "$HOME/.config/karabiner"
     launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.Karabiner-Console-User-Server" || true
 }
 
@@ -69,12 +79,17 @@ install_vault_plugin() {
         echo "Skipping the Obsidian plugin because vault is not set."
         return
     fi
-    (cd obsidian && vault="$vault" npm run install-vault)
+    local output
+    if ! output="$(cd obsidian && vault="$vault" npm run install-vault 2>&1)"; then
+        echo "$output"
+        return 1
+    fi
+    echo "Installed the Obsidian plugin into $vault."
 }
 
 cd "$DOTFILES"
 install_packages
-apply_settings
+bash scripts/mac-settings.sh
 link
 install_tools
 build_karabiner
