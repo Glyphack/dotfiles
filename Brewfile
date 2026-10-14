@@ -1,4 +1,3 @@
-tap "cirruslabs/cli", trusted: { formulae: ["softnet", "tart"] }
 # Automatic configure script builder
 brew "autoconf"
 # Tool for generating GNU Standards-compliant Makefiles
@@ -29,8 +28,6 @@ brew "gcc"
 brew "git-lfs"
 # GNU Privacy Guard (OpenPGP)
 brew "gnupg"
-# Cryptography and SSL/TLS Toolkit
-brew "openssl@3", link: true
 # Command-driven, interactive function plotting
 brew "gnuplot"
 # Library to render SVG files using Cairo
@@ -49,6 +46,8 @@ brew "mise"
 brew "tree-sitter"
 # Ambitious Vim-fork focused on extensibility and agility
 brew "neovim"
+# Cryptography and SSL/TLS Toolkit
+brew "openssl@3", link: true
 # Organize software neatly under a single directory tree (e.g. /usr/local)
 brew "stow"
 # Port of OpenAI's Whisper model in C/C++
@@ -63,8 +62,6 @@ cask "blackhole-2ch"
 cask "brave-browser"
 # Browser for SQLite databases
 cask "db-browser-for-sqlite"
-# Screenshot software with built-in annotation tools
-cask "flameshot"
 cask "font-caskaydia-cove-nerd-font"
 cask "font-hack-nerd-font"
 # Desktop automation application
@@ -77,14 +74,16 @@ cask "karabiner-elements"
 cask "keycastr"
 # Tool to control external monitor brightness & volume
 cask "monitorcontrol"
+# Open-source software for live streaming and screen recording
+cask "obs"
 # Knowledge base that works on top of a local folder of plain text Markdown files
 cask "obsidian"
 # Programmable solid 3D CAD modeller
 cask "openscad@snapshot"
-# Keyboard-driven, vim-like browser based on PyQt5
-cask "qutebrowser"
 # Control your tools with a few keystrokes
 cask "raycast"
+# To-do list
+cask "todoist-app"
 # GPU-accelerated cross-platform terminal emulator and multiplexer
 cask "wezterm@nightly"
 # Multiplayer code editor

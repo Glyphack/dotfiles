@@ -4,6 +4,7 @@
 # General
 # "github:wezterm/wezterm" = "nightly"
 "github:sharkdp/fd" = "latest"
+fd = { version = "10.5.0" }
 prek = { version = "latest", lazy = true }
 meson = { version = "latest", lazy = true }
 "cargo:diskus" = { version = "latest", lazy = true, lazy_bins = "diskus" }
@@ -53,7 +54,7 @@ node = "24"
 hunk = { version = "latest", lazy = true }
 "pipx:pre-commit" = { version = "latest", lazy = true, lazy_bins = "pre-commit" }
 
-"go:glyphack/clay" = { version = "path:{{env.HOME}}/Programming/clay", lazy = true, lazy_bins = "clay" }
+"go:glyphack/clay" = { version = "latest", lazy = true, lazy_bins = "clay" }
 "go:charm.land/glow/v3" = { version = "latest", lazy = true, lazy_bins = "glow" }
 "github:jqlang/jq" = { version = "latest", lazy = true, lazy_bins = "jq" }
 

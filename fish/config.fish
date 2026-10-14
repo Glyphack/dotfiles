@@ -24,6 +24,7 @@ else
 end
 set -gx BREWFILE_PATH "$HOME/Programming/dotfiles/Brewfile"
 
+set -U fish_greeting
 fish_add_path -g "$HOME/.rd/bin" \
     "/opt/homebrew/bin" \
     "$HOME_BIN" \
