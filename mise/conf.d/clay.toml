@@ -1,0 +1,6 @@
+[tools]
+go = { version = "1.26", lazy = true }
+fzf = { version = "0.74.4" }
+ripgrep = { version = "15.2.0", lazy = true }
+fd = { version = "10.5.0", lazy = true }
+yt-dlp = { version = "2026.08.19", lazy = true }
