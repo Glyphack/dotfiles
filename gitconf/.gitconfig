@@ -5,7 +5,6 @@
 [core]
 	excludesfile = ~/.gitignore_global
 	hooksPath = ~/.config/git/hooks
-	fsmonitor = true
 	untrackedCache = true
 
 [alias]
