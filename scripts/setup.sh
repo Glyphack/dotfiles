@@ -50,13 +50,13 @@ link() {
     link_dir "$DOTFILES/fish" "$HOME/.config/fish"
     link_dir "$DOTFILES/wezterm" "$HOME/.config/wezterm"
     link_dir "$DOTFILES/mise" "$HOME/.config/mise"
+    link_dir  "$DOTFILES/hammerspoon" "$HOME/.hammerspoon"
     # These use stow cause the whole folder is not supposed to be synced
     stow_into "$HOME" gitconf
     stow_into "$HOME" ripgrep
     stow_into "$HOME" zsh
     stow_into "$HOME/.config/nvim" nvim
     stow_into "$HOME/.config/fd" fd
-    stow_into "$HOME/.hammerspoon" hammerspoon
     stow_into "$HOME/.qutebrowser" qutebrowser
     stow_into "$HOME/Library/Application Support/harper-ls" harper-ls
 }
