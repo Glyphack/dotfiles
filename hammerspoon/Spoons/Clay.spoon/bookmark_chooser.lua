@@ -65,6 +65,10 @@ function BookmarkChooser:show()
 	self.chooser:show()
 end
 
+function BookmarkChooser:toggle()
+	self.chooser:toggle()
+end
+
 BookmarkChooser.chooser = FuzzyChooser.new("Bookmark", function()
 	return BookmarkChooser:load()
 end, function(choice)

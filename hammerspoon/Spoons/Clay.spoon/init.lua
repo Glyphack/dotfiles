@@ -59,7 +59,7 @@ local function defaultHotkeys(self)
 			key = "m",
 			desc = "choose window",
 			fn = function()
-				self.windowChooser:show()
+				self.windowChooser:toggle()
 			end,
 		},
 		{
@@ -67,7 +67,7 @@ local function defaultHotkeys(self)
 			key = "b",
 			desc = "choose bookmark",
 			fn = function()
-				self.bookmarkChooser:show()
+				self.bookmarkChooser:toggle()
 			end,
 		},
 		{
@@ -86,13 +86,21 @@ local function defaultHotkeys(self)
 				self.focus.launchOrFocusOrRotate({ app = "com.github.wez.wezterm" })
 			end,
 		},
+		{
+			mods = hyper,
+			key = "n",
+			desc = "Raycast notes",
+			fn = function()
+				hs.urlevent.openURL("raycast://extensions/raycast/raycast-notes/raycast-notes")
+			end,
+		},
 		{ mods = hyper, key = "t", desc = "toggle mic mute", fn = self.micMute.toggle },
 		{
 			mods = hyper,
 			key = "\\",
 			desc = "translate selection",
 			fn = function()
-				self.translate:translateSelectionPopup()
+				self.translate:toggleSelectionPopup()
 			end,
 		},
 		{ mods = { "ctrl" }, key = "#50", desc = "reload config", fn = hs.reload },

@@ -51,7 +51,7 @@ end, "Telegram")
 
 local wm = hs.webview.windowMasks
 clay:map(clay.HYPER, "\\", function()
-	clay.translate:translateSelectionPopup({
+	clay.translate:toggleSelectionPopup({
 		from = "nl",
 		to = "en",
 		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,

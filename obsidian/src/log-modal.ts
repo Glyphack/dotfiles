@@ -17,7 +17,7 @@ export class LogModal extends Modal {
 
 	onOpen(): void {
 		this.setTitle('Log');
-		this.modalEl.addClass('dots-log-modal');
+		this.modalEl.addClass('dots-log-modal', 'dots-form');
 		const { contentEl } = this;
 
 		new Setting(contentEl)
@@ -49,6 +49,7 @@ export class LogModal extends Modal {
 		new Setting(contentEl).setName('From').addText((text) => {
 			text.setPlaceholder('Start time, e.g. 09:30 or 0930 (optional)');
 			text.onChange((value) => (this.from = value));
+			text.inputEl.inputMode = 'numeric';
 		});
 
 		new Setting(contentEl).addButton((button) => {
@@ -64,8 +65,10 @@ export class LogModal extends Modal {
 	}
 
 	private grow(input: HTMLTextAreaElement): void {
-		input.style.height = 'auto';
-		input.style.height = `${Math.min(input.scrollHeight, MAX_MESSAGE_HEIGHT_PX)}px`;
+		input.setCssStyles({ height: 'auto' });
+		input.setCssStyles({
+			height: `${Math.min(input.scrollHeight, MAX_MESSAGE_HEIGHT_PX)}px`,
+		});
 	}
 
 	private submit(): void {

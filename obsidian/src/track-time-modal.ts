@@ -24,6 +24,7 @@ export class TrackTimeModal extends Modal {
 
 	onOpen(): void {
 		this.setTitle('Track time');
+		this.modalEl.addClass('dots-form');
 		const { contentEl } = this;
 
 		new Setting(contentEl).setName('Category').addDropdown((dropdown) => {
@@ -44,6 +45,7 @@ export class TrackTimeModal extends Modal {
 				this.duration = value;
 				this.renderPreview();
 			});
+			text.inputEl.inputMode = 'numeric';
 		});
 
 		new Setting(contentEl).setName('Message').addText((text) => {
