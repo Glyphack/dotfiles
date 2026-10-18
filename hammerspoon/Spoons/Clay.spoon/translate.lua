@@ -86,4 +86,13 @@ function translate:translateSelectionPopup(options)
 	return self:translatePopup(currentSelection(), options)
 end
 
+-- Closes the popup when it is on screen, and otherwise does the same as translateSelectionPopup.
+function translate:toggleSelectionPopup(options)
+	if self.webview and self.webview:isVisible() then
+		self.webview:hide()
+		return self
+	end
+	return self:translateSelectionPopup(options)
+end
+
 return translate

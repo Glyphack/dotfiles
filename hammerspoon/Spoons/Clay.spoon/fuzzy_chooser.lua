@@ -96,4 +96,12 @@ function FuzzyChooser:show()
 	self.chooser:show()
 end
 
+function FuzzyChooser:toggle()
+	if self.chooser:isVisible() then
+		self.chooser:hide()
+		return
+	end
+	self:show()
+end
+
 return FuzzyChooser

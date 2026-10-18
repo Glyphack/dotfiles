@@ -2,6 +2,11 @@
 	width: min(38rem, 90vw);
 }
 
+.is-mobile .modal.dots-form {
+	max-height: calc(var(--dialog-max-height) - var(--keyboard-height));
+	margin-bottom: var(--keyboard-height);
+}
+
 .dots-log-message {
 	display: block;
 	border-top: none;

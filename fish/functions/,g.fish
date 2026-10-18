@@ -97,6 +97,12 @@ function __g_branch_mine --description 'branch carries the prefix or has my comm
     test -n "$mine"
 end
 
+function __g_branch_cleanable --description 'branch carries nothing that is missing from base, or what it carries is mine'
+    set -l ahead (git rev-list --count $argv[2]..$argv[1] 2>/dev/null)
+    test "$ahead" = 0; and return 0
+    __g_branch_mine $argv[1]
+end
+
 function __g_auto_stash --description 'stash dirty and untracked changes'
     __g_dirty; or __g_untracked; or return 0
     set -l name ",g/auto/$argv[1]>$argv[2]@"(__g_ts)
@@ -506,7 +512,7 @@ function __g_cmd_status --description 'show worktree kind, ahead/behind base, an
     return 0
 end
 
-function __g_cmd_clean --description 'delete merged shaygan- branches (--all/--prune wipes every non-base branch)'
+function __g_cmd_clean --description 'delete my merged branches (--all/--prune wipes every non-base branch)'
     __g_inprocess_abort; or return 1
     set -l base (__g_base); set -l cur (__g_cur)
     if contains -- --all $argv; or contains -- --prune $argv
@@ -530,9 +536,10 @@ function __g_cmd_clean --description 'delete merged shaygan- branches (--all/--p
     and set pr_merged (gh pr list --state merged --json headRefName -L 300 -q '.[].headRefName' 2>/dev/null)
     set -l deleted 0
     for branch in (git branch --format='%(refname:short)')
-        string match -q "$__g_branch_prefix*" $branch; or continue
+        test $branch = $base; and continue
         test $branch = $cur; and continue
         __g_is_merged $branch $ref; or contains -- $branch $pr_merged; or continue
+        __g_branch_cleanable $branch $ref; or continue
         set -l worktree_path (__g_wt_for $branch)
         if test -n "$worktree_path"
             __g_stash_worktree $worktree_path; or return 1
@@ -543,6 +550,7 @@ function __g_cmd_clean --description 'delete merged shaygan- branches (--all/--p
         set deleted (math $deleted + 1)
     end
     test $deleted -eq 0; and echo "Nothing to clean"
+    return 0
 end
 
 function __g_cmd_coauthored --description 'print a Co-authored-by line for a GitHub username'

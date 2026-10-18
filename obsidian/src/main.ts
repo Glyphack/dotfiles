@@ -31,6 +31,7 @@ import { linkpath } from './sync';
 import type { ExifTool } from './image';
 import { typewriterScroll } from './typewriter';
 import { Typefully } from './typefully';
+import { toXText } from './x-post';
 
 const DAILY_FOLDER = 'Daily';
 
@@ -165,6 +166,20 @@ export default class DotsPlugin extends Plugin {
 				this.postToX(text).catch((error) => {
 					new Notice(`Failed to post to X: ${message(error)}`);
 				});
+			},
+		});
+		this.addCommand({
+			id: 'copy-x-post',
+			name: 'Copy X post',
+			editorCallback: (editor) => {
+				const note = editor.getValue();
+				const body = note.slice(getFrontMatterInfo(note).contentStart);
+				navigator.clipboard
+					.writeText(toXText(body))
+					.then(() => new Notice('Copied X post to clipboard.'))
+					.catch((error) => {
+						new Notice(`Failed to copy X post: ${message(error)}`);
+					});
 			},
 		});
 		this.addRibbonIcon('upload-cloud', 'Publish notes', () => this.syncToHugo());

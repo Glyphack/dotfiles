@@ -9,7 +9,9 @@ export DOTFILES
 LOCAL_SETUP="${LOCAL_SETUP:-$DOTFILES/setup.local.sh}"
 
 install_packages() {
-    if ! HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install --file=Brewfile; then
+    local output
+    if ! output="$(HOMEBREW_NO_AUTO_UPDATE=1 brew bundle install --quiet --file=Brewfile 2>&1)"; then
+        echo "$output"
         echo "Some Brewfile packages failed to install, continuing the setup."
     fi
 }

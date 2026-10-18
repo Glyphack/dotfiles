@@ -56,6 +56,10 @@ function WindowChooser:show()
 	self.chooser:show()
 end
 
+function WindowChooser:toggle()
+	self.chooser:toggle()
+end
+
 WindowChooser.chooser = FuzzyChooser.new("Window", function()
 	return WindowChooser:load()
 end, function(choice)
