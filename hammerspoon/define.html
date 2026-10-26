@@ -1,0 +1,952 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dictionary</title>
+<style>
+  :root {
+    --bg: rgba(251, 250, 247, 0.98);
+    --edge: rgba(0, 0, 0, 0.10);
+    --text: #1c1c1e;
+    --muted: #6e6e73;
+    --faint: #a8a8ad;
+    --line: rgba(0, 0, 0, 0.07);
+    --accent: #2f6fd6;
+    --accent-soft: rgba(47, 111, 214, 0.10);
+    --good: #2a8a55;
+    --good-soft: rgba(42, 138, 85, 0.12);
+    --warn: #b9690f;
+    --warn-soft: rgba(185, 105, 15, 0.12);
+    --syn-bg: rgba(47, 111, 214, 0.09);
+    --syn-fg: #22508f;
+    --ant-bg: rgba(206, 64, 92, 0.10);
+    --ant-fg: #9c2d45;
+    --row-hover: rgba(0, 0, 0, 0.045);
+    --row-active: rgba(47, 111, 214, 0.13);
+    --kbd-bg: rgba(0, 0, 0, 0.06);
+    --tag-bg: rgba(0, 0, 0, 0.05);
+    --serif: ui-serif, "New York", "Iowan Old Style", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: rgba(30, 30, 33, 0.98);
+      --edge: rgba(255, 255, 255, 0.10);
+      --text: #ececf0;
+      --muted: #9a9aa2;
+      --faint: #66666e;
+      --line: rgba(255, 255, 255, 0.08);
+      --accent: #7eb0ff;
+      --accent-soft: rgba(126, 176, 255, 0.14);
+      --good: #5bc48a;
+      --good-soft: rgba(91, 196, 138, 0.16);
+      --warn: #e8a254;
+      --warn-soft: rgba(232, 162, 84, 0.16);
+      --syn-bg: rgba(126, 176, 255, 0.14);
+      --syn-fg: #b4cfff;
+      --ant-bg: rgba(255, 120, 140, 0.14);
+      --ant-fg: #ffa3b3;
+      --row-hover: rgba(255, 255, 255, 0.05);
+      --row-active: rgba(126, 176, 255, 0.18);
+      --kbd-bg: rgba(255, 255, 255, 0.08);
+      --tag-bg: rgba(255, 255, 255, 0.07);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: transparent; }
+  body {
+    font-family: var(--sans);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .panel {
+    position: absolute; inset: 0;
+    background: var(--bg);
+    border: 1px solid var(--edge);
+    border-radius: 18px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* search bar */
+  .search {
+    display: flex; align-items: center; gap: 12px;
+    padding: 16px 20px 14px 20px;
+    border-bottom: 1px solid var(--line);
+    flex: none;
+  }
+  .search svg.book { width: 22px; height: 22px; color: var(--muted); flex: none; }
+  .search input {
+    flex: 1; min-width: 0;
+    font: 500 24px/1.2 var(--sans);
+    letter-spacing: -0.01em;
+    color: var(--text);
+    background: transparent; border: 0; outline: 0; padding: 0;
+    -webkit-user-select: text; user-select: text;
+  }
+  .search input::placeholder { color: var(--faint); font-weight: 400; }
+  .pill {
+    flex: none;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
+    padding: 4px 9px; border-radius: 999px;
+    display: none; align-items: center; gap: 5px;
+  }
+  .pill.show { display: inline-flex; }
+  .pill.good { color: var(--good); background: var(--good-soft); }
+  .pill.warn { color: var(--warn); background: var(--warn-soft); }
+  .pill svg { width: 12px; height: 12px; }
+  .back {
+    flex: none; display: none;
+    width: 28px; height: 28px; border-radius: 8px; border: 0;
+    background: transparent; color: var(--muted); cursor: pointer;
+    align-items: center; justify-content: center;
+  }
+  .back.show { display: inline-flex; }
+  .back:hover { background: var(--row-hover); color: var(--text); }
+  .back svg { width: 16px; height: 16px; }
+
+  /* body area holds the results, and the suggestion list floats over it */
+  .body { position: relative; flex: 1; min-height: 0; }
+
+  .suggest {
+    position: absolute; left: 0; right: 0; top: 0; z-index: 2;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 18px 30px -18px rgba(0, 0, 0, 0.35);
+    max-height: 100%; overflow-y: auto;
+    padding: 6px 8px 8px 8px;
+    display: none;
+  }
+  .suggest.show { display: block; }
+  .group {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--faint); padding: 8px 12px 4px 12px;
+  }
+  .row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 12px; border-radius: 9px; cursor: default;
+    font-size: 17px;
+  }
+  .row:hover { background: var(--row-hover); }
+  .row.active { background: var(--row-active); }
+  .row .w { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row .w b { font-weight: 600; }
+  .row .tag { font-size: 12px; color: var(--muted); flex: none; }
+  .row .tag.fix { color: var(--warn); }
+  .row .tag.ok { color: var(--good); }
+  .row svg { width: 14px; height: 14px; flex: none; color: var(--good); }
+
+  .results { position: absolute; inset: 0; overflow: hidden; }
+  .single { height: 100%; overflow-y: auto; padding: 22px 26px 26px 26px; }
+  .cols { display: flex; height: 100%; }
+  .col { flex: 1; min-width: 0; height: 100%; overflow-y: auto; padding: 22px 26px 26px 26px; }
+  .col.main { flex: 11; }
+  .col.side { flex: 9; border-left: 1px solid var(--line); padding-top: 20px; }
+  .single::-webkit-scrollbar, .col::-webkit-scrollbar { width: 10px; }
+  .single::-webkit-scrollbar-thumb, .col::-webkit-scrollbar-thumb { background: var(--line); border-radius: 10px; border: 3px solid transparent; background-clip: padding-box; }
+  @media (max-width: 840px) {
+    .cols { display: block; overflow-y: auto; }
+    .col { height: auto; overflow: visible; }
+    .col.side { border-left: 0; border-top: 1px solid var(--line); }
+  }
+
+  /* empty state */
+  .empty {
+    height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; color: var(--muted); text-align: center;
+  }
+  .empty .big { font: 400 30px/1.2 var(--serif); color: var(--text); letter-spacing: -0.01em; }
+  .hints { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; font-size: 13px; }
+  kbd {
+    font: 500 12px/1 var(--sans);
+    background: var(--kbd-bg); color: var(--text);
+    padding: 4px 6px; border-radius: 5px; margin-right: 5px;
+  }
+
+  /* entry */
+  .head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 2px; }
+  .headword { font: 600 40px/1.1 var(--serif); letter-spacing: -0.015em; }
+  .phon { color: var(--muted); font-size: 17px; display: inline-flex; align-items: center; gap: 8px; }
+  .speak {
+    width: 26px; height: 26px; border-radius: 50%; border: 0; cursor: pointer;
+    background: var(--accent-soft); color: var(--accent);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .speak svg { width: 14px; height: 14px; }
+  .speak:active { transform: scale(0.94); }
+  .subhead { color: var(--faint); font-size: 13px; margin-bottom: 18px; }
+  .subhead i { font-style: italic; color: var(--muted); }
+  .entry + .entry { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+  .entry + .entry .headword { font-size: 30px; }
+
+  .meaning { margin-bottom: 20px; }
+  .pos {
+    font: italic 500 15px/1 var(--serif); color: var(--accent);
+    margin: 0 0 8px 0; display: flex; align-items: center; gap: 10px;
+  }
+  .pos .infl { font: 13px/1 var(--sans); font-style: normal; color: var(--faint); }
+  .pos::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+  ol.defs { margin: 0; padding: 0 0 0 26px; }
+  ol.defs > li { margin: 0 0 10px 0; padding-left: 4px; font-size: 15.5px; }
+  ol.defs > li::marker { color: var(--faint); font-size: 13px; }
+  ol.defs.plain { list-style: none; padding-left: 4px; }
+  .def .form { font-weight: 600; }
+  .label {
+    display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--muted); background: var(--tag-bg);
+    padding: 1px 6px; border-radius: 5px; margin-right: 6px; vertical-align: 2px;
+  }
+  .label.reg { font-style: italic; font-weight: 500; letter-spacing: 0; }
+  .ex { color: var(--muted); font-style: italic; margin-top: 2px; font-size: 14.5px; }
+  .ex .q::before { content: "“"; } .ex .q::after { content: "”"; }
+  .ex .sep { color: var(--faint); padding: 0 6px; font-style: normal; }
+  .ex .label { font-style: normal; }
+  ul.subs { list-style: none; margin: 6px 0 0 0; padding: 0; }
+  ul.subs li { position: relative; padding-left: 16px; margin-top: 5px; font-size: 15px; }
+  ul.subs li::before { content: "•"; position: absolute; left: 2px; color: var(--faint); }
+
+  .block h3 {
+    margin: 22px 0 9px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  .fold {
+    display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; cursor: pointer;
+    padding: 0; margin: 22px 0 9px 0; font: 600 11px/1 var(--sans); letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  .fold:hover { color: var(--text); }
+  .fold .count { font-weight: 500; letter-spacing: 0; text-transform: none; }
+  .fold svg { width: 10px; height: 10px; transition: transform 0.15s; }
+  .fold.open svg { transform: rotate(90deg); }
+  .fold + .folded { display: none; }
+  .fold.open + .folded { display: block; }
+  .phrase { margin: 0 0 8px 0; font-size: 14.5px; }
+  .phrase .l { font-weight: 600; }
+  .phrase .pp { color: var(--muted); font-style: italic; }
+  .derivs { font-size: 14.5px; color: var(--text); }
+  .derivs i { color: var(--muted); }
+  .origin { font-size: 14px; color: var(--muted); }
+  .origin b { color: var(--text); font-weight: 500; }
+
+  /* thesaurus */
+  .thes > h3 {
+    margin: 0 0 14px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--faint);
+  }
+  .thes .sense-head { font-size: 13.5px; }
+  .thes .chip { font-size: 13.5px; padding: 3px 9px; }
+  .thes .wordrow { margin-left: 16px; }
+  .sense { margin-bottom: 16px; }
+  .sense-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 7px; font-size: 14px; }
+  .sense-head .n { color: var(--faint); font-size: 12px; font-weight: 600; min-width: 14px; }
+  .sense-head .sp { font: italic 500 14px/1 var(--serif); color: var(--accent); }
+  .sense-head .sx { color: var(--muted); font-style: italic; }
+  .wordrow { display: flex; flex-wrap: wrap; gap: 7px; align-items: center; margin: 0 0 6px 20px; }
+  .wordrow .rlabel { font-size: 11.5px; color: var(--muted); font-style: italic; margin-right: 2px; }
+  .wordrow .rlabel.ant { color: var(--ant-fg); font-style: normal; font-weight: 600; letter-spacing: 0.06em; font-size: 10.5px; text-transform: uppercase; }
+  .chip {
+    font-size: 14px; padding: 3px 10px; border-radius: 999px; border: 0; cursor: pointer;
+    font-family: var(--sans); line-height: 1.4;
+  }
+  .chip:hover { filter: brightness(0.93); }
+  .chip:active { transform: translateY(1px); }
+  .chip.syn { background: var(--syn-bg); color: var(--syn-fg); }
+  .chip.ant { background: var(--ant-bg); color: var(--ant-fg); }
+  .chip.plain { background: var(--row-hover); color: var(--text); }
+  .chip.more { background: transparent; color: var(--muted); border: 1px dashed var(--line); }
+  .chip.more:hover { color: var(--text); }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .none { color: var(--faint); font-size: 14px; }
+
+  .links { margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--line); display: flex; gap: 18px; font-size: 13px; }
+  .links a { color: var(--muted); text-decoration: none; cursor: pointer; }
+  .links a:hover { color: var(--accent); }
+
+  .notfound { padding-top: 24px; }
+  .notfound .title { font: 500 26px/1.2 var(--serif); margin-bottom: 6px; }
+  .notfound .title em { font-style: italic; color: var(--warn); }
+  .notfound .sub { color: var(--muted); margin-bottom: 20px; }
+  .notfound h3 { margin: 0 0 9px 0; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warn); }
+</style>
+</head>
+<body>
+<div class="panel">
+  <div class="search">
+    <button class="back" id="back" title="Back (⌘[)">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3 5 8l5 5"/></svg>
+    </button>
+    <svg class="book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 20.5V5.5"/><path d="M8 7h8M8 10.5h6"/></svg>
+    <input id="q" type="text" placeholder="Type an English word" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <span class="pill" id="pill"></span>
+  </div>
+  <div class="body">
+    <div class="suggest" id="suggest"></div>
+    <div class="results" id="results"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const PORT = "define";
+  const DEBOUNCE_MS = 60;
+  const CHIPS_BEFORE_MORE = 14;
+  const CHIPS_BEFORE_LABELED_MORE = 6;
+  const SENSES_BEFORE_MORE = 10;
+
+  const input = document.getElementById("q");
+  const pill = document.getElementById("pill");
+  const backBtn = document.getElementById("back");
+  const suggestBox = document.getElementById("suggest");
+  const results = document.getElementById("results");
+
+  const CHECK = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3 3 7-7"/></svg>';
+  const SPEAKER = '<svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.5 2.5 4.8 5.5H2.5v5h2.3l3.7 3z"/><path d="M10.6 5.3a3.6 3.6 0 0 1 0 5.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12.4 3.4a6 6 0 0 1 0 9.2" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+
+  const state = {
+    seq: 0,
+    items: [],
+    active: -1,
+    history: [],
+    timer: null,
+    current: null,
+  };
+
+  function post(message) {
+    try { webkit.messageHandlers[PORT].postMessage(message); } catch (e) {}
+  }
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function asList(value) { return Array.isArray(value) ? value : []; }
+
+  /* ---------- suggestions ---------- */
+
+  function setPill(kind, text) {
+    pill.className = "pill";
+    pill.innerHTML = "";
+    if (!kind) return;
+    pill.classList.add("show", kind);
+    if (kind === "good") pill.insertAdjacentHTML("beforeend", CHECK);
+    pill.appendChild(document.createTextNode(text));
+  }
+
+  function hideSuggestions() {
+    suggestBox.classList.remove("show");
+    suggestBox.innerHTML = "";
+    state.items = [];
+    state.active = -1;
+  }
+
+  function requestSuggestions() {
+    const text = input.value.trim();
+    state.seq += 1;
+    if (text === "") {
+      hideSuggestions();
+      setPill(null);
+      return;
+    }
+    post({ type: "suggest", text: text, seq: state.seq });
+  }
+
+  function scheduleSuggestions() {
+    clearTimeout(state.timer);
+    state.timer = setTimeout(requestSuggestions, DEBOUNCE_MS);
+  }
+
+  function highlight(word, typed) {
+    const span = el("span", "w");
+    if (typed && word.toLowerCase().startsWith(typed.toLowerCase())) {
+      span.appendChild(document.createTextNode(word.slice(0, typed.length)));
+      span.appendChild(el("b", null, word.slice(typed.length)));
+    } else {
+      span.appendChild(el("b", null, word));
+    }
+    return span;
+  }
+
+  function setActive(index) {
+    const rows = suggestBox.querySelectorAll(".row");
+    if (!rows.length) { state.active = -1; return; }
+    const count = rows.length;
+    state.active = ((index % count) + count) % count;
+    rows.forEach((row, i) => row.classList.toggle("active", i === state.active));
+    rows[state.active].scrollIntoView({ block: "nearest" });
+  }
+
+  // Builds the suggestion list from the spell checker reply. The exact word
+  // comes first when it is spelled right, then ranked completions. When the
+  // text cannot grow into any word, corrections take their place.
+  function onSuggest(reply) {
+    if (reply.seq !== state.seq) return;
+    const typed = (reply.text || "").trim();
+    if (typed === "" || input.value.trim() !== typed) return;
+
+    const items = [];
+    const seen = new Set();
+    const add = (word, kind) => {
+      const key = word.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      items.push({ word: word, kind: kind });
+    };
+
+    const valid = !reply.misspelled;
+    if (valid) add(typed, "exact");
+    asList(reply.completions).forEach(w => add(w, "completion"));
+    if (!valid && items.length === 0) asList(reply.guesses).forEach(w => add(w, "fix"));
+
+    const completions = items.filter(i => i.kind !== "fix");
+    const fixes = items.filter(i => i.kind === "fix");
+
+    if (valid) setPill("good", "word");
+    else if (completions.length === 0) setPill("warn", "not a word");
+    else setPill(null);
+
+    suggestBox.innerHTML = "";
+    state.items = [];
+    const addRow = (item) => {
+      const row = el("div", "row");
+      if (item.kind === "exact") row.insertAdjacentHTML("beforeend", CHECK);
+      row.appendChild(highlight(item.word, item.kind === "fix" ? "" : typed));
+      if (item.kind === "exact") row.appendChild(el("span", "tag ok", "exact"));
+      if (item.kind === "fix") row.appendChild(el("span", "tag fix", "correction"));
+      const index = state.items.length;
+      row.addEventListener("mousemove", () => { if (state.active !== index) setActive(index); });
+      row.addEventListener("click", () => lookup(item.word));
+      suggestBox.appendChild(row);
+      state.items.push(item);
+    };
+    completions.forEach(addRow);
+    if (fixes.length) {
+      suggestBox.appendChild(el("div", "group", "Did you mean"));
+      fixes.forEach(addRow);
+    }
+    if (!state.items.length) {
+      hideSuggestions();
+      return;
+    }
+    suggestBox.classList.add("show");
+    setActive(0);
+  }
+
+  /* ---------- lookup ---------- */
+
+  function lookup(word, options) {
+    word = (word || "").trim();
+    if (!word) return;
+    options = options || {};
+    clearTimeout(state.timer);
+    hideSuggestions();
+    input.value = word;
+    state.seq += 1;
+    setPill(null);
+    if (!options.fromHistory && state.history[state.history.length - 1] !== word) state.history.push(word);
+    backBtn.classList.toggle("show", state.history.length > 1);
+    state.current = word;
+    post({ type: "lookup", word: word });
+  }
+
+  function goBack() {
+    if (state.history.length < 2) return;
+    state.history.pop();
+    lookup(state.history[state.history.length - 1], { fromHistory: true });
+  }
+
+  /* ---------- parsing the Apple dictionary XML ---------- */
+
+  // Text of a node without the dictionary's own punctuation and markers.
+  function cleanText(node) {
+    if (!node) return "";
+    const clone = node.cloneNode(true);
+    clone.querySelectorAll(".gp:not(.tg_q), .ty_hom, .hsb, .lbl").forEach(n => n.remove());
+    return clone.textContent.replace(/\s+/g, " ").trim();
+  }
+
+  // Text of a node as is. Part of speech labels sit inside the punctuation
+  // class, so they need this instead of cleanText.
+  function rawText(node) {
+    return node ? node.textContent.replace(/\s+/g, " ").trim() : "";
+  }
+
+  function children(node, selector) {
+    return Array.from(node.children).filter(c => c.matches(selector));
+  }
+
+  // The entries are XHTML without a default namespace. Adding it makes the
+  // elements real HTML elements, so class selectors work on them.
+  function parseXml(xml) {
+    const namespaced = xml.replace(/<html(\s|>)/, '<html xmlns="http://www.w3.org/1999/xhtml"$1');
+    const doc = new DOMParser().parseFromString(namespaced, "text/xml");
+    return doc.querySelector("parsererror") ? null : doc;
+  }
+
+  function parseExamples(block) {
+    return children(block, ".eg").map(eg => ({
+      label: cleanText(eg.querySelector(":scope > .gg")),
+      text: cleanText(eg.querySelector(".ex")),
+    })).filter(e => e.text);
+  }
+
+  // One definition with its labels and examples. msDict blocks hold them in
+  // the dictionary and msThes blocks hold synonym lists in the thesaurus.
+  function parseDefinition(block) {
+    const labels = children(block, ".gg, .sj, .lg > .ge").map(cleanText).filter(Boolean);
+    const registers = Array.from(block.querySelectorAll(":scope > .lg > .reg, :scope > .lg > .ge")).map(cleanText).filter(Boolean);
+    return {
+      labels: labels.filter(l => !registers.includes(l)),
+      registers: registers,
+      form: cleanText(block.querySelector(":scope > .fg")),
+      definition: cleanText(block.querySelector(":scope > .df")),
+      examples: parseExamples(block),
+    };
+  }
+
+  function parseSenseList(container, blockClass) {
+    const numbered = children(container, ".se2");
+    const senseNodes = numbered.length ? numbered : [container];
+    return senseNodes.map(node => {
+      const blocks = children(node, blockClass);
+      const main = blocks.find(b => !b.classList.contains("t_subsense")) || blocks[0];
+      const subs = blocks.filter(b => b !== main);
+      return {
+        number: cleanText(node.querySelector(":scope > .sn")),
+        main: main ? parseDefinition(main) : null,
+        subsenses: subs.map(parseDefinition),
+        node: node,
+      };
+    }).filter(s => s.main || s.subsenses.length);
+  }
+
+  function parseEntry(xml) {
+    const doc = parseXml(xml);
+    const entry = doc && doc.querySelector(".entry");
+    if (!entry) return null;
+    const head = entry.querySelector(".hg");
+    const result = {
+      headword: cleanText(head && head.querySelector(".hw")),
+      syllables: cleanText(head && head.querySelector(".syl_txt")),
+      pronunciation: cleanText(head && head.querySelector(".prx .ph")),
+      parts: [],
+      phrases: [],
+      derivatives: [],
+      origin: "",
+    };
+    entry.querySelectorAll(".sg > .se1").forEach(se1 => {
+      const header = se1.querySelector(":scope > .x_xdh, :scope > .posg");
+      result.parts.push({
+        pos: rawText(se1.querySelector(".posg .pos")),
+        inflections: Array.from(se1.querySelectorAll(".posg .inf")).map(cleanText).filter(Boolean),
+        form: header ? cleanText(header.querySelector(".fg")) : "",
+        registers: header ? Array.from(header.querySelectorAll(".lg > *")).map(cleanText).filter(Boolean) : [],
+        senses: parseSenseList(se1, ".msDict"),
+      });
+    });
+    entry.querySelectorAll(".subEntryBlock").forEach(block => {
+      const kind = cleanText(block.querySelector(":scope > .ty_label")).toLowerCase();
+      block.querySelectorAll(":scope > .subEntry").forEach(sub => {
+        const lemma = cleanText(sub.querySelector(".l"));
+        const pos = rawText(sub.querySelector(".pos"));
+        if (kind.startsWith("derivative")) {
+          result.derivatives.push({ word: lemma, pos: pos });
+          return;
+        }
+        const senses = parseSenseList(sub, ".msDict");
+        result.phrases.push({ phrase: lemma, pos: pos, senses: senses });
+      });
+    });
+    const etym = entry.querySelector(".etym");
+    if (etym) {
+      const clone = etym.cloneNode(true);
+      clone.querySelectorAll(":scope > .ty_label").forEach(n => n.remove());
+      result.origin = cleanText(clone);
+    }
+    return result;
+  }
+
+  function parseThesaurus(xml) {
+    const doc = parseXml(xml);
+    const entry = doc && doc.querySelector(".entry");
+    if (!entry) return [];
+    const senses = [];
+    const collect = (container, pos, phrase) => {
+      parseSenseList(container, ".msThes").forEach(sense => {
+        const block = sense.node.querySelector(".msThes") || sense.node;
+        const groups = Array.from(block.querySelectorAll(".synList > .synGroup")).map(group => ({
+          label: Array.from(group.querySelectorAll(":scope > .lg > *")).map(cleanText).filter(Boolean).join(" "),
+          words: Array.from(group.querySelectorAll(".syn")).map(cleanText).filter(Boolean),
+        })).filter(g => g.words.length);
+        const plain = [];
+        groups.filter(g => !g.label).forEach(g => g.words.forEach(w => plain.push(w)));
+        const antonyms = Array.from(block.querySelectorAll(".antList .ant")).map(cleanText).filter(Boolean);
+        if (!groups.length && !antonyms.length) return;
+        senses.push({
+          pos: pos,
+          phrase: phrase,
+          example: (parseExamples(block)[0] || {}).text || "",
+          plain: plain,
+          labeled: groups.filter(g => g.label),
+          antonyms: antonyms,
+        });
+      });
+    };
+    entry.querySelectorAll(".sg > .se1").forEach(se1 => collect(se1, rawText(se1.querySelector(".posg .pos")), ""));
+    entry.querySelectorAll(".subEntryBlock > .subEntry").forEach(sub => collect(sub, "", cleanText(sub.querySelector(".l"))));
+    return senses;
+  }
+
+  /* ---------- rendering ---------- */
+
+  function labelNodes(def) {
+    const nodes = [];
+    def.labels.forEach(l => nodes.push(el("span", "label", l)));
+    def.registers.forEach(r => nodes.push(el("span", "label reg", r)));
+    return nodes;
+  }
+
+  function definitionNode(def, cls) {
+    const box = el("div", cls || "def");
+    labelNodes(def).forEach(n => box.appendChild(n));
+    if (def.form) box.appendChild(el("span", "form", "(" + def.form + ") "));
+    box.appendChild(document.createTextNode(def.definition));
+    if (def.examples.length) {
+      const ex = el("div", "ex");
+      def.examples.forEach((e, i) => {
+        if (i) ex.appendChild(el("span", "sep", "·"));
+        if (e.label) ex.appendChild(el("span", "label", e.label));
+        ex.appendChild(el("span", "q", e.text));
+      });
+      box.appendChild(ex);
+    }
+    return box;
+  }
+
+  function senseItem(sense) {
+    const li = el("li");
+    if (sense.main) li.appendChild(definitionNode(sense.main));
+    if (sense.subsenses.length) {
+      const subs = el("ul", "subs");
+      sense.subsenses.forEach(s => {
+        const sli = el("li");
+        sli.appendChild(definitionNode(s, "def sub"));
+        subs.appendChild(sli);
+      });
+      li.appendChild(subs);
+    }
+    return li;
+  }
+
+  function senseList(senses) {
+    const numbered = senses.some(s => s.number);
+    const list = el("ol", numbered ? "defs" : "defs plain");
+    senses.forEach(s => list.appendChild(senseItem(s)));
+    return list;
+  }
+
+  function speakButton(word) {
+    const btn = el("button", "speak");
+    btn.title = "Pronounce";
+    btn.innerHTML = SPEAKER;
+    btn.addEventListener("click", () => post({ type: "speak", word: word }));
+    return btn;
+  }
+
+  function renderEntry(entry, index, typed) {
+    const box = el("section", "entry");
+    const head = el("div", "head");
+    head.appendChild(el("div", "headword", entry.headword || typed));
+    const phon = el("span", "phon");
+    if (entry.pronunciation) phon.appendChild(document.createTextNode("| " + entry.pronunciation + " |"));
+    phon.appendChild(speakButton(entry.headword || typed));
+    head.appendChild(phon);
+    box.appendChild(head);
+
+    const sub = el("div", "subhead");
+    const parts = entry.parts.map(p => p.pos).filter(Boolean);
+    if (entry.syllables && entry.syllables !== entry.headword) sub.appendChild(document.createTextNode(entry.syllables + "  "));
+    parts.forEach((p, i) => {
+      if (i || entry.syllables) sub.appendChild(document.createTextNode(i ? " · " : "· "));
+      sub.appendChild(el("i", null, p));
+    });
+    if (index === 0 && entry.headword && typed && entry.headword.toLowerCase() !== typed.toLowerCase()) {
+      sub.appendChild(document.createTextNode("  · looked up as “" + typed + "”"));
+    }
+    box.appendChild(sub);
+
+    entry.parts.forEach(part => {
+      const section = el("section", "meaning");
+      const pos = el("h3", "pos", part.pos);
+      if (part.form) pos.appendChild(el("span", "infl", "(" + part.form + ")"));
+      if (part.inflections.length) pos.appendChild(el("span", "infl", part.inflections.join(", ")));
+      part.registers.forEach(r => pos.appendChild(el("span", "label reg", r)));
+      section.appendChild(pos);
+      section.appendChild(senseList(part.senses));
+      box.appendChild(section);
+    });
+
+    if (entry.phrases.length) {
+      const block = el("div", "block");
+      block.appendChild(foldButton("Phrases", entry.phrases.length));
+      const list = el("div", "folded");
+      block.appendChild(list);
+      entry.phrases.forEach(p => {
+        const row = el("div", "phrase");
+        row.appendChild(el("span", "l", p.phrase));
+        if (p.pos) row.appendChild(el("span", "pp", " " + p.pos));
+        const defs = p.senses.map(s => s.main).filter(Boolean);
+        defs.forEach((d, i) => {
+          row.appendChild(document.createTextNode(i ? "; " : ": "));
+          labelNodes(d).forEach(n => row.appendChild(n));
+          row.appendChild(document.createTextNode(d.definition));
+        });
+        list.appendChild(row);
+      });
+      box.appendChild(block);
+    }
+
+    if (entry.derivatives.length) {
+      const block = el("div", "block");
+      block.appendChild(el("h3", null, "Derivatives"));
+      const row = el("div", "derivs");
+      entry.derivatives.forEach((d, i) => {
+        if (i) row.appendChild(document.createTextNode(", "));
+        const chip = el("a", null, d.word);
+        chip.style.cursor = "pointer";
+        chip.addEventListener("click", () => lookup(d.word));
+        row.appendChild(chip);
+        if (d.pos) row.appendChild(el("i", null, " " + d.pos));
+      });
+      block.appendChild(row);
+      box.appendChild(block);
+    }
+
+    if (entry.origin) {
+      const block = el("div", "block");
+      block.appendChild(el("h3", null, "Origin"));
+      block.appendChild(el("div", "origin", entry.origin));
+      box.appendChild(block);
+    }
+    return box;
+  }
+
+  function foldButton(title, count) {
+    const btn = el("button", "fold");
+    btn.innerHTML = '<svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 2l3 3-3 3"/></svg>';
+    btn.appendChild(document.createTextNode(title + " "));
+    btn.appendChild(el("span", "count", "(" + count + ")"));
+    btn.addEventListener("click", () => btn.classList.toggle("open"));
+    return btn;
+  }
+
+  function chip(word, kind) {
+    const c = el("button", "chip " + kind, word);
+    c.addEventListener("click", () => lookup(word));
+    return c;
+  }
+
+  // A row of word chips. Long rows show a handful and a "more" chip that
+  // reveals the rest.
+  function wordRow(label, words, kind, budget) {
+    const row = el("div", "wordrow");
+    if (label) row.appendChild(el("span", "rlabel " + (kind === "ant" ? "ant" : ""), label));
+    const visible = words.slice(0, budget);
+    const hidden = words.slice(budget);
+    visible.forEach(w => row.appendChild(chip(w, kind)));
+    if (hidden.length) {
+      const more = el("button", "chip more", "+" + hidden.length + " more");
+      more.addEventListener("click", () => {
+        more.remove();
+        hidden.forEach(w => row.appendChild(chip(w, kind)));
+      });
+      row.appendChild(more);
+    }
+    return row;
+  }
+
+  function senseBlock(sense, index) {
+    const block = el("div", "sense");
+    const head = el("div", "sense-head");
+    head.appendChild(el("span", "n", String(index + 1)));
+    if (sense.phrase) head.appendChild(el("span", "sp", sense.phrase));
+    else if (sense.pos) head.appendChild(el("span", "sp", sense.pos));
+    if (sense.example) head.appendChild(el("span", "sx", "“" + sense.example + "”"));
+    block.appendChild(head);
+    if (sense.plain.length) block.appendChild(wordRow("", sense.plain, "syn", CHIPS_BEFORE_MORE));
+    sense.labeled.forEach(group => block.appendChild(wordRow(group.label, group.words, "syn", CHIPS_BEFORE_LABELED_MORE)));
+    if (sense.antonyms.length) block.appendChild(wordRow("antonyms", sense.antonyms, "ant", CHIPS_BEFORE_MORE));
+    return block;
+  }
+
+  function renderThesaurus(senses) {
+    const box = el("section", "thes");
+    box.appendChild(el("h3", null, "Synonyms & antonyms"));
+    if (!senses.length) {
+      box.appendChild(el("div", "none", "The thesaurus has no entry for this word."));
+      return box;
+    }
+    senses.slice(0, SENSES_BEFORE_MORE).forEach((sense, i) => box.appendChild(senseBlock(sense, i)));
+    const rest = senses.slice(SENSES_BEFORE_MORE);
+    if (rest.length) {
+      const more = el("button", "chip more", "Show " + rest.length + " more senses");
+      more.addEventListener("click", () => {
+        more.remove();
+        rest.forEach((sense, i) => box.appendChild(senseBlock(sense, SENSES_BEFORE_MORE + i)));
+      });
+      box.appendChild(more);
+    }
+    return box;
+  }
+
+  function link(text, url) {
+    const a = el("a", null, text);
+    a.addEventListener("click", (e) => { e.preventDefault(); post({ type: "open", url: url }); });
+    return a;
+  }
+
+  function footerLinks(word) {
+    const links = el("div", "links");
+    links.appendChild(link("Open in Dictionary.app", "dict://" + encodeURIComponent(word)));
+    return links;
+  }
+
+  function renderResult(reply) {
+    results.innerHTML = "";
+    const entries = asList(reply.entries).map(r => parseEntry(r.xml)).filter(Boolean);
+    const thesaurus = [];
+    asList(reply.thesaurus).forEach(r => parseThesaurus(r.xml).forEach(s => thesaurus.push(s)));
+    const typed = reply.word || "";
+
+    const cols = el("div", "cols");
+    const main = el("div", "col main");
+    const side = el("div", "col side");
+    if (!entries.length) {
+      const head = el("div", "head");
+      const headword = (reply.thesaurus[0] && reply.thesaurus[0].headword) || typed;
+      head.appendChild(el("div", "headword", headword));
+      const phon = el("span", "phon");
+      phon.appendChild(speakButton(headword));
+      head.appendChild(phon);
+      main.appendChild(head);
+      main.appendChild(el("div", "subhead", "Only the thesaurus has this word."));
+    }
+    entries.forEach((entry, i) => main.appendChild(renderEntry(entry, i, typed)));
+    main.appendChild(footerLinks(entries[0] ? entries[0].headword : typed));
+    side.appendChild(renderThesaurus(thesaurus));
+    cols.appendChild(main);
+    cols.appendChild(side);
+    results.appendChild(cols);
+  }
+
+  function renderNotFound(reply) {
+    results.innerHTML = "";
+    const single = el("div", "single");
+    results.appendChild(single);
+    const box = el("div", "notfound");
+    const title = el("div", "title");
+    title.appendChild(document.createTextNode("No entry for "));
+    title.appendChild(el("em", null, reply.word));
+    box.appendChild(title);
+    const suggestions = asList(reply.suggestions);
+    box.appendChild(el("div", "sub", suggestions.length
+      ? "It may be misspelled. Pick a word below or try another spelling."
+      : "Nothing close to it was found either."));
+    if (suggestions.length) {
+      box.appendChild(el("h3", null, "Did you mean"));
+      const chips = el("div", "chips");
+      suggestions.forEach(w => chips.appendChild(chip(w, "plain")));
+      box.appendChild(chips);
+    }
+    box.appendChild(footerLinks(reply.word));
+    single.appendChild(box);
+  }
+
+  function onResult(reply) {
+    if (reply.word && reply.word !== state.current) return;
+    if (reply.notFound) renderNotFound(reply);
+    else renderResult(reply);
+  }
+
+  function renderEmpty() {
+    results.innerHTML = "";
+    const single = el("div", "single");
+    results.appendChild(single);
+    const box = el("div", "empty");
+    box.appendChild(el("div", "big", "Look up a word"));
+    const hints = el("div", "hints");
+    [["↑↓", "choose"], ["↵", "look up"], ["⇥", "complete"], ["⌘[", "back"], ["esc", "close"]].forEach(([k, t]) => {
+      const h = el("span");
+      h.appendChild(el("kbd", null, k));
+      h.appendChild(document.createTextNode(t));
+      hints.appendChild(h);
+    });
+    box.appendChild(hints);
+    single.appendChild(box);
+  }
+
+  function onShow() {
+    input.focus();
+    input.select();
+  }
+
+  /* ---------- events ---------- */
+
+  input.addEventListener("input", scheduleSuggestions);
+
+  input.addEventListener("keydown", (e) => {
+    const open = suggestBox.classList.contains("show");
+    if (e.key === "ArrowDown" && open) { e.preventDefault(); setActive(state.active + 1); return; }
+    if (e.key === "ArrowUp" && open) { e.preventDefault(); setActive(state.active - 1); return; }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      lookup(open && state.active >= 0 ? state.items[state.active].word : input.value);
+      return;
+    }
+    if (e.key === "Tab") {
+      e.preventDefault();
+      if (open && state.active >= 0) {
+        input.value = state.items[state.active].word;
+        requestSuggestions();
+      }
+      return;
+    }
+    if (e.key === "Escape") {
+      e.preventDefault();
+      if (open) { hideSuggestions(); return; }
+      post({ type: "close" });
+      return;
+    }
+    if (e.key === "[" && e.metaKey) { e.preventDefault(); goBack(); return; }
+    if (e.key === "ArrowLeft" && e.altKey) { e.preventDefault(); goBack(); return; }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target === input) return;
+    if (e.key === "Escape") { post({ type: "close" }); return; }
+    if (e.key === "[" && e.metaKey) { goBack(); return; }
+    if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) input.focus();
+  });
+
+  results.addEventListener("dblclick", () => {
+    const text = (window.getSelection() || "").toString().trim();
+    if (/^[A-Za-z][A-Za-z'-]*$/.test(text)) lookup(text);
+  });
+
+  backBtn.addEventListener("click", goBack);
+
+  window.defineApp = { onSuggest, onResult, onShow, lookup, parseEntry, parseThesaurus };
+  renderEmpty();
+  input.focus();
+})();
+</script>
+</body>
+</html>
