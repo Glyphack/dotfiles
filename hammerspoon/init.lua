@@ -42,6 +42,9 @@ end, "OBS")
 clay:map(clay.HYPER, "y", function()
 	clay.focus.launchOrFocusOrRotate({ app = "com.hnc.Discord" })
 end, "Discord")
+clay:map(clay.HYPER, "space", function()
+	clay.focus.launchOrFocusOrRotate({ app = "com.raycast.macos" })
+end, "Discord")
 clay:map(clay.HYPER, "0", function()
 	clay.focus.launchOrFocusOrRotate({
 		app = "com.brave.Browser",
