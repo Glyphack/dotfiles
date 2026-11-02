@@ -10,6 +10,7 @@
 ---@field autostart clay.Autostart
 ---@field audio clay.Audio
 ---@field translate clay.Translate
+---@field define clay.Define
 ---@field mappings clay.Hotkey[] the shortcuts added with map, applied over the defaults when Clay starts
 local obj = {}
 obj.__index = obj
@@ -30,6 +31,7 @@ obj.mouseScroll = dofile(hs.spoons.resourcePath("mouse_scroll.lua"))
 obj.autostart = dofile(hs.spoons.resourcePath("autostart.lua"))
 obj.audio = dofile(hs.spoons.resourcePath("audio.lua"))
 obj.translate = dofile(hs.spoons.resourcePath("translate.lua"))
+obj.define = dofile(hs.spoons.resourcePath("define.lua"))
 
 obj.windowChooser:init(obj)
 obj.bookmarkChooser:init(obj)
@@ -101,6 +103,14 @@ local function defaultHotkeys(self)
 			desc = "translate selection",
 			fn = function()
 				self.translate:toggleSelectionPopup()
+			end,
+		},
+		{
+			mods = hyper,
+			key = "p",
+			desc = "look up word",
+			fn = function()
+				self.define:toggle()
 			end,
 		},
 		{ mods = { "ctrl" }, key = "#50", desc = "reload config", fn = hs.reload },

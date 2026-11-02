@@ -17,6 +17,25 @@ local function copy_last_command_output(window, pane)
 	window:toast_notification("wezterm", "No command output found", nil, 2000)
 end
 
+-- Lets outside tools switch workspace and pane by setting the user var
+-- "switch_to" to "<workspace>|<pane id>|<nonce>". The pane id may be empty.
+local function switch_on_user_var(window, pane, name, value)
+	if name ~= "switch_to" then
+		return
+	end
+	local workspace, pane_id = value:match("^(.-)|(%d*)|")
+	if not workspace then
+		return
+	end
+	window:perform_action(wezterm.action.SwitchToWorkspace({ name = workspace }), pane)
+	local target = tonumber(pane_id) and wezterm.mux.get_pane(tonumber(pane_id))
+	if not target then
+		return
+	end
+	target:tab():activate()
+	target:activate()
+end
+
 function M.set_theme(config, light, dark)
 	if wezterm.gui and wezterm.gui.get_appearance():find("Dark") then
 		config.color_scheme = dark
@@ -45,6 +64,8 @@ function M.apply_to_config(config)
 		description = "Copy last command output to clipboard",
 		action = wezterm.action_callback(copy_last_command_output),
 	})
+
+	wezterm.on("user-var-changed", switch_on_user_var)
 end
 
 local loading = false

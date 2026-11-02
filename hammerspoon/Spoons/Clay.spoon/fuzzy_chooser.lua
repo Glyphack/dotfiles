@@ -1,5 +1,6 @@
 local chooser = require("hs.chooser")
 local fzy = dofile(hs.spoons.resourcePath("fzy.lua"))
+local onShutdown = dofile(hs.spoons.resourcePath("on_shutdown.lua"))
 
 local EXACT = 0
 local FUZZY = 1
@@ -71,6 +72,9 @@ function FuzzyChooser.new(placeholder, load, pick)
 		:queryChangedCallback(function(query)
 			self.chooser:choices(self:filter(query))
 		end)
+	onShutdown(function()
+		self.chooser:delete()
+	end)
 	return self
 end
 
@@ -87,6 +91,15 @@ function FuzzyChooser:filter(query)
 		table.insert(result, self.choices[index])
 	end
 	return result
+end
+
+-- Replaces the choices, refreshing the open list with the current query.
+function FuzzyChooser:setChoices(choices)
+	self.choices = choices
+	if not self.chooser:isVisible() then
+		return
+	end
+	self.chooser:choices(self:filter(self.chooser:query()))
 end
 
 function FuzzyChooser:show()
