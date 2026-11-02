@@ -7,7 +7,7 @@ import json
 import subprocess
 import sys
 
-ALARM_NAMES = ["Wake up", "morning off", "Night"]
+ALARM_NAMES = ["Wake up", "Morning off", "Go to sleep"]
 
 
 def run_command(args):

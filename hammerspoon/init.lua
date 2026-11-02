@@ -238,6 +238,13 @@ end
 local wakeWatcher = hs.caffeinate.watcher.new(OnWake)
 wakeWatcher:start()
 
+-- Pixoo GitHub graph
+local PIXOO_UPDATE_INTERVAL_SECONDS = 6 * 60 * 60
+
+PixooGithubTimer = timer.doEvery(PIXOO_UPDATE_INTERVAL_SECONDS, function()
+	fishRunCommand("uv run $HOME/Programming/dotfiles/bin/pixoo_github.py")
+end)
+
 -- Clay apply DO NOT EDIT
 if clay then
 	clay:start()
