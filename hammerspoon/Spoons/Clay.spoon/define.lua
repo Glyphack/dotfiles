@@ -7,7 +7,7 @@
 -- Dictionary and the Oxford American Writer's Thesaurus). The page receives
 -- the raw entry XML and turns it into the view.
 
----@class Define
+---@class clay.Define
 local define = {}
 
 local PANEL_SIZE = hs.geometry.size(1040, 640)
@@ -17,8 +17,8 @@ local MAX_GUESSES = 6
 local MAX_COMPLETIONS = 12
 local MAX_NOT_FOUND_SUGGESTIONS = 8
 
-local moduleDir = debug.getinfo(1, "S").source:match("^@(.*)/[^/]*$") or "."
-local PAGE_PATH = moduleDir .. "/define.html"
+local PAGE_PATH = hs.spoons.resourcePath("define.html")
+local onShutdown = dofile(hs.spoons.resourcePath("on_shutdown.lua"))
 
 -- Asks the macOS English spell checker about one piece of text and returns a
 -- JSON string with whether it is misspelled, likely corrections, and ranked
@@ -114,6 +114,12 @@ define.webview = nil
 define.speaker = nil
 define.lookupSeq = 0
 define.previousWindow = nil
+
+onShutdown(function()
+	if define.webview then
+		define.webview:delete()
+	end
+end)
 
 local function readPage()
 	local file, err = io.open(PAGE_PATH, "r")

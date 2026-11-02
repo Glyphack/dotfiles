@@ -26,6 +26,8 @@
 ---@class clay.Translate
 local translate = {}
 
+local onShutdown = dofile(hs.spoons.resourcePath("on_shutdown.lua"))
+
 local POPUP_STYLE = hs.webview.windowMasks.utility
 	| hs.webview.windowMasks.HUD
 	| hs.webview.windowMasks.titled
@@ -38,6 +40,12 @@ translate.popup_size = hs.geometry.size(770, 610)
 translate.popup_close_on_escape = true
 
 translate.webview = nil
+
+onShutdown(function()
+	if translate.webview then
+		translate.webview:delete()
+	end
+end)
 
 -- options is a table { from = "...", to = "...", popup_style = ... }, all optional.
 -- from and to are two letter language codes such as "nl", listed at

@@ -57,10 +57,6 @@ clay:map(clay.HYPER, "\\", function()
 		popup_style = wm.utility | wm.HUD | wm.titled | wm.closable | wm.resizable,
 	})
 end, "translate selection")
-local define = require("define")
-clay:map(clay.HYPER, "p", function()
-	define:toggle()
-end, "look up word")
 
 pcall(require, "local")
 
@@ -155,6 +151,7 @@ screenCallback(false)
 local HOME_WIFI = "tardis"
 local HUE_LIGHTS_ON_START_HOUR = 18
 local HUE_LIGHTS_ON_END_HOUR = 23
+local HUE_EVENING_BRIGHTNESS = 127
 local FISH_SHELL = "/opt/homebrew/bin/fish"
 
 local function fishRunCommand(command)
@@ -207,7 +204,7 @@ function HueTurnOn()
 		return
 	end
 
-	fishRunCommand("huec power on")
+	fishRunCommand("huec power on && huec brightness set " .. HUE_EVENING_BRIGHTNESS)
 end
 
 local WIFI_CONNECT_DELAY_SECONDS = 3
