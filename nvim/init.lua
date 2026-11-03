@@ -391,6 +391,7 @@ require("lazy").setup({
 				"typescript",
 				"yamlls",
 				"harper_ls",
+				"rumdl",
 			})
 
 			vim.lsp.enable("ty")
@@ -506,7 +507,7 @@ require("lazy").setup({
 					shell = { "shfmt" },
 					sql = { "sqlfluff" },
 					terraform = { "terraform_fmt" },
-					markdown = { "markdownlint" },
+					markdown = { "rumdl" },
 					json = { "jq" },
 					c = { "clang-format" },
 					html = { "prettierd" },

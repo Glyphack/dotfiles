@@ -57,6 +57,17 @@ function BookmarkChooser:load()
 	return choices
 end
 
+-- Returns the URL of the bookmark called name, or nil and shows an alert when no bookmark has that name.
+function BookmarkChooser:bookmarkToURL(name)
+	for _, bookmark in ipairs(self:load()) do
+		if bookmark.text == name then
+			return bookmark.url
+		end
+	end
+	hs.alert.show("No Brave bookmark named " .. name)
+	return nil
+end
+
 function BookmarkChooser:open(choice)
 	self.clay.focus.launchOrFocusOrRotate({ app = BRAVE_BUNDLE_ID, url = choice.url })
 end
