@@ -1,3 +1,5 @@
+#!/usr/bin/env uv run
+
 # /// script
 # requires-python = ">=3.11"
 # dependencies = []
@@ -28,7 +30,20 @@ LABEL_WIDTH = 11
 LABEL_COLOR = (90, 90, 100)
 TODAY_COLOR = (255, 210, 0)
 DISCOVERY_URL = "https://app.divoom-gz.com/Device/ReturnSameLANDevice"
-MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+MONTHS = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+]
 
 LEVEL_COLORS = {
     "NONE": (20, 20, 22),
@@ -86,7 +101,9 @@ def fetch_days(login: str) -> list[Day]:
         capture_output=True,
         text=True,
     ).stdout
-    calendar = json.loads(out)["data"]["user"]["contributionsCollection"]["contributionCalendar"]
+    calendar = json.loads(out)["data"]["user"]["contributionsCollection"][
+        "contributionCalendar"
+    ]
     return [
         Day(date.fromisoformat(day["date"]), day["contributionLevel"])
         for week in calendar["weeks"]
@@ -125,10 +142,15 @@ class Band:
     def position(self, day: date) -> tuple[int, int]:
         """Return the (column, row) of a day."""
         column = self.month_columns()[day.replace(day=1)]
-        return column + (day.day - 1) // DAYS_PER_COLUMN, (day.day - 1) % DAYS_PER_COLUMN
+        return column + (day.day - 1) // DAYS_PER_COLUMN, (
+            day.day - 1
+        ) % DAYS_PER_COLUMN
 
     def month_labels(self) -> list[tuple[int, str]]:
-        return [(column, MONTHS[month.month - 1]) for month, column in self.month_columns().items()]
+        return [
+            (column, MONTHS[month.month - 1])
+            for month, column in self.month_columns().items()
+        ]
 
     def days(self, days: list[Day]) -> list[Day]:
         return [day for day in days if self.start <= day.date < self.end]
@@ -138,7 +160,9 @@ class Band:
 class Canvas:
     pixels: bytearray = field(default_factory=lambda: bytearray(SIZE * SIZE * 3))
 
-    def fill_rect(self, x: int, y: int, w: int, h: int, color: tuple[int, int, int]) -> None:
+    def fill_rect(
+        self, x: int, y: int, w: int, h: int, color: tuple[int, int, int]
+    ) -> None:
         for py in range(y, y + h):
             for px in range(x, x + w):
                 i = (py * SIZE + px) * 3
@@ -171,7 +195,9 @@ class Canvas:
         this_month = days[-1].date.replace(day=1)
         band_height = LABEL_HEIGHT + LABEL_GAP + DAYS_PER_COLUMN * PITCH - 1 + BAND_GAP
         for index in range(BANDS):
-            start = add_months(this_month, (index - BANDS + 1) * MONTHS_PER_BAND - MONTHS_PER_BAND + 1)
+            start = add_months(
+                this_month, (index - BANDS + 1) * MONTHS_PER_BAND - MONTHS_PER_BAND + 1
+            )
             band = Band(start, add_months(start, MONTHS_PER_BAND))
             self.draw_band(band, days, index * band_height)
 
@@ -180,13 +206,25 @@ class Canvas:
         for y in range(SIZE * scale):
             start = (y // scale) * SIZE * 3
             row = self.pixels[start : start + SIZE * 3]
-            rows += b"\x00" + b"".join(bytes(row[i : i + 3]) * scale for i in range(0, len(row), 3))
+            rows += b"\x00" + b"".join(
+                bytes(row[i : i + 3]) * scale for i in range(0, len(row), 3)
+            )
 
         def chunk(kind: bytes, data: bytes) -> bytes:
-            return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+            return (
+                struct.pack(">I", len(data))
+                + kind
+                + data
+                + struct.pack(">I", zlib.crc32(kind + data))
+            )
 
         header = struct.pack(">IIBBBBB", SIZE * scale, SIZE * scale, 8, 2, 0, 0, 0)
-        return b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + chunk(b"IDAT", zlib.compress(rows)) + chunk(b"IEND", b"")
+        return (
+            b"\x89PNG\r\n\x1a\n"
+            + chunk(b"IHDR", header)
+            + chunk(b"IDAT", zlib.compress(rows))
+            + chunk(b"IEND", b"")
+        )
 
 
 @dataclass
@@ -233,7 +271,9 @@ class Pixoo:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--user", default="glyphack")
-    parser.add_argument("--ip", help="Pixoo 64 local IP address, found automatically when not given")
+    parser.add_argument(
+        "--ip", help="Pixoo 64 local IP address, found automatically when not given"
+    )
     parser.add_argument("--preview", help="also save the image as a PNG at this path")
     args = parser.parse_args()
 

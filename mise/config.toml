@@ -51,6 +51,8 @@ node = "24"
 "npm:pnpm" = { version = "latest", lazy = true, lazy_bins = ["pnpm", "pnpx", "pn", "pnx"] }
 "npm:typescript-language-server" = { version = "latest", lazy = true, lazy_bins = "typescript-language-server" }
 "npm:typescript" = "latest"
+rumdl = { version = "latest", lazy = true }
+harper-ls = { version = "latest", lazy = true }
 hunk = { version = "latest", lazy = true }
 "pipx:pre-commit" = { version = "latest", lazy = true, lazy_bins = "pre-commit" }
 

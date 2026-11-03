@@ -50,6 +50,7 @@ link() {
     link_dir "$DOTFILES/fish" "$HOME/.config/fish"
     link_dir "$DOTFILES/wezterm" "$HOME/.config/wezterm"
     link_dir "$DOTFILES/mise" "$HOME/.config/mise"
+    link_dir "$DOTFILES/rumdl" "$HOME/.config/rumdl"
     link_dir  "$DOTFILES/hammerspoon" "$HOME/.hammerspoon"
     # These use stow cause the whole folder is not supposed to be synced
     stow_into "$HOME" gitconf
