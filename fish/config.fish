@@ -32,7 +32,6 @@ set -U fish_greeting
 fish_add_path -g "$HOME/.rd/bin" \
     "/opt/homebrew/bin" \
     "$HOME_BIN" \
-    "$DOTFILES_BIN" \
     "$PYENV_ROOT/bin" \
     "$GOBIN" \
     "$RUST_HOME" \
