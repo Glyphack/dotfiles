@@ -734,9 +734,15 @@ require("lazy").setup({
 					backward = "F",
 					forward_till = "t",
 					backward_till = "T",
-					repeat_jump = "<CR>",
+					repeat_jump = "",
 				},
 			})
+			map("n", "<CR>", function()
+				if not MiniJump.state.jumping then
+					return "<CR>"
+				end
+				return "<Cmd>lua MiniJump.jump()<CR>"
+			end, "Repeat jump", { expr = true })
 			-- Add/delete/replace surroundings (brackets, quotes, etc.)
 			--
 			-- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
@@ -1145,14 +1151,12 @@ require("lazy").setup({
 					map("n", "<leader>p", function()
 						local worktree = vim.fn.FugitiveWorkTree(args.buf)
 						fugitive_toggle()
-						vim.notify("Pushing...", vim.log.levels.INFO)
-						vim.system({ "git", "push" }, { cwd = worktree }, function(out)
+						vim.system({ "git", "bush" }, { cwd = worktree, detach = true }, function(out)
+							if out.code == 0 then
+								return
+							end
 							vim.schedule(function()
-								if out.code == 0 then
-									vim.notify("Git push succeeded", vim.log.levels.INFO)
-								else
-									vim.notify("Git push failed: " .. out.stderr, vim.log.levels.ERROR)
-								end
+								vim.notify("Could not start git bush: " .. out.stderr, vim.log.levels.ERROR)
 							end)
 						end)
 					end, "Push changes", { buffer = args.buf })
