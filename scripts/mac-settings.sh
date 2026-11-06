@@ -25,3 +25,6 @@ for (var i = 0; i < screens.count; i++) {
   }
 }
 JXA
+
+for t in public.plain-text public.text public.source-code public.script public.shell-script public.python-script public.ruby-script public.json public.yaml public.xml com.apple.log public.comma-separated-values-text public.css public.c-source public.c-header public.c-plus-plus-source public.c-plus-plus-header public.swift-source com.sun.java-source com.netscape.javascript-source com.microsoft.typescript; do duti -s dev.zed.Zed $t all; done
+duti -s md.obsidian net.daringfireball.markdown all

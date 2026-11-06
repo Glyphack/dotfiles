@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Usage: git bush [git push arguments]
+# Runs git push detached from the terminal so the shell gets control back
+# right away and closing the tab or quitting the editor does not stop it.
+# The push output goes to a log file under the cache folder. A macOS
+# notification is shown only when the push fails.
+
+set -u
+
+repo_root=$(git rev-parse --show-toplevel) || exit 1
+repo_name=$(basename "$repo_root")
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+log_dir="${XDG_CACHE_HOME:-$HOME/.cache}/git-bush"
+mkdir -p "$log_dir"
+log_file="$log_dir/$(date +%Y%m%d-%H%M%S)-$repo_name-${branch//\//-}.log"
+notify="$(dirname "$0")/macos-notify.sh"
+
+echo "Pushing $repo_name ($branch) in the background, log: $log_file"
+
+(
+  trap '' HUP
+  if GIT_TERMINAL_PROMPT=0 git push "$@" >"$log_file" 2>&1; then
+    exit 0
+  fi
+  "$notify" "git push failed: $repo_name ($branch)" "$(tail -n 3 "$log_file")" Basso
+) </dev/null >/dev/null 2>&1 &

@@ -148,6 +148,20 @@ local function copy_last_command_output(window, pane)
 	window:toast_notification("wezterm", "No command output found", nil, 2000)
 end
 
+-- Selects the last typed command (the one being typed counts) in copy mode and copies it.
+local function copy_last_command(with_output)
+	return wezterm.action_callback(function(window, pane)
+		window:perform_action(act.ActivateCopyMode, pane)
+		window:perform_action(act.CopyMode({ MoveBackwardZoneOfType = "Input" }), pane)
+		window:perform_action(act.CopyMode({ SetSelectionMode = "SemanticZone" }), pane)
+		if with_output then
+			window:perform_action(act.CopyMode({ MoveForwardZoneOfType = "Output" }), pane)
+		end
+		window:perform_action(act.CopyTo("Clipboard"), pane)
+		window:perform_action(act.CopyMode("Close"), pane)
+	end)
+end
+
 config.keys = {
 	-- terminal
 	{ key = "c", mods = "LEADER", action = act.ActivateCopyMode, description = "Activate copy mode" },
@@ -184,6 +198,18 @@ config.keys = {
 		mods = "CMD|SHIFT",
 		description = "Copy last command output to clipboard",
 		action = wezterm.action_callback(copy_last_command_output),
+	},
+	{
+		key = "i",
+		mods = "CMD|SHIFT",
+		description = "Copy last command (or the one being typed) to clipboard",
+		action = copy_last_command(false),
+	},
+	{
+		key = "a",
+		mods = "CMD|SHIFT",
+		description = "Copy last command and its output to clipboard",
+		action = copy_last_command(true),
 	},
 
 	-- Pane management
