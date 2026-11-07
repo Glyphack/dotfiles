@@ -7,7 +7,7 @@ export interface DotsSettings {
 	ntfyServer: string;
 	ntfyTopic: string;
 	typewriterMode: boolean;
-	typefullySecret: string;
+	typefullySecret: string | null;
 }
 
 export const DEFAULT_SETTINGS: DotsSettings = {
@@ -16,7 +16,7 @@ export const DEFAULT_SETTINGS: DotsSettings = {
 	ntfyServer: 'https://ntfy.sh',
 	ntfyTopic: '',
 	typewriterMode: false,
-	typefullySecret: '',
+	typefullySecret: null,
 };
 
 export class DotsSettingTab extends PluginSettingTab {
@@ -108,7 +108,7 @@ export class DotsSettingTab extends PluginSettingTab {
 			)
 			.addComponent((el) =>
 				new SecretComponent(this.app, el)
-					.setValue(this.plugin.settings.typefullySecret)
+					.setValue(this.plugin.settings.typefullySecret ?? '')
 					.onChange(async (value) => {
 						this.plugin.settings.typefullySecret = value;
 						await this.plugin.saveSettings();

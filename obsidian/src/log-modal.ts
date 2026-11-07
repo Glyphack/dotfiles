@@ -65,7 +65,7 @@ export class LogModal extends Modal {
 	}
 
 	private grow(input: HTMLTextAreaElement): void {
-		input.setCssStyles({ height: 'auto' });
+		input.setCssStyles({ height: '' });
 		input.setCssStyles({
 			height: `${Math.min(input.scrollHeight, MAX_MESSAGE_HEIGHT_PX)}px`,
 		});

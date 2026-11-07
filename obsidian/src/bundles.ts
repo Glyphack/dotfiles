@@ -1,7 +1,8 @@
 import type { Dirent } from 'fs';
-import { describeError } from './sync';
+import { LayoutCatalog, describeError, isLayoutHelperDir, layoutName } from './sync';
 
 export const MANIFEST_FILE = '.dots-synced';
+export const LAYOUTS_DIR = 'layouts';
 
 export interface BundleFile {
 	name: string;
@@ -102,6 +103,40 @@ export class BundleStore {
 			}
 		}
 		await removeDirIfEmpty(this.fs, dir);
+	}
+
+	get layoutsPath(): string {
+		return this.path.join(this.path.dirname(this.contentPath), LAYOUTS_DIR);
+	}
+
+	async readLayouts(): Promise<LayoutCatalog> {
+		const names = await this.collectLayoutNames(this.layoutsPath);
+		return new LayoutCatalog(this.layoutsPath, names);
+	}
+
+	private async collectLayoutNames(dir: string): Promise<Set<string> | null> {
+		const entries = await this.readDir(dir);
+		if (!entries) {
+			return null;
+		}
+		const names = new Set<string>();
+		for (const entry of entries) {
+			if (entry.name.startsWith('.')) {
+				continue;
+			}
+			if (entry.isFile()) {
+				names.add(layoutName(entry.name));
+				continue;
+			}
+			if (!entry.isDirectory() || isLayoutHelperDir(entry.name)) {
+				continue;
+			}
+			const nested = await this.collectLayoutNames(this.path.join(dir, entry.name));
+			for (const name of nested ?? []) {
+				names.add(name);
+			}
+		}
+		return names;
 	}
 
 	private get manifestPath(): string {
