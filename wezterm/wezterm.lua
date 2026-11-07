@@ -15,7 +15,7 @@ config.key_tables = {
 	copy_mode = wezterm.gui.default_key_tables().copy_mode,
 }
 config.font = wezterm.font("Hack Nerd Font Mono", { weight = "Regular", stretch = "Normal", style = "Normal" })
-config.font_size = 16
+config.font_size = 18
 config.window_decorations = "RESIZE"
 
 local img_background = {

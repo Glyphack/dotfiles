@@ -1,9 +1,11 @@
 AnyNodeRef
 Async
 C.
+DHH
 Espanso
 Github
 Hammerspoon
+José
 Karabiner
 Makefile
 OKR
@@ -12,6 +14,7 @@ RSS
 Raycast
 Readwise
 UDF
+Valim
 coroutine
 dataframe
 dotfiles
