@@ -38,6 +38,50 @@ function isBlank(value: unknown): boolean {
 	return typeof value === 'string' && value.trim().length === 0;
 }
 
+export const LAYOUT_KEY = 'layout';
+
+export function requestedLayout(
+	frontmatter: Record<string, unknown> | undefined,
+): string | null {
+	const value = frontmatter?.[LAYOUT_KEY];
+	if (typeof value !== 'string') {
+		return null;
+	}
+	const name = value.trim();
+	return name.length > 0 ? name : null;
+}
+
+export class LayoutCatalog {
+	constructor(
+		public readonly dir: string,
+		private readonly names: Set<string> | null,
+	) {}
+
+	problem(layout: string | null): string | null {
+		if (layout === null) {
+			return null;
+		}
+		if (this.names === null) {
+			return `layout ${layout} cannot be checked, ${this.dir} does not exist`;
+		}
+		if (this.names.has(layout)) {
+			return null;
+		}
+		return `layout ${layout} not found in ${this.dir}`;
+	}
+}
+
+const LAYOUT_HELPER_DIRS = new Set(['partials', '_partials', 'shortcodes', '_shortcodes', '_markup']);
+
+export function isLayoutHelperDir(name: string): boolean {
+	return LAYOUT_HELPER_DIRS.has(name);
+}
+
+export function layoutName(filename: string): string {
+	const dot = filename.indexOf('.');
+	return dot === -1 ? filename : filename.slice(0, dot);
+}
+
 export const INDEX_FILE = 'index.md';
 
 export interface FrontmatterConfig {
@@ -180,7 +224,8 @@ export function transformNote(
 function renderReference(reference: ResolvedReference): string {
 	const { resolution, text } = reference;
 	if (resolution.kind === 'attachment') {
-		return `![${text}](${resolution.filename}${sizeQuery(resolution.width, resolution.height)})`;
+		const marker = reference.isEmbed ? '!' : '';
+		return `${marker}[${text}](${resolution.filename}${sizeQuery(resolution.width, resolution.height)})`;
 	}
 	if (resolution.url) {
 		return `[${text}](${resolution.url})`;

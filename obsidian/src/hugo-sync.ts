@@ -31,6 +31,7 @@ import {
 	missingKeys,
 	noteLinkUrl,
 	parseEmbedDisplay,
+	requestedLayout,
 	shareState,
 	transformNote,
 } from './sync';
@@ -48,6 +49,7 @@ interface PreparedNote {
 	attachments: Map<string, TFile>;
 	missingEmbeds: string[];
 	missingKeys: string[];
+	missingLayout: string | null;
 }
 
 const NOTICE_MS = 15000;
@@ -102,6 +104,7 @@ export class HugoSync {
 		}
 
 		const previous = await store.readManifest();
+		const layouts = await store.readLayouts();
 		const owned = new Set(previous);
 		const { index, skipped } = this.discover();
 		const targets =
@@ -119,6 +122,7 @@ export class HugoSync {
 				file,
 				...this.resolveReferences(file, cache, index),
 				missingKeys: missingKeys(cache?.frontmatter, REQUIRED_KEYS),
+				missingLayout: layouts.problem(requestedLayout(cache?.frontmatter)),
 			});
 		}
 
@@ -294,7 +298,19 @@ export class HugoSync {
 			if (linkpath(link.link).length === 0) {
 				continue;
 			}
-			const target = this.resolveNote(link.link, file);
+			const target = this.resolveTarget(link.link, file);
+			if (target && target.extension !== 'md') {
+				attachments.set(target.name, target);
+				references.push(
+					toReference(link, false, linkDisplayText(link), {
+						kind: 'attachment',
+						filename: target.name,
+						width: null,
+						height: null,
+					}),
+				);
+				continue;
+			}
 			if (!target && !isWikilink(link.original)) {
 				continue;
 			}
@@ -336,14 +352,6 @@ export class HugoSync {
 		}
 
 		return { references, attachments, missingEmbeds };
-	}
-
-	private resolveNote(link: string, file: TFile): TFile | null {
-		const target = this.resolveTarget(link, file);
-		if (!target || target.extension !== 'md') {
-			return null;
-		}
-		return target;
 	}
 
 	private resolveFile(target: TFile, index: PublishIndex): Resolution {
@@ -389,6 +397,9 @@ function publishProblems(item: PreparedNote, failures: Map<string, string>): str
 	}
 	if (item.missingEmbeds.length > 0) {
 		problems.push(`unresolved embeds: ${item.missingEmbeds.join(', ')}`);
+	}
+	if (item.missingLayout) {
+		problems.push(item.missingLayout);
 	}
 	const blocked: string[] = [];
 	for (const file of item.attachments.values()) {

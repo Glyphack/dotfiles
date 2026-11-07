@@ -210,7 +210,8 @@ export default class DotsPlugin extends Plugin {
 	}
 
 	private async postToX(text: string) {
-		const key = this.app.secretStorage.getSecret(this.settings.typefullySecret);
+		const secretId = this.settings.typefullySecret;
+		const key = secretId === null ? null : this.app.secretStorage.getSecret(secretId);
 		if (!key) {
 			new Notice('Set the Typefully API key in Dots settings.');
 			return;

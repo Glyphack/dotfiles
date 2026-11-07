@@ -1,2 +1,53 @@
 [global]
 disable = ["MD013"]
+
+# Rules that catch content which renders broken, heading level jumps and
+# duplicate headings are errors. Everything else is a warning.
+
+[MD001]
+severity = "error"
+
+[MD024]
+severity = "error"
+
+[MD025]
+severity = "warning"
+
+[MD040]
+severity = "warning"
+
+[MD045]
+severity = "warning"
+
+[MD011]
+severity = "error"
+
+[MD042]
+severity = "error"
+
+[MD051]
+severity = "error"
+
+[MD052]
+severity = "error"
+
+[MD056]
+severity = "error"
+
+[MD057]
+severity = "error"
+
+[MD066]
+severity = "error"
+
+[MD068]
+severity = "error"
+
+[MD070]
+severity = "error"
+
+[MD075]
+severity = "error"
+
+[MD083]
+severity = "error"
