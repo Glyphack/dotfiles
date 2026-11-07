@@ -271,7 +271,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		lsp_map("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
 		lsp_map("gr", vim.lsp.buf.references, "Goto References")
 		lsp_map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-		lsp_map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
 		lsp_map("<leader>ps", vim.lsp.buf.signature_help, "Peek signature")
 		lsp_map("K", vim.lsp.buf.hover, "Hover Documentation")
 		lsp_map("gt", vim.lsp.buf.type_definition, "Goto type definition")
