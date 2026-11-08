@@ -51,3 +51,10 @@
 .dots-sync-skipped li {
 	color: var(--text-warning);
 }
+
+.dots-zen .workspace-ribbon,
+.dots-zen .workspace-tab-header-container,
+.dots-zen .view-header,
+.dots-zen .status-bar {
+	display: none;
+}

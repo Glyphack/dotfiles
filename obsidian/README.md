@@ -120,3 +120,7 @@ Set the Typefully API key in Dots settings first. It is kept in Obsidian's secre
 
 This feature mimics the `scrolloff=999` setting in vim.
 Turn it on with the `Typewriter mode` toggle in Dots settings, or run the `Toggle typewriter mode` command.
+
+## Zen Mode
+
+Close everything and just see your current note
