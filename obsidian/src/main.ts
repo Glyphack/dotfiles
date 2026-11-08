@@ -32,6 +32,7 @@ import type { ExifTool } from './image';
 import { typewriterScroll } from './typewriter';
 import { Typefully } from './typefully';
 import { toXText } from './x-post';
+import { ZenMode } from './zen';
 
 const DAILY_FOLDER = 'Daily';
 
@@ -42,6 +43,7 @@ export default class DotsPlugin extends Plugin {
 	private weeklyNote!: WeeklyNote;
 	private exiftool: ExifTool | null = null;
 	private typewriterExtension: Extension[] = [];
+	private zenMode!: ZenMode;
 
 	async onload() {
 		this.settings = Object.assign(
@@ -60,6 +62,7 @@ export default class DotsPlugin extends Plugin {
 			() => this.settings.autoPublish,
 		);
 		this.weeklyNote = new WeeklyNote(this.app);
+		this.zenMode = new ZenMode(this.app.workspace);
 		this.addSettingTab(new DotsSettingTab(this.app, this));
 
 		this.addCommand({
@@ -157,6 +160,11 @@ export default class DotsPlugin extends Plugin {
 			},
 		});
 		this.addCommand({
+			id: 'toggle-zen-mode',
+			name: 'Toggle zen mode',
+			callback: () => this.zenMode.toggle(),
+		});
+		this.addCommand({
 			id: 'post-to-x',
 			name: 'Post to X',
 			editorCallback: (editor) => {
@@ -193,7 +201,11 @@ export default class DotsPlugin extends Plugin {
 		});
 	}
 
-	onunload() {}
+	onunload() {
+		if (this.zenMode.isActive) {
+			this.zenMode.exit();
+		}
+	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
