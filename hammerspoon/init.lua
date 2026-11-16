@@ -49,6 +49,12 @@ clay:map(clay.HYPER, "0", function()
 	})
 end, "Telegram")
 
+clay:map(clay.HYPER, "h", function()
+  clay.windowChooser:toggle()
+end, "Window Switcher")
+clay:map(clay.HYPER, "m", nil, "")
+
+
 local wm = hs.webview.windowMasks
 clay:map(clay.HYPER, "\\", function()
 	clay.translate:toggleSelectionPopup({

@@ -15,6 +15,9 @@ Raycast
 Readwise
 UDF
 Valim
+base32
+base36
+base64
 coroutine
 dataframe
 dotfiles
