@@ -1,14 +1,16 @@
 local json = require("hs.json")
 local FuzzyChooser = dofile(hs.spoons.resourcePath("fuzzy_chooser.lua"))
+local Favicons = dofile(hs.spoons.resourcePath("favicons.lua"))
 
-local BOOKMARKS_PATH = os.getenv("HOME")
-	.. "/Library/Application Support/BraveSoftware/Brave-Browser/Default/Bookmarks"
+local BRAVE_PROFILE_DIR = os.getenv("HOME") .. "/Library/Application Support/BraveSoftware/Brave-Browser/Default"
+local BOOKMARKS_PATH = BRAVE_PROFILE_DIR .. "/Bookmarks"
 local BRAVE_BUNDLE_ID = "com.brave.Browser"
 local ROOT_KEYS = { "bookmark_bar", "other", "synced" }
 
 local BookmarkChooser = {
 	chooser = nil,
 	clay = nil,
+	favicons = Favicons.new(BRAVE_PROFILE_DIR),
 }
 
 function BookmarkChooser:init(clay)
@@ -54,6 +56,7 @@ function BookmarkChooser:load()
 			collectBookmarks(root, root.name or "", icon, choices)
 		end
 	end
+	self.favicons:setImages(choices)
 	return choices
 end
 

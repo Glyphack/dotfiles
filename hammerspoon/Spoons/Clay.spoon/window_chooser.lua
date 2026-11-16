@@ -1,5 +1,9 @@
 local windowFilter = require("hs.window.filter")
 local FuzzyChooser = dofile(hs.spoons.resourcePath("fuzzy_chooser.lua"))
+local Favicons = dofile(hs.spoons.resourcePath("favicons.lua"))
+
+local BRAVE_PROFILE_DIR = os.getenv("HOME") .. "/Library/Application Support/BraveSoftware/Brave-Browser/Default"
+local CHROME_PROFILE_DIR = os.getenv("HOME") .. "/Library/Application Support/Google/Chrome/Default"
 
 local log = hs.logger.new("clay.windowChooser", "info")
 
@@ -47,6 +51,9 @@ local function runOsascript(language, script, done)
 	runTask("/usr/bin/osascript", { "-l", language, "-e", script }, done)
 end
 
+-- A macOS helper that runs the menu bar. Its untitled windows are not app windows.
+local MENU_BAR_AGENT_BUNDLE_ID = "com.apple.MenuBarAgent"
+
 local WindowSource = {}
 WindowSource.__index = WindowSource
 
@@ -65,7 +72,8 @@ function WindowSource:load(done)
 	for _, win in ipairs(self.filter:getWindows(windowFilter.sortByFocusedLast)) do
 		local id = win:id()
 		local app = win:application()
-		if id and app then
+		-- Menu bar icons, like the audio and video indicator, show up as windows with id 0.
+		if id and id ~= 0 and app and app:bundleID() ~= MENU_BAR_AGENT_BUNDLE_ID then
 			local appName = app:name()
 			local title = win:title()
 			if title == "" then
@@ -94,8 +102,8 @@ end
 local ChromiumTabSource = {}
 ChromiumTabSource.__index = ChromiumTabSource
 
-function ChromiumTabSource.new(bundleId, name)
-	return setmetatable({ bundleId = bundleId, name = name }, ChromiumTabSource)
+function ChromiumTabSource.new(bundleId, name, favicons)
+	return setmetatable({ bundleId = bundleId, name = name, favicons = favicons }, ChromiumTabSource)
 end
 
 function ChromiumTabSource:choicesFrom(tabs)
@@ -108,16 +116,19 @@ function ChromiumTabSource:choicesFrom(tabs)
 			titles = {}
 		end
 		for tabIndex, title in ipairs(titles) do
+			local url = tabs.urls[windowIndex][tabIndex]
 			table.insert(choices, {
 				text = title,
-				subText = self.name .. " tab · " .. tabs.urls[windowIndex][tabIndex],
+				subText = self.name .. " tab · " .. url,
 				image = icon,
+				url = url,
 				windowId = windowId,
 				tabIndex = tabIndex,
 				isTab = true,
 			})
 		end
 	end
+	self.favicons:setImages(choices)
 	return choices
 end
 
@@ -317,8 +328,8 @@ local WindowChooser = {
 
 WindowChooser.sources = {
 	WindowChooser.windows,
-	ChromiumTabSource.new("com.google.Chrome", "Chrome"),
-	ChromiumTabSource.new("com.brave.Browser", "Brave"),
+	ChromiumTabSource.new("com.google.Chrome", "Chrome", Favicons.new(CHROME_PROFILE_DIR)),
+	ChromiumTabSource.new("com.brave.Browser", "Brave", Favicons.new(BRAVE_PROFILE_DIR)),
 	WezTermSource.new(),
 }
 
@@ -374,15 +385,15 @@ function WindowChooser:toggle()
 	self.chooser:toggle()
 end
 
+-- Lists windows above tabs that match the query just as exactly.
+local function windowsFirst(choice)
+	return choice.isTab and 1 or 0
+end
+
 WindowChooser.chooser = FuzzyChooser.new("Window or tab", function()
 	return WindowChooser:load()
 end, function(choice)
 	WindowChooser:focus(choice)
-end)
-
-local rank = WindowChooser.chooser.filter
-WindowChooser.chooser.filter = function(chooser, query)
-	return tabsLast(rank(chooser, query))
-end
+end, windowsFirst)
 
 return WindowChooser

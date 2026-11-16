@@ -32,18 +32,24 @@ function FuzzyQuery:match(text)
 	return { tier = tier, score = score }
 end
 
-function FuzzyQuery:rank(texts)
+-- Ranks entries, each a { text, group } table. Exact matches come before fuzzy ones.
+-- Among matches that are equally exact, lower groups come first, then better scores.
+function FuzzyQuery:rank(entries)
 	local matches = {}
-	for index, text in ipairs(texts) do
-		local match = self:match(text)
+	for index, entry in ipairs(entries) do
+		local match = self:match(entry.text)
 		if match then
 			match.index = index
+			match.group = entry.group
 			table.insert(matches, match)
 		end
 	end
 	table.sort(matches, function(a, b)
 		if a.tier ~= b.tier then
 			return a.tier < b.tier
+		end
+		if a.group ~= b.group then
+			return a.group < b.group
 		end
 		if a.score ~= b.score then
 			return a.score > b.score
@@ -60,8 +66,16 @@ end
 local FuzzyChooser = {}
 FuzzyChooser.__index = FuzzyChooser
 
-function FuzzyChooser.new(placeholder, load, pick)
-	local self = setmetatable({ load = load, choices = {} }, FuzzyChooser)
+-- group is optional. It returns a number for a choice, and among matches that are
+-- equally exact, choices in lower groups are listed first.
+function FuzzyChooser.new(placeholder, load, pick, group)
+	local self = setmetatable({
+		load = load,
+		group = group or function()
+			return 0
+		end,
+		choices = {},
+	}, FuzzyChooser)
 	self.chooser = chooser
 		.new(function(choice)
 			if choice then
@@ -82,12 +96,12 @@ function FuzzyChooser:filter(query)
 	if query == "" then
 		return self.choices
 	end
-	local texts = {}
+	local entries = {}
 	for _, choice in ipairs(self.choices) do
-		table.insert(texts, choice.text .. " " .. choice.subText)
+		table.insert(entries, { text = choice.text .. " " .. choice.subText, group = self.group(choice) })
 	end
 	local result = {}
-	for _, index in ipairs(FuzzyQuery.new(query):rank(texts)) do
+	for _, index in ipairs(FuzzyQuery.new(query):rank(entries)) do
 		table.insert(result, self.choices[index])
 	end
 	return result
