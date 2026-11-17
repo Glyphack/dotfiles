@@ -11,4 +11,4 @@
 
 BRIGHTNESS="$1"
 
-/Users/shayeganhooshyari/.local/bin/huec brightness set "$BRIGHTNESS"
+mise exec -- huec brightness set "$BRIGHTNESS"

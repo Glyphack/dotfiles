@@ -6,4 +6,4 @@
 # @raycast.mode silent
 # @raycast.icon 🌑
 
-/Users/shayeganhooshyari/.local/bin/huec power off
+mise exec -- huec power off
