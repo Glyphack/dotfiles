@@ -1,4 +1,4 @@
-FROM node:20
+FROM node:20-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   less \
@@ -17,6 +17,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   tmux \
   curl \
   ca-certificates \
+  build-essential \
+  pkg-config \
+  libssl-dev \
+  python3 \
+  xz-utils \
   openjdk-17-jdk \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -55,9 +60,7 @@ RUN curl https://mise.run | sh
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ARG CLAUDE_VERSION=latest
-RUN curl -fsSL https://claude.ai/install.sh
-RUN curl -fsSL batrachian.ai/install | sh
-RUN curl -fsSL https://opencode.ai/install | bash
+RUN curl -fsSL https://claude.ai/install.sh | bash -s -- "${CLAUDE_VERSION}"
 
 # RUN cargo install cargo-nextest --locked
 

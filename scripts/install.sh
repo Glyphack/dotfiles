@@ -6,6 +6,7 @@ REPO="Glyphack/dotfiles"
 DOTFILES="${DOTFILES:-$HOME/Programming/dotfiles}"
 CLAY_REPO="Glyphack/clay"
 CLAY_BIN="$HOME/.local/bin/clay"
+SCRATCH_REPO="Glyphack/scratch"
 
 install_clay() {
     local asset="clay-darwin-arm64"
@@ -37,10 +38,24 @@ connect_github() {
     git -C "$DOTFILES" remote set-url origin "git@github.com:$REPO.git"
 }
 
+clone_scratch() {
+    local scratch
+    scratch="$(fish -lc 'echo $SCRATCH_DIR')"
+    if [[ -z "$scratch" ]]; then
+        echo "SCRATCH_DIR is not set in the fish config."
+        return 1
+    fi
+    if [[ -d "$scratch" ]]; then
+        return
+    fi
+    gh repo clone "$SCRATCH_REPO" "$scratch"
+}
+
 install_clay
 eval "$(/opt/homebrew/bin/brew shellenv)"
 clone_dotfiles
 "$DOTFILES/scripts/setup.sh"
 "$CLAY_BIN" --no-interactive --profile current-mac
 connect_github
+clone_scratch
 exec fish
