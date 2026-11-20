@@ -1,0 +1,22 @@
+[tasks.sync-kobo]
+description = "Copy the KOReader plugins to the Kobo plugged in over USB"
+env = { KOBO = "/Volumes/KOBOeReader" }
+run = '''
+plugins="$KOBO/.adds/koreader/plugins"
+if [ ! -d "$plugins" ]; then
+  echo "Could not find $plugins. Plug in the Kobo and try again." >&2
+  exit 1
+fi
+for plugin in kobo/*.koplugin; do
+  name="$(basename "$plugin")"
+  rsync -rt --delete --exclude .DS_Store "$plugin/" "$plugins/$name/"
+  echo "Copied $name"
+done
+'''
+
+[tasks.dutch-verb]
+description = "Build the e-reader dashboard server and restart it"
+run = [
+  'go build -C tools/ereader-dashboard -o "{{config_root}}/bin/ereader-dashboard" .',
+  'launchctl kickstart -k "gui/$(id -u)/ereader-dashboard"',
+]

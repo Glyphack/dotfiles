@@ -4,10 +4,10 @@ Shows a picture from your own server on the sleep screen.
 When the device goes to sleep, the plugin first downloads
 http://<server>/dashboard.png, turning on Wi-Fi for it when needed, and saves it
 where the sleep screen reads it. Then the device sleeps and shows the new
-picture. It downloads at most once a day. When Wi-Fi or the server can't be
+picture. It tries at most once an hour. When Wi-Fi or the server can't be
 reached, the device sleeps with the picture it already has.
 
-@module koplugin.SleepDashboard
+@module koplugin.EreaderDashboard
 --]]--
 
 local DataStorage = require("datastorage")
@@ -22,20 +22,17 @@ local logger = require("logger")
 local _ = require("gettext")
 local T = require("ffi/util").template
 
-local IMAGE_PATH = DataStorage:getDataDir() .. "/sleep-dashboard.png"
-local SETTINGS_PATH = DataStorage:getSettingsDir() .. "/sleepdashboard.lua"
+local MENU_ID = "ereader_dashboard"
+local IMAGE_PATH = DataStorage:getDataDir() .. "/ereader-dashboard.png"
+local SETTINGS_PATH = DataStorage:getSettingsDir() .. "/ereader-dashboard.lua"
 local PNG_SIGNATURE = "\137PNG\r\n\26\n"
--- After a failed attempt, wait this long before trying again, so being away
--- from the home network doesn't slow down every sleep.
-local RETRY_AFTER_SECONDS = 60 * 60
+-- After an attempt, wait this long before the next one. This keeps the picture
+-- fresh without slowing down every sleep, also when away from the home network.
+local UPDATE_EVERY_SECONDS = 60 * 60
 -- How long to wait for Wi-Fi to connect before sleeping without a new picture.
 local CONNECT_TIMEOUT_SECONDS = 20
 local BLOCK_TIMEOUT_SECONDS = 5
 local TOTAL_TIMEOUT_SECONDS = 15
-
-local function today()
-    return os.date("%Y-%m-%d")
-end
 
 local function trim(text)
     return (text:gsub("^%s+", ""):gsub("%s+$", ""))
@@ -49,6 +46,17 @@ local function isPng(path)
     local header = file:read(#PNG_SIGNATURE)
     file:close()
     return header == PNG_SIGNATURE
+end
+
+--- Puts the menu item first in the Tools menu. Without this, KOReader adds it
+--- after "More tools", which is often on the second page.
+local function putFirstInTools(order)
+    for _, id in ipairs(order.tools) do
+        if id == MENU_ID then
+            return
+        end
+    end
+    table.insert(order.tools, 1, MENU_ID)
 end
 
 local function portraitScreenSize()
@@ -73,7 +81,7 @@ function SleepUpdate.new(plugin, sleep)
         wifi_was_on = NetworkMgr.wifi_was_on,
     }, SleepUpdate)
     update.give_up = function()
-        logger.info("SleepDashboard: Wi-Fi did not connect in time, sleeping without a new picture")
+        logger.info("EreaderDashboard: Wi-Fi did not connect in time, sleeping without a new picture")
         update:finish()
     end
     return update
@@ -96,7 +104,7 @@ function SleepUpdate:start()
         self:download()
     end, false)
     if started ~= true then
-        logger.info("SleepDashboard: could not turn on Wi-Fi, sleeping without a new picture")
+        logger.info("EreaderDashboard: could not turn on Wi-Fi, sleeping without a new picture")
         self:finish()
         return
     end
@@ -111,7 +119,7 @@ function SleepUpdate:download()
     end
     local ok, err = pcall(self.plugin.update, self.plugin)
     if not ok then
-        logger.err("SleepDashboard: update failed with an error:", err)
+        logger.err("EreaderDashboard: update failed with an error:", err)
     end
     self:finish()
 end
@@ -125,7 +133,7 @@ function SleepUpdate:finish()
     UIManager:unschedule(self.give_up)
     local ok, err = pcall(self.cleanUp, self)
     if not ok then
-        logger.err("SleepDashboard: cleanup failed:", err)
+        logger.err("EreaderDashboard: cleanup failed:", err)
     end
     self.sleep()
 end
@@ -195,7 +203,7 @@ function SleepHook:startUpdate()
         return true
     end)
     if not ok then
-        logger.err("SleepDashboard: could not check for an update:", due)
+        logger.err("EreaderDashboard: could not check for an update:", due)
         return false
     end
     if not due then
@@ -209,32 +217,34 @@ function SleepHook:startUpdate()
     self.running = update
     local started, err = pcall(update.start, update)
     if not started then
-        logger.err("SleepDashboard: could not start the update:", err)
+        logger.err("EreaderDashboard: could not start the update:", err)
         update:finish()
     end
     return true
 end
 
-local SleepDashboard = WidgetContainer:extend{
-    name = "sleepdashboard",
+local EreaderDashboard = WidgetContainer:extend{
+    name = "ereader-dashboard",
     is_doc_only = false,
 }
 
-function SleepDashboard:init()
+function EreaderDashboard:init()
     self.settings = LuaSettings:open(SETTINGS_PATH)
+    putFirstInTools(require("ui/elements/filemanager_menu_order"))
+    putFirstInTools(require("ui/elements/reader_menu_order"))
     self.ui.menu:registerToMainMenu(self)
     SleepHook:attach(self)
 end
 
-function SleepDashboard:onCloseWidget()
+function EreaderDashboard:onCloseWidget()
     SleepHook:detach(self)
 end
 
-function SleepDashboard:isEnabled()
+function EreaderDashboard:isEnabled()
     return self.settings:isTrue("enabled")
 end
 
-function SleepDashboard:server()
+function EreaderDashboard:server()
     local server = self.settings:readSetting("server")
     if server == nil or server == "" then
         return nil
@@ -242,7 +252,7 @@ function SleepDashboard:server()
     return server
 end
 
-function SleepDashboard:imageUrl()
+function EreaderDashboard:imageUrl()
     local server = self:server()
     if not server then
         return nil
@@ -255,27 +265,24 @@ function SleepDashboard:imageUrl()
     return string.format("%s/dashboard.png?width=%d&height=%d", server, width, height)
 end
 
---- True when the plugin is on, has a server, hasn't downloaded a picture today,
---- and the last attempt was at least RETRY_AFTER_SECONDS ago.
-function SleepDashboard:shouldUpdateBeforeSleep()
+--- True when the plugin is on, has a server, and the last attempt was at least
+--- UPDATE_EVERY_SECONDS ago.
+function EreaderDashboard:shouldUpdateBeforeSleep()
     if not self:isEnabled() or not self:server() then
         return false
     end
-    if self.settings:readSetting("last_success_day") == today() then
-        return false
-    end
     local last_attempt = self.settings:readSetting("last_attempt_time") or 0
-    return os.time() - last_attempt >= RETRY_AFTER_SECONDS
+    return os.time() - last_attempt >= UPDATE_EVERY_SECONDS
 end
 
-function SleepDashboard:markAttempt()
+function EreaderDashboard:markAttempt()
     self.settings:saveSetting("last_attempt_time", os.time())
     self.settings:flush()
 end
 
 --- Downloads the picture to a temporary file and moves it in place only if it is a valid PNG,
 --- so a failed download never breaks the current sleep screen picture.
-function SleepDashboard:download(url)
+function EreaderDashboard:download(url)
     local http = url:match("^https://") and require("ssl.https") or require("socket.http")
     local socketutil = require("socketutil")
     local partial_path = IMAGE_PATH .. ".part"
@@ -316,33 +323,33 @@ function SleepDashboard:download(url)
     return true
 end
 
-function SleepDashboard:saveResult(ok, message)
+function EreaderDashboard:saveResult(ok, message)
     self.settings:saveSetting("last_result", { ok = ok, message = message, time = os.time() })
     self.settings:flush()
     return ok, message
 end
 
 --- Downloads the picture now. Expects the network to be connected.
-function SleepDashboard:update()
+function EreaderDashboard:update()
     local url = self:imageUrl()
     if not url then
         return self:saveResult(false, _("Set the server address first."))
     end
     local ok, download_error = self:download(url)
     if not ok then
-        logger.warn("SleepDashboard: update failed:", download_error)
+        logger.warn("EreaderDashboard: update failed:", download_error)
         return self:saveResult(false, download_error)
     end
-    self.settings:saveSetting("last_success_day", today())
     return self:saveResult(true, _("The sleep screen picture was updated."))
 end
 
-function SleepDashboard:updateNow()
+function EreaderDashboard:updateNow()
     if not self:server() then
         UIManager:show(InfoMessage:new{ text = _("Set the server address first.") })
         return
     end
     NetworkMgr:runWhenConnected(function()
+        self:markAttempt()
         local ok, message = self:update()
         UIManager:show(InfoMessage:new{ text = message, timeout = ok and 3 or nil })
         NetworkMgr:afterWifiAction()
@@ -350,7 +357,7 @@ function SleepDashboard:updateNow()
 end
 
 --- Points the sleep screen at the downloaded picture and remembers the old sleep screen.
-function SleepDashboard:enable()
+function EreaderDashboard:enable()
     self.settings:saveSetting("previous_sleep_screen", {
         type = G_reader_settings:readSetting("screensaver_type"),
         image = G_reader_settings:readSetting("screensaver_document_cover"),
@@ -362,7 +369,7 @@ function SleepDashboard:enable()
 end
 
 --- Puts back the sleep screen that was set before enable.
-function SleepDashboard:disable()
+function EreaderDashboard:disable()
     local previous = self.settings:readSetting("previous_sleep_screen") or {}
     G_reader_settings:saveSetting("screensaver_type", previous.type or "disable")
     G_reader_settings:saveSetting("screensaver_document_cover", previous.image)
@@ -371,7 +378,7 @@ function SleepDashboard:disable()
     self.settings:flush()
 end
 
-function SleepDashboard:editServer(touchmenu_instance)
+function EreaderDashboard:editServer(touchmenu_instance)
     local dialog
     dialog = InputDialog:new{
         title = _("Server address"),
@@ -405,7 +412,7 @@ function SleepDashboard:editServer(touchmenu_instance)
     dialog:onShowKeyboard()
 end
 
-function SleepDashboard:lastResultText()
+function EreaderDashboard:lastResultText()
     local result = self.settings:readSetting("last_result")
     if not result then
         return _("Last update: never")
@@ -417,9 +424,9 @@ function SleepDashboard:lastResultText()
     return T(_("Last update failed: %1"), when)
 end
 
-function SleepDashboard:addToMainMenu(menu_items)
-    menu_items.sleep_dashboard = {
-        text = _("Sleep screen dashboard"),
+function EreaderDashboard:addToMainMenu(menu_items)
+    menu_items[MENU_ID] = {
+        text = _("E-reader dashboard"),
         sorting_hint = "tools",
         sub_item_table = {
             {
@@ -469,4 +476,4 @@ function SleepDashboard:addToMainMenu(menu_items)
     }
 end
 
-return SleepDashboard
+return EreaderDashboard

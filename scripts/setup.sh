@@ -95,6 +95,5 @@ install_packages
 bash scripts/mac-settings.sh
 link
 install_tools
-go build -C tools/ereader-image -o "$DOTFILES/bin/ereader-image" .
 build_karabiner
 install_vault_plugin

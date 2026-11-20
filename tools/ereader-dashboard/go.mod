@@ -1,4 +1,4 @@
-module ereader-image
+module ereader-dashboard
 
 go 1.26.7
 

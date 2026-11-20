@@ -9,6 +9,7 @@ set -gx EDITOR nvim
 # Personal
 set -gx PROGRAMMING_DIR ~/Programming
 set -gx DOTFILES_DIR ~/Programming/dotfiles
+set -gx DOTFILES ~/Programming/dotfiles
 set -gx WORKTREES_DIR $PROGRAMMING_DIR/wk
 set -gx SCRATCH_DIR $PROGRAMMING_DIR/scratch
 

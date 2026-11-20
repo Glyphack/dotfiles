@@ -3,14 +3,14 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>ereader-image</string>
+	<string>ereader-dashboard</string>
 	<key>Program</key>
-	<string>$DOTFILES/bin/ereader-image</string>
+	<string>$DOTFILES/bin/ereader-dashboard</string>
 	<key>RunAtLoad</key>
 	<true/>
 	<key>KeepAlive</key>
 	<true/>
 	<key>StandardErrorPath</key>
-	<string>$HOME/Library/Logs/ereader-image.log</string>
+	<string>$HOME/Library/Logs/ereader-dashboard.log</string>
 </dict>
 </plist>
