@@ -27,7 +27,7 @@ local img_background = {
 local appearance = wezterm.gui.get_appearance()
 
 if appearance:find("Dark") then
-	config.background = { img_background }
+	-- config.background = { img_background }
 	config.color_scheme = "flexoki-dark"
 else
 	config.color_scheme = "Solarized Light (Gogh)"

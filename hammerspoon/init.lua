@@ -251,6 +251,12 @@ PixooGithubTimer = timer.doEvery(PIXOO_UPDATE_INTERVAL_SECONDS, function()
 	fishRunCommand("uv run $HOME/Programming/dotfiles/bin/pixoo_github.py")
 end)
 
+-- local PIXOO_YOUTUBE_UPDATE_INTERVAL_SECONDS = 60
+--
+-- PixooYoutubeTimer = timer.doEvery(PIXOO_YOUTUBE_UPDATE_INTERVAL_SECONDS, function()
+-- 	fishRunCommand("uv run $HOME/Programming/dotfiles/bin/pixoo_youtube.py")
+-- end)
+
 -- Clay apply DO NOT EDIT
 if clay then
 	clay:start()
