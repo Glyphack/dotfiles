@@ -10,6 +10,9 @@
 // @raycast.author glyphack
 // @raycast.description Switch the mouse pointer between small and big
 
+// Usage: pointer-size.swift [small|big]
+// Without an argument it switches to the other size.
+//
 // Changes the pointer size right away through the private CoreGraphics
 // cursor scale API. The change lasts until logout, after that macOS goes back
 // to the size set in System Settings > Accessibility > Display.
@@ -65,12 +68,22 @@ struct CursorScale {
     }
   }
 
-  func toggle() -> Float {
-    let next = current() > smallScale ? smallScale : bigScale
-    set(next)
-    return next
+  func toggled() -> Float {
+    current() > smallScale ? smallScale : bigScale
   }
 }
 
-let scale = CursorScale().toggle()
+let cursor = CursorScale()
+let scale: Float
+switch CommandLine.arguments.dropFirst().first {
+case nil:
+  scale = cursor.toggled()
+case "small":
+  scale = smallScale
+case "big":
+  scale = bigScale
+case let other?:
+  die("Unknown size \(other), use small or big")
+}
+cursor.set(scale)
 print(scale == smallScale ? "Pointer is small" : "Pointer is big")
